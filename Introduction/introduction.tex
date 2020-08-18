@@ -1,0 +1,234 @@
+\chapter{Introduction}
+\label{chapter:introduction}
+\textit{"An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem"}- John Tukey
+
+\section{Chapter Overview}
+This chapter provides a general introduction to this dissertation, provides the motivation for this research, list down the hypotheses and research questions, and outlines the structure of this thesis. In particular, \cref{chapter:preli} discusses the reason of cancer and outlines it's severity. \Cref{motivations}, outlines the specific motivations underpinning this research. \Cref{problem_challenges}, discusses the research problems and points out several challenges concerning the research problems. \Cref{goals} discusses the goal of this thesis including a workflow diagram. \Cref{hypotheses} presents the hypotheses and research questions derived from the previously reported work on cancer prediction and diagnosis. \Cref{contributions} list down the contributions of this dissertations. \Cref{structure} outlines the organisation and structure of the thesis.
+
+\section{Motivations}\label{motivations}
+Machine learning~(ML) is about using a set of statistical and mathematical algorithms to perform tasks such as concept learning, predictive modeling, clustering, and mining useful patterns can be performed. The ultimate goal is to improve the learning in such a way that it becomes automatic, so that no more human interactions are needed, or to reduce the level of human interaction as much as possible. Eventhough efficient ML models maybe better at predicting, detecting, and processing patterns than human, but they cannot reason or explain. In almost every domain, applying ML and getting higher prediction accuracy is not enough. In fact, the goal is not predicting something with high-level of confidence only, rather better understanding. Owing to outstanding performance across domains~(e.g., computer vision, natural language processing, multimedia analytics, business analytics), AI-guided machines~(deep neural networks -- DNN and ML algorithms) could eventually be applied to decision-making. Many existing approaches can neither ensure the diagnosis transparently nor are they trustworthy. 
+
+\hspace*{3.5mm} The European Union~(EU) General Data Protection Regulation~(GDPR)~\cite{kaminski2019right}. In particular, according to article 14 of GDPR, when a company uses automated decision-making tools, it must provide meaningful information about the logic involved, as well as the significance and the envisaged consequences of such processing for the data subject. Article 22 states that individuals ``have the right not to be subject to a decision based solely on automated processing" and ``whenever human subjects have their lives significantly impacted by an automatic decision making machine, the human subject has the right to know why the decision is made". For example, in carcinogenesis knowing biological mechanisms~(e.g., oncogenes) is also important. AI-based techniques have already been utilized, including automated diagnoses and treatment in clinical setting, e.g. aiming to model the progression and treatment of cancerous conditions. If we can’t see how the predictions were made~(from the input data in order to recommend treatment diagnosis and treatment), we can’t know what impact will happen on human lives because the day when such AI-guided machines take life decisions for humans is not very far ahead. 
+
+\hspace*{3.5mm} Cancer has been characterized as a heterogeneous disease consisting of many different types and subtypes. Consequently, it is one of the deadliest diseases caused by abnormal behaviors of genes alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, copy numbers~(CN), profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,13cancerdef,19Cruz}. As a result, gene expression~(GE) can be disrupted by cell division, environmental effects, or genetically inherited from parents. Changes in GEs sometimes change the production of different proteins, affecting normal cell behavior. These damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}. This is one of the utmost reasons cancer incidences are gradually increasing and become the second leading cause of death worldwide. More than 200 types of cancer have been identified in which each type can be characterized with different molecular profiles requiring unique therapeutic strategies~\cite{82Tomczak}. 
+
+\hspace*{3.5mm} According to a statistic from the National Cancer Institute\footnote{\url{https://www.cancer.gov/about-cancer/understanding/statistics}}, there were around 14.1 million cancer cases in 2012 in which as many as 8.8 million people died of five leading cancers of lung, liver, colorectal, stomach, and breast~\cite{stat}. In 2018, an estimated 17.35 million new cases of cancer have been diagnosed in the United States in which 609,640 people died. The number of new cancer cases per year is expected to rise to 23.6 million by 2030, which is anticipated to increase further to 70\% by 2035~\cite{71Torre}. Cancer is not only a lethal disease but tremendously complex to diagnose and treat. However, discovery of important biomarkers is a significant step towards understanding the molecular mechanisms of carcinogenesis and prognosis of certain cancer type. Knowing the important biomarkers enables recommending accurate drug repositioning. However, for recommending any diagnosis, mixed data types such as genomics~(e.g., gene/miRNA expression, DNA methylation, copy number variation~(CNVs), mutations), bioimaging~(e.g., histology and radiological images), and clinical info and pathology reports)~\cite{22Ding, 23Zheng} for understanding the genetic and epigenetic causes before recommending appropriate treatment. 
+
+\hspace*{3.5mm} Further, by acquiring insights from omics data, treatment can be focused on preventive measures. As the importance of genetic knowledge in cancer treatment is increasingly addressed~\cite{15Wu}, several projects have emerged. The Cancer Genome Atlas (TCGA)~\cite{tomczak2015cancer} is best known for omics data and is a collection of bio-molecules inside living things such as genomics, metabolomics, and proteomics. However, these omics data are generated from multiplatform and heterogeneous sources, which needs to be analyzed to make clinical decisions, where both multimodality and heterogeneity impose great challenges to bioinformatics tools and computational algorithms~\cite{karimACCESS2019,karimBIB2019}. 
+%Albeit, neural networks~(NN)-based state-of-the-art approaches~\cite{16Kourou, 17Danaee} show high confidence at predicting cancer subtypes and survival rates, they are mostly black-box approaches. 
+These data are also highly variable, and high-dimensional, which imposes significant challenges to existing bioinformatics tools stimulating the development of deep learning~(DL)-based diagnosis and prognosis systems. Since DL algorithms work better with such high dimensional data, recent studies focused on using deep architectures such as autoencoders, CNN, and RNN. However, diagnosis and prognosis, especially for specific cancer types is not straightforward, e.g., the diagnosis of a breast cancer patient depends on several distinct molecular subtypes. Subsequently, the early diagnosis of a cancer type~(e.g., classifying cancer patients into high or low risk groups) have become essential in cancer research, as it can facilitate the subsequent clinical management of patients~\cite{kourou2015machine}. 
+
+\section{Problem Statement} \label{problem_challenges}
+Current cancer typing methods focused on employing ML approaches and using mixed data types to handle the high dimensionality and heterogeneity. Although these models have shown tremendous success in exhibiting high confidence, they are mostly perceived as `black box' methods because of a lack of understanding of their internal functioning. In particular, except for linear and tree-based models, DNN models are perceived mostly as `black box' methods because of their not well-understood internal functioning. Often, we don't fully understand how and which factors tend the network to make a certain prediction right or why it will fail in certain cases. This is a serious drawback since interpretability is essential to generate insights on why a given cancer case is of a certain type, and since knowing the most important biomarkers can help in recommending more accurate treatments and drug repositioning. 
+
+\begin{figure*}
+	\centering
+	\includegraphics[width=0.9\linewidth]{images/bbm.png}
+	\caption{The problem with model opacity}
+    \label{fig:model_bbm}
+    \vspace{-2mm}
+\end{figure*}
+
+\hspace*{3.5mm} Interpretable ML models allow healthcare experts to make reasonable and data-driven decisions to provide personalized diagnosis or treatment decisions that can ultimately lead to higher quality of service in healthcare~\cite{stiglic2020interpretability}. Therefore, we model the problem as a prediction task in a classification setting: given genomic data of $n$ patients, $X$ = ${\mathbf{\{x_1,x_2,..., x_n}}\}$ in dataset $D$, where $X \in \mathbb{R}^{D}$. We consider classifying an individual $x_i$ into a specific into a specific cancer type groups based on its genomic profiles. However, instead of classifying samples directly in the original data space $X$, we first transform the data with a nonlinear mapping $F_{\theta}: X \rightarrow Z$, where $\theta$ are learnable parameters and $Z \in \mathbb{R}^{K}$ is the learned or embedded feature space, where $K \ll D$. To parametrize $F_{\theta}$, representation learning based on different neural networks architecture (e.g., autoencoders) is employed in our approach due to it's function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} in genomic data.  
+
+\hspace*{3.5mm} Based on the embedding $Z$, the classifier $F$ maps an input $x$ to an output $F(x) \in y, F: \mathbb{R}^{d} \mapsto y$. When we assume $F$ has a parametric form, we write $F_{\theta}$, where ${L}(F(x), y)$ denotes the loss function used to train $F$ on a dataset $D$ of input-output pairs $(x,y)$. We call $F$ a ``black-box model" and lacks of explainability. We embed both local and global explainability logic~(ante-hoc) and add an explainability layer to make the model interpretable, which we hope to explain a data point $x$ using an explanation function $g$. Local explainability refers to an explanation giving reasoning why the model $F$ has predicted $F(x)$ for a fixed point $x$, during inferencing. In this thesis, we aim to employ several local and global explanation methods to reason the predictions made by the model and mitigate the diagnosis decision biases. We answer following questions based on global explanation methods: 
+
+\vspace{-4mm}
+\begin{itemize}[noitemsep]
+    \item Which features in $X$ were most important across predictions with $F$? 
+    \item Which training data points $z \in \mathbb{R}^{K}$ were most important to $F(X)$? 
+    \item What minimal change is necessary to input $X$ to change the output $F(X)$~(e.g., sensitivity analysis)? 
+\end{itemize}
+\vspace{-4mm}
+
+Since providing human-level interpretability by ``zooming in" on individual predictions makes the explanation more trustworthy~\cite{ribeiro2018anchors}, we answer the following questions based on local explanation methods: 
+
+\vspace{-4mm}
+\begin{itemize}[noitemsep]
+    \item Which feature $x \in X$ was most important for a certain prediction with $F$? 
+    \item Which training data point $z \in \mathbb{R}^{K}$ was most important to $F(x)$? 
+    \item What minimal change is necessary to input $x$ to change the output $F(x)$~(e.g., sensitivity analysis)? 
+\end{itemize}
+\vspace{-4mm}
+
+\section{Thesis Goal} \label{goals}
+Since an efficient ML model maybe better at predicting, detecting, and processing patterns then a human being, they intrinsically it cannot reason. Nevertheless, it is important to take fairness issues into consideration while developing such an explainable artificial intelligence~(XAI) system, because such systems can be used in many sensitive environments to make important and life-changing decisions~\cite{stiglic2020interpretability}. Therefore, it is essential to ensure that the decisions do not reflect discriminatory behavior toward certain groups or populations~\cite{mehrabi2019survey}. The goal is to develop an XAI system to improve the fairness, accountability, and transparency of a decision support system for real-life problems, e.g., to aid the cancer diagnosis. 
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[width=\textwidth,height=95mm]{images/fair_rule_generator.png}	
+    \caption{Workflow of the overall proposed approach}
+	\label{fig:wf_overall_approach}
+\end{figure*}
+
+\hspace*{3.5mm} The proposed XAI model itself continuously reads input data, collects the predictions, identifies misclassified instances, uses the existing knowledge from the knowledge base~(KB), and produces new knowledge, answers, and provides human-interpretable explanations about the prediction made. Thus, making those predictions more accurately and explainable can: i) help doctors recommend best possible treatments, ii) help learn similarities between cancer types, iii) allow for drug repositioning, iv) and most importantly patients themselves can see why and what types of decision are made. 
+
+\iffalse
+\begin{figure*}[h]
+	\centering
+		\includegraphics[width=\linewidth,height=60mm]{images/wf2.png}
+		\caption{Workflow of the proposed model for explainable predictions of cancer}
+        \label{fig:chapter_1_wf}
+\end{figure*}
+\fi 
+\hspace*{3.5mm} We hypothesize that our approach based on DL and ML baselines with the explanation capability can be more effective at learning hierarchical features. We trained and evaluated several deep architectures with interpretability capabilities, generate heat maps~(HM) for the classes and compute the feature importance in terms of mean absolute impact~(MAI) to identify important biomarkers, provide interpretations of the predictions, and decision visualization to make the cancer diagnosis transparent. Further, we validated our findings through functional analysis to make sure the selected genes are biologically trustworthy for the corresponding tumor types. Further, we will validate our findings based on the annotations provided by the TumorPortal to ensure the consistency and accuracy. In the same line, the symbolic reasoning over neural networks~(aka. neuro-symbolic reasoning), which can fuse the ability of DNNs models can be used to learn probabilistic correlations from scratch alongside abstract and higher-order concepts in order to provide human-interpretable explanations, and error corrections. \Cref{fig:wf_overall_approach} depicts the workflow of the proposed model for explainable predictions of cancer. 
+
+%\subsection{Scope of the thesis}
+%In the present study, a novel OA quantification solution based on multimodality integration is applied to overcome the limitations of the state-of-the-art approaches by effectively getting rid of the negative influences stemming from modality-forming principles. In terms of their complementary and application range, following a series of preprocessing methods, including contrast enhancement, noise elimination, and multi-slice integration, aiming at the same patient, radiographs and MRIs from axial, sagittal as well as coronal plane are respectively classified by their extracted features in the detected ROIs. Given supplying reliability and objectivity of the grading process, class-discriminating attention maps are generated by Class Activation Maps (CAM), prior to the averaging ensemble of models with the same modality and multimodality. 
+
+\section{Hypotheses and Research Questions} \label{hypotheses}
+To disseminating biological knowledge about carcinogenics through the proposed XAI system, the author suggests the following hypotheses to solve several research questions.  
+
+\subsection{Research questions}
+To develop an explainable model and to improve the fairness and transparency of a clinical decision support system~(CDSS), this thesis attempts to solve the following research questions: 
+
+\vspace{-2mm}
+\begin{itemize}[noitemsep]
+    \item \textbf{RQ1}: How the multimodal data\footnote{e.g., genomics data such as GE, miRNA expression, copy numbers, and clinical outcome)} can be more effective to provide accurate decision\footnote{e.g., how to accurately predict the outcome of a diagnosis decision?}? 
+    \item \textbf{RQ2}: How to identify relevant features or factors\footnote{e.g., biomarkers for cancer diagnosis} that contributed most for a certain decision? 
+    \item \textbf{RQ3}: How to provide human-understandable interpretations of predictions using fair decision rules? 
+    %\textbf{${RQ}_5$}: How to generate human-interpretable decision rules to provide transparent cancer diagnosis? \\
+    \item \textbf{RQ4}: How to disseminate and validate embedded domain knowledge\footnote{e.g., mechanisms of carcinogenesis}?
+    \item \textbf{RQ5}: How to score a `black-box' model on fairness and transparency\footnote{e.g., why did the model behave in a certain way?}? 
+\end{itemize}
+\vspace{-2mm}
+
+\subsection{Hypothesis}
+The candidate has the following hypotheses, which he hopes will lead towards potential solutions to the research questions mentioned above:
+
+\vspace{-2mm}
+\begin{itemize}[noitemsep]
+    %\textbf{$H_2$}: neural representation learning can be more effective for learning high-level abstract features against data sparsity. \\
+    \item \textbf{H1}: Multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision. 
+    \item \textbf{H2}: A neural ensemble method by combining several deep architectures can be more effective than structures solely based on a single model by reducing the generalization error. 
+    \item \textbf{H3}: Since genomics data are high dimensional, embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers. 
+    \item \textbf{H4}: Interpretability provides insights on why/how a certain clinical diagnostic decision is recommended, highlighting significant~(i.e, most and least) biomarkers for further validation. 
+    \item \textbf{H5}: Ontological reasoning can help characterize errors w.r.t their hierarchical relations from the KB that helps in decision reasoning.
+    %A reasoner then can interact with the learning algorithm as a semantic referee. \\
+    \item \textbf{H6}: Fair decision rules can be deduced by combining predictions and the reasoning. 
+\end{itemize}
+\vspace{-2mm}
+
+\hspace*{3.5mm} To reach the goal by solving the above research questions, our approach driven by the hypotheses reflected in \cref{fig:wf_overall_approach} that outlines the workflow of the overall proposed approach.
+
+\section{Key Contributions} \label{contributions}
+Overall contributions of this thesis can be summarized as follows:
+
+\begin{itemize}[noitemsep]
+    \item We prepared a rich labelled multimodal genomics data for cancer type prediction that can be used to develop an efficient CDSS.  
+    \item We trained several robust neural network models in which different interpretable~(e.g., feature attribution methods, SHAP, Skater, RuleMatrix) and explainable logic~(e.g., Grad-CAM, attention mechanism, and LRP) are embedded, which can identify most significant biomarkers and provide class-specific explanations giving the top-k and common genes across cancer types.
+    \item We performed adversarial training to make the explainable model robust against different types of attacks such as content moderation attack and out-of-distribution attack. 
+    \item A novel method of generating decision rules for cancer diagnosis by combing model prediction, biomarkers, and reasoning based on neuro-symbolic reasoning. 
+    \item We took both proactive and reactive measures to make the diagnosis decision fair by mitigating different types of bias. 
+    \item Comprehensive evaluations with detailed analyses of outcomes and comparisons with state-of-the-arts. 
+\end{itemize}
+
+\hspace*{3.5mm} Preceding contributions were reflected into 3 directions: i) publications, ii) public talk and presentations, iii) technical~(i.e., implementations of the approaches presented and making them open-source). %A number of peer-reviewed publications were produced while conducting the work in this thesis. They are mentioned below, and a note is made to their relevant chapters. 
+
+\subsection{Relevant publications}
+The above contributions to science were reflected in a number of peer-reviewed publications. It is to be noted that some of the publications help build the foundations of this thesis. In addition, and notes are made to their relevant chapters: 
+
+\begin{enumerate}
+	\item {Alokkumar Jha, Yasar Khan, Muntazir Mehdi, \textbf{Md. Rezaul Karim}, Qaiser Mehmood, Achille Zappa, Dietrich Rebholz-Schuhmann, and Ratnesh Sahay, ``Discovering Biomarker and Pathway for Gynecological Cancers", \emph{Journal of Biomedical Semantics}, 8(1), September 2017, DOI: 10.1186/s13326-017-0146-9.} 
+	
+	\textbf{Abstract}: In this paper, we present an approach to link and query different sequencing datasets such as TCGA, COSMIC, REACTOME, KEGG, and GO to indicate risks of different cancer types. We analyse the tissue expression of genes, CNV, somatic mutation, and promoter methylation to identify associated pathways and find novel biomarkers. 
+	
+	\textbf{Relevance}: this publication helps provide basic understanding of carcinogenics and different types of genomics data needed to be analyse towards biomarker discovery in \cref{chapter:introduction} and \cref{chapter:preli}.
+	
+	\textbf{Link}:~\url{https://jbiomedsem.biomedcentral.com/articles/10.1186/s13326-017-0146-9}
+	
+	\item \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Cancer Risk and Type Prediction Based on Copy NumberVariations with LSTM and Deep Belief Networks", \emph{Proc. of Artificial Intelligence International Conference (A2IC2018)}, November 21-23, Barcelona, Spain. 
+	
+	\textbf{Abstract}: In this paper, we apply DL methods to identify cancer and tumor types using CNVs extracted from cancer genomics data from TCGA. We identify and extract CNVs based on long short-term memory~(LSTM) and deep belief networks~(DBN) were trained using two different representations of CNVs: based on oncogenes and all human genes. Due to lack of sufficient amount of labeled data, we pre-trained the DBN in an unsupervised way then the supervised fine-tuning was carried out using both feed-forward and LSTM network. 
+	
+	\textbf{Relevance}: this publication was one of the first attempts to apply DL in cancer types prediction, which motivates us employing more advanced DNN architectures in chapter  \ref{chapter:uni_modality}, \ref{chapter:multiodality}, \ref{chapter:xai}, and \ref{chapter:robustness}.
+	
+	\textbf{Link}:~\url{https://www.premc.org/doc/A2IC2018/A2IC2018_Book_Of_Abstracts.pdf}
+	
+	\textbf{GitHub}:~\url{https://github.com/rezacsedu/Cancer-Risk-Type-Prediction-CNV-LSTM-DBN}
+	
+	\item \textbf{Md. Rezaul Karim}, Oya Beyan, Achille Zappa, Ivan G. Costa, Dietrich Rebholz-Schuhmann, Michael Cochez, and Stefan Decker, ``Deep Learning-based Clustering Approaches for Bioinformatics", \emph{Briefings in Bioinformatics}, 02 February, 2020.
+	
+	\textbf{Abstract}: In this paper, we review state-of-the-art DL-based approaches for cluster analysis that are based on representation learning. We also discussed why and how the representation learning based on different autoencoder architectures are more effective at clustering high dimensional datasets than classic clustering algorithms~(e.g., K-means), covering bioimaging, GE, and biomedical texts. 
+	
+	\textbf{Relevance}: this publication forms the foundations of representation learning based on variational, LSTM, convolutional autoencoders used in chapter \ref{chapter:multiodality}, \ref{chapter:xai}, and \ref{chapter:robustness}.
+
+	\textbf{Link}:~\url{https://academic.oup.com/bib/advance-article/doi/10.1093/bib/bbz170/5721075}
+	
+	\textbf{GitHub}:~\url{https://github.com/rezacsedu/DL_Clustering_Bioinformatics}
+	
+	\item \textbf{Md. Rezaul Karim}, Michael Cochez, Oya Beyan, Dietrich-Rebholz Schuhmann, and Stefan Decker, ``Convolutional Embedded Networks for Population Scale Clustering and Bio-ancestry Inferencing", \emph{IEEE/ACM Transactions on Computational Biology and Bioinformatics}, 2020.
+	
+	\textbf{Abstract}: in this paper, we proposed convolutional embedded networks~(CEN) in which we combine two DNN architectures called convolutional embedded clustering~(CEC) and convolutional autoencoder~(CAE) classifier for clustering individuals and predicting geographic ethnicity, respectively, based on genetic variants~(GVs). We employed CAE-based representation learning on GVs from the `1000 genomes' and `Simons genome diversity' projects. This publication forms the foundations of representation learning based on CAE used in \cref{chapter:uni_modality} and \cref{chapter:xai}.
+
+	\textbf{GitHub}:~\url{https://github.com/rezacsedu/Recurrent-Deep-Embedding-Networks}
+	
+	\item \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Drug-Drug Interaction Prediction Based on Knowledge Graph Embeddings and Convolutional-LSTM Network", \emph{In Proc. of ACM International Conference on Bioinformatics, Computational Biology, and Health-informatics~(ACM-BCB)}, Niagara Falls, New York, USA, September 7-10, 2019.
+	
+	\textbf{Abstract}: In this paper, we propose a new approach for predicting drug-drug interactions~(DDI) with Convolutional-LSTM network trained on multiple data sources. For this task we use drug features from DrugBank, PharmGKB, and KEGG drugs, which are integrated using Knowledge Graphs~(KGs). Our evaluations against several baseline models outperforms state-of-the-art approaches. 
+	
+	\textbf{Relevance}: this publication further motivates us employing Conv-LSTM network in \cref{chapter:uni_modality}.
+	
+	\textbf{Link}:~\url{https://dl.acm.org/doi/10.1145/3307339.3342161}
+
+	\textbf{GitHub}:~\url{https://github.com/rezacsedu/DDI-prediction-KG-embeddings-Conv-LSTM}
+	
+	\item \textbf{Md. Rezaul Karim}, Ashiqur Rahman, Stefan Decker, and Oya Beyan, ``A snapshot neural ensemble method for cancer type prediction based on copy number variations", accepted for publication in \emph{Neural Computing and Applications}, 30 November 2019. 
+	
+	\textbf{Abstract}: in this paper, we used CNVs data covering different cancer types from The Cancer Genome Atlas~(TCGA).We construct two sparse representations of CNVs based on oncogenes and protein-coding genes. Then we train Conv-LSTM and convolutional autoencoder~(CAE) networks using both representations and create snapshots models. While the Conv-LSTM can capture locally and globally important features, CAE can utilize unsupervised pre-training to initialize the weights in the subsequent convolutional layers against the sparsity. Model averaging ensemble~(MAE) is then applied to combine the snapshot models in order to make a single prediction. 
+	
+	\textbf{Relevance}: this publication further forms the foundation of applying snapshot neural ensemble technique in chapters \ref{chapter:uni_modality} and \ref{chapter:xai}.
+	
+	\textbf{Link}:~\url{	https://link.springer.com/article/10.1007/s00521-019-04616-9}
+	
+	\textbf{GitHub}:~\url{https://github.com/rezacsedu/Cancer-type-prediction-CNV_LSTM-CAE} 
+	
+	\item \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Prognostically Relevant Subtypes and Survival Prediction for Breast Cancer Based on Multimodal Genomics Data", \emph{IEEE Access}, September 2019.
+	
+	\textbf{Abstract}: In this paper, we propose a new approach to analyze genomics data from TCGA to classify breast cancer patients based on their subtypes and survival rates. We used DNA methylation, GE, and miRNA expression data by creating a multiplatform network called multimodal autoencoders~(MAE) classifier to support each data type.
+	
+	\textbf{Relevance}: this publication further forms the foundation of applying MAE technique in \cref{chapter:xai}.
+	
+	\textbf{Link}:~\url{https://ieeexplore.ieee.org/document/8839793}
+	
+	\textbf{GitHub}:~\url{https://github.com/rezacsedu/MultimodalAE-BreastCancer}
+	
+	\item \textbf{Md. Rezaul Karim}, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", \emph{In proc. of IEEE International Concerence on Bioinformatics and Bioengineering~(BIBE 2019)}.
+	
+	\textbf{Abstract}: In this paper, we propose a new approach called \emph{OncoNetExplainer} to make explainable predictions of cancer types based on GE data on which we trained CNN and VGG16 networks using GradCAM++. We generate class-specific heat maps to identify significant biomarkers and computed feature importance to rank top genes across all the cancer types. Further, we identified top genes, and cancer-specific driver genes using gradient boosted trees and SHapley Additive exPlanations~(SHAP). Findings were validated with the annotations provided by the TumorPortal. 
+	
+	\textbf{Relevance}: this publication further forms the foundation of applying MAE technique in \cref{chapter:xai}.
+	
+	\textbf{Link}:~\url{https://ieeexplore.ieee.org/document/8941872}
+
+	\textbf{GitHub}:~\url{https://github.com/rezacsedu/XAI_Cancer_Pred}
+\end{enumerate}
+
+%The articles in this dissertation are all related to knowledge evolution. The Venn diagram in fig. 7 depicts the relation between the research topics introduced in the previous chapter and the papers. Note that it does not necessarily depict the relations between the research topics in a broader sense1.  Each of the following sections describes the contributions to a topic from that figure. 
+
+\subsection{Public conference talks}
+The candidate participated several conferences as the part of the journey of this thesis: 
+\begin{enumerate}[noitemsep]
+    \item 10$^{th}$ International Semantic Web Applications \& Tools for Healthcare and Life Sciences~(SWAT4HCLS) Conference, Rome, Italy, 4-7 December, 2017 for providing a talk for the hackathon titled ``Deep Neural Networks for Analysing Cancer Genomics Data"\footnote{\url{http://www.swat4ls.org/wp-content/uploads/2017/11/Hackaton_SWAT4LS_DeepLearing_for_Cancer_Genomics.pdf}}
+	\item 10th ACM International Conference on Bioinformatics and Computational Biology~(ACM-BCB), Niagara Falls, New York, USA, September 7-10, 2019 for presenting the paper titled ``Drug-Drug Interaction Prediction Based on Knowledge Graph Embeddings and Convolutional-LSTM Network".
+	\item 1st Artificial Intelligence International Conference~(A2IC'2018), November 21-23, Barcelona, Spain for presenting the paper ``Cancer Risk and Type Prediction Based on CNVs with LSTM and DBN". 
+	\item 19th IEEE International Conference on Bioinformatics and Bioengineering~(BIBE 2019), October 27-30, 2019, for presenting the paper titled ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data".
+\end{enumerate}
+
+\subsection{Implementations}
+All the codes in the preceding publications were written by the candidate. The candidate also relied on open-source libraries such as Keras, Sciket-learn, TensorFlow, PyTorch, DeepLearning4j, Apache Spark, and SHAP. All programs were implementation in Python. The software stack comprising Scikit-learn and Keras with the TensorFlow backend. Networks were trained on two computers: i) i7 CPU core, 32GB of RAM, Ubuntu 16.04 OS and Nvidia GTX 1050i GPU, ii) Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. In both machines, the CUDA and cuDNN enabled to make the overall pipeline faster. 
+
+\hspace*{3.5mm} Besides semantic web technologies such as OWL, RDF, SPARQL, Jena, RDF4J, Fuseki, Virtuoso also utilized to some extent in certain publications. Git was extensively used for the CI/CD and version control. Also, the Flask framework was used for wrapping up the explainable models and serving as an explainable interface. All the implementations were made open-source with a focus of reproduciblity. The GitHub page of the implementations can be found at \url{https://github.com/rezacsedu}.
+
+\begin{figure*}[h]
+	\centering
+		\includegraphics[width=\linewidth,height=95mm]{images/chapter_outline.png}
+		\caption{A bottom-up layout of the thesis, outlining the chapters}
+        \label{fig:chapter_organization}
+\end{figure*}
+
+\section{Thesis Outline} \label{structure}
+The rest of the thesis is structured into ten chapters. The brief overview of each chapter is as followed: \cref{chapter:preli} covers the foundations and concepts that will be used in the subsequent chapters. In \cref{chapter:uni_modality}, we develop predictive model based on single modality towards finding the association between CNV data and cancer, followed by the cancer type prediction task. In \cref{chapter:multiodality}, we extend the single modality based predictive model to multimodality-based cancer typing method by employing a multimodal neural network, but with a focus of breast cancer. In \cref{chapter:xai}, we employed two different approaches to open the `black box' uni/multimodal models towards making them explainable predictions of cancer types based on different genomics data. Besides, we identify significant biomarkers and computed feature importance in terms of mean absolute impact to rank top genes across all the cancer types. In \cref{chapter:robustness}, we apply different types of adversarial attacks on our models, including image content moderation, numeric data moderation, and out-of-distribution, followed by assessing the robustness against these scenario. 
+
+\hspace*{3.5mm} In \cref{chapter:xai_rules}, we generate decision rules by combining model predictions and interpretations. Additionally, we identify  misclassified instances~(i.e., initial prediction by the model). In \cref{chapter:nsr}, we develop a  domain-specific ontology. Based on the biomarkers and their attributes, the reasoner tries to decide whether a biological entity is of correct types based on the ontological reasoning. The reasoner also help validate the findings and decision rules in order to deduce human-understandable decision rules in \cref{chapter:xai_rules}. In \cref{chapter:fairness}, we assess both explainability and fairness of our approach from statistical and philosophical perspective. \Cref{chapter:end} provides explanations and points out the relevance of the study, highlights its limitations and discusses future works before concluding the dissertation. 
+

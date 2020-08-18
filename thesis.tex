@@ -1,0 +1,152 @@
+% Yue Li, June 2017
+\documentclass[a4paper,9pt,twoside]{report}
+\usepackage[left=2.5cm,right=2.5cm,top=2cm,bottom=3cm]{geometry}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage[disable]{todonotes}
+\usepackage{lmodern}% http://ctan.org/pkg/lm
+\usepackage{textcomp}
+\usepackage{ragged2e}
+\usepackage{indentfirst}
+\usepackage{paralist}
+\usepackage{listings}
+%\usepackage[utf8x]{inputenc} 
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{ftnxtra}
+\usepackage{fnpos} % \makeFNbelow by default 
+\usepackage{graphicx}
+\usepackage{caption, subcaption}
+\usepackage{xcolor}
+\usepackage{rotate}
+%\usepackage{changes}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{listings}
+\usepackage{tablefootnote}
+\usepackage{todonotes}
+\usepackage[para]{footmisc}
+\usepackage[final]{pdfpages}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{multirow}
+\usepackage[many]{tcolorbox}
+\usepackage{fontawesome}
+\usepackage{lipsum}
+\usepackage[nodisplayskipstretch]{setspace}
+\usepackage{xcolor,colortbl}
+\definecolor{Gray}{gray}{0.85}
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+\usepackage{graphicx}
+\usepackage{etoolbox}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage[para]{footmisc}
+\usepackage{imakeidx}
+\usepackage{kg-macros}
+\usepackage{cube}
+\usepackage{xspace} % For formal tables
+\usepackage{paralist}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{ifsym}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepackage{makecell}
+\usepackage{ragged2e}
+\usepackage{booktabs} 
+\usepackage{tabularx}
+\usepackage{multirow} 
+\usepackage{balance}
+\usepackage{makecell}
+%\usepackage{subfig} %
+\usepackage{paralist}
+\usepackage{fancyvrb}
+\usepackage{xspace}
+
+\makeatletter
+\renewcommand\@makefntext[1]{\leftskip=2em\hskip-2em\@makefnmark#1}
+\makeatother
+
+\lstset{
+    morekeywords={IF, ELSE, ELSE IF, AND, OR, THEN, in, ELSE DEFAULT},
+    %passkeywords={PASS},
+    frameround=fttt,
+    numbers=left,
+    breaklines=true,
+    keywordstyle=\color{blue}\bfseries, 
+    basicstyle=\ttfamily, %\color{red},
+    numberstyle=\color{black}
+    }
+%\makeindex
+\pgfplotsset{compat=1.14}
+\include{thesis.preamble}
+
+\begin{document}
+
+%\title{OncoNetExplainer: Explainable Predictions of Cancer Based on Neuro-symbolic Representation Learning}
+%\title{Towards Explainable Cancer Prognosis and Prediction Based on Neuro-symbolic Reasoning and Learning}
+
+\title{Improving Transparency and Explainability of Black-box\\ Decision Support Systems with Neuro-symbolic\\ Reasoning and Decision Rules}
+
+\author{Md. Rezaul Karim}
+\submitdate{July 2020}
+\degree{Doctor of Philosophy}
+\studentid{Matriculation number: 376439}
+\supervisor{Prof. Dr. Stefan Decker\\}
+\examiner{Prof. Dr. Dietrich Rebholz-Schuhmann\\}
+\advisorone{Dr. Oya Beyan}% and Dr. Michael Cochez}
+\advisortwo{Dr. Michael Cochez}
+
+\normallinespacing
+\maketitle
+
+\includepdf[pages=-,pagecommand={},width=\textwidth]{oathstatement.pdf}
+
+% delete the two declaration sentences in thesis.sty if not applicable. 
+
+\preface
+\input{Abstract/abstract}
+\input{Abstract/abstract_de}
+\input{Acknowledgements/acknowledgements}
+\clearpage
+\input{Abbreviations/abb.tex}
+%\input{Abbreviations/ded.tex}
+
+% There is a maximum limit of 15,000 words without exceeding 40 pages (A4 sides) for the main body of the dissertation that will be submitted in PDF. This limitation includes the bibliography and excludes cover/front pages (e.g., abstract, acknowledgement, table of contents) and excludes the appendices, listing of any codes or any other supporting documentation.
+% Note: Your dissertation should not exceed the word and page limits. You do not have to use up your word limit to get a good grade; never `pad out' your dissertation, this will only annoy the markers.
+
+\body
+\input{Introduction/introduction}
+\input{Foundations/foundations.tex}
+%\input{RelatedWork/RelatedWork.tex}
+\input{SingleModality/SingleModality.tex}
+\input{MultiModality/MultiModality.tex}
+\input{ExplainablePredictions/ExplainablePredictions.tex}
+\input{Robustness/robustness.tex} 
+\input{ExplainableRules/XAI_Rules.tex}
+\input{NeuroSymbolicPredictions/NeuroSymbolicPredictions.tex}
+\input{ExplainabilityComparison/ExplainabilityComparison.tex}
+\input{Conclusion/summary.tex}
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{ieeetr}
+\bibliography{Bibliography/bibliography}
+
+
+% appendices come here
+
+\input{Appendices/appendix}
+\clearpage
+%\printindex
+
+\end{document}

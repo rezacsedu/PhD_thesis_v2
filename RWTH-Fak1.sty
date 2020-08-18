@@ -1,0 +1,86 @@
+% LaTeX2e file `RWTH-Fak1.sty'
+%
+% Titelei fuer die Fakultaet 1 der RWTH Aachen
+%
+% Author: Andre Stollenwerk stollenwerk@embedded.rwth-aachen.de
+%
+\newif\if@final
+\@finalfalse
+\newif\if@pruefung
+\@pruefungfalse
+\DeclareOption{final}{\typeout{FINAL} \@finaltrue}
+\DeclareOption{pruefung}{\typeout{PRUEFUNG} \@pruefungtrue}
+\DeclareOption*{\PackageWarning{fred}{Unknown `\CurrentOption'}}
+\ProcessOptions\relax
+\newcommand*{\@grade}{%
+  \PackageError{RWTH_Fak1_title}{\string\grade\space missing}{%
+    You have to use \string\grade\space to set up the grade,\MessageBreak
+    e.g. `\string\grade{eines Doktors der Naturwissenschaften}'.}%
+}
+\newcommand*{\grade}[1]{\gdef\@grade{#1}}
+\newcommand*{\actualpregrade}[1]{\gdef\@actualpregrade{#1}}
+\newcommand*{\actualpostgrade}[1]{\gdef\@actualpostgrade{#1}}
+%Check for these parameters later...
+\newcommand*{\@birthplace}{%
+  \PackageError{RWTH_Fak1_title}{\string\birthplace\space missing}{%
+    You have to use \string\birthplace\space to set up the place of the
+    author's birth.}%
+}
+\newcommand*{\birthplace}[1]{\gdef\@birthplace{#1}}
+\newcommand*{\@experts}{%
+  \PackageError{RWTH_Fak1_title}{\string\experts\space missing}{%
+    You have to use \string\experts\space to set up the experts,\MessageBreak
+    e.g. `\string\experts{Name of the First Expert\string\and\space
+      Name of the Second Expert}'.}%
+}
+\newcommand*{\experts}[1]{\gdef\@experts{#1}}
+\newcommand*{\@expertI}{%
+  \PackageError{RWTH_Fak1_title}{\string\expertI\space missing}{%
+    You have to use \string\expertI\space to set up the experts,\MessageBreak
+    e.g. `\string\expertI{Universit\"atsprofessor Dr. Gutachter}'.}%
+}
+\newcommand*{\expertI}[1]{\gdef\@expertI{#1}}
+\newcommand*{\@expertII}{%
+  \PackageError{RWTH_Fak1_title}{\string\expertII\space missing}{%
+    You have to use \string\expertII\space to set up the experts,\MessageBreak
+    e.g. `\string\expertII{Universit\"atsprofessor Dr. Gutachter}'.}%
+}
+\newcommand*{\expertII}[1]{\gdef\@expertII{#1}}
+\newcommand*{\dateoforalexamination}[1]{\gdef\@date{#1}}
+\renewcommand*{\maketitle}{%
+\@ifundefined{KOMAScript}{}{\KOMAoptions{twoside = false}}
+  \begin{titlepage}
+  \ifx \@actualpregrade\undefined \ifx\@actualpostgrade\undefined \PackageError{RWTH_Fak1_title}{\string\actualpregrade\space or \string\actualpostgrade\space missing}{You have to use \string\actualpregrade\space or \string\actualpostgrade\space to set up the grade,\MessageBreak e.g. `\string\actualpregrade{Diplom-Informatiker}' or `\string\actualpostgrade{Master of Science}'.} \fi \fi
+    \centering
+    \null\vfill
+    {\LARGE\bfseries\strut\ignorespaces\textsf\@title\par}\vfill
+	\if@final
+    Von der Fakult\"at f\"ur Mathematik, Informatik und Naturwissenschaften der\\
+    RWTH Aachen University zur Erlangung des akademischen Grades\\
+	\fi
+	\if@pruefung
+    Der Fakult\"at f\"ur Mathematik, Informatik und Naturwissenschaften der
+    RWTH Aachen University vorgelegte Dissertation zur Erlangung des
+    akademischen Grades
+	\fi
+    \strut\ignorespaces\@grade%
+    \if@final\space genehmigte Dissertation\par\vfill
+    vorgelegt von\par\vskip\baselineskip
+    \fi
+    \if@pruefung%
+    \space von\par\vfill%
+    \fi
+    {\large\bfseries\strut\ignorespaces\ifx \@actualpregrade\undefined \else \@actualpregrade\\%
+    \fi \@author\ifx\@actualpostgrade\undefined \else, \@actualpostgrade\fi\par}
+    \vskip3pt aus \@birthplace\par
+    \if@final\vfill
+    \begin{tabular}{ll}
+     Berichter: & \@expertI\\
+                & \@expertII
+    \end{tabular}\vskip 2\baselineskip
+    Tag der m\"undlichen Pr\"ufung: \@date\par\vskip\baselineskip
+    {\small Diese Dissertation ist auf den Internetseiten der Universit\"atsbibliothek  online verf\"ugbar.}\fi
+    \vfill
+  \end{titlepage}
+  \@ifundefined{KOMAScript}{}{\KOMAoptions{twoside}}
+}
