@@ -221,11 +221,17 @@ The candidate participated several conferences as the part of the journey of thi
 \end{enumerate}
 
 \subsection{Implementations}
-All the codes in the preceding publications were written by the candidate. The candidate relied on existing libraries such as Keras, Sciket-learn, TensorFlow, PyTorch, DeepLearning4j, Apache Spark, and SHAP. All programs were implementation in Python. The software stack comprising Scikit-learn and Keras with the TensorFlow backend. Networks were trained on two computers: i) i7 CPU core, 32GB of RAM, Ubuntu 16.04 OS and Nvidia GTX 1050i GPU, ii) Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. 
+All the codes in the preceding publications were written by the candidate, where programs were implemented in Python. The candidate also relied on existing libraries such as Keras, sciket-learn, TensorFlow, Apache Spark, and SHAP. %All programs were implementation in Python. 
+%Software stack consist of scikit-learn and Keras with the TensorFlow backend. 
+Networks were trained on an computer of Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. 
 %In both machines, the CUDA and cuDNN enabled to make the overall pipeline faster. 
-
-\hspace*{3.5mm} Besides semantic web technologies such as OWL, RDF, SPARQL, Jena, RDF4J, Fuseki, Virtuoso also utilized to some extent in certain publications. GitHub was extensively used for the  version control. 
+Besides semantic web technologies such as OWL, RDF, SPARQL, Jena, RDF4J, Fuseki, Virtuoso also utilized to some extent in certain publications. GitHub was extensively used for the  version control. 
 Also, the Flask framework was used for wrapping up the explainable models and serving as an explainable interface. All the implementations were made open-source with a focus of reproduciblity. The GitHub page of the implementations can be found at \url{https://github.com/rezacsedu}.
+
+\section{Thesis Outline} \label{structure}
+The rest of the thesis is structured into ten chapters. 
+%The brief overview of each chapter is as followed: 
+\Cref{chapter:preli} covers the foundations and concepts that will be used in the subsequent chapters. In \cref{chapter:uni_modality}, we develop predictive model based on single modality towards finding the association between CNV data and cancer, followed by the cancer type prediction task. In \cref{chapter:multiodality}, we extend the single modality based predictive model to multimodality-based cancer typing method by employing a multimodal neural network, but with a focus of breast cancer. In \cref{chapter:xai}, we employed two different approaches to open the `black box' uni/multimodal models towards making them explainable predictions of cancer types based on different genomics data. Besides, we identify significant biomarkers and computed feature importance in terms of mean absolute impact to rank top genes across all the cancer types. In \cref{chapter:robustness}, we apply different types of adversarial attacks on our models, including image content moderation, numeric data moderation, and out-of-distribution, followed by assessing the robustness against these scenario. 
 
 \begin{figure*}[h]
 	\centering
@@ -233,9 +239,6 @@ Also, the Flask framework was used for wrapping up the explainable models and se
 		\caption{A bottom-up layout of the thesis, outlining the chapters}
         \label{fig:chapter_organization}
 \end{figure*}
-
-\section{Thesis Outline} \label{structure}
-The rest of the thesis is structured into ten chapters. The brief overview of each chapter is as followed: \cref{chapter:preli} covers the foundations and concepts that will be used in the subsequent chapters. In \cref{chapter:uni_modality}, we develop predictive model based on single modality towards finding the association between CNV data and cancer, followed by the cancer type prediction task. In \cref{chapter:multiodality}, we extend the single modality based predictive model to multimodality-based cancer typing method by employing a multimodal neural network, but with a focus of breast cancer. In \cref{chapter:xai}, we employed two different approaches to open the `black box' uni/multimodal models towards making them explainable predictions of cancer types based on different genomics data. Besides, we identify significant biomarkers and computed feature importance in terms of mean absolute impact to rank top genes across all the cancer types. In \cref{chapter:robustness}, we apply different types of adversarial attacks on our models, including image content moderation, numeric data moderation, and out-of-distribution, followed by assessing the robustness against these scenario. 
 
 \hspace*{3.5mm} In \cref{chapter:xai_rules}, we generate decision rules by combining model predictions and interpretations. Additionally, we identify  misclassified instances~(i.e., initial prediction by the model). In \cref{chapter:nsr}, we develop a  domain-specific ontology. Based on the biomarkers and their attributes, the reasoner tries to decide whether a biological entity is of correct types based on the ontological reasoning. The reasoner also help validate the findings and decision rules in order to deduce human-understandable decision rules in \cref{chapter:xai_rules}. In \cref{chapter:fairness}, we assess both explainability and fairness of our approach from statistical and philosophical perspective. \Cref{chapter:end} provides explanations and points out the relevance of the study, highlights its limitations and discusses future works before concluding the dissertation. 
 
