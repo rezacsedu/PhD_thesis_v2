@@ -12,6 +12,45 @@ Machine learning~(ML) is about using a set of statistical and mathematical algor
 
 \hspace*{3.5mm} Moreover, real-life data contain heterogeneity, high variability, and high dimensionality, which imposes significant challenges to existing ML methods stimulating the development of deep learning~(DL)-based decision support systems. Nevertheless, real world experience is multimodal~\cite{mmsurvey}, e.g., while watching a movie, we not only observe the movie itself but the acting, background music, action, background scenario, and landscapes, etc. Approaches based on DL work better with such high dimensional data, recent studies focused on using different deep neural network~(DNN) architectures based on autoencoders, convolutional neural network~(CNN), and recurrent neural network~(RNN). Although many existing approaches based on DNN have shown tremendous success in solving such problems. However, DNN models are perceived mostly as `black box' methods because of their not well-understood internal functioning. Subsequently, they cannot reason their underlying decisions, leaving them incapable of providing transparent and trustworthy diagnosis. 
 
+Let's assume a simple example of a man named John, who is a typical bank customer. Now John like most customers today, whenever you interact with a company oftentimes data
+about you ends up getting sent into some kind of model. In this case, if you're in a financial institution, often these models are trying to predict 
+things that you care about in terms of outcomes. So in this case, predicting whether John has any repayment problems. So here, a chance of 55 percent leads to the bank denying his loan. So in this case, there's a standard thing that happens
+thousands of times every day around the world, and it leads to questions from John, obviously, like, why did you deny my loan?
+If you have a good manager, you should also ask the same question, right? Why are we making these really business-critical decisions?
+But unfortunately, sometimes for the data scientist who came in building this model was all about accuracy for them,
+and so they don't have good answers sometimes when they're trying to explain what's going on here.
+
+So why does this happen? Well, it happens often because many times you run into a trade-off between a complex model,
+where because you have a very, very large potentially complicated dataset, you can take advantage of the flexibility of these complex models,
+and get a lot of accuracy. But that can lead to a lack of interpretability. In contrast, some simple models can be interpretable in the right contexts, but if there are too restrictive, they'll lead to a lack of accuracy.
+Okay? This is what often leads people to run into this in practice, particularly in finance. So if you have interpretability
+or accuracy and you can link choose one, that's a painful trade-off. For the bank, it's particularly painful because accuracy directly corresponds to money for them,
+because accuracy will correspond to default rates for the loans. But interpretability is really important. These are wonderful icons that are different on Mac and Windows,
+but this is meant to be a happy person. So if you're interpretable, you have a happy customer, happy manager.
+There's also really important legality concerns as GDPR and other things. So there are strong drivers on both sides of this trade-off for the many companies. Now, one thing you can do is try and make simple models better, right? So that you can improve their ability to retain
+the interpretability and also move towards accuracy. That's a great approach. We're actually going to focus on the other one though, which is basically,
+taking what's already considered very complex models and trying to extract interpretability from them.
+
+Okay? So if you do that though and you just look at a complex model by itself, it could be very complicated in the mapping,
+and trying to explain an entire mapping space could just be hopelessly complex. So instead what we're going to do is focus on explaining individual predictions one at a time,
+because those involve, perhaps, just a small piece of the overall complexity of the model. So I don't have to describe how a model behaves in all circumstances in order to tell John what was going on with his loan,
+I just need to tell him what was going on that affected him. So if we do that, one way to go about it is to say, "Let's start with a simple model and see what this means,
+be really specific and concrete." So here's a a linear model. Why do we consider these things interpretable?
+Often, it's because they have this giant summation sitting in the middle of the model, right?
+
+So we have a bunch of terms coming in. These are things about John, let's say, these input attributes, and a bunch of terms come together and they just get summed up and sent to you as some output.
+Okay? So we think of these as interpretable because we can look at that and see a bunch of things coming together additively,
+and what's coming into the summation can be viewed as a credit that's attributed to each input feature.
+In contrast, if we look at a complex model, say a neural net or a random forest, maybe gradient boosted decision trees, things like this.
+Often, there's so much going on in there that there's not a nice term that we can just surface and say,
+"This is how the model's going." So what we're going to talk about is, how we can explain an individual prediction in a way very similar to how a linear model works, where again we're going to have a summation sitting inside there.
+But now, instead of having just terms that are straight from the definition of the model, we're going to have to come up with our own definition
+of a credit attributed to each feature.
+
+Okay? So this Phi function is going to be indexed by the feature and it depends both on the model and the current input.
+Okay? So we're essentially replacing the input to a summation that you would get in a linear model with something that
+represents the importance of that feature in the complicated model.
+
 \hspace*{3.5mm} From practical point of view, if we cannot see how the predictions were made, we cannot know what impact will happen on human lives, as the day when such AI-guided machines take life decisions for humans is not very far ahead. For example, artificial intelligence~(AI) in healthcare is increasingly been applied and adopted, e.g., AI-based systems have already been deployed in diagnosis, treatment recommendations, patient engagement, and administrative activities. In fact, there are many instances, where AI already outperforming healthcare tasks in automated diagnoses and treatment in clinical setting~(e.g., outperforming radiologists at spotting malignant tumours, model the progression and treatment of cancerous conditions. Besides, AI is guiding researchers in how to construct cohorts for costly clinical trials~\cite{davenport2019potential}. 
 
 \hspace*{3.5mm} Furthermore, since the opaqueness raises numerous legal, ethical, and practical concerns, transparency and accountability in AI-based systems have to ensure. The General Data Protection Regulation~(GDPR)~\cite{kaminski2019right}, approved by the European Parliament in 2018, suggests that individuals should be able to obtain explanations of the decisions made from their data by automated processing, and to challenge those decisions. In particular, the article 22 states that individuals ``have the right not to be subject to a decision based solely on automated processing" and ``whenever human subjects have their lives significantly impacted by an automatic decision-making machine, the human subject has the right to know why the decision is made", i.e., `right to explanation'. In other words, the GDPR prohibits the use of ML for automated decisions unless a clear explanation of the logic used to make each decision is well explained. 
@@ -228,17 +267,17 @@ Networks were trained on an computer of Intel(R) Xeon(R) CPU E5-2640, 256 of RAM
 Besides semantic web technologies such as OWL, RDF, SPARQL, Jena, RDF4J, Fuseki, Virtuoso also utilized to some extent in certain publications. GitHub was extensively used for the  version control. 
 Also, the Flask framework was used for wrapping up the explainable models and serving as an explainable interface. All the implementations were made open-source with a focus of reproduciblity. The GitHub page of the implementations can be found at \url{https://github.com/rezacsedu/OncoNetExplainer}.
 
-\section{Thesis Outline} \label{structure}
-The rest of the thesis is structured into ten chapters. 
-%The brief overview of each chapter is as followed: 
-\Cref{chapter:preli} covers the foundations and concepts that will be used in the subsequent chapters. In \cref{chapter:uni_modality}, we develop predictive model based on single modality towards finding the association between CNV data and cancer, followed by the cancer type prediction task. In \cref{chapter:multiodality}, we extend the single modality based predictive model to multimodality-based cancer typing method by employing a multimodal neural network, but with a focus on breast cancer. In \cref{chapter:xai}, we employ two different approaches to open the `black box' uni/multimodal models towards making explainable predictions of cancer types based on different genomics data. Besides, we identify significant biomarkers and computed feature importance in terms of mean absolute impact to rank top genes across all the cancer types. In \cref{chapter:robustness}, we apply different types of adversarial attacks on our models, including image content moderation, numeric data moderation, and out-of-distribution, followed by assessing the robustness against these scenarios. 
-
 \begin{figure*}[h]
 	\centering
 		\includegraphics[width=0.8\linewidth,height=105mm]{images/chapter_outline.png}
 		\caption{A bottom-up layout of the thesis, outlining the chapters}
         \label{fig:chapter_organization}
 \end{figure*}
+
+\section{Thesis Outline} \label{structure}
+The rest of the thesis is structured into ten chapters. 
+%The brief overview of each chapter is as followed: 
+\Cref{chapter:preli} covers the foundations and concepts that will be used in the subsequent chapters. In \cref{chapter:uni_modality}, we develop predictive model based on single modality towards finding the association between CNV data and cancer, followed by the cancer type prediction task. In \cref{chapter:multiodality}, we extend the single modality based predictive model to multimodality-based cancer typing method by employing a multimodal neural network, but with a focus on breast cancer. In \cref{chapter:xai}, we employ two different approaches to open the `black box' uni/multimodal models towards making explainable predictions of cancer types based on different genomics data. Besides, we identify significant biomarkers and computed feature importance in terms of mean absolute impact to rank top genes across all the cancer types. In \cref{chapter:robustness}, we apply different types of adversarial attacks on our models, including image content moderation, numeric data moderation, and out-of-distribution, followed by assessing the robustness against these scenarios. 
 
 \hspace*{3.5mm} In \cref{chapter:xai_rules}, we generate decision rules by combining model predictions and interpretations. Additionally, we identify  misclassified instances~(i.e., initial prediction by the model). In \cref{chapter:nsr}, we apply symbolic reasoning to provide diagnosis reasoning based on a domain-specific ontology; where, a reasoner decides whether a biological entity~(based on biomarkers and their attributes) is of correct types based on the ontological reasoning. The reasoner also help validate the findings and decision rules in order to deduce human-understandable decision rules. In \cref{chapter:fairness}, we improve the trustworthy of the diagnosis by combining model interpretations, decision rules, and decision reasoning. In \cref{chapter:end}, we provide explanations and points out the relevance of the study, highlights its limitations, and discusses future works before concluding the dissertation. 
 
