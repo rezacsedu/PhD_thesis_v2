@@ -25,14 +25,14 @@ things that you care about in terms of outcomes. So in this case, predicting whe
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth]{images/loan.png}
+	\includegraphics[width=0.8\linewidth,height=40mm]{images/loan.png}
 	\caption{Problems of model opacity}
     \label{fig:model_bbm}
     \vspace{-2mm}
 \end{figure*}
 
 \hspace*{3.5mm} So why does this happen? Well, it happens often because many times you run into a trade-off between a complex model, where because you have a very, very large potentially complicated dataset, you can take advantage of the flexibility of these complex models, and get a lot of accuracy. But that can lead to a lack of interpretability. In contrast, some simple models can be interpretable in the right contexts, but if there are too restrictive, they'll lead to a lack of accuracy.
-Okay? This is what often leads people to run into this in practice, particularly in finance. So if you have interpretability or accuracy and you can link choose one, that's a painful trade-off. For the bank, it's particularly painful because accuracy directly corresponds to money for them, because accuracy will correspond to default rates for the loans. But interpretability is really important. So if you're interpretable, you have a happy customer, happy manager.
+Okay? This is what often leads people to run into this in practice, particularly in finance. So if you have interpretability or accuracy and you can link choose one, that's a painful trade-off. For the bank, it's particularly painful because accuracy directly corresponds to money for them, because accuracy will correspond to default rates for the loans. But interpretability is really important. Because if you're interpretable, you have happy customers.
 
 \hspace*{3.5mm} There's also really important legality concerns as GDPR and other things. So there are strong drivers on both sides of this trade-off for the many companies. Now, one thing you can do is try and make simple models better, right? So that you can improve their ability to retain the interpretability and also move towards accuracy. That's a great approach. We're actually going to focus on the other one though, which is basically, taking what's already considered very complex models and trying to extract interpretability from them. Okay? So if you do that though and you just look at a complex model by itself, it could be very complicated in the mapping, and trying to explain an entire mapping space could just be hopelessly complex. So instead what we're going to do is focus on explaining individual predictions one at a time, because those involve, perhaps, just a small piece of the overall complexity of the model. 
 
