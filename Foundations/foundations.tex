@@ -50,20 +50,20 @@ ML is about using a set of statistical and mathematical algorithms to perform ta
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.95\linewidth]{images/B08452_01_02.png}
-	\caption{The lifecycle of a typical ML pipeline~\cite{karimScalaML2019}} 
+	\includegraphics[width=0.8\linewidth,height=40mm]{images/B08452_01_02.png}
+	\caption{Lifecycle of a typical ML pipeline~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline}
 \end{figure}
 
 \hspace*{3.5mm} On the other hand, the regularization parameter defines the trade-off between minimizing the training error and the model's complexity in an effort to avoid overfitting problems. More elaborately, when using an ML algorithm, the goal is to obtain the best hyperparameters of a function that return the minimum error when making predictions. Therefore, using a convex optimization technique, we can minimize the function until it converges towards the minimum error. Given that a problem is convex, it is usually easier to analyze the asymptotic behavior of the algorithm, which shows how fast it converges as the model observes more and more training data. The challenge of ML is to allow training a model so that it can recognize complex patterns and make decisions not only in an automated way but also as intelligently as possible. However, if the performance is not satisfactory, he can perform additional tuning to get the best model based on hyperparameter optimization. Finally, he would deploy the best model in a production-ready environment. \Cref{fig:ml_pipeline} summarizes these steps in a nutshell. 
 
-\subsection{Machine learning task}
+\subsection{Machine learning tasks}
 Although every ML problem is more or less an optimization problem, the way they are solved can vary. Learning tasks can be categorized into three types: supervised learning, unsupervised learning, and reinforcement learning. Supervised learning is the simplest and most well-known automatic learning task. It is based on a number of predefined examples, in which the category to which each of the inputs should belong is already known, as shown in \cref{fig:ml_pipeline_sup}:
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\linewidth]{images/sup.png}
-	\caption{Workflow of supervised learning~\cite{karimScalaML2019}} 
+	\includegraphics[width=0.8\linewidth,height=40mm]{images/sup.png}
+	\caption{Workflow of supervised learning technique~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline_sup}
 \end{figure}
 
@@ -82,8 +82,8 @@ Although every ML problem is more or less an optimization problem, the way they 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\linewidth]{images/unsup.png}
-	\caption{Workflow of unsupervised learning~\cite{karimScalaML2019}} 
+	\includegraphics[width=0.8\linewidth,height=40mm]{images/unsup.png}
+	\caption{Workflow of unsupervised learning technique~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline_unsup}
 \end{figure}
 
@@ -118,7 +118,7 @@ Feed-forward neural networks~(FFNNs) are neural networks that have a complex and
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth,height=60mm]{images/ffnn_1.png}
+    \includegraphics[width=0.9\textwidth,height=55mm]{images/ffnn_1.png}
     \caption{The architecture of a MLP with an input layer, 2 hidden layers, and an output layer}
     \label{fig:mlp_1}
 \end{figure}
@@ -131,7 +131,7 @@ A regular AE consists of multi-layer dense networks called encoder and decoder, 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth,height=65mm]{images/ae.png}
+    \includegraphics[width=0.5\textwidth,height=55mm]{images/ae.png}
     \caption{An unsupervised autoencoder as a network for latent feature learning~\cite{karimDLTF2018}}
     \label{fig:ae_theory1}
     \vspace{-2mm}
@@ -162,7 +162,7 @@ DNNs have no prior knowledge of how the pixels are organized because they do not
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.85\textwidth,height=38mm]{images/cnn.png}
+    \includegraphics[width=0.9\textwidth,height=40mm]{images/cnn.png}
     \caption{A schematic architecture of a CNN used for facial recognition~\cite{karim2017predictive,zaccone2018deep}}
     \label{fig:cnn_theory1}
 \end{figure}
@@ -422,6 +422,16 @@ ML models are composed of two different types of parameters called model paramet
 \end{itemize} 
 \vspace{-2mm}
 
+\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Random vs. grid search for hyperparameter optimization]
+    \scriptsize{
+        \textbf{Grid search:} in the following figure, $x$ number of values are picked, which are evenly spaced along each axis, forming a grid. Then a model is trained for each possible combination, followed by evaluating each model, and selecting the architecture giving the best result. \\
+        }
+    \includegraphics[width=0.7\textwidth]{images/gvr.png}\\ 
+    \scriptsize{
+        \textbf{Random search:} $x$-squared number of values are picked randomly and used in cross validation to test the accuracy of the experiment for each combination.
+        } 
+\end{tcolorbox}
+
 \subsection{Techniques for hyperparameter optimization}
 Since an appropriate selection of hyperparameters have huge impact on the performance of ML model, `hyperparameter tuning' is performed, which is the process of searching best model based on optimal combination of hyperparameters. In other words, hyperparameter optimization~(HPO) is the problem of choosing the best combination~(or optimal) hyperparameters for a learning algorithm. HPO is often represented as the following objective function: 
 
@@ -432,16 +442,6 @@ Since an appropriate selection of hyperparameters have huge impact on the perfor
 \end{align}
 
 where $x \in X$, $f(x)$ represents an objective score to minimize, e.g. RMSE evaluated on the validation set and $x^*$ is the set of hyperparameters to yield the lowest value of the score. However, in case of complex model, there are more than one hyperparameter on which there are several approaches to perform hyperparameter tuning such as grid search, random search, and Bayesian optimization. \\
-
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Random vs. grid search for hyperparameter optimization]
-    \scriptsize{
-        \textbf{Grid search:} in the following figure, $x$ number of values are picked, which are evenly spaced along each axis, forming a grid. Then a model is trained for each possible combination, followed by evaluating each model, and selecting the architecture giving the best result. \\
-        }
-    \includegraphics[width=0.7\textwidth]{images/gvr.png}\\ 
-    \scriptsize{
-        \textbf{Random search:} $x$-squared number of values are picked randomly and used in cross validation to test the accuracy of the experiment for each combination.
-        } 
-\end{tcolorbox}
 
 \subsection{Grid search and random search}
 In grid search, evenly spaced values are generated for each hyperparameter being tested, followed by building a model for each possible combination of all of the hyperparameter values, evaluating each model and selecting the architecture which produces the best results. %\subsection{Random search}
@@ -486,7 +486,7 @@ Interpretability of an ML system is the ability to explain or to present in unde
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth,height=50mm]{images/xai_tec.png}	
+	\includegraphics[width=\textwidth,height=50mm]{images/xai_tec.png}	
     \caption{Categorization of the survey in terms of scope, methodology, and usage~(based on~\cite{das2020opportunities})}	
 	\label{fig:survey_xai}
 \end{figure*}
@@ -606,7 +606,7 @@ For the human-level interpretability of a model, we need to know the inner insig
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[width=\textwidth,height=50mm]{images/xai_roadmap.png}	
+	\includegraphics[width=0.9\textwidth,height=45mm]{images/xai_roadmap.png}	
     \caption{A timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on~\cite{das2020opportunities})}	
 	\label{fig:xai_timeline}
 \end{sidewaysfigure*}

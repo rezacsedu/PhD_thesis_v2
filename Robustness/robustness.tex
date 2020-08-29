@@ -3,7 +3,7 @@
 
 \section{Chapter Overview}
 The ability of a classifier to recognize unknown inputs is important for many classification-based systems~\cite{OOD15}. Although modern DNN architectures are efficient predictive models, they often unable to identify when their predictions might be incorrect~\cite{OOD3}. Therefore, the relation between learning confidence and neutral networks provides an intuitive production~\cite{OOD3}.
-It is important to detect anomalous inputs when deploying machine learning~(ML) models~\cite{OOD5}. To ensure an explainable model is robust to adversaries and behaves as intended in real-life clinical decision system, adversarial training is necessary. In this chapter, we apply different adversarial attacks on our model, including image content moderation, numeric data moderation, and out-of-distribution~(OOD), before assessing the robustness against each scenario. 
+It is important to detect anomalous inputs when deploying machine learning~(ML) models~\cite{OOD5}. To ensure an explainable model is robust to adversaries and behaves as intended in real-life scenario, adversarial training is necessary. In this chapter, we introduce different adversarial attacks on our model, including content moderation, numeric data moderation, and out-of-distribution~(OOD), before assessing the robustness against each scenario. 
 
 \section{Introduction}
 In a typical ML pipeline, split the available training data into train, validation, and test sets is common: we train a model on the train set, validate the hyperparameters on the validation set, and evaluate the performance of the trained model on the test set. However, often, it is difficult to asses how would a model perform on the test set in a real-world scenario, e.g., in a clinical setting. Besides, if we have multiple models trained and need to decide which one to deploy in a clinical setting, how would we decide? Suppose, we have 2 trained models $X$ and $Y$. If model $X$ performs better than model $Y$ on the test set, does that mean model $X$ would also be more suitable in a clinical setting? Statistical learning theory can answer this question through some general assumptions. If the test set represents the population to large extent and coming from the same distributions and if the data in the clinical setting also from the same distributions, we can relate the test set error to the real-world error with a high probability. 
@@ -461,13 +461,13 @@ With the above experimental setting, first, we generate some adversarial samples
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=0.9\linewidth,height=50mm]{images/adversarial_training_1.png}
+		\includegraphics[width=0.8\linewidth,height=40mm]{images/adversarial_training_1.png}
 		\caption{$MCAE_{lrc}$}
         \label{fig:normal_vs_robust_f1}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=0.9\linewidth,height=50mm]{images/adversarial_training_2.png}
+		\includegraphics[width=0.8\linewidth,height=40mm]{images/adversarial_training_2.png}
 		\caption{$MCAE_{slr}$}
         \label{fig:normal_vs_robust_f2}
 	\end{subfigure}

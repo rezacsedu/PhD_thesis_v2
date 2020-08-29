@@ -129,7 +129,16 @@ We hypothesize that our approach based on DL and ML baselines with the explanati
 \end{itemize}
 %\vspace{-2mm}
 
-\hspace*{3.5mm} We train and evaluate several deep architectures with interpretability capabilities, generate heat maps~(HM) for the classes and compute the feature importance in terms of mean absolute impact~(MAI) to identify important biomarkers, provide interpretations of the predictions, and decision visualization to make the cancer diagnosis transparent. Further, we validated our findings through functional analysis to make sure the selected genes are biologically trustworthy for the corresponding tumor types. Further, we will validate our findings based on the annotations provided by the TumorPortal to ensure the consistency and accuracy. In the same line, the symbolic reasoning over neural networks~(aka. neuro-symbolic reasoning), which can fuse the ability of DNNs models can be used to learn probabilistic correlations from scratch alongside abstract and higher-order concepts in order to provide human-interpretable explanations, and error corrections. \Cref{fig:wf_overall_approach} depicts the workflow of the proposed model for explainable predictions of cancer. This thesis make the following hypotheses, which will lead towards potential solutions to the research questions mentioned above in case they are confirmed:
+\hspace*{3.5mm} \Cref{fig:chapter_2_wf} outlines the workflow of the proposed approach to make the model explainable. We train and evaluate several deep architectures with interpretability capabilities, generate heat maps~(HM) for the classes and compute the feature importance in terms of mean absolute impact~(MAI) to identify important biomarkers, provide interpretations of the predictions, and decision visualization to make the cancer diagnosis transparent. Further, we validate our findings through functional analysis to make sure the selected genes are biologically trustworthy for the corresponding tumor types. In particular, based on annotations from the TumorPortal, we will validate our findings to ensure biological relevance. 
+
+\begin{figure*}[h]
+	\centering
+		\includegraphics[width=0.9\linewidth,height=70mm]{images/g_t_l_xai.png}
+		\caption{Workflow of the proposed approach to make the model explainable}
+        \label{fig:chapter_2_wf}
+\end{figure*}
+
+\hspace*{3.5mm} In the same line, symbolic reasoning over neural networks~(aka. neuro-symbolic reasoning), which can fuse the ability of DNNs models can be used to learn probabilistic correlations from scratch alongside abstract and higher-order concepts in order to provide human-interpretable explanations, and error corrections. \Cref{fig:wf_overall_approach} depicts the workflow of the proposed model for explainable predictions of cancer. This thesis make the following hypotheses, which will lead towards potential solutions to the research questions mentioned above in case they are confirmed:
 
 %\vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -150,7 +159,7 @@ We hypothesize that our approach based on DL and ML baselines with the explanati
 The main contributions of this thesis can be summarized as follows:
 
 \begin{itemize}[noitemsep]
-    \item We prepared a rich labelled multimodal genomics data for cancer type prediction that can be used to develop an efficient XCDSS\footnote{Explainable clinical decision support system}.  
+    \item We prepared a rich labelled multimodal genomics data for cancer type prediction that can be used to develop an explainable DSS.  
     \item We trained several robust neural network models in which different interpretable~(e.g., feature attribution methods) and explainable logic~(e.g., Grad-CAM, LRP) are embedded. These approach enhance the capability of the learning algorithm to identify most significant biomarkers and provide class-specific explanations giving the top-k and common genes across cancer types. 
     \item We performed adversarial training to make the explainable model robust against different types of attacks, such as content moderation and out-of-distribution attacks. 
     \item A novel method of generating decision rules for cancer diagnosis by combing model prediction, biomarkers, and reasoning based on neuro-symbolic reasoning. 
@@ -255,10 +264,9 @@ All the codes in the preceding publications were written by the candidate, where
 %Software stack consist of scikit-learn and Keras with the TensorFlow backend. 
 Networks were trained on an computer of Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. 
 %In both machines, the CUDA and cuDNN enabled to make the overall pipeline faster. 
-Besides semantic web technologies such as OWL, RDF, SPARQL, Jena, RDF4J, Fuseki, Virtuoso also utilized to some extent in certain publications. GitHub was extensively used for the  version control. 
-Also, the Flask framework was used for wrapping up the explainable models and serving as an explainable interface. All the implementations were made open-source with a focus of reproduciblity. The GitHub page of the implementations can be found at \url{https://github.com/rezacsedu/OncoNetExplainer}.
+Besides semantic web technologies such as OWL, RDF, SPARQL, Jena, and Virtuoso also utilized in certain publications. GitHub was extensively used for the  version control. Also, the Flask framework was used for wrapping up the explainable models and serving  explainable interface. All the implementations were made open-source with a focus of reproducibility\footnote{GitHub repo of the implementations can be found: \url{https://github.com/rezacsedu/OncoNetExplainer}}.
 
-\begin{figure*}[h]
+\begin{figure*}
 	\centering
 		\includegraphics[width=0.8\linewidth,height=105mm]{images/chapter_outline.png}
 		\caption{A bottom-up layout of the thesis, outlining the chapters}
