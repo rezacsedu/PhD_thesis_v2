@@ -51,7 +51,7 @@ Compared to other interpretable options, rules fare well;users prefer, trust and
 In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. 
 
 \subsection{Problem statement}
-However, to know the local and global-behaviour of a model, the task is to generate as set of rules that that ``anchors" (or, covers) the prediction sufficiently, giving entire model's behaviour~\cite{ribeiro2018anchors}. Since we argued that the interpretability provided by the predictor ${F}$ in \cref{chapter:xai} is not sufficiently human-interpretable and globally too complex, we assume it as a `white-box' model\footnote{However, we still assume it a `black-box' model to some extent.}. Given a partially `white-box' model ${F}: X \rightarrow Y$ and an instance $x \in X$, the goal of local model-agnostic interpretability is to explain the behavior of ${F}(x)$ using decision rules, where ${F}(x)$ is the individual prediction for $x$. 
+To know the local and global-behaviour of a model, the task is to generate as set of rules that that ``anchors"~(or, covers) the prediction sufficiently, giving entire model's behaviour~\cite{ribeiro2018anchors}. Since we argued that the interpretability provided by the predictor ${F}$ in \cref{chapter:xai} is not sufficiently human-interpretable and globally too complex, we assume it as a `white-box' model\footnote{However, we still assume it a `black-box' model to some extent.}. Let's it is a partially `white-box' model. From a given such model ${F}: X \rightarrow Y$ and an instance $x \in X$, the goal of local model-agnostic interpretability is to explain the behavior of ${F}(x)$ using decision rules, where $X$ is the full dataset and ${F}(x)$ is the individual prediction for $x$. 
 
 \begin{table}[h!]
     \caption{Example of gene expression samples based on oncogenes}
@@ -81,7 +81,8 @@ However, to know the local and global-behaviour of a model, the task is to gener
 	    \label{fig:rules_wf}
 \end{sidewaysfigure*}
 
-\hspace*{3.5mm} Let $R$ be a rule~(in the form of set of predicates) to provide interpretable representation, such that $R(x)$ returns 1 if all its feature predicates are true for instance $x$, 0 otherwise. For example, in \cref{ge:ancor_example} when x=\{1, 0.3195, -0.2154, -0.154, 0.4767, 0.652\} or x=\{1, 0.230, -0.552, 0.715, 0.924, 0.652\}, $F(x)=Y$, $A(x)=1$ where $A=\{TP53, TBX3, MPO, AMBN\}$. On the other hand, when x=\{0, -0.240, 0.252, 0.350, -0.642, -0.985\} or x=\{0, -0.450, 0.012, 0.650, -0.325, -0.357\}, $ F(x)=N$, $R(x)=0$ where $R=\{TP53, TBX3, MTOR, MPO\}$. Representing a decision this intuitive way, however, is not very user friendly given the continuous nature of the data and huge number of protein-coding genes~(i.e., more then 20k). Therefore, we need a better rule list to approximate the behaviour of the trained models. 
+\hspace*{3.5mm} Let $R$ be a rule~(in the form of set of predicates) to provide interpretable representation, such that $R(x)$ returns 1 if all its feature predicates are true for instance $x$, 0 otherwise. For example, in \cref{ge:ancor_example} when x=\{1, 0.3195, -0.2154, -0.154, 0.4767, 0.652\} or x=\{1, 0.230, -0.552, 0.715, 0.924, 0.652\}, $F(x)=Y$, $A(x)=1$ where $A=\{TP53, TBX3, MPO, AMBN\}$. On the other hand, when x=\{0, -0.240, 0.252, 0.350, -0.642, -0.985\} or x=\{0, -0.450, 0.012, 0.650, -0.325, -0.357\}, $ F(x)=N$, $R(x)=0$ where $R=\{TP53, TBX3, MTOR, MPO\}$. Representing a decision this intuitive way, however, is not very user friendly given the continuous nature of the data and huge number of protein-coding genes~(i.e., more then 20k). Therefore, we need a better rule list to approximate the behaviour of the original  models trained on dataset $X$. 
+
 \subsection{Generating decision rules}
 Our approach is based on RuleMatrix~\cite{ming2018rulematrix}, which is Bayesian rule approach to generate and explain model's decision. The overall workflow is shown in \cref{fig:rules_wf}: first the multimodal genomics data is used to create for learning representation on which a model is trained. Then a surrogate model produces a rule list by approximating original model's behaviour. Since not every rule has better coverage, support, and confidence, filtering can be performed by a user~(a doctor) based on support and confidence before explaining the final decision to another user~(e.g., a patient).\\ 
 
@@ -94,10 +95,59 @@ Our approach is based on RuleMatrix~\cite{ming2018rulematrix}, which is Bayesian
         }
 \end{tcolorbox}
 
-\hspace*{3.5mm} Since, we already covered the representation learning and predictive modelling in \cref{chapter:xai}, we will cover only the rule generation, filtering of rules, and rule-based explanation steps. 
+\hspace*{3.5mm} Since, we already covered the representation learning and predictive modelling in \cref{chapter:xai}, we will cover only the model surrogate, rule generation, filtering of rules, and rule-based explanation steps. 
+
+\subsubsection{Model surrogation}
+A surrogate model is an interpretable model trained to approximate the predictions of the underlying model~(i.e., a `black box' model) as accurately as possible and to be interpretable. In other words, by interpreting the surrogate model, we can draw conclusions about the `black box' model~\cite{molnar2019interpretable}. There is actually not much theory needed to understand surrogate models. We want to approximate our `black-box' prediction function $f$ as closely as possible with the surrogate model prediction function $g$, under the constraint that $g$ is interpretable. 
+
+\hspace*{3.5mm} For $g$, any interpretable model can be used~\cite{molnar2019interpretable}. Since we already have a trained models, training a surrogate model would be easy, as long as we have access to data and prediction function\footnote{It is a model-agnostic method as it does not require knowing inner working principle of the `black-box' model}. If the underlying ML model is replaced with another, the surrogate model will still be usable~\cite{molnar2019interpretable}. 
+
+Perform the following steps to obtain a surrogate model:
+
+
+    Select a dataset X. This can be the same dataset that was used for training the black box model or a new dataset from the same distribution. You could even select a subset of the data or a grid of points, depending on your application.
+    For the selected dataset X, get the predictions of the black box model.
+    Select an interpretable model type (linear model, decision tree, ...).
+    Train the interpretable model on the dataset X and its predictions.
+    Congratulations! You now have a surrogate model.
+    Measure how well the surrogate model replicates the predictions of the black box model.
+    Interpret the surrogate model.
+
+
+%\vspace{-2mm}
+\begin{algorithm*}[h]
+\caption{Generating surrogate model}
+\small{
+    \DontPrintSemicolon \SetKwInOut{Input}{Input}%
+      \SetKwInOut{Output}{Output}%
+      \Input{Dataset $X$- used for training the `black-box' model or a new dataset from the same distribution.}%
+      \Output{A surrogate model $M_s$ to approximate `black-box' model.}%
+      \BlankLine%
+     \For{for each sample $x \in X$}{ \tcp*{for each sample in training set do}
+            %$\mathcal{(A}, \mathcal{C}) \leftarrow  \{\}$ \tcp*{Get the predictions of the `black-box' model}\;
+            \vspace{-2mm}
+            Step -1: select an interpretable model type\tcp*{e.g., linear model, decision tree}\;
+            Step-2: train the interpretable model $M_s$ on dataset $X$\;
+            Step-3: generate the predictions $Y_M$ from surrogate model\;
+            %$ c_i \leftarrow {r_i}$.split(`Predicted Label:')\;
+            %$\mathcal{C} \leftarrow \mathcal{C} \cup c_i$\;
+            \textbf{Return} $(\mathcal{A}, \mathcal{C})$
+     }}
+     \label{algo:surrogate_model_generation}
+\end{algorithm*}
+
+\hspace*{3.5mm} R-squared measure~($R^2$) is a way to measure how well the surrogate replicates the black box model~\cite{molnar2019interpretable}. The $R^2$ can be measured mathematically, as follows~\cite{molnar2019interpretable}: 
+
+\begin{equation}
+    R^{2}=1-\frac{SSE}{SST}=1-\frac{\sum_{i=1}^{n}\left(\hat{y}_{*}^{(i)}-\hat{y}^{(i)}\right)^{2}}{\sum_{i=1}^{n}\left(\hat{y}^{(i)}-\overline{\hat{y}}\right)^{2}}
+    \label{ew:r_squared}
+\end{equation}
+
+\hspace*{3.5mm} where $\hat{y}_{*}^{(i)}$ is the prediction for the $i^{th}$ instance of the surrogate model, $\hat{y}^{(i)}$ the prediction of the `black-box' model, $\overline{\hat{y}}$ the mean of the `black-box' model predictions, $SSE$ is the sum of squares error, and $SST$ is the sum of squares total. The $R^2$ can be interpreted as the percentage of variance captured by the surrogate model, i.e., $R^2$ is close to $1(=$ low $\mathrm{SSE}$), then the interpretable model
+approximates the behavior of the `black-box' model very well~\cite{molnar2019interpretable}. Subsequently, we even can replace the complex model with the interpretable model. However, if $R^2$ is close to 0~(i.e., high SSE), then the interpretable model fails to explain the `black-box' model and should not replace. 
 
 \subsubsection{Rule set generation}
-Similar to literature~\cite{ming2018rulematrix}, we apply the representation of an ordered list of inclusive rules based on Bayesian rule lists. Based on a partially `white-box' model ${F}$, the task is to extract a rule list $R$ to explain it's decision. However, as shown in \cref{fig:rules_wf}, we treat the original~(trained) model as a teacher that have sufficient knowledge and the student model is trained using the data ``labeled" by the teacher, s.t. the predictions of the teacher model is used as ground truth instead of the real ones. RuleMatrix takes a trained model ${F}$~(i.e, teacher) and training set $X$ as input to produce a rule list $R$ by approximating the classifier w.r.t, fidelity as the accuracy with the true labels as the output of ${F}$~\cite{ming2018rulematrix}:  
+Similar to literature~\cite{ming2018rulematrix}, we apply the representation of an ordered list of inclusive rules based on Bayesian rule lists. Based on a partially `white-box' model ${F}$, the task is to extract a rule list $R$ to explain it's decision. However, as shown in \cref{fig:rules_wf}, we treat the original~(trained) model as a teacher that have sufficient knowledge and the student model is trained using the data ``labeled" by the teacher, s.t. the predictions of the teacher model is used as ground truth instead of the real ones. RuleMatrix takes a trained model ${F}$~(i.e, teacher) and training set $X$ as input to produce a rule list $R$ generated through a surrogate model by approximating the classifier  w.r.t, fidelity as the accuracy with the true labels as the output of ${F}$~\cite{ming2018rulematrix}. On the other hand, we measured the performance of the surrogate model itself using $R^2$ to measure how well the surrogate replicates the `black-box' model.    
 
 \vspace{-6mm}
 \begin{align}
@@ -112,7 +162,7 @@ This is also align with our case given that the training set has a large number 
 
 \hspace*{3.5mm} SBRL algorithm expects all the input features to be categorical, while our data set has a bunch of continuous features. In such a case, discretization could help not only to get better accuracy~\cite{maslove2013discretization} but also help interpreting the decision rules better. This means that we have to represent the features to be categorical such that numeric features have to be categorized. There are many ways to cut a continuous feature into intervals, but this is not trivially straightforward way. Now question is how many intervals should the feature be divided into? Maybe we could employ two splitting criteria such as quantiles and fixed interval lengths. For the former, we can binning continuous features based on the frequency of the values by quantiles is an option. However, that's a tricky part and would give so many bins that would not help us in interpreting a rule. On the other hand, although genomics data we use are also mostly continuous, domain expertise or knowledge might help. For example, according to baseline expression results, we discritized gene and miRNA expressions into 4 different levels\footnote{\url{https://www.ebi.ac.uk/gxa/FAQ.html}}:
 
-\vspace{-4mm}
+\vspace{-2mm}
 \begin{itemize}[noitemsep]
     \item \textbf{Below}: if expression level is less than the cutoff~(0.5 FPKM\footnote{FPKM: Fragments Per Kilobase Million- is a normalised estimation of gene expression based on RNA-seq data.}).
     \item \textbf{Low}: if expression level is between 0.5 to 10 FPKM.

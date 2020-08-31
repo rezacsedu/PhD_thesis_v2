@@ -214,7 +214,7 @@ There are structural variations in DNA where protein-encoding genes are not pres
 
 %An example of the CNV selection process is shown in \cref{fig:cnv_overlap}. It shows a reference segment of chromosome 1 at the top that extends from DNA location 109 to 1,145 with two genes, A and B, within this segmental region. Below this reference, there are six candidate copy numbers~(C1-C6) at this location. C1 is a candidate copy number that extends between genes A and B, but C1 does not overlap with any one of them, which is why we remove it from the calculation. Candidates C2 and C3 are copy numbers, too, which slightly overlap with A and B, respectively. We still consider them as valid copy numbers because gene positions are not always fixed. C4 and C5 both fully overlap with genes A and B, hence, they are also valid copy numbers. C6 is not only a big segmental copy number, but it also overlaps with both genes. However, since we consider only the part of genes that overlap, we discard rest of the regions from the calculation. This is based on the hypothesis that even if a candidate copy number overlaps with a gene just by one base pair, we still consider it as a valid copy number~\cite{CNV2}. 
 
-\vspace{-3mm}
+\vspace{-2mm}
 \begin{table} [!ht]
     \caption{Example of training data prepared based CNVs representation of oncogenes}
     \label{cnv:changed232d}
