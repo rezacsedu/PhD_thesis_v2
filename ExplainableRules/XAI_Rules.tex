@@ -100,51 +100,52 @@ Our approach is based on RuleMatrix~\cite{ming2018rulematrix}, which is Bayesian
 \subsubsection{Model surrogation}
 A surrogate model is an interpretable model trained to approximate the predictions of the underlying model~(i.e., a `black box' model) as accurately as possible and to be interpretable. In other words, by interpreting the surrogate model, we can draw conclusions about the `black box' model~\cite{molnar2019interpretable}. There is actually not much theory needed to understand surrogate models. We want to approximate our `black-box' prediction function $f$ as closely as possible with the surrogate model prediction function $g$, under the constraint that $g$ is interpretable. 
 
-\hspace*{3.5mm} For $g$, any interpretable model can be used~\cite{molnar2019interpretable}. Since we already have a trained models, training a surrogate model would be easy, as long as we have access to data and prediction function\footnote{It is a model-agnostic method as it does not require knowing inner working principle of the `black-box' model}. If the underlying ML model is replaced with another, the surrogate model will still be usable~\cite{molnar2019interpretable}. 
-
-Perform the following steps to obtain a surrogate model:
-
-
-    Select a dataset X. This can be the same dataset that was used for training the black box model or a new dataset from the same distribution. You could even select a subset of the data or a grid of points, depending on your application.
-    For the selected dataset X, get the predictions of the black box model.
-    Select an interpretable model type (linear model, decision tree, ...).
-    Train the interpretable model on the dataset X and its predictions.
-    Congratulations! You now have a surrogate model.
-    Measure how well the surrogate model replicates the predictions of the black box model.
-    Interpret the surrogate model.
-
+\hspace*{3.5mm} For $g$, any interpretable model can be used~\cite{molnar2019interpretable}. Since we already have a trained models, training a surrogate model would be easy, as long as we have access to data and prediction function\footnote{It is a model-agnostic method as it does not require knowing inner working principle of the `black-box' model}. If the underlying ML model is replaced with another, the surrogate model will still be usable~\cite{molnar2019interpretable}. \Cref{algo:surrogate_model_generation} outlines the necessary steps to obtain a surrogate model:
 
 %\vspace{-2mm}
 \begin{algorithm*}[h]
 \caption{Generating surrogate model}
 \small{
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
-      \SetKwInOut{Output}{Output}%
-      \Input{Dataset $X$- used for training the `black-box' model or a new dataset from the same distribution.}%
-      \Output{A surrogate model $M_s$ to approximate `black-box' model.}%
-      \BlankLine%
-     \For{for each sample $x \in X$}{ \tcp*{for each sample in training set do}
-            %$\mathcal{(A}, \mathcal{C}) \leftarrow  \{\}$ \tcp*{Get the predictions of the `black-box' model}\;
-            \vspace{-2mm}
-            Step -1: select an interpretable model type\tcp*{e.g., linear model, decision tree}\;
-            Step-2: train the interpretable model $M_s$ on dataset $X$\;
-            Step-3: generate the predictions $Y_M$ from surrogate model\;
-            %$ c_i \leftarrow {r_i}$.split(`Predicted Label:')\;
-            %$\mathcal{C} \leftarrow \mathcal{C} \cup c_i$\;
-            \textbf{Return} $(\mathcal{A}, \mathcal{C})$
+    \SetKwInOut{Output}{Output}%
+    \Input{Dataset $X$ for training the `black-box' model $M_b$ or a new dataset from the same distribution for training the surrogate model, interpretable model type $t$ and params $p$.}%
+    \Output{A surrogate model $M_s$ and predictions $Y_s$ to approximate `black-box' model $M_b$.}%
+    \BlankLine%
+    \For{for each sample $x \in X$}{\tcp*{For dataset $X$, get  predictions for black box model $M_b$}
+        \vspace{-2mm}
+        $Y_b \leftarrow  M_b.predict(X)$\;
+        \textbf{Return} $Y_b$  
+    }
+    \BlankLine%
+    \For{for each sample $x \in X$}{\tcp*{for each sample in training set do}
+        \vspace{-2mm}
+        $M_s \leftarrow  \{\}$\;
+        $Y_s \leftarrow  \{\}$\;
+        $t \leftarrow  \{\}$\; \tcp*{e.g., linear model, decision tree}
+        %\vspace{-2mm}
+        $clf \leftarrow  estimatorInstantiate(t,p)$\;\tcp*{Instantiate an interpretable estimator}
+        \vspace{-2mm}
+        $M_s \leftarrow  clf.fit(X, Y)$\; \tcp*{train the interpretable model $M_s$ on dataset $X$}
+        \vspace{-2mm}
+        $Y_s \leftarrow  M_s.predict(X)$\; \tcp*{Get the predictions of the surrogate model}
+        \textbf{Return} $[(M_b, Y_b)(M_s, Y_s)]$
      }}
      \label{algo:surrogate_model_generation}
 \end{algorithm*}
 
-\hspace*{3.5mm} R-squared measure~($R^2$) is a way to measure how well the surrogate replicates the black box model~\cite{molnar2019interpretable}. The $R^2$ can be measured mathematically, as follows~\cite{molnar2019interpretable}: 
+\hspace*{3.5mm} R-squared measure~($R^2$) is a way to measure how well the surrogate replicates the `black-box' model~\cite{molnar2019interpretable}. The $R^2$ can be measured mathematically, as follows~\cite{molnar2019interpretable}: 
 
 \begin{equation}
     R^{2}=1-\frac{SSE}{SST}=1-\frac{\sum_{i=1}^{n}\left(\hat{y}_{*}^{(i)}-\hat{y}^{(i)}\right)^{2}}{\sum_{i=1}^{n}\left(\hat{y}^{(i)}-\overline{\hat{y}}\right)^{2}}
     \label{ew:r_squared}
 \end{equation}
 
-\hspace*{3.5mm} where $\hat{y}_{*}^{(i)}$ is the prediction for the $i^{th}$ instance of the surrogate model, $\hat{y}^{(i)}$ the prediction of the `black-box' model, $\overline{\hat{y}}$ the mean of the `black-box' model predictions, $SSE$ is the sum of squares error, and $SST$ is the sum of squares total. The $R^2$ can be interpreted as the percentage of variance captured by the surrogate model, i.e., $R^2$ is close to $1(=$ low $\mathrm{SSE}$), then the interpretable model
-approximates the behavior of the `black-box' model very well~\cite{molnar2019interpretable}. Subsequently, we even can replace the complex model with the interpretable model. However, if $R^2$ is close to 0~(i.e., high SSE), then the interpretable model fails to explain the `black-box' model and should not replace. 
+\hspace*{3.5mm} where $\hat{y}_{*}^{(i)}$ is the prediction for the $i^{th}$ instance of the surrogate model $M_s$, $\hat{y}^{(i)}$ is the prediction of the `black-box' model $M_b$, $\overline{\hat{y}}$ the mean of the `black-box' model predictions, $SSE$ is the sum of squares error, and $SST$ is the sum of squares total~\cite{molnar2019interpretable}. The $R^2$ can be interpreted as the percentage of variance captured by the surrogate model, as follows~\cite{molnar2019interpretable}:
+
+\begin{itemize}[noitemsep]
+    \item If $R^2$ is close to $1(=$ low $\mathrm{SSE}$), then the interpretable model approximates the behavior of the `black-box' model very well\footnote{In such scenario, we even can replace the complex model with the interpretable model.}. 
+    \item If $R^2$ is close to 0~(i.e., high SSE), the interpretable model will fail to explain the `black-box' model\footnote{In such scenario, we should not replace  complex model with the interpretable model.}. 
+\end{itemize}
 
 \subsubsection{Rule set generation}
 Similar to literature~\cite{ming2018rulematrix}, we apply the representation of an ordered list of inclusive rules based on Bayesian rule lists. Based on a partially `white-box' model ${F}$, the task is to extract a rule list $R$ to explain it's decision. However, as shown in \cref{fig:rules_wf}, we treat the original~(trained) model as a teacher that have sufficient knowledge and the student model is trained using the data ``labeled" by the teacher, s.t. the predictions of the teacher model is used as ground truth instead of the real ones. RuleMatrix takes a trained model ${F}$~(i.e, teacher) and training set $X$ as input to produce a rule list $R$ generated through a surrogate model by approximating the classifier  w.r.t, fidelity as the accuracy with the true labels as the output of ${F}$~\cite{ming2018rulematrix}. On the other hand, we measured the performance of the surrogate model itself using $R^2$ to measure how well the surrogate replicates the `black-box' model.    
@@ -324,9 +325,9 @@ An intrinsic limitation of the rule induction algorithm results from the trade-o
 
 \section{Chapter Summary} \label{chapter_7:conclusion}
 In this chapter, we provide model-agnostic explanation based on IF-THEN rules for the reasoning of a model's prediction so that human users can understand. %, which will be model-agnostic explanations based on IF-THEN rules. 
-Using RuleMatrix~\cite{ming2018rulematrix}, we will see how to explain individual predictions of our black-box models by finding a decision rule that ``anchors" the prediction sufficiently. Besides, we explain both global and local behaviours of the best model trained on the gene expression dataset. We employ `RuleMatrix', and `Skater' for explaining the decisions both globally and locally, given the fact that Skater' can be used to plot the decision generated by the surrogate model in the form of decision trees.  
+Using RuleMatrix~\cite{ming2018rulematrix}, we will see how to explain individual predictions of our `black-box' models by finding a decision rule that ``anchors" the prediction sufficiently. Besides, we explain both global and local behaviours of the best model trained on the gene expression dataset. We employ `RuleMatrix', and `Skater' for explaining the decisions both globally and locally, given the fact that Skater' can be used to plot the decision generated by the surrogate model in the form of decision trees.  
 %In \cref{chapter:nsr}, we will see how to combine model predictions, interpretation, and reasoning to provide more fair rules. 
+Nevertheless, we analysed the limitations of our approach and missclassified instances knowing the motivations that one of the first steps towards improving an XAI system is to understand it’s weaknesses. We try to understand through a few examples why a trained model fails in certain cases and which factors caused it to make a given prediction. 
 
-\hspace*{3.5mm} Nevertheless, we analysed the limitations of our approach and missclassified instances knowing the motivations that one of the first steps towards improving an XAI system is to understand it’s weaknesses. We try to understand through a few examples why a trained model fails in certain cases and which factors caused it to make a given prediction. Nevertheless, as research~\cite{POSTF} has exposed that some genes have both oncogenic and tumor-suppressor functionality that referred as proto-oncogenes with tumor-suppressor function~(POTSF). Most of the POTSF genes act as transcription factors or kinases and exhibit dual biological functions, e.g., that they both positively and negatively regulate transcription in cells. There are some specific cancer types, e.g., leukemia are over-represented by such POTSF genes, whereas some common cancer types like lung cancer are under-represented by them~\cite{POSTF}. 
-Therefore, in addition to the predictions, interpretations and explanation from the model, it is also important to understand and disseminate about such biological instances and reason about these entities and eventually answer queries posed by human operators in order to guide decision making processes. In this chapter, we cover how the symbolic reasoning on deep neural networks, called `neuro-symbolic reasoning' can be more effective in deducing human-understandable decision. 
+\hspace*{3.5mm} Research~\cite{POSTF} has exposed that some genes have both oncogenic and tumor-suppressor functionality. Those genes are known as proto-oncogenes with tumor-suppressor function~(POTSF). Majority of the POTSF genes act as transcription factors or kinases and exhibit dual biological functions, i.e., that they both positively and negatively regulate transcription in cells. There are some specific cancer types, e.g., leukemia are over-represented by such POTSF genes, whereas some common cancer types like lung cancer are under-represented by them~\cite{POSTF}. Therefore, in addition to the predictions, interpretations and explanation from the model, it is also important to understand and disseminate such biological instances and reason about them is important. In the next chapter, we show how the symbolic reasoning can be more effective in deducing human-understandable decision. In particular, we will answer queries posed by human operators in order to guide decision making processes in a DSS. 
 
