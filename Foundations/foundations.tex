@@ -474,36 +474,40 @@ Nevertheless, as each experiment using grid search and random search is performe
 BO finds a better optimum in a smaller number of steps than random search and beats the baseline in almost every run~\cite{BO}. Nevertheless, this becomes even more evident in higher-dimensional search spaces, e.g., imagine that geneomics data often have 20K+ dimensionality. 
 
 \section{Interpretability of ML Models}
-Although DL models have shown tremendous success at AI-aided diagnosis and prognosis, showing high effectiveness and accuracy. Suppose, we have an accurate model that can classify cancerous samples with an accuracy of 90\%. Still, we cannot claim that it has high confidence, given that the single accuracy metric is an incomplete description~\cite{doshi2017towards} and can't be enough in AI-aided diagnosis and prognosis, unless it explains the reason behind the  decision. Otherwise, such a model has to perceive a `black box' method as it cannot explain why it reached to such a diagnosis decision and lack of transparency.  
+Although DL models have shown tremendous success at AI-aided diagnosis and prognosis, showing high effectiveness and accuracy. However, there are many cases where not only high accuracy, but also explanation about the outcome is necessary. Suppose, we have an accurate model that can classify cancerous samples with an accuracy of 90\%. Still, we cannot claim that it has high confidence, given that the single accuracy metric is an incomplete description~\cite{doshi2017towards} and can't be enough in AI-aided diagnosis and prognosis, unless it explains the reason behind the  decision. Otherwise, such a model has to perceive a `black box' method as it cannot explain why it reached to such a diagnosis decision and lack of transparency.  
 
 \hspace*{3.5mm} If the parameters $\boldsymbol{\theta}$ of a ML model $\boldsymbol{f}$ and it's architecture are known, the model is considered a `white-box'. %A white-box model also helps improve model-debugging and promotes trust. 
 However, a `white-box' model is not necessarily explainable or interpretable~\cite{das2020opportunities}. On the other hand, an ML model $\boldsymbol{f}$ is considered a `black-box' if the model parameters and network architectures are hidden from the end-user. Based on this intuition, we can slightly coined the definitions of `black-box' and `white-box' provided by Das et al.~\cite{das2020opportunities} models as follows: 
 
 \begin{definition}
-    \textbf{White-box model}: a ML model $f$ is `white-box': i) if its parameters $\boldsymbol{\theta}$ and architecture are known to the end users, and ii) users have sufficient know-how and why it provides decision/prediction.  
+    \textbf{white-box model}: a ML model $f$ is `white-box': i) if its parameters $\boldsymbol{\theta}$ and architecture are known to the end users, and ii) users have sufficient know-how and why it provides decision/prediction.  
 \end{definition}
 
 \begin{definition}
-    \textbf{Black-box model}: a ML model $f$ is considered black-box' if the model parameters and network architectures are hidden from the end-users. 
+    \textbf{black-box model}: a ML model $f$ is considered black-box' if the model parameters and network architectures are hidden from the end-users. 
 \end{definition}
 
-\hspace*{3.5mm} On the other hand, interpretable ML refers to methods and models that make the behavior and predictions of a ML systems understandable to humans~\cite{molnar2019interpretable}. 
+\hspace*{3.5mm} In contrast, interpretable ML refers to methods that make the behavior and predictions of a system understandable to humans~\cite{molnar2019interpretable}. 
 %This is a serious drawback since interpretability is essential to generate insights on why a given cancer case is of a certain type, and since knowing the most important biomarkers can help in recommending more accurate treatments and drug repositioning. 
 %Further, the `right to explanation' of the EU GDPR~\cite{kaminski2019right} gives patients the right to know why and how an algorithm made a diagnosis decision. However, existing approaches can neither ensure the diagnosis transparently nor are they trustworthy. 
 %AI-aided system has to be well-interpretable and explainable.
-Interpretability of an ML system is the ability to explain or to present in understandable terms to a human~\cite{doshi2017towards}. Following are non-technical definitions by Miller et al.~\cite{XAI_miller}~(\cref{def:xai_1}) and Kim et al.~\cite{XAI_kim}~(\cref{def:xai_2}), respectively:
+Interpretability of an ML system is the ability to explain or to present in understandable terms to a human~\cite{doshi2017towards}. Following is a non-technical definition by Miller et al.~\cite{XAI_miller}. Although a white-box model improves model-debugging and promotes trust, knowing it's architecture and parameters alone won't make the model essentially explainable~\cite{das2020opportunities}.  %~(\cref{def:xai_1}) and Kim et al.~\cite{XAI_kim}~(\cref{def:xai_2}), respectively:
 
 \begin{definition}
-    \textbf{Interpretability}: is the degree to which a human can understand the cause of a decision.
+    \textbf{interpretability}: is the degree to which a human can understand the cause of a decision.
     \label{def:xai_1}
 \end{definition}
+
+\iffalse
 \vspace{-6mm}
 \begin{definition}
-    \textbf{Interpretability}: is the degree to which a human can consistently predict model's result.
+    \textbf{interpretability}: is the degree to which a human can consistently predict model's result.
     \label{def:xai_2}
 \end{definition}
-
-\hspace*{3.5mm} Although a white-box model improves model-debugging and promotes trust, knowing it's architecture and parameters alone won't make the model essentially explainable~\cite{das2020opportunities}. In fact, model interpretation is an extension of the model evaluation, which helps to foster a better understanding of a model’s learned decision policies. In the same line, it gives the ability to explain a model in a way which is human understandable such that the outcomes are self-descriptive and needs no further explanation. The higher the interpretability, the easier it is for someone to comprehend why a particular decision or prediction is made by the model~\cite{stiglic2020interpretability,bhatt2020explainable}, i.e., trustworthiness for the human. In either way, good interpretability has to be ensured both locally, e.g., individual predictions and globally, e.g., entire model behavior. 
+\fi 
+\vspace{-6mm}
+\hspace*{3.5mm} Model interpretation is an extension of the model evaluation, which helps to foster a better understanding of a model’s learned decision policies and gives the ability to explain a model in a way which is human understandable such that the outcomes are self-descriptive and needs no further explanation. 
+The higher the interpretability, the easier it is for someone to comprehend why a particular decision or prediction is made by the model~\cite{stiglic2020interpretability,bhatt2020explainable}, i.e., trustworthiness for the human. In either way, good interpretability has to be ensured both locally, e.g., individual predictions and globally, e.g., entire model behavior. 
 
 \begin{figure*}[h]
 	\centering
@@ -512,7 +516,7 @@ Interpretability of an ML system is the ability to explain or to present in unde
 	\label{fig:survey_xai}
 \end{figure*}
 
-\hspace*{3.5mm} There is a trade-off between explianability and accuracy. How well does an explanation predict unseen data is a measurement of accuracy~\cite{molnar2019interpretable}. High accuracy is important if the explanation is used for predictions in place of the ML model. However, if the goal is to explain what the `black-box' model does~(i.e., algorithmic transparency), only `fidelity' is important. 
+\hspace*{3.5mm} Although many authors used interpretability and explainability interchangeably, the former means that the cause and effect~(e.g., of a certain outcome) can be determined in a system. The latter is the extent to which the internal working mechanism of an AI system can be explained to humans, in human-interpretable language. Miller et al.~\cite{miller2018explanation} defined explanation as the answer to a why and how questions. For example, in our cancer diagnosis context, a patient may have the following questions: i) why do I have colon cancer?, ii) Why did not the treatment work on me?, iii) how did the model predict that I have colon cancer?, etc. However, there is a trade-off between explianability and accuracy. How well does an explanation predict unseen data is a measurement of accuracy~\cite{molnar2019interpretable}. High accuracy is important if the explanation is used for predictions in place of the ML model. However, if the goal is to explain what the `black-box' model does~(i.e., algorithmic transparency), only `fidelity' is important~\cite{molnar2019interpretable}. 
 
 \subsection{Algorithmic transparency}
 A ML model is considered transparent if it is expressive enough to be human understandable, where transparency can be a part of the algorithm itself or using external means~(e.g., model
@@ -520,7 +524,7 @@ decomposition or simulations)~\cite{das2020opportunities}.
 Although the phrase `algorithmic transparency' was coined by Nicholas Diakopoulos et al.~\cite{diakopoulos2017algorithmic} in 2016 w.r.t role of algorithms in deciding the content of digital journalism, the underlying principle dates back to 1970s and the rise of automated systems for scoring consumer credit~\cite{diakopoulos2015algorithmic}.  %\footnote{\url{https://en.wikipedia.org/wiki/Algorithmic_transparency}}. 
 
 \begin{definition}
-    {\textbf{Algorithmic transparency}} is the principle that the factors that influence the decisions made by algorithms should be visible, or transparent, to the people who use, regulate, and are affected by systems that employ those algorithms.
+    {\textbf{algorithmic transparency}} is the principle that the factors that influence the decisions made by algorithms should be visible, or transparent, to the people who use, regulate, and are affected by systems that employ those algorithms.
 \end{definition}
 
 \hspace*{3.5mm} More technically, ``algorithmic transparency" is how the algorithm learns a model from the data and maps different relationships transparently based on what it makes prediction for unknown samples. First example could be a decision tree algorithm, which implicitly performs variable screening or feature selection. Hence, feature importance is clear, showing clear interactions between features. The second example could be image classification using neural networks, e.g., while classifying images, a CNN model learns features~(e.g., class-discriminating pixels) using edge detectors and filters across convolutional layers. Then it can learn more abstract features in the deepest layer. Then it can provide attention on some areas using attention maps, explaining where most important pixels are located to. \\
