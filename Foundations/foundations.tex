@@ -808,15 +808,22 @@ Unfortunately, there is little consensus on what interpretability in ML is and h
 
 \section{Cancer Growth and Metastasis}
 \label{cancer_growth}
-In order to develop a DSS for clinical or medical setting, we need to know the data as well as the mechanism for which the diagnosis decision will be made. 
-In this section, we focus on the different types and subtypes of cancer and their growth and metastasis. The idea is to acquire some biological interpretations of the genomics data. First of all, cancer is an umbrella term for a large group of diseases caused when abnormal cells divide rapidly, and spread to other tissue and organs. Consequently, changes such as mutations happened to the DNA in the cells, but usually cells correct these mistakes. When a mistake is not corrected, a cell can become cancerous. Mutations can cause cells that should be replaced to survive instead of die, and new cells to form when they're not needed. These extra cells can divide uncontrollably, causing growths called tumors to form. 
+In this section, we focus on the different types and subtypes of cancer and their growth and metastasis\footnote{Metastasis is how the cancer spreads to  different parts of the body from where it started growing. When this spread over, an oncologist refers saying the cancer has ``metastasized"}. The idea is to acquire some biological interpretations of the genomics data. 
+
+\subsection{The growth of cancer}
+Cancer is an umbrella term for a large group of diseases caused when abnormal cells divide rapidly, and spread to other tissue and organs~\cite{pancan}. When a minor changes such as mutations happened to the DNA in the cells, our body cells correct these mistakes, by converting it into a healthy cell. However, when a mistake cannot be corrected, a cell can become cancerous. Besides, mutations can cause cells that should be replaced to survive instead of die, and new cells to form when they're not needed. These extra cells can divide uncontrollably, causing growths called tumors to form~\cite{82Tomczak}. 
+
+\hspace*{3.5mm} Consequently, cancer incidences are gradually increasing and become the second leading cause of death worldwide. More than 200 types of cancer have been identified~\cite{82Tomczak}. According to a statistic from the National Cancer Institute\footnote{\url{https://www.cancer.gov/about-cancer/understanding/statistics}}, there were around 14.1 million cancer cases in 2012 in which as many as 8.8 million people died of five leading cancers of lung, liver, colorectal, stomach, and breast~\cite{stat}. In 2018, an estimated 17.35 million new cases of cancer have been diagnosed in the United States in which 609,640 people died. The number of new cancer cases per year is expected to rise to 23.6 million by 2030, which is anticipated to increase further by 70\% by 2035~\cite{71Torre}. 
+
+\hspace*{3.5mm} Cancer is mostly caused by abnormal behaviors of genes alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, copy numbers~(CN), profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,13cancerdef,19Cruz}. As a result, gene expression~(GE) can be disrupted by cell division, environmental effects, or genetically inherited from parents. Changes in GEs sometimes change the production of different proteins, affecting normal cell behavior. These damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}.
 
 \hspace*{3.5mm} Besides, genetic mutations can be inherited. Cancer disrupts grow and divide process of healthy cells, which leads to abnormal growths~\cite{pancan}. 
 %It’s caused by changes or mutations in DNA. DNA exists in the individual genes of every cell. It has instructions that tell the cell what functions to perform and how to grow and divide. 
 Tumors can cause a variety of health problems, depending on where they grow in the body. Nevertheless, oftentimes cancer is caused by gene alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, CNV, profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,19Cruz}. 
 However, not all tumors are cancerous. Benign tumors are noncancerous and do not spread to nearby tissues. Sometimes, they can grow large and cause problems when they press against neighboring organs and tissue. Malignant tumors are cancerous and can invade other parts of the body. Some cancer cells can also migrate through the bloodstream or lymphatic system to distant areas of the body. This process is called metastasis.Cancers that have metastasized are considered more fatal and advanced than those that have not, hence are harder to treat. 
 
-\hspace*{3.5mm} Cancers are named for the area in which they begin and the type of cell they are made of; even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer. On the other hand, cancer subtypes describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells. Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}:
+\subsection{Metastasis}
+Cancers are named for the area in which they begin and the type of cell they are made of; even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer. On the other hand, cancer subtypes describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells. Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}:
 
 \begin{itemize}[noitemsep]
     \item \textbf{Carcinoma} is a cancer that starts in the skin or the tissues that line other organs.
@@ -825,30 +832,19 @@ However, not all tumors are cancerous. Benign tumors are noncancerous and do not
     \item \textbf{Lymphoma} and myeloma are cancers of the immune system.
 \end{itemize} 
 
-\hspace*{3.5mm} Although cancer is a lethal disease condition and more than 200 types of cancer have been identified, each of which can be characterized by different molecular profiles requiring unique therapeutic strategies~\cite{82Tomczak}. The most common types of cancer include, the cancer of bladder, breast, colon and rectal, endometrial, kidney, leukemia, liver, lung, melanoma, pancreatic, prostate, and thyroid. 
+\hspace*{3.5mm} Although cancer is a lethal disease condition and more than 200 types of cancer have been identified. The most common types of cancer include, the cancer of bladder, breast, colon and rectal, endometrial, kidney, leukemia, liver, lung, melanoma, pancreatic, prostate, and thyroid. 
 
-\section{Genomics Data-based Diagnosis of Cancer}
-With high-throughput technologies such as next-generation sequencing~(NGS), cancer-
-specific genetic profiling is now possible. The entire genome sequencing data using NGS can be used to identify similar genetic mutations and genetic variations associated with different tumors. %\subsection{Data availability}
-As mentioned, different types of genomics data are used in cancer research, including somatic mutations, CNV, DNA methylation~(DM), gene expression~(GE), miRNA expression~(MR), and Isoform expression~(IEx), along with clinical outcomes. The largest uniformly processed cancer genomic provided is The Cancer Genome Atlas~(TCGA) collected many types of data for each of over 20,000 tumor and normal samples, where each step in the genome characterization pipeline generate following data points\footnote{\url{https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga/using-tcga/types}}:
+\subsection{Genomics Data-based Diagnosis of Cancer}
+\hspace*{3.5mm} Cancer is not only a lethal disease but tremendously complex to diagnose and treat. Not only recommending accurate diagnosis and subsequent treatment, but also knowing the biological mechanisms is important, e.g., oncogenes. However, discovery of important biomarkers is a significant step towards understanding the molecular mechanisms of carcinogenesis and prognosis of certain cancer type. Knowing the important biomarkers enables recommending accurate drug repositioning. However, for recommending any diagnosis, multi-omics data and clinical information need to be processed for understanding the genetic and epigenetic causes before recommending appropriate treatment. Such data include gene/miRNA expression, DNA methylation, copy number variation~(CNVs), mutations, bioimaging~(e.g., histology and radiologies), and reports)~\cite{22Ding, 23Zheng}.  
 
-\begin{itemize}[noitemsep]
-    \item Clinical information, such treatment information, survival data, etc. Besides, pathology reports were collected for selected sampels. 
-    \item Molecular analyte metadata (e.g., sample portion weight).
-    \item Molecular characterization data (e.g., gene expression values).
-    %\item Patient phenotype and demographic information~(e.g., age, height, race, etc.). 
-    \item Demographic information for the characterization of the patient by means of segementing the population, e.g., characterization by age, sex, or race\footnote{\url{https://docs.gdc.cancer.gov/Data_Dictionary/viewer/\#?view=table-entity-list&anchor=clinical}}.
-    \item Diagnosis data from the investigation, analysis and recognition of the presence and nature of disease, condition, or injury from expressed signs and symptoms. 
-    \item Family history: record of a patient's background regarding cancer events of blood relatives.
-\end{itemize}
+\hspace*{3.5mm} Further, by acquiring insights from omics data, treatment can be focused on preventive measures. As the importance of genetic knowledge in cancer treatment is increasingly addressed~\cite{15Wu}, several projects have emerged. In particular, the next generation sequencing~(NGS) is playing a key role in therapeutic decision making for the cancer prognosis and treatment~\cite{jha2017towards}. The NGS technologies are producing a massive amount of sequencing datasets too. For example, the cancer genome atlas (TCGA)~\cite{tomczak2015cancer} is best known for omics data and is a collection of bio-molecules inside living things such as genomics, metabolomics, and proteomics. However, omics data are generated from multiplatform and heterogeneous sources, which needs to be analyzed to make clinical decisions, where both multimodality and heterogeneity impose great challenges to bioinformatics tools and computational algorithms~\cite{karimACCESS2019,karimBIB2019}. 
 
-Now that we already know about genomics data, up next we discuss each data types. 
+%Now that we already know about genomics data, up next we discuss each data types. 
 
-
-\subsection{Gene and miRNA expression}
+\subsubsection{Gene and miRNA expression}
 Due to  gene alterations and abnormal behaviors of genes, GE can be disrupted by cell division or environmental effects, or genetically inherited from parents. Changes in GE sometimes change the production of different proteins, affecting normal cell behavior. These damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}. GE quantification data contains the amount of expression per gene for each patient based on ensembl gene identifiers, while miRNA expression quantification data contains the amount of miRNA expression for each patient based on miRNA identifiers.
 
-\subsection{Copy number variations}
+\subsubsection{Copy number variations}
 \label{sec:cnv_data}
 CNVs signify gene or genomic regions that appear in different number of copies in different individuals or even in different cells of the same individual, where copy numbers can vary from one person to another by several thousand. About 5-12\% of the human genome, including thousands of genes, may be variable in copy number, and this variation can be de novo deletions or duplications of the genome or inherited from the parents by healthy individuals~\cite{ostrovnaya2010classification}, ranging in size from 100 bp to 3 Mb~\cite{zhang2006development}. Although the significance is not fully understood, it is likely that CNVs are responsible for a considerable proportion of phenotypic variation~\cite{ostrovnaya2010classification}. Such variations may lead to changes in gene dosage and expression~\cite{diskin2009copy}. Approximately 179,450 human CNVs have been reported in the Database of Genomic Variants~(DGV)~\cite{iafrate2004detection,zhang2006development}. Although there are substantially fewer reported CNVs than SNPs, it is estimated that more than 30\% of the human genome is covered by at least one CNV (compared to the $<1$\% covered by SNPs). 
 
@@ -904,14 +900,18 @@ CNVs signify gene or genomic regions that appear in different number of copies i
 
 \hspace*{3.5mm} These became more obvious because CNVs are associated with the risk of individual cancer~\cite{cnv11,cnv12,cnv13}. For example, CNVs that play a role in genetic predisposition to pancreatic adenocarcinoma~\cite{cnv13} are associated with breast cancer risk and prognosis~\cite{cnv12} and are responsible for the spatial pattern change in colorectal cancer~\cite{cnv11}. This is because the presence of CNVs in cancer patients’ cells is abundantly high, which is very different than healthy cells. Consequently, many clinically important CNVs are outcomes of duplication or deletion of a genomic region with at least 1Kb~(or shorter) in length. The CNVs related data used in this thesis include copy number segment~(CNS), which is the amount of CNVs for each patient based on chromosome, and position of CNV in base pair. On the other hand, the masked CNS contains the amount of masked, i.e., without germline mutation CNV for each patient.
 
-\subsection{DNA methylation}
+\subsubsection{DNA methylation}
 An altered DNA methylation pattern can have a severe impact on the behaviour of a cell by changing the binding affinity of transcription factors~(TF) and thereby intervene in GE. By silencing genes which code information for proteins involved in DNA repair, cell cycle regulation or suppression of metastasis, DNA methylation can also support oncogenesis. The changes in the DNA methylation pattern resulting in this can either occur prior to cell mutation or following it. Subsequently, either they initiate cancer development or they support it. Since the influence of DNA methylation is generally limited to only decrease the rate at which the respective protein is created, its role in the expression of genes relevant for cancer development is known to be more of quantitative character. The DNA methylation data used in this thesis contains the amount of methylated DNA for each patient per CpG probe identifiers. 
 
-\subsection{Other genomics data}
-Other types of genomics data that are used in cancer research includes masked somatic mutation data, i.e., description of masked, i.e., without germline mutation of Simple SNV or SNP for each patient. Data is categorized based on chromosome, gene, position of SNP in base pair. The isoform expression quantification contains the amount of isoform expression for each patient based on miRNA identifiers. 
+%\subsubsection{Other genomics data}
+%Other types of genomics data that are used in cancer research includes masked somatic mutation data. These data provides the description of masked, i.e., without germline mutation of Simple SNV or SNP for each patient. Data is categorized based on chromosome, gene, position of SNP in base pair. The isoform expression quantification contains the amount of isoform expression for each patient based on miRNA identifiers. 
 
-\subsection{Biological significance of genomics data}
-One of the well-known project as part of TCGA is called PanCancerAtlas~(PCAt) that covers multi-platform genomic measurements from 33 different cancer types~\cite{pancan}. In this thesis, we will mostly use the PCAt data. Expression datasets have unique characteristics that are different from text, images, or relational datasets.Most of the genomics data show the following characteristics~\cite{lu2003cancer}:
+%\subsubsection{Characteristics of genomics data}
+
+\section{Characteristics of genomics data}
+In order to develop a DSS for clinical setting, we need to know the data as well as the mechanism for which the diagnosis decision will be based on. First of all, some types of cancer run in certain families. However, majority cancer types are not clearly linked to the genes, but we inherit from our parents. Therefore, this thesis will not consider family history records. Instead, we will mostly use the omics data and clinical information from one of the well-known project called PanCancerAtlas~(PCAt). PCAt covers multi-platform genomic measurements from 33 different cancer types~\cite{pancan}. 
+%Therefore, we will use the PCAt data, due to availability and quality. 
+The expression datasets in PCAt have unique characteristics that are different from text, images, or relational datasets. In particular, genomics data from PCAt show the following characteristics~\cite{lu2003cancer}:
 
 \begin{itemize}[noitemsep]
     \item High dimensionality: up to tens of thousands of genes,
@@ -919,8 +919,21 @@ One of the well-known project as part of TCGA is called PanCancerAtlas~(PCAt) th
     \item Majority of genes are not related to cancer classification.
 \end{itemize}
 
-\hspace*{3.5mm} With such a huge feature space, even a robust classifiers built upon it would prone to overfitting, given the fact the small sample size makes it even worse~\cite{lu2003cancer}. Since most genes are known to be irrelevant for class distinction, their inclusion would not only introduce noise and confuse the classifiers, but also increase the computation time~\cite{lu2003cancer}. Therefore, feature selection and ranking of biologically meaningful biomarkers prior to classification would help in alleviating these problems. 
-Eventually, with the `noise' from the irrelevant genes removed, the biological information hidden within will be less  obstructed~\cite{lu2003cancer}. We will mostly use the omics data, clinical infomation, and patient demographic. Since some types of cancer run in certain families, most cancers are not clearly linked to the genes we inherit from the parents. Therefore, this thesis will not consider family history records.
+\hspace*{3.5mm} With such a huge feature space, even a robust classifiers built upon, would prone to overfitting, due to small sample size~\cite{lu2003cancer}. Since most genes are known to be irrelevant for class distinction, their inclusion would not only introduce noise and confuse the classifiers, but also increase the computation time~\cite{lu2003cancer}. Therefore, feature selection and ranking of biologically meaningful biomarkers prior to classification would help in alleviating these problems. Nevertheless, with the `noise' from the irrelevant genes removed, the biological information hidden within will be less  obstructed~\cite{lu2003cancer}. 
+
+\hspace*{3.5mm} 
+%With high-throughput technologies such as next-generation sequencing~(NGS), cancer-specific genetic profiling is now possible. The entire genome sequencing data using NGS can be used to identify similar genetic mutations and genetic variations associated with different tumors. %\subsection{Data availability}
+As mentioned, different types of genomics data are used in cancer research, including somatic mutations, CNV, DNA methylation~(DM), gene expression~(GE), miRNA expression~(MR), and Isoform expression~(IEx), along with clinical outcomes. The largest uniformly processed cancer genomic data provided is TCGA, giving over 20,000 tumor and normal samples, where each step in the genome characterization pipeline generate following data points\footnote{\url{https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga/using-tcga/types}}:
+
+\begin{itemize}[noitemsep]
+    \item Clinical information, such treatment information, survival data, etc. Besides, pathology reports were collected for selected sampels. 
+    \item Molecular analyte metadata (e.g., sample portion weight).
+    \item Molecular characterization data (e.g., gene expression values).
+    %\item Patient phenotype and demographic information~(e.g., age, height, race, etc.). 
+    \item Demographic information for the characterization of the patient by means of segementing the population, e.g., characterization by age, sex, or race\footnote{\url{https://docs.gdc.cancer.gov/Data_Dictionary/viewer/\#?view=table-entity-list&anchor=clinical}}.
+    \item Diagnosis data from the investigation, analysis and recognition of the presence and nature of disease, condition, or injury from expressed signs and symptoms. 
+    \item Family history: record of a patient's background regarding cancer events of blood relatives.
+\end{itemize}
 
 \section{Chapter Summary}
 In this chapter, we provides the preliminaries and foundations of several aspects needed to grasp the techniques applied in subsequent chapters. We covered basic of ML, DL, representation learning, neural ensemble methods, interpretable methods, cosine annealing, Grad-CAM++, SHAP, LRP, attention mechanism, heat map, and feature importance. As research suggested, introducing semantics into deep learning through ontological-reasoning a new era towards XAI, where the ML model reads input data, generates the predictions, observe the results, use the existing knowledge from the KB as a semantic reasoner, and produces new knowledge to provide more human-interpretable answers and explanations. 
