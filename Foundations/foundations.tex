@@ -808,31 +808,35 @@ Unfortunately, there is little consensus on what interpretability in ML is and h
 
 \section{Cancer Growth and Metastasis}
 \label{cancer_growth}
-In this section, we focus on the different types and subtypes of cancer and their growth and metastasis\footnote{Metastasis is how the cancer spreads to  different parts of the body from where it started growing. When this spread over, an oncologist refers saying the cancer has ``metastasized"}. The idea is to acquire some biological interpretations of the genomics data. 
+Cancer is an umbrella term for a large group of lethal diseases. Till date, more than 200 types of cancer have been identified~\cite{82Tomczak}, making it the second leading cause of death worldwide~\cite{pancan}. According to a statistic from the National Cancer Institute\footnote{\url{https://www.cancer.gov/about-cancer/understanding/statistics}}, there were around 14.1 million cancer cases in 2012 in which as many as 8.8 million people died of five leading cancers of lung, liver, colorectal, stomach, and breast~\cite{stat}. In 2018, an estimated 17.35 million new cases of cancer have been diagnosed in the United States in which 609,640 people died. The number of new cancer cases per year is expected to rise to 23.6 million by 2030, which is anticipated to increase further by 70\% by 2035~\cite{71Torre}. 
 
 \subsection{The growth of cancer}
-Cancer is an umbrella term for a large group of diseases caused when abnormal cells divide rapidly, and spread to other tissue and organs~\cite{pancan}. When a minor changes such as mutations happened to the DNA in the cells, our body cells correct these mistakes, by converting it into a healthy cell. However, when a mistake cannot be corrected, a cell can become cancerous. Besides, mutations can cause cells that should be replaced to survive instead of die, and new cells to form when they're not needed. These extra cells can divide uncontrollably, causing growths called tumors to form~\cite{82Tomczak}. 
+In this section, we focus on the different types and subtypes of cancer and their growth and metastasis. The idea is to acquire some biological interpretations of the genomics data for our DSS. Cancer mainly caused when abnormal cells divide rapidly, and spread to other tissue and organs~\cite{pancan}. However, there are several biological processes responsible for the growth of cancer: 
 
-\hspace*{3.5mm} Consequently, cancer incidences are gradually increasing and become the second leading cause of death worldwide. More than 200 types of cancer have been identified~\cite{82Tomczak}. According to a statistic from the National Cancer Institute\footnote{\url{https://www.cancer.gov/about-cancer/understanding/statistics}}, there were around 14.1 million cancer cases in 2012 in which as many as 8.8 million people died of five leading cancers of lung, liver, colorectal, stomach, and breast~\cite{stat}. In 2018, an estimated 17.35 million new cases of cancer have been diagnosed in the United States in which 609,640 people died. The number of new cancer cases per year is expected to rise to 23.6 million by 2030, which is anticipated to increase further by 70\% by 2035~\cite{71Torre}. 
-
-\hspace*{3.5mm} Cancer is mostly caused by abnormal behaviors of genes alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, copy numbers~(CN), profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,13cancerdef,19Cruz}. As a result, gene expression~(GE) can be disrupted by cell division, environmental effects, or genetically inherited from parents. Changes in GEs sometimes change the production of different proteins, affecting normal cell behavior. These damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}.
-
-\hspace*{3.5mm} Besides, genetic mutations can be inherited. Cancer disrupts grow and divide process of healthy cells, which leads to abnormal growths~\cite{pancan}. 
+\begin{itemize}[noitemsep]
+    \item \textbf{Minor mutations}: when a minor changes such as mutations happened to the DNA in the cells, our body cells correct these mistakes, by converting it into a healthy cell. However, when a mistake cannot be corrected, a cell can become cancerous. 
+    \item \textbf{Major mutations}: mutations can cause cells that should be replaced to survive instead of die, and new cells to form when they're not needed. These extra cells can divide uncontrollably, causing growths called tumors~\cite{82Tomczak}. Besides, genetic mutations can be inherited. Cancer disrupts grow and divide process of healthy cells, which leads to abnormal growths~\cite{pancan}. 
+    \item \textbf{Gene alterations}: cancer also caused by gene alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, copy numbers~(CN), profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,13cancerdef,19Cruz}. 
 %It’s caused by changes or mutations in DNA. DNA exists in the individual genes of every cell. It has instructions that tell the cell what functions to perform and how to grow and divide. 
-Tumors can cause a variety of health problems, depending on where they grow in the body. Nevertheless, oftentimes cancer is caused by gene alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, CNV, profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,19Cruz}. 
-However, not all tumors are cancerous. Benign tumors are noncancerous and do not spread to nearby tissues. Sometimes, they can grow large and cause problems when they press against neighboring organs and tissue. Malignant tumors are cancerous and can invade other parts of the body. Some cancer cells can also migrate through the bloodstream or lymphatic system to distant areas of the body. This process is called metastasis.Cancers that have metastasized are considered more fatal and advanced than those that have not, hence are harder to treat. 
+\end{itemize}
 
-\subsection{Metastasis}
-Cancers are named for the area in which they begin and the type of cell they are made of; even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer. On the other hand, cancer subtypes describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells. Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}:
+\subsection{Cancer metastasis and subtypes}
+When gene expression~(GE) is disrupted by cell division, environmental effects, or genetically inherited from parents, it also changes the production of different proteins, affecting normal cell behavior. Then the damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}. Tumors can cause a variety of health problems, depending on where they grow in the body~\cite{zuo2019identification}. They can grow large and cause problems when they press against neighboring organs and tissue, although not all tumors are cancerous. For example, all malignant tumors are cancerous and can invade other parts of the body, benign tumors are noncancerous and do not spread to nearby tissues~\cite{13cancerdef}. 
 
+\hspace*{3.5mm} Cancers are named for the area in which they begin and the type of cell they are made of~\cite{19Cruz}, even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer. This process is called metastasis is how the cancer spreads to  different parts of the body from where it started growing~\cite{13cancerdef}. Some cancer cells can also migrate through the bloodstream or lymphatic system to distant areas of the body. When this spread over, an oncologist refers saying the cancer has ``metastasized"~\cite{22Ding}. Cancers that have metastasized are considered more fatal and advanced than those that have not, hence are harder to treat. 
+
+\hspace*{3.5mm} On the other hand, cancer subtypes describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells. Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}:
+
+\vspace{-2mm}
 \begin{itemize}[noitemsep]
     \item \textbf{Carcinoma} is a cancer that starts in the skin or the tissues that line other organs.
     \item \textbf{Sarcoma} is a cancer of connective tissues, e.g., bones, muscles, and blood vessels.
     \item \textbf{Leukemia} is a cancer of bone marrow, which creates blood cells.
     \item \textbf{Lymphoma} and myeloma are cancers of the immune system.
 \end{itemize} 
+\vspace{-2mm}
 
-\hspace*{3.5mm} Although cancer is a lethal disease condition and more than 200 types of cancer have been identified. The most common types of cancer include, the cancer of bladder, breast, colon and rectal, endometrial, kidney, leukemia, liver, lung, melanoma, pancreatic, prostate, and thyroid. 
+\hspace*{3.5mm} Although more than 200 types of cancer have been identified, the cancer of bladder, breast, colon and rectal, endometrial, kidney, leukemia, liver, lung, melanoma, pancreatic, prostate, and thyroid are most common~\cite{71Torre}. 
 
 \subsection{Genomics Data-based Diagnosis of Cancer}
 \hspace*{3.5mm} Cancer is not only a lethal disease but tremendously complex to diagnose and treat. Not only recommending accurate diagnosis and subsequent treatment, but also knowing the biological mechanisms is important, e.g., oncogenes. However, discovery of important biomarkers is a significant step towards understanding the molecular mechanisms of carcinogenesis and prognosis of certain cancer type. Knowing the important biomarkers enables recommending accurate drug repositioning. However, for recommending any diagnosis, multi-omics data and clinical information need to be processed for understanding the genetic and epigenetic causes before recommending appropriate treatment. Such data include gene/miRNA expression, DNA methylation, copy number variation~(CNVs), mutations, bioimaging~(e.g., histology and radiologies), and reports)~\cite{22Ding, 23Zheng}.  
@@ -913,11 +917,13 @@ In order to develop a DSS for clinical setting, we need to know the data as well
 %Therefore, we will use the PCAt data, due to availability and quality. 
 The expression datasets in PCAt have unique characteristics that are different from text, images, or relational datasets. In particular, genomics data from PCAt show the following characteristics~\cite{lu2003cancer}:
 
+\vspace{-2mm}
 \begin{itemize}[noitemsep]
     \item High dimensionality: up to tens of thousands of genes,
     \item Very small sample size: less than $100,$ and
     \item Majority of genes are not related to cancer classification.
 \end{itemize}
+\vspace{-2mm}
 
 \hspace*{3.5mm} With such a huge feature space, even a robust classifiers built upon, would prone to overfitting, due to small sample size~\cite{lu2003cancer}. Since most genes are known to be irrelevant for class distinction, their inclusion would not only introduce noise and confuse the classifiers, but also increase the computation time~\cite{lu2003cancer}. Therefore, feature selection and ranking of biologically meaningful biomarkers prior to classification would help in alleviating these problems. Nevertheless, with the `noise' from the irrelevant genes removed, the biological information hidden within will be less  obstructed~\cite{lu2003cancer}. 
 
