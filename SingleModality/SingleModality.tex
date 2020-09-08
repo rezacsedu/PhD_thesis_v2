@@ -88,7 +88,7 @@ Let $X_{1}, X_{2}, \ldots, X_{m}$ be the CNV samples~(independent $m$-dimensiona
 %Let the test set be $S=\left\{t_{1}, t_{2}, \ldots, t_{l}\right\}$ where $l$ is the size of the test set A classifier is a function Class with two arguments, $T$ and $s,$ where $T$ denotes the training samples and $s$ is a testing sample. Function Class returns a class prediction for sample $s .$ The classification accuracy is defined as the number of correct predictions made by the classifier on a set of testing tuples.
 %Given a training set $T=\left\{\left(t_{1}, c_{1}\right),\left(t_{2}, c_{2}\right), \ldots,\left(t_{n}, c_{n}\right)\right\},$ where 
 %$t_{i}$ are independent $m$-dimensional GE values~(i.e., $m$ is number of genes), 
-=\left(t_{i} \cdot X_{1}, t_{i} \cdot X_{2}, \ldots, t_{i} \cdot X_{m}\right), m \gg n$ and $c_{i} \in \operatorname{dom}(\mathrm{C})$ is the class label of the $i^{th}$  tuple. 
+=\left(t_{i} \cdot X_{1}, t_{i} \cdot X_{2}, \ldots, t_{i} \cdot X_{m}\right), m \gg n$ and $c_{i} \in \operatorname{dom}(\mathrm{C})$ is the class label of the $i^{th}$ tuple. 
 First, we extract important features based on oncogenes and non-coding human genes. 
 Then we consider classifying an individual $x$ into a specific group or cancer type, where a predictor~(e.g., a classifier) is a function $F: {X}^{(m)} \rightarrow {Y}$, which maps the data instance from a feature space ${X}^{(m)}$ with $m$ input features to a labels $y$ in a target space ${Y}$, where $F(x)=y$ denotes the decision $y$, predicted by $F$. We also assume that $F$ is a `black-box' predictor, whose internal functioning is either unknown~(or partially known) or known but not interpretable by a human. 
  
