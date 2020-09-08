@@ -74,16 +74,16 @@ Coming back to our cancer diagnosis case study. Current cancer typing methods fo
 %Eventhough, they perform well, but lack the capability of explain the diagnoses decisions. 
 It is well-known that interpretable models and their inner working mechanism are simple. However, such a simple model lacks the capacity and flexibility to capture complex relations and interactions between high dimensional genomic data. In principle, except for the linear and tree-based models, DNN models are perceived mostly as `black box'. Hence often we don't fully understand how and which factors tend the model itself to reach a diagnosis decision, e.g., prediction. % right and why it will fail in certain cases methods as w of their not well-understood internal functioning. Often, . These are serious drawbacks.
 
-\begin{figure*}[h]
+\begin{figure}[h]
 	\centering
-		\includegraphics[width=0.8\linewidth,height=80mm]{images/acc_vs_xai.png}
+		\includegraphics[width=0.7\linewidth,height=70mm]{images/acc_vs_xai.png}
 		\caption{The accuracy vs. interpretability trade-off}
         \label{fig:acc_vs_xai}
-\end{figure*}
+\end{figure}
 
 \begin{figure*}
 	\centering
-	\includegraphics[width=\linewidth,height=60mm]{images/xai_interface.png}
+	\includegraphics[width=\linewidth,height=65mm]{images/xai_interface.png}
 	\caption{Problems of model opacity}
     \label{fig:model_bbm}
     \vspace{-2mm}
@@ -339,18 +339,17 @@ Above contributions were reflected in a number of peer-reviewed publications~(no
 \subsection{Public conference talks}
 The candidate participated several conferences as the part of the journey of this thesis: 
 \begin{enumerate}[noitemsep]
-    \item 10$^{th}$ International Semantic Web Applications \& Tools for Healthcare and Life Sciences~(SWAT4HCLS) Conference, Rome, Italy, 4-7 December, 2017 for providing a talk for the hackathon titled ``Deep Neural Networks for Analysing Cancer Genomics Data"\footnote{\url{http://www.swat4ls.org/wp-content/uploads/2017/11/Hackaton_SWAT4LS_DeepLearing_for_Cancer_Genomics.pdf}}
-	\item 10th ACM International Conference on Bioinformatics and Computational Biology~(ACM-BCB), Niagara Falls, New York, USA, September 7-10, 2019 for presenting the paper titled ``Drug-Drug Interaction Prediction Based on Knowledge Graph Embeddings and Convolutional-LSTM Network".
-	\item 1st Artificial Intelligence International Conference~(A2IC'2018), November 21-23, Barcelona, Spain for presenting the paper ``Cancer Risk and Type Prediction Based on CNVs with LSTM and DBN". 
-	\item 19th IEEE International Conference on Bioinformatics and Bioengineering~(BIBE 2019), October 27-30, 2019, for presenting the paper titled ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data".
+    \item 10$^{th}$ \textit{International Semantic Web Applications \& Tools for Healthcare and Life Sciences}~(SWAT4HCLS) Conference, Rome, Italy, 4-7 December, 2017 for providing a talk for the hackathon titled ``Deep Neural Networks for Analysing Cancer Genomics Data"\footnote{\url{http://www.swat4ls.org/wp-content/uploads/2017/11/Hackaton_SWAT4LS_DeepLearing_for_Cancer_Genomics.pdf}}
+	\item 10th \textit{ACM International Conference on Bioinformatics and Computational Biology}~(ACM-BCB), Niagara Falls, New York, USA, September 7-10, 2019 for presenting the paper titled ``Drug-Drug Interaction Prediction Based on Knowledge Graph Embeddings and Convolutional-LSTM Network".
+	\item 1$^{st}$ \textit{Artificial Intelligence International Conference}~(A2IC'2018), November 21-23, Barcelona, Spain for presenting the paper ``Cancer Risk and Type Prediction Based on CNVs with LSTM and DBN". 
+	\item 19$^{th}$ \textit{IEEE International Conference on Bioinformatics and Bioengineering}~(BIBE 2019), October 27-30, 2019, for presenting the paper titled ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data".
 \end{enumerate}
 
 \subsection{Implementations}
-All the codes in the preceding publications were written by the candidate, where programs were implemented in Python. The candidate also relied on existing libraries such as Keras, sciket-learn, TensorFlow, Apache Spark, and SHAP. %All programs were implementation in Python. 
+All the codes in the preceding publications were implemented in Python, where we relied on existing libraries such as Keras, sciket-learn, TensorFlow, Apache Spark, and SHAP. %All programs were implementation in Python. 
 %Software stack consist of scikit-learn and Keras with the TensorFlow backend. 
-Networks were trained on an computer of Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. 
 %In both machines, the CUDA and cuDNN enabled to make the overall pipeline faster. 
-Besides semantic web technologies such as OWL, RDF, SPARQL, Jena, and Virtuoso also utilized in certain publications. GitHub was extensively used for the  version control. Also, the Flask framework was used for wrapping up the explainable models and serving  explainable interface. All the implementations were made open-source with a focus of reproducibility\footnote{GitHub repo of the implementations can be found: \url{https://github.com/rezacsedu/OncoNetExplainer}}.
+Besides, semantic web technologies such as OWL, RDF, SPARQL, Jena, and Virtuoso also utilized in certain publications. GitHub was extensively used for the  version control. On the other hand, Flask framework was used for wrapping up the explainable models and serving  explainable interface. Networks were trained on an computer with the specification of Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. Implementations were made open-source with a focus of reproducibility\footnote{GitHub repo of the implementations can be found: \url{https://github.com/rezacsedu/OncoNetExplainer}}.
 
 \begin{figure*}
 	\centering
