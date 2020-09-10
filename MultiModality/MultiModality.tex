@@ -39,12 +39,12 @@ The multilayer nature of DNN's each successive layer is hypothesized to represen
 
 \section{Methods}\label{chapter_4:mm}
 In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training. 
-
-\subsection{Problem statement}
+%\subsection{Problem statement}
 %Although breast cancer patients now have one of the best survival rates among other cancer types, improved studies on breast cancer are still a non-trivial research problem. 
 %We focus here on the difficult problem of finding sub types of breast cancers. 
 Since we conceive finding the importance of extensive knowledge about genetic mutations in breast cancer aiming to help in discovering more suitable treatments for each breast cancer subtypes, we show which genetic mutations are responsible for which breast cancer subtypes~(with feature selection). % or have direct correlations on the survival rates.  %, which is because certain genetic mutations might have a direct correlation on survival rates. %To summarize, the following tasks will be completed:
 For the breast cancer subtypes prediction, we used genomics data accompanied by ER, PGR, and HER2/neu status that are present inside breast cancer patients for each patient either separately or in a multimodal way. 
+We adaptively capture the heterogeneity of expression across samples in a gene regulation space, instead gene expression space. The idea is to  transform gene/miRNA expression and DNA methylation profiles into regulation profiles for characterizing differential expression of genes between different subtypes.
 %In the context of survival rate prediction, our network should tell us the chance of survival for each cancer patient based on individual patient's clinical and pathology information. The survival rate ranges between [0-1], with 1 being the highest chance of survival.
 %Since data is essential for training the MAE model, 
 We provide the details of the data collection, processing, and feature selection in details. 
