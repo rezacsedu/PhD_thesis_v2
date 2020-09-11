@@ -641,7 +641,7 @@ For the human-level interpretability of a model, we need to know the inner insig
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[width=0.9\textwidth,height=55mm]{images/xai_roadmap.png}	
+	\includegraphics[width=0.8\textwidth,height=50mm]{images/xai_roadmap.png}	
     \caption{A timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on~\cite{das2020opportunities})}	
 	\label{fig:xai_timeline}
 \end{sidewaysfigure*}
@@ -661,33 +661,33 @@ Guided backpropagation~(GB)~\cite{springenberg2014striving} is another method, w
 
 \hspace*{3.5mm} To explain where the model provides more attention, CAM computes the amount of weights of each feature map from the final conv layer. CAM calculates the contribution to prediction $y_c$ at location $(i,j)$, where the goal is to obtain $L_{ij}^{c}$ that satisfies $y^{c}=\sum_{i, j} L_{ij}^{c}$. The last feature map $A_{ijk}$ and prediction $y_c$ are represented in a linear relationship in which linear layers consist  of global average pooling (GAP) and FCL: i) GAP outputs $F_{k}=\sum_{i,j} A_{ijk}$, ii) FCL that holds weight $w_{k}^{c}$, generates the following output~\cite{kim2020extending}: 
  
- \vspace{-2mm}
+ \vspace{-4mm}
  \begin{align}
      y^{c}=\sum_{k} w_{k}^{c} F_{k}=\sum_{k} w_{k}^{c} \sum_{i, j} A_{i j k}=\sum_{i, j} \sum_{k} w_{k}^{c} A_{i j k}.
  \end{align}
- \vspace{-2mm}
+ \vspace{-4mm}
  
 \noindent where $L_{i j}^{c}=\sum_{k} w_{k}^{c} A_{i j k}$~\cite{kim2020extending}. Subsequently, heat maps~(HM) are then plotted to visualize the weighted combination of the feature maps. However, if linear layers replace the classifier architecture, re-training of the network is required and non-linearity of classifier vanishes. Subsequently, literature~\cite{114} came up with an efficient generalization of CAM called Grad-CAM, where instead of pooling, globally averages gradients of feature maps as weights, w.r.t, aiming at class $c$. The guided backpropagation in Grad-CAM helps to generate more human-interpretable but fewer class-sensitive visualizations than the saliency maps~(SM)~\cite{nie2018theoretical}. Since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Accordingly, class-relevant pixels are highlighted rather than producing random noise~\cite{nie2018theoretical}. Therefore, Grad-CAM is used to draw the HM to provide attention to discriminating regions, where the class-specific weights of each FM are collected from the final conv layer through globally averaged gradients~(GAG) of FMs instead of pooling~\cite{chattopadhay2018grad}: 
 
-\vspace{-2mm}
+\vspace{-4mm}
 \begin{equation}
     \alpha_k^c=\frac{1}{Z}\sum_{i}\sum_{j}\frac{\partial y^c}{\partial A_{ij}^k}.
     \label{eq:alpha}
 \end{equation}
-\vspace{-2mm}
+\vspace{-4mm}
 
 where $Z$ is number of pixels in a FM, $c$ is gradient of the class, and $A_{ij}^k$ is the value of $k^{th}$ FM. Having gathered relative weights, the coarse SM, $L^c$ is computed as the weighted sum of $\alpha_k^c*A_{ij}^k$ of the ReLU activation and employ the linear combination to the FM, as features with only positive influence on the class are of interest~\cite{chattopadhay2018grad} and negative pixels that belong to other categories in the image are discarded~\cite{114}:
 
-\vspace{-2mm}
+\vspace{-4mm}
 \begin{equation}
     L^c=\operatorname{ReLU}(\sum_{i}\alpha_k^cA^k).
     \label{3.11}
 \end{equation}
-\vspace{-2mm}
+\vspace{-4mm}
 
 \hspace*{3.5mm} However, if an image contains multiple occurrences with slightly different orientations or views of the same class, several objects would fade away in the saliency map created by Grad-CAM. Moreover, due to its overlooking at significance disparity among pixels, parts of objects are rarely focused by Grad-CAM. Grad-CAM++ is proposed~\cite{chattopadhay2018grad} to replace the GAG with a weighted average of the pixel-wise gradients since the weights of pixels contribute to the final prediction by applying the following iterators over the same activation map $A^k$, $(i,j)$ and $(a,b)$:
 
-\vspace{-2mm}
+\vspace{-4mm}
 \begin{align}
     \begin{aligned}
         w_{k}^{c}=\sum_{i} \sum_{j} \alpha_{i j}^{k c} \cdot \operatorname{ReLU}\left(\frac{\partial y^{c}}{\partial A_{i j}^{k}}\right) \\
@@ -700,16 +700,18 @@ where $Z$ is number of pixels in a FM, $c$ is gradient of the class, and $A_{ij}
 Gradient for a DNN architecture can not only be noisy but also tends to vanish due to saturation in Sigmoid or the flat zero-gradient region in ReLU. One of the consequences is that gradient of the output w.r.t input or internal layer activation may be noisy visually which causes problems in the plain SM~\cite{wang2020score}. 
 \hspace*{3.5mm} These apply to both Grad-CAM and Grad-CAM++. A recent approach called Score-CAM is proposed by Haofan Wang et al.~\cite{wang2020score}. While Grad-CAM and Grad-CAM++ use the gradient information flowing into the last convolutional layer to represent the importance of each activation map, Score-CAM utilizes the importance called Channel-wise Increase of Confidence~(CIC): Score-CAM considers a convolutional layer $l$ in a model $f$, given a class of interest $c$, \cref{3.11} can be rewritten $L_{\text {Score-CAM}}^{c}$ as follows: 
 
+\vspace{-4mm}
 \begin{align}
     L_{S c o r e-C A M}^{c}=\operatorname{ReLU}\left(\sum_{k} \alpha_{k}^{c} A_{l}^{k}\right).
 \end{align}
+\vspace{-4mm}
 
 \hspace*{3.5mm} where $\alpha_{k}^{c}=C\left(A_{l}^{k}\right)$ and  $C(\cdot)$ denotes the CIC score for activation map $A_{l}^{k}$. Since the weights come from the CIC score corresponding to activation maps on target class, Score-CAM gets rid of the dependence on gradient. Score-CAM can localize both single and multi objects accurately. From application perspective, Grad-CAM tends to only capture one object in the image, Grad-CAM++ and Score-CAM can localize multiple objects, but SM of Score-CAM are more focused than Grad-CAM++~\cite{wang2020score}.
 
 \subsubsection{Layer-wise relevance propagation}
 LRP~\cite{LRP1} is based on an assumption that the likelihood of a class can be traced backwards through a network to the individual layer-wise nodes of the input~\cite{LRP2}. LRP identifies important pixels by running a backward pass in the neural network. The backward pass is a conservative relevance redistribution procedure, where nodes that contribute the most to the higher-layer receive most relevance from it. First, an image $x$ is classified in a forward pass. Relevance $R_{t}^{(L)}$ is then back-propagated using deep Taylor decomposition (DTD)~\cite{DTD} to generate a relevance map $R_{LRP}$. Assuming the network has $L$ layers and for layer $l$, $1,2,...,N$ are the nodes, $1,2,..,M$ are the nodes in layer $l+ 1$. The relevance $R_{n}^{(l)}$ at node $n$ in layer $l$ is recursively defined as follows~\cite{LRP2}.  
 
-\vspace{-2mm}
+\vspace{-4mm}
 \begin{align}
     R_{n}^{(l)}=\sum_{m} \frac{a_{n}^{(l)} w_{n, m}^{+(l)}}{\sum_{n^{\prime}} a_{n^{\prime}}^{(l)} w_{n^{\prime}, m}^{+(l)}} R_{m}^{(l+1)}.
     \label{eq:rn}
@@ -717,7 +719,7 @@ LRP~\cite{LRP1} is based on an assumption that the likelihood of a class can be 
 
 However, node-level relevance in case of negative values is calculated using ReLU as follows~\cite{LRP2}:
 
-\vspace{-2mm}
+\vspace{-4mm}
 \begin{align}
     R_{n}^{(l)}=\sum_{m} \frac{x_{n}^{(l)} w_{n, m}^{(l)}-b_{n}^{(l)} w_{n, m}^{+(l)}-h_{n}^{(l)} w_{n, m}^{-(l)}}{\sum_{n^{\prime}} x_{n^{\prime}}^{(l)} w_{n^{\prime}, m}^{(l)}-b_{n^{\prime}}^{(l)} w_{n^{\prime}, m}^{+(l)}-h_{n^{\prime}}^{(l)} w_{n^{\prime}, m}^{-(l+1)}}.
     \label{eq:rn_neg}
@@ -725,7 +727,7 @@ However, node-level relevance in case of negative values is calculated using ReL
 
 The output layer relevance is calculated before the back-propagation as follows~\cite{LRP2}:
 
-\vspace{-2mm}
+\vspace{-4mm}
 \begin{align}
     R_{n}^{(L)}=\left\{\begin{array}{ll}
     {z_{t}^{(L)}} & {n=t}, \\
@@ -835,20 +837,18 @@ In this section, we focus on the different types and subtypes of cancer and thei
 \subsection{Cancer metastasis and subtypes}
 When gene expression~(GE) is disrupted by cell division, environmental effects, or genetically inherited from parents, it also changes the production of different proteins, affecting normal cell behavior. Then the damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}. Tumors can cause a variety of health problems, depending on where they grow in the body~\cite{zuo2019identification}. They can grow large and cause problems when they press against neighboring organs and tissue, although not all tumors are cancerous. For example, all malignant tumors are cancerous and can invade other parts of the body, benign tumors are noncancerous and do not spread to nearby tissues~\cite{13cancerdef}. 
 
-\hspace*{3.5mm} Cancers are named for the area in which they begin and the type of cell they are made of~\cite{19Cruz}, even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer. This process is called metastasis is how the cancer spreads to  different parts of the body from where it started growing~\cite{13cancerdef}. Some cancer cells can also migrate through the bloodstream or lymphatic system to distant areas of the body. When this spread over, an oncologist refers saying the cancer has ``metastasized"~\cite{22Ding}. Cancers that have metastasized are considered more fatal and advanced than those that have not, hence are harder to treat. 
+\hspace*{3.5mm} Cancers are named for the area in which they begin and the type of cell they are made of~\cite{19Cruz}, even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer. This process is called metastasis is how the cancer spreads to  different parts of the body from where it started growing~\cite{13cancerdef}. Some cancer cells can also migrate through the bloodstream or lymphatic system to distant areas of the body. When this spread over, an oncologist refers saying the cancer has ``metastasized"~\cite{22Ding}. Cancers that have metastasized are considered more fatal and advanced than those that have not, hence are harder to treat. On the other hand, cancer subtypes describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells. Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}:
 
-\hspace*{3.5mm} On the other hand, cancer subtypes describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells. Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}:
-
-\vspace{-2mm}
+\vspace{-4mm}
 \begin{itemize}[noitemsep]
     \item \textbf{Carcinoma} is a cancer that starts in the skin or the tissues that line other organs.
     \item \textbf{Sarcoma} is a cancer of connective tissues, e.g., bones, muscles, and blood vessels.
     \item \textbf{Leukemia} is a cancer of bone marrow, which creates blood cells.
     \item \textbf{Lymphoma} and myeloma are cancers of the immune system.
 \end{itemize} 
-\vspace{-2mm}
+\vspace{-4mm}
 
-\hspace*{3.5mm} Although more than 200 types of cancer have been identified, the cancer of bladder, breast, colon and rectal, endometrial, kidney, leukemia, liver, lung, melanoma, pancreatic, prostate, and thyroid are most common~\cite{71Torre}. 
+\hspace*{3.5mm} Although more than 200 types have been reported, cancer of bladder, breast, colon and rectal, endometrial, kidney, leukemia, liver, lung, melanoma, pancreatic, prostate, and thyroid are most common~\cite{71Torre}. 
 
 \subsection{Genomics Data-based Diagnosis of Cancer}
 \hspace*{3.5mm} Cancer is not only a lethal disease but tremendously complex to diagnose and treat. Not only recommending accurate diagnosis and subsequent treatment, but also knowing the biological mechanisms is important, e.g., oncogenes. However, discovery of important biomarkers is a significant step towards understanding the molecular mechanisms of carcinogenesis and prognosis of certain cancer type. Knowing the important biomarkers enables recommending accurate drug repositioning. However, for recommending any diagnosis, multi-omics data and clinical information need to be processed for understanding the genetic and epigenetic causes before recommending appropriate treatment. Such data include gene/miRNA expression, DNA methylation, copy number variation~(CNVs), mutations, bioimaging~(e.g., histology and radiologies), and reports)~\cite{22Ding, 23Zheng}.  
@@ -859,6 +859,22 @@ When gene expression~(GE) is disrupted by cell division, environmental effects, 
 
 \subsubsection{Gene and miRNA expression}
 Due to  gene alterations and abnormal behaviors of genes, GE can be disrupted by cell division or environmental effects, or genetically inherited from parents. Changes in GE sometimes change the production of different proteins, affecting normal cell behavior. These damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}. GE quantification data contains the amount of expression per gene for each patient based on ensembl gene identifiers, while miRNA expression quantification data contains the amount of miRNA expression for each patient based on miRNA identifiers.
+
+\vspace{1mm}
+\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Different types of publicly available data in TCGA]
+    %INFO: \faBook \\
+    \scriptsize{
+        \textbf{Masked somatic mutations:} description of masked (without germline mutation) of SNV or SNP for each patient in which the data is categorized based on chromosome, gene, position of SNP in base pair. \\
+        \textbf{Copy number segment:} amount of copy numbers for patient based on chromosome and position of CNV in base pair. \\
+        \textbf{Masked copy number segment:} Amount of masked (without germline mutation) CNV for the patients. \\
+        \textbf{DNA methylation:} amount of methylated DNA for each patient per CpG probe identifiers~\cite{ncbi1,ncbi2}. \\
+        \textbf{Gene expression:} amount of expression per gene for each patient based on ensemble gene identifiers~\cite{yates}. \\
+        \textbf{miRNA expression:} amount of miRNA expression for each patient based on miRNA identifiers~\cite{kozomara1,kozomara2}. \\
+        \textbf{DNA methylation:} amount of methylated DNA for each patient per CpG probe identifiers~\cite{ncbi1,ncbi2}. \\
+        \textbf{Isoform expressions:} amount of isoform expression for each patient based on miRNA identifiers. \\
+        \textbf{Clinical:} Clinical outcomes and records of the patients. 
+        }
+\end{tcolorbox}
 
 \subsubsection{Copy number variations}
 \label{sec:cnv_data}
@@ -897,22 +913,6 @@ CNVs signify gene or genomic regions that appear in different number of copies i
 	\end{center}
 \end{table*}
 \fi 
-
-\vspace{-2mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Different types of publicly available genomics data in TCGA]
-    %INFO: \faBook \\
-    \scriptsize{
-        \textbf{Masked somatic mutations:} description of masked (without germline mutation) of SNV or SNP for each patient in which the data is categorized based on chromosome, gene, position of SNP in base pair. \\
-        \textbf{Copy number segment:} amount of copy numbers for patient based on chromosome and position of CNV in base pair. \\
-        \textbf{Masked copy number segment:} Amount of masked (without germline mutation) CNV for the patients. \\
-        \textbf{DNA methylation:} amount of methylated DNA for each patient per CpG probe identifiers~\cite{ncbi1,ncbi2}. \\
-        \textbf{Gene expression:} amount of expression per gene for each patient based on ensemble gene identifiers~\cite{yates}. \\
-        \textbf{miRNA expression:} amount of miRNA expression for each patient based on miRNA identifiers~\cite{kozomara1,kozomara2}. \\
-        \textbf{DNA methylation:} amount of methylated DNA for each patient per CpG probe identifiers~\cite{ncbi1,ncbi2}. \\
-        \textbf{Isoform expressions:} amount of isoform expression for each patient based on miRNA identifiers. \\
-        \textbf{Clinical:} Clinical outcomes and records of the patients. 
-        }
-\end{tcolorbox}
 
 \hspace*{3.5mm} These became more obvious because CNVs are associated with the risk of individual cancer~\cite{cnv11,cnv12,cnv13}. For example, CNVs that play a role in genetic predisposition to pancreatic adenocarcinoma~\cite{cnv13} are associated with breast cancer risk and prognosis~\cite{cnv12} and are responsible for the spatial pattern change in colorectal cancer~\cite{cnv11}. This is because the presence of CNVs in cancer patients’ cells is abundantly high, which is very different than healthy cells. Consequently, many clinically important CNVs are outcomes of duplication or deletion of a genomic region with at least 1Kb~(or shorter) in length. The CNVs related data used in this thesis include copy number segment~(CNS), which is the amount of CNVs for each patient based on chromosome, and position of CNV in base pair. On the other hand, the masked CNS contains the amount of masked, i.e., without germline mutation CNV for each patient.
 

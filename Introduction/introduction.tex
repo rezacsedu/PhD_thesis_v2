@@ -3,11 +3,12 @@
 \textit{"An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem"}- John Tukey
 
 \section{Chapter Overview}
-Decision support systems~(DSS) are information system that support business or organizational decision-making activities~\cite{hackathorn1981organizational}. A typical DSS takes a set of input and analyzes them to generate actionable insights from which DSS `decisions' are generated. The decision can be further validated with user knowledge and expertise. In other words, a DSS is often a computerized program, which analyse massive amounts of data to assists in decision-making. On the other hand, a DSS that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}. 
+Decision support systems~(DSS) are information system that support business or organizational decision-making activities~\cite{hackathorn1981organizational}. A DSS is often a computerized program, which analyse massive amounts of data to assists in decision-making. A typical DSS takes a set of input and analyzes them to generate actionable insights from which DSS `decisions' are generated. The decision can be further validated with user knowledge and expertise. On the other hand, a DSS that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}. 
 
-\hspace*{3.5mm} In an AI-guided or intelligent DSS, a set of learning algorithms are embedded that perform cognitive decision-making. These learning algorithms mostly include various machine learning~(ML) algorithms that acts one of the most common forms of AI. ML is about using a set of statistical and mathematical algorithms to perform tasks such as concept learning, predictive modeling, clustering, and mining useful patterns can be performed. The most complex forms of ML involve deep learning~(DL), or deep neural network~(DNN) models with many levels of features or variables that predict outcomes that help take meaningful decision. However, DNN models are perceived mostly as `black box' methods because of their not well-understood internal functioning. They cannot reason their underlying decisions, leaving them incapable of aiding transparent and trustworthy decisions. We call such DSS a `black box' model. Throughout this thesis we aim to improve the transparency and explainability of such black-box DSSs. This chapter provides a general introduction to this dissertation, including the motivation and goals, formulates the research questions, and outlines the structure of the thesis. 
-%In particular, \cref{chapter:preli} discusses the reason of cancer and outlines it's severity.
-%\Cref{motivations}, outlines the motivation underpinning the DSS based on.  \Cref{problem_challenges}, discusses the research problems and points out several challenges concerning the research problems. \Cref{thesis_goal} outlines the goal of this thesis. \Cref{hypotheses} presents the hypotheses and research questions derived from the previously reported work on cancer prediction and diagnosis. \Cref{contributions} lists the contributions of this dissertations. \Cref{structure} outlines the organisation and structure of the thesis.
+\hspace*{3.5mm} In an AI-guided or intelligent DSS, a set of learning algorithms are embedded that perform cognitive decision-making. These learning algorithms mostly include various machine learning~(ML) algorithms that acts one of the most common forms of AI. ML is about using a set of statistical and mathematical algorithms to perform tasks such as concept learning, predictive modeling, clustering, and mining useful patterns can be performed. The most complex forms of ML involve deep learning~(DL), or deep neural network~(DNN) models with many levels of features or variables that predict outcomes that help take meaningful decision. However, DNN models are perceived mostly as `black box' methods because of their not well-understood internal functioning. They cannot reason their underlying decisions, leaving them incapable of aiding transparent and trustworthy decisions. We call such DSS a `black box' model. Throughout this thesis we aim to improve the transparency and explainability of such black-box DSSs. 
+
+\hspace*{3.5mm} This chapter provides a general introduction to this dissertation, including the motivation and goals, formulates the research questions, and outlines the structure of the thesis. 
+In particular, \cref{chapter:preli} discusses the reason of cancer and outlines it's severity. \Cref{motivations}, outlines the motivation underpinning the DSS based on. \Cref{problem_challenges}, discusses the research problems and point out several challenges and research problems. \Cref{thesis_goal} outlines the goal of this thesis. \Cref{hypotheses} states research questions and hypotheses derived from the previously reported work on cancer prediction and diagnosis. \Cref{contributions} lists the contributions of this dissertations. \Cref{structure} outlines the organisation and structure of the thesis. 
 
 %\section{Introduction}
 
@@ -48,6 +49,14 @@ However, without rigorous explainability, banks are not able to provide applican
 
 \hspace*{3.5mm} Since there is a chance that John might get a better job with higher salary and/or his current loan could already be paid, which will increase his chance in subsequent applications. Then it is trivial to explain the decision to the borrower. However, depending upon lender's credit model, there might be hundreds of other variables involved, where the interactions among each of those variables can be variables too. Such interactions should be observed rigorously, by zooming into individual data points. Nevertheless, since often the relation might not be linear as we thought, they might not be even linearly separable. Subsequently, a linear or tree-based model might not be able to model the relationship. We might even need a complex model such as neural networks, ending up higher accuracy, but less interpretable.  
 
+\begin{figure*}
+	\centering
+	\includegraphics[width=0.9\linewidth,height=50mm]{images/bbm.png}
+	\caption{A `black-box' DSS cannot trace back decisions to inputs, i.e., how and why an input is mapped to a output, and vice versa}
+    \label{fig:model_bbm}
+    \vspace{-2mm}
+\end{figure*}
+
 \subsection{Impacts of `black-box' DSS in healthcare}
 In healthcare, one of the most common applications of traditional ML is precision medicine, e.g., predicting what treatment protocols are likely to succeed on a patient based on patient phenotype, demography, and the treatment contexts~\cite{davenport2019potential}. Recently, AI-guided DSS that used in healthcare is increasingly been applied and adopted in clinical diagnosis, treatment recommendations, patient engagement, and administrative activities in clinical setting~\cite{deepmindhealth}. Even there are many instances, where AI is already outperforming healthcare tasks. AI-guided system is outperforming radiologists at spotting malignant tumours, model the progression, and treatment of cancerous conditions~\cite{deepmindhealth}. Besides, AI is guiding researchers in how to construct cohorts for costly clinical trials~\cite{davenport2019potential}. 
 
@@ -81,7 +90,7 @@ It is well-known that interpretable models and their inner working mechanism are
 \begin{figure*}
 	\centering
 	\includegraphics[width=\linewidth,height=65mm]{images/xai_interface.png}
-	\caption{Problems of model opacity}
+	\caption{An explainable DSS is capable to answer ``what", ``why", ``how", and ``where" type of questions}
     \label{fig:model_bbm}
     \vspace{-2mm}
 \end{figure*}
@@ -99,7 +108,7 @@ It is well-known that interpretable models and their inner working mechanism are
 \end{enumerate}
 \vspace{-2mm}
 
-\hspace*{3.5mm} From accurate predictions and human-interpretable explanations, we can identify cancer types and learn similarities between cancer patients. Nevertheless, given that different stakeholders in the ML ecosystem can be aligned with different questions about what, why, how, and where a computer program is carried out~\cite{zednik2019solving}, these will help the doctors to answer different types of questions asked by the end users such as stakeholders, doctors, and patients.  
+\hspace*{3.5mm} From accurate predictions and human-interpretable explanations, we can identify cancer types and learn similarities between cancer patients. Nevertheless, given that different stakeholders in the ML ecosystem can be aligned with different questions about ``what", ``why", ``how", and ``where" a computer program is carried out~\cite{zednik2019solving}, these will help the doctors to answer different types of questions asked by the end users such as stakeholders, doctors, and patients.  
 
 \section{Problem Formulation} \label{problem_challenges}
 The problem of classifying the patients is grouping into a specific cancer types based on their multimodal genomic profiles. In other words, the cancer typing method can be formulated as a prediction task in a multi-class classification problem. Before, we formally define the problem, we introduce and use some notations necessary to grasps the cancer typing method necessary in our DSS: 
@@ -161,14 +170,6 @@ The problem of classifying the patients is grouping into a specific cancer types
 
 \hspace*{3.5mm} To parametrize $F_{\theta}$, we employ neural network-based representation learning~(e.g., autoencoders) due to their function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} from genomic data. The input is fed into the encoder $f_{\theta_{i}}$ to generate a modality specific latent representation. Subsequently, the latent representation is then fed into the decoder module to reconstruct ${X}_{i}^{\prime}$ similar to the original input $X_i$. The parameters of the modality specific network are then then trained to minimize the error between the decoder’s output and the input signal~(i.e., the input and the reconstruction). The latent representations of all modalities are then concatenated into a single representation $Z$ = $h_{i,j} \in \mathbb{R}^{D}$. Then based on the embedding $Z$, classifier $F$ then maps the input $X$ to an output $F: \mathbb{R}^{D} \mapsto Y$. Since either the decision made by the model $F$ cannot be traced back to the inputs, nor it is clear why the outputs are transformed the way they are, we treat $F$ a `black-box' model. 
 
-\begin{figure*}[h]
-	\centering
-	\includegraphics[width=0.9\linewidth,height=50mm]{images/bbm.png}
-	\caption{With a `black-box' model, decisions cannot be traced back to the inputs, i.e., how and why the input is mapped to a decision}
-    \label{fig:model_bbm}
-    \vspace{-2mm}
-\end{figure*}
-
 \hspace*{3.5mm} For our cancer diagnosis use case, by emphasizing specific characteristics of a patient that represents the characteristics of a smaller group of cancer patients such as breast cancer, yet different in other patients~(rather than all the patients in a dataset). By embedding both local and global interpretability logic, we make ``black-box" model $F$ interpretable in a post-hoc manner. We explain a data point $x$ using an explanation function $g$. Local interpretability refers to an explanation giving reasoning why the model $F$ has predicted $F(x)$ for a data point $x$, during inferencing. Since providing human-level interpretability by ``zooming in" individual predictions makes the explanation more evident~\cite{ribeiro2018anchors}, we answer the following questions based on local explanation methods: 
 
 \vspace{-2mm}
@@ -206,7 +207,7 @@ Finally, we update the decision rules by combining reasoning and predictions to 
 To improve the transparency and explainability of a DSS and to disseminate biological knowledge about carcinogenics, we attempt to solve the research questions that are driven by several hypotheses.  
 
 \subsection{Research questions}
-We attempt to solve the following research questions:  
+In this thesis, we attempt to solve the following 5 research questions on which the DSS is built upon:  
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -214,25 +215,25 @@ We attempt to solve the following research questions:
     \item \textbf{RQ2}: \textit{How to identify relevant features or factors for a certain decision?} Identification of important biomarkers that contributed most~(i.e., some of the features have a higher impact than others), which facilitates the identification and validation of the presence of cancer and also help determine its stage, subtype, and whether they will respond to therapy. Cancer biomarkers are also of potential therapeutic targets and a key in sequence-specific gene silencing therapy against cancer by selectively silencing aberrantly activated oncogenes.  
     \item \textbf{RQ3}: \textit{How to provide human-understandable interpretations of the decisions using decision rules?} Decision rules are more effective at providing intuitive explanations. Using a set of rules, it is possible to explain a decision directly to humans with the ability to look up the reason for a decision. 
     %\textbf{${RQ}_5$}: How to generate human-interpretable decision rules to provide transparent cancer diagnosis? \\
-    \item \textbf{RQ4}: \textit{How to disseminate and validate embedded domain knowledge in the model?} An explainable ML model can not only provide predictions, but also insights such as gave top biomarkers, gene correlations, biomarkers types, etc. These help understand the mechanisms of carcinogenesis by further validating the diagnosis with expert and domain knowledge. 
+    \item \textbf{RQ4}: \textit{How to disseminate and validate embedded domain knowledge in the model?} An explainable ML model can not only provide predictions, but also insights about top biomarkers, gene correlations, biomarkers types, etc. These help to understand the mechanisms of carcinogenesis, to be further validated with expert domain knowledge. 
     \item \textbf{RQ5}: \textit{How to score a `black-box' model on transparency?} Knowing the answer to this question will enable us why did the model behave in a certain way? 
 \end{itemize}
 \vspace{-2mm}
 
-\subsection{Hypothesis}
+\subsection{Hypotheses}
 %To reach the goal, we solve the above research questions, which are driven by the hypotheses.
-This thesis makes the following hypotheses, which will lead towards potential solutions to the research questions mentioned above in case they are confirmed:
+This thesis makes the following 8 hypotheses, which will lead towards potential solutions to the research questions mentioned above in case they are confirmed:
 
 %\vspace{-2mm}
 \begin{itemize}[noitemsep]
-    %\textbf{$H_2$}: neural representation learning can be more effective for learning high-level abstract features against data sparsity. \\
-    \item \textbf{H1}: Multimodal genomics data and clinical outcomes can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision. 
+    \item \textbf{H1}: Stacking- and neural representation learning can be very effective at handling high dimensional genomic data and to extract most abstract features through a hierarchical learning process. 
     \item \textbf{H2}: A neural ensemble method, combining several deep architectures, can be more effective than structures solely based on a single model by reducing the generalization error. 
-    \item \textbf{H3}: Since genomics data are high dimensional, embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers. 
-    \item \textbf{H4}: Interpretability provides insights on why/how a certain clinical diagnostic decision is recommended, highlighting significant~(i.e, most and least) biomarkers for further validation. 
-    \item \textbf{H5}: Ontological reasoning can help characterize errors w.r.t their hierarchical relations from the KB that helps in the decision making process.
-    %A reasoner then can interact with the learning algorithm as a semantic referee. \\
-    \item \textbf{H6}: Fair decision rules can be deduced by combining model predictions and symbolic reasoning. 
+	\item \textbf{H3}: Multimodal genomics data and clinical outcomes can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision. 
+    \item \textbf{H4}: Since genomics data is high dimensional, embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers. 
+    \item \textbf{H5}: An interpretable `black-box' model can answer why and how a certain diagnosis decision is made by highlighting most significant~(i.e, most and least) biomarkers for clinical validation. 
+    \item \textbf{H6}: A surrogate model can be used to approximate the predictions~(embedded knowledge) of a partially `white-box' model and generate decision rules for diagnosis decisions. 
+    \item \textbf{H7}: Ontological reasoning can characterize errors~(in diagnosis decision) w.r.t hierarchical relations between entities in the KB that helps in the decision making process.
+    \item \textbf{H8}: Fair decision rules can be deduced by combining model predictions and symbolic reasoning. 
 \end{itemize}
 %\vspace{-2mm}
 
@@ -242,18 +243,18 @@ This thesis makes the following hypotheses, which will lead towards potential so
 The main contributions of this thesis can be summarized as follows:
 
 \begin{itemize}[noitemsep]
-    \item We prepared a rich labelled multimodal genomics data for cancer type prediction that can be used to develop an explainable DSS.  
-    \item We trained several robust neural network models in which different interpretable~(e.g., feature attribution methods) and explainable logics~(e.g., Grad-CAM, LRP) are embedded. These approach enhance the capability of the learning algorithm to identify most significant biomarkers and provide class-specific explanations giving the top-k and common genes across cancer types. 
-    \item We performed adversarial training to make the explainable model robust against different types of attacks, such as content moderation and out-of-distribution attacks. 
-    \item A novel method of generating decision rules for cancer diagnosis by combing model prediction, top biomarkers, and reasoning based on symbolic reasoning. 
+    \item We prepare a labelled multimodal genomics data for cancer type prediction, which can be used to develop an explainable DSS.  
+    \item We train several robust neural network architectures in which different interpretable methods and explainable logic are embedded. These approach enhance the capability of the learning algorithm to identify most significant biomarkers and provide class-specific explanations giving the top-k and common genes across cancer types. 
+    \item We perform adversarial training to make the explainable model robust against different types of attacks, such as content moderation and out-of-distribution attacks. 
+    \item We propose a novel method of generating decision rules for cancer diagnosis by combing model prediction, top biomarkers, and reasoning based on symbolic reasoning. 
     \item We took both proactive and reactive measures to make the diagnosis decision trustworthy by mitigating different types of bias. 
-    \item Comprehensive evaluations of our approach with detailed analyses of outcomes and comparisons with state-of-the-art. 
+    \item We provide comprehensive evaluations of our approach with detailed analyses of outcomes and comparisons with state-of-the-art. 
 \end{itemize}
 
-\hspace*{3.5mm} These contributions were reflected into 3 directions: i) peer-reviewed scientific publications, ii) public talks and presentations, iii) open source contributions, e.g., implementations of some approaches presented. %A number of peer-reviewed publications were produced while conducting the work in this thesis. They are mentioned below, and a note is made to their relevant chapters. 
+\hspace*{3.5mm} These contributions were disseminated into 3 directions: i) peer-reviewed scientific publications, ii) public talks and presentations, iii) open source contributions. %, e.g., implementations of some approaches presented. %A number of peer-reviewed publications were produced while conducting the work in this thesis. They are mentioned below, and a note is made to their relevant chapters. 
 
 \subsection{Relevant publications}
-Above contributions were reflected in a number of peer-reviewed publications~(notes are made to their relevant chapters). It is to note that some of these publications help build the foundation of this thesis: 
+Above scientific contributions were reflected in a number of peer-reviewed publications. We provide notes to their relevance, where some of these publications help build the foundation of this thesis: 
 
 \begin{enumerate}
 	\item {Alokkumar Jha, Yasar Khan, Muntazir Mehdi, \textbf{Md. Rezaul Karim}, Qaiser Mehmood, Achille Zappa, Dietrich Rebholz-Schuhmann, and Ratnesh Sahay, ``Discovering Biomarker and Pathway for Gynecological Cancers", \emph{Journal of Biomedical Semantics}, 8(1), September 2017, DOI: 10.1186/s13326-017-0146-9.} 
@@ -346,7 +347,7 @@ The candidate participated several conferences as the part of the journey of thi
 All the codes in the preceding publications were implemented in Python, where we relied on existing libraries such as Keras, sciket-learn, TensorFlow, Apache Spark, and SHAP. %All programs were implementation in Python. 
 %Software stack consist of scikit-learn and Keras with the TensorFlow backend. 
 %In both machines, the CUDA and cuDNN enabled to make the overall pipeline faster. 
-Besides, semantic web technologies such as OWL, RDF, SPARQL, Jena, and Virtuoso also utilized in certain publications. GitHub was extensively used for the  version control. On the other hand, Flask framework was used for wrapping up the explainable models and serving  explainable interface. Networks were trained on an computer with the specification of Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. Implementations were made open-source with a focus of reproducibility\footnote{GitHub repo of the implementations can be found: \url{https://github.com/rezacsedu/OncoNetExplainer}}.
+Besides, semantic web technologies such as OWL, RDF, SPARQL, Jena, and Virtuoso also utilized in certain publications. GitHub was extensively used for the  version control. On the other hand, Flask framework\footnote{Flask: \url{https://palletsprojects.com/p/flask/}} was used for wrapping up the explainable models and serving  explainable interface. Networks were trained on an computer with the specification of Intel(R) Xeon(R) CPU E5-2640, 256 of RAM, Ubuntu 16.04 OS. Implementations were made open-source with a focus of reproducibility\footnote{GitHub repo of the implementations can be found: \url{https://github.com/rezacsedu/OncoNetExplainer}}.
 
 \begin{figure*}
 	\centering
@@ -356,9 +357,18 @@ Besides, semantic web technologies such as OWL, RDF, SPARQL, Jena, and Virtuoso 
 \end{figure*}
 
 \section{Thesis Outline} \label{structure}
-The rest of the thesis is structured into ten chapters. 
+The rest of the thesis is structured into following nine chapters:  
 %The brief overview of each chapter is as followed: 
-\Cref{chapter:preli} covers the foundations and concepts that will be used in the subsequent chapters. In \cref{chapter:uni_modality}, we develop predictive model based on single modality towards finding the association between CNV data and cancer, followed by the cancer type prediction task. In \cref{chapter:multiodality}, we extend the single modality based predictive model to multimodality-based cancer typing method by employing a multimodal neural network, but with a focus on breast cancer. In \cref{chapter:xai}, we employ two different approaches to open the `black box' uni/multimodal models towards making explainable predictions of cancer types based on different genomics data. Besides, we identify significant biomarkers and computed feature importance in terms of mean absolute impact to rank top genes across all the cancer types. In \cref{chapter:robustness}, we apply different types of adversarial attacks on our models, including image content moderation, numeric data moderation, and out-of-distribution, followed by assessing the robustness against these scenarios. 
+\begin{enumerate}[noitemsep]
+    \item \Cref{chapter:preli} provides the foundations and related concepts that will be used in the subsequent chapters. 
+    \item \Cref{chapter:uni_modality} investigates the association of CNV and cancer, followed by the development of a predictive model based on single modality for the cancer type prediction task.  
+    \item \Cref{chapter:multiodality}, extends the single modality based predictive model to multimodality-based by employing a multimodal neural network.  
+    \item \Cref{chapter:xai} employs two different approaches to open the `black box' uni/multimodal models towards making them explainable. We identify biologically relevant biomarkers by computing their feature importance, ranking top genes across all the cancer types, and provide functional analysis.  
+    \item \Cref{chapter:robustness}, is about different adversarial attacks on the models, including content moderation and out-of-distribution, followed by assessing the models' adversarial robustness. 
+    \item \Cref{chapter:xai_rules} is about generating decision rules by combining model predictions and interpretations. Additionally, we identify  misclassified instances~(i.e., initial prediction by the model). 
+    \item \Cref{chapter:nsr} is to perform symbolic reasoning based on a domain-specific ontology in which a reasoner decides whether a biological entity~(based on biomarkers and their attributes) is of correct types and helps to validate the findings and decision rules in order to improve human trustworthiness. 
+    \item \Cref{chapter:fairness} is to improve the trustworthiness of the diagnosis by combining model interpretations, decision rules, and reasoning.
+    \item \Cref{chapter:end} is to provide explanations and points out the relevance of the study, highlights its limitations, and discusses future works before concluding the dissertation. 
+\end{enumerate}
 
-\hspace*{3.5mm} In \cref{chapter:xai_rules}, we generate decision rules by combining model predictions and interpretations. Additionally, we identify  misclassified instances~(i.e., initial prediction by the model). In \cref{chapter:nsr}, we apply symbolic reasoning to provide diagnosis reasoning based on a domain-specific ontology; where, a reasoner decides whether a biological entity~(based on biomarkers and their attributes) is of correct types based on the ontological reasoning. The reasoner also help validate the findings and decision rules in order to deduce human-understandable decision rules. In \cref{chapter:fairness}, we improve the trustworthy of the diagnosis by combining model interpretations, decision rules, and decision reasoning. In \cref{chapter:end}, we provide explanations and points out the relevance of the study, highlights its limitations, and discusses future works before concluding the dissertation. 
 
