@@ -634,7 +634,6 @@ Based on outputs returned by the black-box model, \textit{surrogate} or a simple
 
 \hspace*{3.5mm} To explain and interpret the model predictions these ways, several approaches and methods have been proposed. 
 \Cref{fig:xai_timeline} shows a timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on~\cite{das2020opportunities}). In this subsection, we'll briefly cover most widely used ones. 
-
 \subsubsection{Feature-based attribution methods}
 \label{subsubsec:FI_shap}
 For the human-level interpretability of a model, we need to know the inner insights, e.g., what features does a model think are most important and significant? Some of the features have higher impact than the others. This concept is called feature importance, which can be computed based on permutation importance~(PI). Intuitively, we can think of such importance both locally and globally (see in local vs global interpretability), e.g., for a single prediction, we can compute the effect of each feature in the data, or, effect of each feature over a large number samples and overall the predictions.
@@ -774,7 +773,6 @@ Due to the nested non-linear and complex structure, DNN architectures are mostly
 \hspace*{3.5mm} A decision rule is a simple IF-THEN statement consisting of a condition called antecedent and a prediction~\cite{molnar2019interpretable}. If derived from intelligible features and the length of the condition is short, decision rules are probably the most interpretable prediction models. In particular, the IF-THEN structure semantically resembles natural language and the way how human think~\cite{molnar2019interpretable}. 
 
 \hspace*{3.5mm} Consequently, interpreting the predicted body mass index~(BMI) with decision rules maybe very easy, can be explained in layman term, e.g., suppose that we have a simple model for predicting the BMI. This simple concept may not be well understood by patients~\cite{post2015patient}, whereas a simple decision rule can be effective, e.g., IF BMI $\geq$ 30~(condition), THEN you're obese~(prediction). Further explanations can be provided saying that ``an increased BMI is associated with risk for developing type 2 diabetes, hypertension, and cardiovascular disease". To summarize, once we have a transparent and easily explainable AI model, decision rules can be generated using a series of IF-THEN statements. In this thesis, one of the goals is to generate human-interpretable decision rules automatically based on self-explanatory logic for all decisions. 
-
 
 \subsubsection{Neuro-symbolic reasoning and challenges of current XAI methods}
 Alejandro B. A, et al.~\cite{arrieta2020explainable} outline the trade-off between interpretability and accuracy, i.e., between the simplicity of the information given by the system on its internal functioning, and the exhaustiveness of this description
