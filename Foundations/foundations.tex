@@ -3,7 +3,7 @@
 \textit{``The beginning of knowledge is the discovery of something we do not understand''}- Frank Herbert 
 
 \section{Chapter Overview}
-In this chapter, we cover the foundations and concepts that will be found in all the subsequent chapters. We start with a basic of decision support systems~(DSS) and move towards an intelligent DSS. Subsequently, we cover the necessary foundations for building an explainable DSS for to provide accurate diagnoses decisions about different cancer types. In particular, we cover in detail the concepts of machine learning~(ML) and deep learning~(DL), artificial intelligence~(AI), decision rules, neuro-symbolic reasoning, and representation learning, with a focus on explainability and algorithmic transparency. Later in the chapter, we discuss different types and subtypes of cancer, growth and metastasis of cancer, in order to know the biological interpretations of genomics data. 
+In this chapter, we cover the foundations and concepts that will be found in all the subsequent chapters. We start with a basic of decision support systems~(DSS) and move towards an intelligent DSS. Subsequently, we cover the necessary foundations for building an explainable DSS for to provide accurate diagnoses decisions about different cancer types. In particular, we cover in detail the concepts of machine learning~(ML) and deep learning~(DL), artificial intelligence~(AI), decision rules, neuro-symbolic reasoning, and representation learning~(RL), with a focus on explainability and algorithmic transparency. Later in the chapter, we discuss different types and subtypes of cancer, growth and metastasis of cancer, in order to know the biological interpretations of genomics data. 
 
 \section{Decision Support Systems}\label{sec:DSS}
 Decision support systems~(DSS) are information system that support business or organizational decision-making activities~\cite{hackathorn1981organizational}. A typical DSS takes a set of input and analyzes them to generate actionable insights from which DSS `decisions' are generated. The decision can be further validated with user knowledge and expertise. In other words, a DSS is often a computerized program, which analyse massive amounts of data to assists in decision-making. DSS components can be broadly classified as follows~\cite{hackathorn1981organizational}: 
@@ -46,7 +46,7 @@ Decision support systems~(DSS) are information system that support business or o
 As long as there are a few rules in the rule set, they work well and easy to understand. However, when the number of rules is large, including conflicting rules, they tend to break down. Moreover, if the underlying domain knowledge changes, updating the rules can be difficult and time consuming~\cite{davenport2019potential}. Moreover, rule-based clinical DSS are difficult to maintain as medical knowledge changes and are often not able to handle the explosion of data and knowledge based on genomic, proteomic, metabolic and other ‘omic-based’ approaches to care~\cite{das2020opportunities}.
 Subsequently, they gradually being replaced with ML-based systems with AI capabilities. 
 
-\hspace*{3.5mm} DSSs that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}.  In an AI-guided or intelligent DSS, a set of learning algorithms are embedded to perform cognitive decision-making in which ML often act as one of the most common forms of AI~\cite{das2020opportunities}. Intelligent DSSs are often ML or DL-based DSS, where a ML or DL algorithm is employed to improve the learning outcome so that the decision-making process becomes automatic by reducing the level of human interaction as much as possible~\cite{davenport2019potential}. Since the `black-box' nature and opaqueness in raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of such DSS throughout. In the subsequent sections, we discuss the fundamental components of DSS such as ML, DL,  representation learning, multimodal learning, interpretability, and different types of geneomics data required. 
+\hspace*{3.5mm} DSSs that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}.  In an AI-guided or intelligent DSS, a set of learning algorithms are embedded to perform cognitive decision-making in which ML often act as one of the most common forms of AI~\cite{das2020opportunities}. Intelligent DSSs are often ML or DL-based DSS, where a ML or DL algorithm is employed to improve the learning outcome so that the decision-making process becomes automatic by reducing the level of human interaction as much as possible~\cite{davenport2019potential}. Since the `black-box' nature and opaqueness in raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of such DSS throughout. In the subsequent sections, we discuss the fundamental components of DSS such as ML, DL, RL, multimodal learning, interpretability, and different types of geneomics data required. 
 
 \section{Machine Learning}
 ML is about using a set of statistical and mathematical algorithms to perform tasks such as concept learning, predictive modeling, clustering, and mining useful patterns can be performed, where a learner or ML algorithm is the program used to learn a ML model from data. Subsequently, a ML model is the learned program that maps inputs to predictions. Tom M. Mitchell~\cite{mitchell1997machine} explained what learning really means from a computer science perspective: \textit{``a computer program is said to learn from experience $E$ with respect to some class of tasks $T$ and performance measure $P$, if its performance at tasks in $T$, as measured by $P$, improves with experience $E$"}. We can interpret the above definition in another way: based on a set of observation or data~(i.e., experience $E$), a learning algorithm can be used to solve a problem~(i.e., task $T$) iteratively, i.e., as long as the performance~(i.e., $P$) is not satisfactory. 
@@ -59,6 +59,14 @@ ML is about using a set of statistical and mathematical algorithms to perform ta
 \end{align}
 
 \hspace*{3.5mm} We call the method linear if $L(w;x,y)$ can be expressed as a function of $w^Tx$ and $y$. The objective function $f$ has two components, i) a regularizer that controls the complexity of the model, ii) the loss that measures the error of the model on the training data. The loss function $L(w;)$ is typically a convex function in $w$. The fixed regularization parameter $\lambda \geq 0$ defines the trade-off between minimizing the loss on the training error and minimizing model complexity to avoid overfitting~\cite{karim2018scala}. If both of components are convex, their sum is also convex, else non-convex~\cite{zaccone2018deep}. Therefore, using a convex optimization technique, we can minimize the function until it converges towards the minimum error.  %This can be a set of weights for a linear model or for a neural network. Other names for the rather unspecific word "model" are "predictor" or - depending on the task - "classifier" or "regression model". he trained ML model is called $\hat{f}$ or $\hat{f}(x)$
+
+\begin{definition}
+    \textbf{An instance}: is a row in the dataset~(also called data point, example, or observation). An instance consists of the features $x^{(i)}$ and~(if known) the target outcome ${y}$, where target is the information that the model learned to predict.
+\end{definition}
+
+\begin{definition}
+        \textbf{Prediction:} is what a ML model ``guesses" what the target value should be based on the given feature, i.e., $\hat{y}$ = $\hat{f}\left(x^{(i)}\right)$. If $\hat{y}$ is equal to~(or close) ${y}$, we say it's an accurate prediction.   
+\end{definition}
 
 \begin{figure}[h]
 	\centering
@@ -74,15 +82,6 @@ However, if the performance is not satisfactory, additional tuning or retraining
 deploying the best model in a production-ready environment. 
 \Cref{fig:ml_pipeline} summarizes these steps in a nutshell. 
 
-\vspace{2mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Data instance and prediction:]
-    %INFO: \faBook \\
-    \scriptsize{
-        \textbf{An instance}: is a row in the dataset~(also called data point, example, or observation). An instance consists of the features $x^{(i)}$ and~(if known) the target outcome ${y}$, where target is the information that the model learned to predict. \\
-        \textbf{Prediction:} is what a ML model ``guesses" what the target value should be based on the given feature, i.e., $\hat{y}$ = $\hat{f}\left(x^{(i)}\right)$. If $\hat{y}$ is equal to~(or close) ${y}$, we say it's an accurate prediction.   
-        }
-\end{tcolorbox}
-
 \subsection{Machine learning tasks}
 Although every ML problem is more or less an optimization problem, the way they are solved can vary. Depending on the data type~(often combination of features and targets), learning tasks could be of different three types such as supervised, unsupervised, and reinforcement learning. Supervised learning is the simplest and most well-known automatic learning task. It is based on a number of predefined examples, in which the category to which each of the inputs should belong is already known, as shown in \cref{fig:ml_pipeline_sup}:
 
@@ -93,16 +92,7 @@ Although every ML problem is more or less an optimization problem, the way they 
 	\label{fig:ml_pipeline_sup}
 \end{figure}
 
-\hspace*{3.5mm} In the preceding diagram, an actor~(e.g., data scientist) performs extraction, transformation, and load~(ETL) and necessary feature engineering~(such as feature extraction, selection, etc.) to get the appropriate data consisting of features and labels, to fed into the model. The training set is used to train a ML model and the validation set is used to validate the training against the overfitting problem and regularization. Then the actor can evaluate model's performance on the test set~(i.e., unseen data). The supervised learning context includes classification and regression. 
-
-\vspace{2mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Classification vs. regression:]
-    %INFO: \faBook \\
-    \scriptsize{
-        \textbf{Classification:} it is used to predict which class a data point is a part of discrete value or the label of the class attribute. \\
-        \textbf{Regression:} it is used for predicting continuous values and making a numeric prediction of the class attribute.
-        } 
-\end{tcolorbox}
+\hspace*{3.5mm} In the preceding diagram, an actor~(e.g., data scientist) performs extraction, transformation, and load~(ETL) and necessary feature engineering~(such as feature extraction, selection, etc.) to get the appropriate data consisting of features and labels, to fed into the model. The training set is used to train a ML model and the validation set is used to validate the training against the overfitting problem and regularization. Then the actor can evaluate model's performance on the test set~(i.e., unseen data). The supervised learning context includes classification and regression. While classification is used to predict which class a data point is a part of discrete value or the label of the class attribute, whereas regression is used for predicting continuous values and making a numeric prediction of the class attribute.
 
 \hspace*{3.5mm} How would you summarize and group a dataset if the labels were not given? Probably, you'll try to answer this question by finding the underlying structure of a dataset and measuring the statistical properties such as frequency distribution, mean, standard deviation, and so on. If the question is how would you effectively represent data in a compressed format? You'll probably reply saying that you'll use some software for doing the compression, although you might have no idea how that software would do it. \Cref{fig:ml_pipeline_unsup} shows the typical workflow of an unsupervised learning task. 
 
@@ -181,7 +171,7 @@ Usually, reconstruction loss is the distance measure~($d_{AE}$) between input $x
     \label{eq:Loss1}
 \end{equation}
 
-\hspace*{3.5mm} The identity function seems a particularly trivial function to be trying to learn, but by placing constraints on the network, such as by limiting the number of hidden units, we can discover interesting features of the data~\cite{karimDLTF2018}. Although used for learning representations from numeric data and LQ images, AE is mostly not suitable for 2D/3D finite and discrete signals or digital images~\cite{min2018survey}, primarily because of their weak RL capability. In \cref{sec:rep_learn}, we discuss different variants of autoencoders for the representation learning, which we will use in subsequent chapters. 
+\hspace*{3.5mm} The identity function seems a particularly trivial function to be trying to learn, but by placing constraints on the network, such as by limiting the number of hidden units, we can discover interesting features of the data~\cite{karimDLTF2018}. Although used for learning representations from numeric data and LQ images, AE is mostly not suitable for 2D/3D finite and discrete signals or digital images~\cite{min2018survey}, primarily because of their weak RL capability. In \cref{sec:rep_learn}, we discuss different variants of autoencoders for the RL, which we will use in subsequent chapters. 
 
 \subsection{Convolutional neural networks}
 DNNs have no prior knowledge of how the pixels are organized because they do not know that nearby pixels are close. CNNs embed this prior knowledge using lower layers by using feature maps in small areas of the image, while the higher layers combine lower-level features into larger features. This setting works well with most of the natural images, giving CNN a decisive head start over DNNs~\cite{karimIoT2019}. CNNs have achieved much and have been widely adopted in computer vision, e.g., image recognition. The connection schemes in a CNN are significantly different compared to an MLP or DBN. A few of the convolutional~(conv) layers are connected in a cascade style. 
@@ -253,7 +243,7 @@ In CNNs, each layer understands an image at a much more granular level through a
 Representing raw data in a format that a ML model can work with has always been a big challenge in order to develop DSS~\cite{mmsurvey}. Images, audio samples, individual words, or a sentence features are often represented in vector or tensor formats, which is called representation learning~(RL). In this section, we discuss different RL techniques for both unimodal and multimodal datasets. 
 
 \subsection{Learning representation from unimodal data}
-While the development of unimodal representations has been extensively studied, there has been a shift from hand-designed for specific applications to data-driven~\cite{mmsurvey}. Subsequently, several ways by employing different neural network architectures have been proposed to improve the quality of the representation learning~\cite{min2018survey} from such datasets. In some early approaches, deep belief networks~(DBN) is employed as the feature extractor in which restricted Boltzmann machines~(RBM)~\cite{jaitly2011learning} formed the basic building block. 
+While the development of unimodal representations has been extensively studied, there has been a shift from hand-designed for specific applications to data-driven~\cite{mmsurvey}. Subsequently, several ways by employing different neural network architectures have been proposed to improve the quality of the RL~\cite{min2018survey} from such datasets. In some early approaches, deep belief networks~(DBN) is employed as the feature extractor in which restricted Boltzmann machines~(RBM)~\cite{jaitly2011learning} formed the basic building block. 
 
 \hspace*{3.5mm} Each successive layer of a deep RBM is stacked together to represent the data at a higher level of abstraction. One advantage of RBM for RL is it does not need much labeled data for the training. Being the graphical models, the representation of data is probabilistic. Besides, the scale invariant feature transform was often used in imaging, which is gradually shifted to CNN with which most visual descriptions are learned from data. However, despite numerous successes, DBN has gradually been replaced with AE. 
 
@@ -359,8 +349,9 @@ The input can be denoised and passed through by stacking autoencoders~(SAE), e.g
 \noindent where $dropout(.)$ is the dropout operation~\cite{srivastava2014dropout}, $g_1$ and $g_2$ are activation functions for encoding and decoding layer respectively, and $\theta$=$\lbrace{W_1, b_1, W_2, b_2}\rbrace$ are model hyperparameters~\cite{xie2016unsupervised}. Then greedy layer-wise training~(GLW) is performed by minimizing the least-squares loss $||x-y||^{2}_{2}$, i.e., after training one layer, output $h$ is used as the input to the next layer and so on. In such a scenario, ReLU activation function is used in all encoder and decoder pairs, except for $g_2$~(first pair) and $g_1$~(last pair). Once the GLW training is finished, all the encoder and decoder layers are concatenated in reverse layer-wise training order, by forming a deep AE and fine-tuned to minimize the reconstruction loss. During the GLW pre-training, each layer is pretrained for a relatively higher number of iterations with a dropout. The result is a multilayer deep AE with a bottleneck-coding layer in the middle. Based on a similar principle, other types of AE can be stacked to form such a deep AE architecture. 
 
 \subsection{Learning representation from multimodal data}
-A multimodal representation is a representation of data using information from multiple such entities~\cite{mmsurvey}. The ability to represent multimodal data in an efficient way is forms the backbone of any predictive model. However, how to combine different types of data from heterogeneous sources, how to deal with different levels of noise and artifacts, and how to deal with missing data are few challenges in the multimodal RL. To develop a DSS, we might need to represent one or multiple types of data, e.g., genomics, proteomics, or imaging data need to feed into the neural networks. \\
+A multimodal representation is a representation of data using information from multiple such entities~\cite{mmsurvey}, where \textit{``modality refers to the way in which we experience a real-life events that includes multiple such modalities"}~\cite{mmsurvey}. If the decision support~(or recommendation) provided by a decision support system relies on different types of input, such dataset can be characterized as multimodal. The ability to represent multimodal data in an efficient way forms the backbone of any predictive model. How to combine different types of data from heterogeneous sources, how to deal with different levels of noise and artifacts, and how to deal with missing data are few challenges in the multimodal RL. 
 
+\iffalse
 \vspace{-2mm}
 \begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Input modality]
     %INFO: \faBook \\
@@ -368,6 +359,7 @@ A multimodal representation is a representation of data using information from m
         \textbf{Input modality:} a decision support systems, which provides decision (e.g., clinical) relies on different types of data and in terms of dataset is characterized as multimodal. The term `modality' refers to the way in which we experience a real-life events that includes multiple such modalities~\cite{mmsurvey}.
         }
 \end{tcolorbox}
+\fi 
 
 \begin{figure*}[htp!]
 	\centering
@@ -387,7 +379,7 @@ A multimodal representation is a representation of data using information from m
 	\label{fig:mm_rL_example}
 \end{figure*}
 
-\hspace*{3.5mm} Although several works have focused on unimodal RL, recent approaches are more focused on multimodal representations from different types of data involving simple or shared concatenation of unimodal ones~\cite{mmsurvey}. \Cref{fig:mm_rL_example} shows two fusion architectures in multimodal RL. The latent representation concatenation architecture is depicted in \cref{fig:lrc_1} consists of learning simultaneously a single latent representation from each modality. In the subsequent chapters, we'll show how to use the concatenation of all the modality-specific latent representations to train a classifier. 
+\hspace*{3.5mm} To develop a DSS, we might need to feed one~(\textit{unimodal}) or multiple types of data~(i.e., \textit{multimodal}) such as genomics, proteomics, or imaging data into the neural networks. Although several works have focused on unimodal RL, recent approaches are more focused on multimodal representations from different types of data involving simple or shared concatenation of unimodal ones~\cite{mmsurvey}. \Cref{fig:mm_rL_example} shows two fusion architectures in multimodal RL. The latent representation concatenation architecture is depicted in \cref{fig:lrc_1} consists of learning simultaneously a single latent representation from each modality. In the subsequent chapters, we'll show how to use the concatenation of all the modality-specific latent representations to train a classifier. 
 
 \section{Model Ensemble Methods}
 The ensemble modelling is based on a principle in which weak learners is grouped together to form one strong learner. First, multiple models are trained, each with the objective to predict or classify a set of results. By using ensemble methods, the stability of the final model can be increased by reducing the errors. In particular, by combining many models, mostly the variance error can be reduced. For example, by maximum voting from a panel of independent radiologists, we get the final prediction fair and trustworthy than a single radiologist. 
@@ -412,30 +404,18 @@ The ensemble modelling is based on a principle in which weak learners is grouped
 	\vspace{-2mm}
 \end{figure*}
 
-\hspace*{3.5mm} In short, the model ensemble technique helps to achieve improved performance of a model compared to the predictions from a single model by reducing the generalization error~\cite{karimACCA2019}. Technically, bagging~(refer to \cref{fig:bagging}), boosting, and stacking~(refer to \cref{fig:stacking}) are three main concepts can be employed to create an ensemble method by reducing the variance, noise, and bias: \\
+\hspace*{3.5mm} In short, the model ensemble technique helps to achieve improved performance of a model compared to the predictions from a single model by reducing the generalization error~\cite{karimACCA2019}. Bagging~(refer to \cref{fig:bagging}), boosting, and stacking~(refer to \cref{fig:stacking}) are three main concepts are widely used to create an ensemble to improve the classification accuracy by reducing the variance, noise, and bias: 
 
-\vspace{-2mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Ensemble concepts]
-    \scriptsize{
-        \textbf{Bagging:} is the combination of bootstrapping and aggregating the scores over many samples in order to decrease the model’s variance. Bootstrapping is a very well-known method that helps decrease model variance by reducing overfitting and resampling data from the training set with the same cardinality as the original set. Bagging is an effective method when you have limited data. \\
-        \textbf{Boosting:} is adding additional models to the overall ensemble model sequentially to decrease model’s bias. \\
-        \textbf{Stacking:} is method where a new model is trained from the combined predictions of two or more previously trained models, where the predictions from the previously trained models are used as inputs for each sequential layer, and combined to form a new set of predictions. The idea helps to increase the predictive force of the final model. 
-        }
-\end{tcolorbox}
+\begin{itemize}[noitemsep]
+    \item \textbf{Bagging} is about bootstrapping and aggregating the scores over many samples. It is an effective method in case of limited labelled data. In a limited labelled data setting, smaller training set is generated by re-sampling the original training set having the sample cardinality. Bootstrapping reduces the probability of overfitting, which decreases the variance in the ensemble model. 
+    \item \textbf{Boosting} is adding additional models to the ensemble model sequentially to decrease model’s bias.
+    \item \textbf{Stacking} is a an ensemble method in which a new model is trained from the combined predictions of two or more previously trained models, where predictions from the previously trained models are used as inputs for each sequential layer, and combined to form a new set of predictions. Stacking helps to increase the predictive power of the final model. 
+\end{itemize}
 
 \hspace*{3.5mm} When it comes to neural ensemble, it can be achieved by training multiple model snapshots during a single training of a neural network and combining their predictions to make an ensemble prediction called snapshot ensemble~\cite{huang2017snapshot}. A limitation of this approach, however, might be that the saved models will be similar, resulting in similar predictions and predictions errors. Hence, we cannot expect much benefit from combining their predictions unless we have already introduced diversities during model training~\cite{huang2017snapshot}. This issue is addressed in \cref{chapter:uni_modality}, by changing the learning algorithm to force the exploration of different network weights during a single training run that will result slightly different performance\cite{karimACCA2019}. 
 
 \section{Hyperparamters Tuning}
-ML models are composed of two different types of parameters called model parameters and hyperparameters. While the former parameters are learned during the model training such as weights in neural networks, the latter parameters can be arbitrarily set by the user before starting training like number of estimators in random forest or learning rate in a neural network. \\
-
-\vspace{-1mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Model parameters vs. hyperparameters]
-    %INFO: \faBook \\
-    \scriptsize{
-        \textbf{Parameters:} are model parameters learned during the training. \\
-        \textbf{Hyperparameters:} are set by the human, e.g., data scientist before the training.
-        }
-\end{tcolorbox}
+ML models are composed of two different types of parameters called model parameters and hyperparameters. While the former parameters are learned during the model training such as weights in neural networks, the latter parameters can be arbitrarily set by the user before starting training like number of estimators in random forest or learning rate in a neural network. In other words, model parameters are learned during the training, while hyperparameters are set by the human, e.g., data scientist before the training.
 
 \hspace*{3.5mm} Often parameters that define model architecture are called hyperparameters, where the prefix `hyper refers that it is not a `model parameter', i.e., can be optimized during the training. More technically, model parameters are learned during the training while we optimize a loss function using an optimizer such as RMSProp, whereas hyperparameters are not model parameters and cannot be directly trained from the data. Following are a few examples of hyperparameters: 
 
@@ -448,6 +428,7 @@ ML models are composed of two different types of parameters called model paramet
 \end{itemize} 
 \vspace{-2mm}
 
+\iffalse
 \begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Random vs. grid search for hyperparameter optimization]
     \scriptsize{
         \textbf{Grid search:} in the following figure, $x$ number of values are picked, which are evenly spaced along each axis, forming a grid. Then a model is trained for each possible combination, followed by evaluating each model, and selecting the architecture giving the best result. \\
@@ -457,6 +438,7 @@ ML models are composed of two different types of parameters called model paramet
         \textbf{Random search:} $x$-squared number of values are picked randomly and used in cross validation to test the accuracy of the experiment for each combination.
         } 
 \end{tcolorbox}
+\fi 
 
 \subsection{Techniques for hyperparameter optimization}
 Since an appropriate selection of hyperparameters have huge impact on the performance of ML model, `hyperparameter tuning' is performed, which is the process of searching best model based on optimal combination of hyperparameters. In other words, hyperparameter optimization~(HPO) is the problem of choosing the best combination~(or optimal) hyperparameters for a learning algorithm. HPO is often represented as the following objective function: 
@@ -467,11 +449,24 @@ Since an appropriate selection of hyperparameters have huge impact on the perfor
     \label{eq:hpt}
 \end{align}
 
-where $x \in X$, $f(x)$ represents an objective score to minimize, e.g. RMSE evaluated on the validation set and $x^*$ is the set of hyperparameters to yield the lowest value of the score. However, in case of complex model, there are more than one hyperparameter on which there are several approaches to perform hyperparameter tuning such as grid search, random search, and Bayesian optimization. \\
+where $x \in X$, $f(x)$ represents an objective score to minimize, e.g. RMSE evaluated on the validation set and $x^*$ is the set of hyperparameters to yield the lowest value of the score. However, in case of complex model, there are more than one hyperparameter on which there are several approaches to perform hyperparameter tuning such as grid search, random search, and Bayesian optimization. 
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth,height=50mm]{images/gvr.png}
+    \caption{Random vs. grid search for hyperparameter optimization}	
+	\label{fig:random_vs_grid_search}
+	\vspace{-2mm} 
+\end{figure*}
 
 \subsection{Grid search and random search}
 In grid search, evenly spaced values are generated for each hyperparameter being tested, followed by building a model for each possible combination of all of the hyperparameter values, evaluating each model and selecting the architecture which produces the best results. %\subsection{Random search}
 In random search, random values for each hyperparameter are generated that are used in cross-validation to evaluate the model for each combination.
+
+\begin{itemize}[noitemsep]
+    \item In \textbf{grid search}, $x$ number of values are picked, which are evenly spaced along each axis, forming a grid, as shown in \cref{fig:random_vs_grid_search}. Then a model is trained for each possible combination, followed by evaluating each model, and selecting the architecture giving the best result.
+    \item In \textbf{random search}, $x$-squared number of values are picked randomly and used in cross validation to test the accuracy of the experiment for each combination, as shown in \cref{fig:random_vs_grid_search}.
+\end{itemize}
 
 \hspace*{3.5mm} Random search is better than grid search for most cases, hyperparameters are not equally important, making some hyperparamters are more important than others. A Gaussian process analysis of the function from hyper-parameters to validation set performance reveals that for most data sets only a few of the hyper-parameters really matter, but that different hyper-parameters are important on different data sets. This phenomenon makes grid search a poor choice for configuring algorithms for new data sets. %- Bergstra, 2012
 
@@ -952,6 +947,6 @@ As mentioned, different types of genomics data are used in cancer research, incl
 \end{itemize}
 
 \section{Chapter Summary}
-In this chapter, we provides the preliminaries and foundations of several aspects needed to grasp the techniques applied in subsequent chapters. We covered basic of ML, DL, representation learning, neural ensemble methods, interpretable methods, cosine annealing, Grad-CAM++, SHAP, LRP, attention mechanism, heat map, and feature importance. As research suggested, introducing semantics into deep learning through ontological-reasoning a new era towards XAI, where the ML model reads input data, generates the predictions, observe the results, use the existing knowledge from the KB as a semantic reasoner, and produces new knowledge to provide more human-interpretable answers and explanations. 
+In this chapter, we provides the preliminaries and foundations of several aspects needed to grasp the techniques applied in subsequent chapters. We covered basic of ML, DL, RL, neural ensemble methods, interpretable methods, cosine annealing, Grad-CAM++, SHAP, LRP, attention mechanism, heat map, and feature importance. As research suggested, introducing semantics into deep learning through ontological-reasoning a new era towards XAI, where the ML model reads input data, generates the predictions, observe the results, use the existing knowledge from the KB as a semantic reasoner, and produces new knowledge to provide more human-interpretable answers and explanations. 
 
 \hspace*{3.5mm} The benefit is that the model learns not only from the data but also from explicit and encoded prior knowledge, which not only helps avoiding making similar mistakes in successive iterations, but also helps reducing the biases. Eventually, if an XAI system can explain its reasoning, we can verify whether that reasoning is sound with respect to these auxiliary criteria, hence can be used in real clinical setting. In the next chapter, we start our explainable journey towards making the cancer diagnosis fair and trustworthy. We'll use single modality, e.g., CNV data and check the feasibility weather we can effectively predict cancer types. We will explore some advanced techniques concerning neural networks, such as neural ensemble. 
