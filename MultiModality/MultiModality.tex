@@ -4,9 +4,11 @@
 \textit{"Learning is lifelong; we forget rules when they no longer apply or revise them when the environment changes."} - Ethem Alpaydin, Machine Learning: The New AI 
 
 \section{Chapter Overview}
-In the previous chapter, we used only CNVs, i.e., single modality to develop a decision support system~(DSS), which was technically a black-box model based on snapshot neural ensemble method in which we trained two deep architectures called \texttt{Conv-LSTM} and \texttt{CAE}. The DSS moderately performed at predicting cancer types. However, our real world experience is multimodal~\cite{mmsurvey}, e.g., while watching a movie, we not only observe the movie itself but the acting, background music, action, background scenario, and landscapes, etc. Multimodal machine learning~(ML) aims to build a ML model capable of processing and relating information from multiple modalities~\cite{mmsurvey}. Concerning our cancer CDSS, multiple factors are involved~(e.g., in cancer diagnosis, estrogen receptor~(ER), progesterone receptor~(PGR), and human epidermal growth factor receptor 2~(HER2/neu statuses for breast cancer), providing AI-based diagnoses might not be accurate solely based on CNVs. This requires using multimodal features based on DNA methylation, gene expression, miRNA expression, and CNVs data by creating a multiplatform network to support each data type, where the DSS based on CNV data along with other types of genomics data from different cohorts such as DNA methylation, gene expression, and somatic mutations will be more reliable. 
+In the previous chapter, we used only CNVs, i.e., single modality to develop a decision support system~(DSS), which was technically a black-box model based on snapshot neural ensemble method in which we trained two deep architectures called \texttt{Conv-LSTM} and \texttt{CAE}. The DSS moderately performed at predicting cancer types. However, our real world experience is multimodal~\cite{mmsurvey}, e.g., while watching a movie, we not only observe the movie itself but the acting, background music, action, background scenario, and landscapes, etc. Multimodal machine learning~(ML) aims to build a ML model capable of processing and relating information from multiple modalities~\cite{mmsurvey}. Concerning our cancer CDSS, multiple factors are involved~(e.g., in cancer diagnosis, estrogen receptor~(ER), progesterone receptor~(PGR), and human epidermal growth factor receptor 2~(HER2/neu statuses for breast cancer), providing AI-based diagnoses might not be accurate solely based on CNVs. 
 
-\hspace*{3.5mm} Based on this motivation, in this chapter, we extend the single modality to multimodality-based cancer typing method by employing a multimodal neural network approach to analyze genomics data from TCGA to classify breast cancer patients based on their subtypes. We hypothesize\footnote{\textbf{H3}: Multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision.} that multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision.
+\hspace*{3.5mm} This, however, requires using multimodal features based on different types of omics data such as DNA methylation, gene expression, miRNA expression, and CNVs and creating a multiplatform network to support each modality. As research has exposed that cancer diagnosis based on multimodal data is both clinically and biologically effective and accurate~\cite{cheerla2019deep,phan2016integration}, subsequently a DSS based on multimodal genomics data of DNA methylation, gene expression, and somatic mutations from different cohorts will be more reliable. Multimodal representation learning generates distributed vectors by mapping multiple modalities of information to a single mathematical space, where the similarities are attributed based on a distance measure. Using a unimodal representation technique is sufficient for each respective modality in the multimodal space~\cite{ito2018effects}. 
+
+\hspace*{3.5mm} Based on this motivation, in this chapter, we extend the single modality to multimodality-based cancer typing method by employing a multimodal neural network approach to analyze genomics data from TCGA to classify breast cancer patients based on their subtypes. We hypothesize\footnote{\textbf{H3}: Multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision.} that multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision. Besides, we 
 %and survival rates. 
 In particular, we used DNA methylation, gene expression~(GE), and miRNA expression data by creating a multiplatform network called multimodal autoencoders~(MAE) classifier to support each data type\footnote{RQ1: How to use multimodal genomic data to accurately predict cancer
 types?}. We will observe the effect of different modalities and assess the performance of our CDSS across breast cancer subtype classification. 
@@ -50,7 +52,7 @@ For the breast cancer subtypes prediction, we used genomics data accompanied by 
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[width=\textwidth]{images/mae_v2.png}
+	\includegraphics[width=\textwidth,height=140mm]{images/mae_v2.png}
 	\caption{Workflow of the proposed approach in which same input types with different features for subtypes %and survivals 
 	are used~\cite{karimACCESS2019}.}
 	\label{fig:wf_mae}
@@ -59,10 +61,6 @@ For the breast cancer subtypes prediction, we used genomics data accompanied by 
 \subsection{Datasets and feature selection}
 \label{dc}
 Although genomics data covers all data related to DNA on living organisms, we use transcriptomics data, including RNA and miRNA. These genomics data are usually accompanied by clinical outcomes, which comprise of general clinical information as well as cancer status (e.g., cancer location, cancer stage). These data are also very high-dimensional, e.g., GE data for each patient, which is structured based on gene id reaches around 60,000 types, meaning a predictor based on GE comes with 60,000 different features. Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{icgc}, and COSMIC~\cite{forbes}. However, based on public availability and amount of data consideration, e.g., the number of patients data and clinical outcomes, we considered the breast invasive carcinoma~(BRCA) branch of TCGA as the main source of data\footnote{TCGA has 39 projects for 39 different cancer types~(v89)}. After selecting data sources, we start collecting both clinical data and biospecimens through the Genomics Data Commons~(GDC) data portal\footnote{\url{https://portal.gdc.cancer.gov/}}. 
-
-\hspace*{3.5mm} To provide more reliable cancer identification 
-%and the decision about survival
-, several modalities consisting of masked somatic mutations, copy number segment~(CNS) and mask CNS, DNA methylation, GE, miRNA expression along with clinical outcomes were used, instead of a single modality. Besides, some preprocessed data were reused\footnote{Based on a Master thesis I co-supervised with Dr. Oya Beyan: "Analysis of Breast Cancer Genomic Data with Multimodal Deep Belief Network", by Galih Wicaksono, Software Systems Engineering, RWTH Aachen University, 2018.}. Some of the data comes in different formats, e.g., $70\%$ of the DNA methylation data of breast cancer patient came from a different platform than the remaining $30\%$, having two structures. 
 
 \begin{table}[h]
     \scriptsize
@@ -123,7 +121,9 @@ Although genomics data covers all data related to DNA on living organisms, we us
     	\vspace{-4mm}
 \end{table}
 
-\hspace*{3.5mm} However, in our case, several factors refrained us from using each type of data, e.g. masked somatic mutation data are the base pair~(BP) position in a chromosome but 
+\hspace*{3.5mm} To provide more reliable cancer identification, 
+%and the decision about survival
+several modalities consisting of masked somatic mutations, copy number segment~(CNS) and mask CNS, DNA methylation, GE, miRNA expression along with clinical outcomes were used, instead of a single modality. Besides, some preprocessed data were reused\footnote{Based on a Master thesis I co-supervised with Dr. Oya Beyan: "Analysis of Breast Cancer Genomic Data with Multimodal Deep Belief Network", by Galih Wicaksono, Software Systems Engineering, RWTH Aachen University, 2018.}. Some data come in different formats, e.g., $70\%$ of the DNA methylation data of breast cancer patient came from a different platform than the remaining $30\%$, having two structures. However, in our case, several factors refrained us from using each type of data, e.g. masked somatic mutation data are the base pair~(BP) position in a chromosome but 
 %The total number of base pairs in a single human cell 3 billion and 
 not all the mutations are significant. Even if we use them, the generated dataset will be very sparse. %giving too many zero entries. 
 The CNS and masked CNS data were not used because of extremely high dimension and complex structure of the data, and there was no fixed dimension for each data per patient. Since BP's start refers observed, CNS data and stop positions in a chromosome, which will always vary at a BP resolution.
@@ -331,19 +331,19 @@ The best results for ER status prediction are shown in in~\cref{tab:all_results}
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=0.85\linewidth,height=45mm]{images/conf_er.png}
+		\includegraphics[width=\linewidth,height=60mm]{images/conf_er.png}
 		\caption{ER status classification}
         \label{fig:er_confusion}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=0.85\linewidth,height=45mm]{images/conf_pgr.png}
+		\includegraphics[width=\linewidth,height=60mm]{images/conf_pgr.png}
 		\caption{PGR status classification}
         \label{fig:pgr_confusion}
 	\end{subfigure}\\[1ex]
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[width=0.85\linewidth,height=45mm]{images/conf_her2.png}
+		\includegraphics[width=\linewidth,height=60mm]{images/conf_her2.png}
 		\caption{HER2 status classification }
         \label{fig:her2_confusion}
 	\end{subfigure}
@@ -354,23 +354,23 @@ The best results for ER status prediction are shown in in~\cref{tab:all_results}
 %\subsubsection{Breast cancer subtype classification (HER2/neu status)}
 \hspace*{3.5mm} The best results for HER2/neu status prediction for each type of input is shown in \cref{tab:all_results}. Similar to the ER and PGR status prediction tasks, the predictor performs the best with the input of GE data combined with miRNA expression data.  However, we observed overall a low accuracy score for each type of data, although, the performance on the training set itself was near to perfect. Even after applying several regularization techniques such as l2-regularization and Gaussian dropout layers, the result is still poor, which might be because of the overfitting. One of the possible causes for such overfitting is the smaller number of samples~(i.e. 860 samples) compared to ER and PGR statuses~(i.e. 1,024 samples).
 
-\begin{figure*}
+\begin{figure*}[h]
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=0.8\linewidth,height=40mm]{images/1.png}
+		\includegraphics[width=\linewidth,height=55mm]{images/1.png}
 		\caption{ER status classification}
         \label{fig:top_er}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=0.8\linewidth,height=40mm]{images/2.png}
+		\includegraphics[width=\linewidth,height=55mm]{images/2.png}
 		\caption{PGR status classification}
         \label{fig:top_pgr}
 	\end{subfigure}
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[width=0.8\linewidth,height=40mm]{images/3.png}
+		\includegraphics[width=\linewidth,height=55mm]{images/3.png}
 		\caption{HER2 status classification }
         \label{fig:top_her2}
 	\end{subfigure}
@@ -383,13 +383,13 @@ The best results for ER status prediction are shown in in~\cref{tab:all_results}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=0.8\linewidth,height=45mm]{images/raw_tsne.png}
+		\includegraphics[width=\linewidth,height=60mm]{images/raw_tsne.png}
 		\caption{t-SNE plot of raw gene expression}
         \label{fig:tsne_raw}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=0.8\linewidth,height=45mm]{images/ae_tsne.png}
+		\includegraphics[width=\linewidth,height=60mm]{images/ae_tsne.png}
 		\caption{t-SNE plot of encoder's latent feature}
         \label{fig:tsne_ae}
 	\end{subfigure}

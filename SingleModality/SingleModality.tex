@@ -3,18 +3,18 @@
 Niels Bohr
 
 \section{Chapter Overview} 
-An accurate diagnosis decision for cancer is specific to patients with particular genomic profiles and molecular traits, which needs to address carefully. In cancer diagnosis, discovery of important biomarkers is becoming an important step to understand molecular mechanisms of carcinogenesis in which omics data and clinical outcomes need to be analyzed before making any clinical decision. In particular, CNVs that found to be associated with the risk toward individual cancers, can be analyzed to reveal genetic predispositions before the cancer actually grows. However, the complex nature, high dimensionality, and heterogeneity of copy number variations~(CNVs) make the overall analysis very challenging. Deep learning~(DL) approaches based on deep neural networks~(DNN) can be used to overcome this challenge. For example, convolutional neural network~(CNN) is good at reducing frequency variations. On the other hand, the long short-term memory~(LSTM) is good at temporal modeling btween CNVs across genes. Further, a neural ensemble method, which can combine several deep architectures is found to be more effective than structures solely based on CNN or LSTM. 
+An accurate diagnosis decision for cancer is specific to patients with particular genomic profiles and molecular traits, which needs to address carefully. Discovery of biologically significant biomarkers is an important step to understand molecular mechanisms of carcinogenesis in which omics data and clinical outcomes need to be analyzed before making any clinical decision. In the earlier chapter, we discussed how copy number variations~(CNVs) are associated with the risk toward individual cancers. CNVs can be analyzed to reveal genetic predispositions before the cancer actually grows. However,  complex nature and high dimensionality of CNVs make the overall analysis very challenging. Deep learning~(DL) approaches based on deep neural networks~(DNN) found to be effective against this challenge: while convolutional neural network~(CNN) is good at reducing frequency variations, long short-term memory~(LSTM) is good at temporal modeling between CNVs across genes. Further, a neural ensemble method, which can combine several deep architectures, is found to be more effective than structures solely based on CNN or LSTM. 
 
-\hspace*{3.5mm} In this chapter, we use a single modality of CNV data and try to find association with cancer, a partial effort to develop a decision support system~(DSS) to answer research question 1\footnote{\textbf{RQ1}: \textit{How can multimodal data be more effective than unimodal data to provide accurate decision?}}?. We collect genomics data about 8,000 patients covering 14 different cancer types from The Cancer Genome Atlas~(TCGA). We extract CNVs features based on 578 oncogenes and 20,308 non-coding human genes, including genomic deletions and duplication across samples using \texttt{MSeq-CNV} tool. Then we train two powerful deep architectures called \texttt{Conv-LSTM} and \texttt{CAE} networks based on two different but sparse representations of CNVs features and create their snapshots models. While the \texttt{Conv-LSTM} can capture locally and globally important features, \texttt{CAE} can utilize unupervised pretraining to initialize the weights in the subsequent convolutional layers to extract most abstract CNV features. Finally, model averaging ensemble~(MAE) is applied to combine the predictions from the snapshot models and predict the cancer types. 
+\hspace*{3.5mm} In this chapter, we use CNV data and try to find association with cancer, a partial effort to develop a decision support system~(DSS) to answer research question 1\footnote{\textbf{RQ1}: \textit{How can multimodal data be more effective than unimodal data to provide accurate decision?}}. We collect genomics data about 8,000 patients covering 14 different cancer types from The Cancer Genome Atlas~(TCGA). We extract CNVs features based on  oncogenes and non-coding human genes, including genomic deletions and duplication across samples using \texttt{MSeq-CNV} tool. We train two neural network architectures called \texttt{Conv-LSTM} and \texttt{CAE} networks based on two different representations of CNVs and create their snapshots models. \texttt{Conv-LSTM} and \texttt{CAE} are trained to capture locally/globally important features and to extract most abstract CNV features, respectively. Finally, model averaging ensemble~(MAE) is applied to combine the predictions from the snapshot models to predict the cancer types. 
 
 \section{Introduction}
-With the high-throughput technologies such as next-generation sequencing~(NGS), cancer-specific genetic profiling is now possible. The entire genome sequencing data using NGS can be used to identify similar genetic mutations and genetic variations associated with different tumors. An accurate identification of cancer based on CNVs can help to reveal the genetic predisposition for cancer before cancer actually occurs, so that vigilant prevention and rigorous monitoring may be practiced by those who are highly predisposed. In \cref{chapter:preli}, we discuss how CNVs are associated with individual cancers. Subsequently, CNVs were used to identify minimum redundancy maximum relevance feature selection~(mRMR) and incremental feature selection~(IFS) methods~\cite{zhang2016classification} such that only one sample could be covered at a time or using microarray-based comparative genomic hybridization~(aCGH) methods. Extracted CNVs data are used to train ML models for cancer identification and type prediction. However, these approaches are not capable of simultaneous analysis of multiple samples and recurrent CNVs~\cite{malekpour2018mseq}. %Although, aCGH methods are more efficient, current aCGH platforms, which benefit from more than 1 million genomic probes, have a lower detection rate of CNVs. 
+With the high-throughput technologies such as next-generation sequencing~(NGS), cancer-specific genetic profiling is now possible. The entire genome sequencing data using NGS can be used to identify similar genetic mutations and genetic variations associated with different tumors. An accurate identification of cancer based on CNVs can help to reveal the genetic predisposition for cancer before cancer actually occurs, so that vigilant prevention and rigorous monitoring may be practiced by those who are highly predisposed. In \cref{chapter:preli}, we discuss how CNVs are associated with cancers. Subsequently, CNVs were used to identify minimum redundancy maximum relevance feature selection~(mRMR) and incremental feature selection~(IFS) methods~\cite{zhang2016classification} such that only one sample could be covered at a time or using microarray-based comparative genomic hybridization~(aCGH) methods. Extracted CNVs features are then used to train ML models for cancer identification, e.g., type prediction. However, these approaches are not capable of simultaneous analysis of multiple samples and recurrent CNVs~\cite{malekpour2018mseq}. %Although, aCGH methods are more efficient, current aCGH platforms, which benefit from more than 1 million genomic probes, have a lower detection rate of CNVs. 
 
-\hspace*{3.5mm} In this chapter, we focus on CNVs-based cancer typing method. As we rely on a single modality, we attempt to find the association of CNVs with different cancer types. We use MSeq-CNV~\cite{malekpour2018mseq}\footnote{\url{https://github.com/CNVdetection/MSeq-CNV}} to extract recurrent CNVs. MSeq-CNV uses mixture density for modeling aberrations in depth of coverage and abnormalities in the mate pair insertion sizes. Subsequently, common CNVs across multiple samples can be detected easily. Moreover, since CNVs are very high dimensional, modelling possible non-linear interactions among both oncogenes and protein-coding genes is very challenging. To handle these these challenges, we hypothesize the following: 
+\hspace*{3.5mm} In this chapter, we focus on CNVs-based cancer typing method~(i.e., single modality), we attempt finding association of CNVs with different cancer types. We use MSeq-CNV~\cite{malekpour2018mseq} to extract recurrent CNVs. Since MSeq-CNV uses mixture density for modeling aberrations in depth of coverage and abnormalities in the mate pair insertion sizes, common CNVs across multiple samples can be detected easily. Since CNVs are very high dimensional, modelling non-linear interactions between oncogenes and protein-coding genes is very challenging. We have following hypotheses to address above-mentioned challenges: 
 
 \begin{enumerate}[noitemsep]
-    \item High dimensionality of genomic data\footnote{\textbf{H1}: \textit{stacking- and neural representation learning can be very effective at handling high dimensional genomic data and to extract most abstract features through a hierarchical learning process}} can be tamed by learning most abstract features through a hierarchical learning process by stacking DNN architectures and neural representation learning. 
-    \item A neural ensemble method\footnote{\textbf{H2}: \textit{A neural ensemble method, combining several deep architectures, can be more effective than structures solely based on a single model by reducing the generalization error}.} by combining several deep architectures can be more effective than structures solely based on a single model by reducing the generalization error.
+    \item \textbf{High dimensionality} of genomic data\footnote{\textbf{H1}: \textit{Stacking- and neural representation learning can be very effective at handling high dimensional genomic data and to extract most abstract features through a hierarchical learning process.}} can be tamed by learning most abstract features through a hierarchical learning process by stacking DNN architectures and neural representation learning. 
+    \item A \textbf{neural ensemble method}\footnote{\textbf{H2}: \textit{A neural ensemble method, combining several deep architectures, can be more effective than structures solely based on a single model by reducing the generalization error}.} by combining several deep architectures can be more effective than structures solely based on a single model by reducing the generalization error.
 \end{enumerate}
 
 \hspace*{3.5mm} Based on these hypotheses, we train and evaluate \texttt{Conv-LSTM} and \texttt{CAE} networks separately, which follow the model weighted averaging ensemble of the classifiers, where we combine the predictions of multiple model snapshots.  %Further, we provide interpretations about the prediction made by the neural network in order to make the cancer diagnosis more effective. 
@@ -187,12 +187,12 @@ Copy numbers and gene coordinates of different cancer types from TCGA are used i
 %In addition, since not all genes are available in every human body and vary from person to person, genes are also variable in the human genome. 
 We prepared two different datasets of CNVs based on oncogenes and protein-coding genes that are used to train the Conv-LSTM and CAE networks to get the ensemble from. Additionally, some preprocessed data\footnote{Based on a Master thesis I co-supervised with Dr. Oya Beyan: "Using Deep Neural Networks and Copy Number Variations for Cancer Detection", by Md. Ashiqur Rahman, Software Systems Engineering, RWTH Aachen University, 2018.} were reused. %Data co %\Cref{fig:pipeline} shows the overall processing pipeline of our proposed approach.
 
-\subsection{Feature selection: protein-coding genes}
+\subsection{Feature selection from protein-coding genes}
 We used the CNVs of 20,308 protein non-coding genes. Since not all of these genes are responsible for tumor growth, features from irrelevant genes make the CNV data unnecessarily complex. Neural networks then fail to converge the training, resulting in poor performance. Although using protein-encoding genes makes the dimension fixed, 95\% of the features will be empty across the samples (e.g., a sample with 500 CNVs has 19,808 empty features making empty features for 19,808 cases). Using gene locations adds two additional complexities evolved: the curse of dimensionality and sparsity. 
 
 \hspace*{3.5mm} To solve these problems, we perform CNV analysis in combination with 568 oncogenes responsible for the majority of cancer types. While oncogenes are found to be related to tumor growth, it is not confirmed which other genes also responsible for its growth. In such a setting, consecutive genes with non-zero values represent copy number length, and negative or positive segmentation values represent loss and gain, respectively. We hypothesize that DNN will be able to identify those hidden non-linear features. 
 
-\subsection{Feature selection: oncogenes}
+\subsection{Feature selection from oncogenes}
 There are structural variations in DNA where protein-encoding genes are not present, and these genes have no effect on tumor growth. One way to remove such unnecessary segments is by keeping only those copy numbers that fall within gene regions and discarding the rest using oncogenes, because oncogenes not only control the cell division but are also responsible for gene expression changes due to external or natural causes and could lead to the development of tumor at some point. Thus, by considering only 568 oncogenes, we prepared another CNV representation instead of taking the whole 20,308 genes. 
 
 \hspace*{3.5mm} As stated earlier, the manual CNV feature extraction is not efficient, and the recurrent CNVs from multiple samples are often ignored, we used the MSeq-CNV tool, which is an efficient CNV extraction method. In order to model the number of mate pairs with aberration in the insertion size and Poisson distribution for emitting the read counts, MSeq-CNV applies the binomial distribution-based mixture density on each genomic position. This applies a mixture density for modeling aberrations in depth of coverage and abnormalities in the mate pair insertion sizes. After applying MSeq-CNV, genome-wide copy gain and loss regions are saved in a matrix form, where each row represents a different CNV call with its sample number, start position, end position, and copy number estimation.
@@ -215,13 +215,13 @@ There are structural variations in DNA where protein-encoding genes are not pres
     \vspace{-6mm}
     \begin{center}
         \scriptsize
-        \begin{tabular}{l|l|l| l|l|l|l|l|l|l}
+        \begin{tabular}{l|l|l|l|l|l|l|l}
             \hline
             \rowcolor{Gray}
-            \textbf{Type} & \textbf{Gender} & Age & Race & \textbf{PRDM16} & \textbf{RPL22} & \textbf{CAMTA1} & \textbf{MTOR} & .. & \textbf{MTCP1} \\\hline    
-            1 & 1 & 45 & American & -0.3195 & -0.2154 & 0 & 0.4767  & .. & 0.652 \\\hline
-            2 & 0 & 55 & Indian & 0.230 & -0.552 & 1.715 & -0.92  & .. & -1.0 \\\hline
-            3 & 1 & 65 & Nigerian & -1.240 & 0.975 & 0.350 & 0.642  & .. & 0.985 \\\hline
+            \textbf{Type} & \textbf{Gender} & \textbf{PRDM16} & \textbf{RPL22} & \textbf{CAMTA1} & \textbf{MTOR} & .. & \textbf{MTCP1} \\\hline    
+            COAD & 1 & -0.3195 & -0.2154 & 0 & 0.4767  & .. & 0.652 \\\hline
+            PRAD & 0 & 0.230 & -0.552 & 1.715 & -0.92  & .. & -1.0 \\\hline
+            OV & 1 & -1.240 & 0.975 & 0.350 & 0.642  & .. & 0.985 \\\hline
         \end{tabular}
         \vspace{-6mm}
     \end{center}
@@ -235,16 +235,16 @@ There are structural variations in DNA where protein-encoding genes are not pres
 We construct and train Conv-LSTM and CAE networks on two different CNVs representations~(i.e., oncogenes and protein-coding genes), followed by the creation of multiple snapshot models. Then we evaluate each network independently, followed by the MEA to combine the snapshot models. 
 
 \subsubsection{Construction of Conv-LSTM network }
-We construct and train the \texttt{Conv-LSTM} network by combining both CNN and LSTM layers as shown in \cref{fig:conv_lstm}. While the CNN model uses conv filters to capture local relationship values, an LSTM network can carry overall relationship of a whole CNV sequence more efficiently. This turns \texttt{Conv-LSTM} into a powerful architecture to capture long-term dependencies between features extracted by CNN~\cite{karim2019drug}. To capture both the local and global relationships, all the input $\mathcal{X}_{1},\mathcal{X}_{2},...,\mathcal{X}_{t}$ cells in \texttt{Conv-LSTM} output $\mathcal{C}_{1},\mathcal{C}_{2},...,\mathcal{C}_{t}$, hidden states $\mathcal{H}_{1},\mathcal{H}_{2},....,\mathcal{H}_{t}$, and gates $i_t$,$f_t$,$o_t$ of the network as 3D tensors whose last two dimensions are spatial dimensions. %To get a better picture of the inputs and states, we may imagine them as vectors standing on a spatial grid. 
+We construct and train the \texttt{Conv-LSTM} network by combining both CNN and LSTM layers as shown in \cref{fig:conv_lstm}. While the CNN model uses conv filters to capture local relationship values, an LSTM network can carry overall relationship of a whole CNV sequence more efficiently. This turns \texttt{Conv-LSTM} into a powerful architecture to capture long-term dependencies between features extracted by CNN~\cite{karim2019drug}. To capture both the local and global relationships, all the input ${X}_{1},{X}_{2},...,{X}_{t}$ cells in \texttt{Conv-LSTM} output ${C}_{1},{C}_{2},...,{C}_{t}$, hidden states ${H}_{1},{H}_{2},....,{H}_{t}$, and gates $i_t$,$f_t$,$o_t$ of the network as 3D tensors whose last two dimensions are spatial dimensions. %To get a better picture of the inputs and states, we may imagine them as vectors standing on a spatial grid. 
 \texttt{Conv-LSTM} determines the future state of a certain cell in the input hyperspace by the inputs and past states of its local neighbors, which is achieved by using a convolution operator in the state-to-state and input-to-state transitions, which can be represented as follows~\cite{Conv_LSTM1,karimACCA2019}:
 
 \vspace{-4mm}
 \begin{align}
     \begin{array}{c}
-            {i_{t}=\sigma\left(W_{x i} * \mathcal{X}_{t}+W_{h i} * \mathcal{H}_{t-1}+W_{c i} \circ \mathcal{C}_{t-1}+b_{i}\right)} \\
-            {f_{t}=\sigma\left(W_{x f} * \mathcal{X}_{t}+W_{h f} * \mathcal{H}_{t-1}+W_{c f} \circ \mathcal{C}_{t-1}+b_{f}\right)} \\
-            {\mathcal{C}_{t}=f_{t} \circ \mathcal{C}_{t-1}+i_{t} \circ \tanh \left(W_{x c} * \mathcal{X}_{t}+W_{c o} * \mathcal{C}_{t}+b_{o}\right)} \\
-            {\qquad \mathcal{H}_{t}=o_{t} \circ \tanh \left(\mathcal{C}_{t}\right)}
+            {i_{t}=\sigma\left(W_{x i} * {X}_{t}+W_{h i} * {H}_{t-1}+W_{c i} \circ {C}_{t-1}+b_{i}\right)} \\
+            {f_{t}=\sigma\left(W_{x f} * {X}_{t}+W_{h f} * {H}_{t-1}+W_{c f} \circ {C}_{t-1}+b_{f}\right)} \\
+            {{C}_{t}=f_{t} \circ {C}_{t-1}+i_{t} \circ \tanh \left(W_{x c} * {X}_{t}+W_{c o} * {C}_{t}+b_{o}\right)} \\
+            {\qquad {H}_{t}=o_{t} \circ \tanh \left({C}_{t}\right)}
     \end{array}
 \end{align}
 \vspace{-4mm}
@@ -253,7 +253,7 @@ We construct and train the \texttt{Conv-LSTM} network by combining both CNN and 
 
 \begin{figure*}
 	\centering
-	\includegraphics[width=0.80\textwidth,height=40mm]{images/conv_lstm.png}	 
+	\includegraphics[width=\linewidth,height=50mm]{images/conv_lstm.png} 
 	\caption{Schematic representation of the \texttt{Conv-LSTM} network starts from taking input CNV samples and passing to CNN layers before getting a sequence vector representation from the LSTM layers to pass to dense, dropout, and softmax layers~\cite{karimACCA2019}}	
 	\label{fig:conv_lstm}
 	\vspace{-2mm}
@@ -268,7 +268,7 @@ Humans communicate through languages or signs, which is analogous to biological 
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=0.9\textwidth,height=40mm]{images/cae2.png}	
+	\includegraphics[width=\textwidth,height=50mm]{images/cae.png}	
     \caption{Schematic representation of the CAE classifier~\cite{karimACCA2019}}
 	\label{fig:cae}
 \end{figure*}
@@ -281,7 +281,7 @@ Humans communicate through languages or signs, which is analogous to biological 
 Being motivated by several reasons, we constructed a CAE, which is architecturally a 19-layer autoencoder, in which a batch normalization layer is used after every conv layer and the ReLu activation function in every layer except for last layer that uses a Softmax activation function. From the given CNV samples, a convolutional layer in the encoder calculates the feature map. The pooling layer is calculated by down-sampling the convolutional layer by taking the maximum value in each non-overlapping sub-region. The CAE classifier contains of two parts: i) the CAE autoencoder and ii) the classifier. The CAE autoencoder part has the following structure: 
 
 \begin{itemize}[noitemsep]
-    \scriptsize
+    %\scriptsize
         \item Input layer: each CNVs sample is reshaped from 1 x 20,736 to 144 x 144
         \item Convolutional layer: of size 32 x 20,736 (i.e. 144 x 144) 
         \item Batch normalization layer: of size 32 x 20,736
@@ -317,7 +317,7 @@ We train the networks in two steps: i) first, we train each network independentl
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.75\textwidth,height=60mm]{images/ca.png}
+    \includegraphics[width=\textwidth,height=90mm]{images/ca.png}
     \caption{Training loss of Conv-LSTM network with standard learning rate~(blue) vs. cosine annealing~(red): intermediate models~(dotted lines) form an ensemble at the end of training~\cite{karimACCA2019}}
     \label{fig:ca}
     \vspace{-2mm}
@@ -335,7 +335,7 @@ The CAC requires total training epochs, maximum learning rate, and number of cyc
 
 \begin{figure}
     \centering
-        \includegraphics[width=0.8\textwidth,height=50mm]{images/mae_model_v2.png}
+        \includegraphics[width=\linewidth,height=80mm]{images/snapshot_ensemble.png}
     \caption{Model averaging ensemble of Conv-LSTM and CAE snapshots~\cite{karimACCA2019}}
     \label{fig:mae}
     \vspace{-2mm}
@@ -454,13 +454,13 @@ As shown in~\cref{table:codingene}, precision and recall for majority cancer typ
 	\centering
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=0.95\linewidth]{images/cm1.png}
+		\includegraphics[width=\linewidth]{images/cm1.png}
 		\caption{Using coding genes based CNVs}
         \label{fig:cm_1}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=0.95\linewidth]{images/cm2.png}
+		\includegraphics[width=\linewidth]{images/cm2.png}
 		\caption{Using oncogenes based CNVs}
         \label{fig:cm_2}
 	\end{subfigure}

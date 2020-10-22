@@ -145,7 +145,7 @@ From given genomics profiles of PCAt cohorts covering  different cancer types~(e
             %PRAD & 501 & 536 & Prostate adenocarcinoma \\\hline 
             %STAD & 442 & 464 & Stomach adenocarcinoma \\\hline 
     \end{tabular}
-    \vspace{-6mm}
+    \vspace{-4mm}
 \end{table}
 
 \hspace*{3.5mm} While using single modality, we classify samples directly in it's original data space $X$. In the latter approach, instead of classifying samples directly in it's original data space $X$, we first transform each data with a nonlinear mapping $F_{\theta}: X \rightarrow Z$, where $\theta$ are learnable parameters and $Z \in {R}^{K}$ is the learned or embedded feature space, where $K \ll D$. Then we create a shared representation of class-discriminating features from each modality, followed by parametrizing $F_{\theta}$ by representation learning based on multimodal convolutional autoencoders~(MCAE) is employed due to it's function approximation properties and feature learning capabilities~\cite{xie2016unsupervised,karim2019drug} from genomic data. Based on embedding $Z$, the classifier then $F$ maps an input $x$ to an output $F(x) \in y, F: {R}^{d} \mapsto y$. When we assume $F$ has a parametric form, we write $F_{\theta}$, where ${L}(F(x), y)$ denotes the loss function used to train $F$ on a dataset $D$ of input-output pairs $(x(i), y(i))$. Local explainability refers to an explanation for why $F$ predicted $F(x)$ for a fixed point $x$. 
@@ -158,9 +158,9 @@ The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt c
 One of the goals of genomics data~(in particular, expression data) analysis is to disseminate biologically meaningful information about the biomarkers such as genes and proteins. 
 %Through these information, biologists are able to discover unknowns and reaffirm previously knowledge. 
 Since, our aims is providing accurate diagnosis of cancer, information about gene interaction is of biological relevance. This will provide clearer understanding of the roles a certain set of genes play in cancer development and related issues, which will also assists in the  early treatment of disease~\cite{lu2003cancer}. %It is a common consensus that biological relevance for a cancer classifier is as important as the classification
-accuracy.
+%accuracy.
 
-\hspace*{3.5mm}Technically, finding out important biomarkers is the ranking of biologically meaningful features. The main characteristic of feature ranking is that it is based on individual feature correlation w.r.t class separation, i.e., selecting genes with high individual correlation with the classes. Such that no correlation among the genes Finding marker genes that are genes whose expression values are biologically useful for determining the class of the samples~\cite{lu2003cancer}. In other words, marker genes are genes that characterize the tumor classes. The identification of marker genes are important due to the following reasons~\cite{lu2003cancer}:
+\hspace*{3.5mm} Identification of biomarkers is the ranking of biologically significant and meaningful features, which is based on individual feature correlation w.r.t class separation, i.e., selecting genes with high individual correlation with the classes such that no correlation among the genes Finding marker genes that are genes whose expression values are biologically useful for determining the class of the samples~\cite{lu2003cancer}. In other words, marker genes are genes that characterize the tumor classes. Subsequently, accurate identification of marker genes are important due to the following reasons~\cite{lu2003cancer}:
 
 \begin{itemize}[noitemsep]
     \item Enable better classification performance
@@ -329,7 +329,7 @@ In this subsection, we discuss construction and training of the unimodal vanilla
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth,height=100mm]{images/wf_2D_CNN.png}
+	\includegraphics[width=\textwidth,height=120mm]{images/wf_2D_CNN.png}
     \caption{Workflow of the unimodal CNN modality approach}	
 	\label{fig:workflow_2D_CNN}
 \end{figure*}
@@ -343,7 +343,7 @@ We train a vanilla CNN and VGG16 architectures from scratch alongside data augme
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=\textwidth,height=55mm]{images/clstm.PNG}
+	\includegraphics[width=\textwidth,height=65mm]{images/clstm.png}
     \caption{Schematic representation of our approach, which starts from taking a raw GE sample and passing to conv layers before obtaining rectified conv feature maps~(with guided-backprop and GradCAM++) to pass through dense, dropout, and softmax layer}	
 	\label{fig:clstm}
 \end{figure*}
@@ -494,23 +494,24 @@ The multimodality nature of the data motivated us to develop two deep architectu
 \end{itemize}
 \vspace{-2mm}
 
-\begin{figure*}[htp!]
+\begin{sidewaysfigure*}[htp!]
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=70mm]{images/lrc_cls.png}
+		\includegraphics[width=\linewidth,height=140mm]{images/lrc_cls.png}
 		\caption{Classification on LRC}
         \label{fig:lrc_11}
 	\end{subfigure}
+	\hfill
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=70mm]{images/joint_rl_cls.png}
+		\includegraphics[width=\linewidth,height=140mm]{images/joint_rl_cls.png}
 		\caption{Classification on SLR}
         \label{fig:slr_11}
 	\end{subfigure}
 	\caption{Fusion architectures in multimodal representation learning and classification} 
 	\label{fig:mm_rL_example1}
-\end{figure*}
+\end{sidewaysfigure*}
 
 \subsubsection{Construction of MCAE}
 Although a single and simple AE discussed in \cref{preli:AEs} can reconstruct an output similar to the original input, it cannot handle multimodality. Nevertheless, traditional supervised learning is only able to learn from the intersection of samples, which are both clean and labeled. In contrast, weights of the MCAE encoder learn from both unlabelled data, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Architecturally, MCAE is similar to a three-stage CAE: the first stage represents a particular modality for each type of data, and the second stage represents the cross-modality. CAE is trained to find a low-dimensional representation of the multimodal data, taking advantage of the information that one modality provides about another. 
@@ -578,16 +579,16 @@ Further, we observe the performance by adding the GNL followed by the dense laye
 \subsubsection{Interpreting black-box MCAE model}
 %We discuss details of the construction and training of the MCAE architecture, followed by providing explanations of the interpretability in this sub-section. 
 %\Cref{fig:tsne_ge} shows the t-SNE visualization based on GE  profiles. 
-Majority of the approaches based on multimodal learning directly merge the learned or latent vectors. This is a very critical drawback. Consequently, the learned representations from CAE are not easily interpretable, disentangling them is essential to provide insight into what features did the representations capture and what attributes of the samples are the classification based on~\cite{karimTCBB2020}. As already mentioned earlier, there aren't huge difference between GE, miRNA, or CNV features values. Therefore, merging them blindly could ignore the differences of features contributions and also increase dimensions of representations. However, different to unimodal CNN models, we chose not to go for manual feature selection. Rather, we let the MCAE model extract the most important features based on attention mechanism. 
+Majority of the approaches based on multimodal learning directly merge the learned or latent vectors. Consequently, the learned representations from CAE are not easily interpretable, which is a very critical drawback. However, disentangling them is essential to provide insight into what features did the representations capture and what attributes of the samples are the classification based on~\cite{karimTCBB2020}. As mentioned earlier, there is not huge difference between GE, miRNA, or CNV features values. Therefore, merging them blindly could ignore that subtle differences w.r.t feature contributions and may increase dimensions of the representation. 
 
-\begin{figure*}[htp!]
+\begin{sidewaysfigure*}[h]
 	\centering
-	\includegraphics[width=\textwidth,height=65mm]{images/attention.png}	\caption{The schematic representation of the attention mechanism}.	
+	\includegraphics[width=\textwidth,height=70mm]{images/attention.png}	\caption{The schematic representation of the attention mechanism}.	
     \vspace{-2mm}
 	\label{fig:attention}
-\end{figure*}
+\end{sidewaysfigure*}
 
-\hspace*{3.5mm}In particular, motivated by the facts that attention networks have already been applied in numerous research domains, as shown in \cref{fig:attention}, we employ this technique to learn the latent representations by fusing different features and their dimensions before the actual concatenation. From the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. Let $K$ denote the dimensions of latent vectors. Then, we learn the representations from the latent vectors of individual features. The representation of a feature $i$ can be defined as follows:
+\hspace*{3.5mm} Unlike the unimodal CNN models, where we performed CNN-based feature selection, we let the MCAE model to do so, using attention mechanism. In particular, motivated by the facts that attention networks have already been applied in numerous research domains, as shown in \cref{fig:attention}, we employ this technique to learn the latent representations by fusing different features and their dimensions before the actual concatenation. From the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. Let $K$ denote the dimensions of latent vectors. Then, we learn the representations from the latent vectors of individual features. The representation of a feature $i$ can be defined as follows: 
 
 \vspace{-6mm}
 \begin{align}

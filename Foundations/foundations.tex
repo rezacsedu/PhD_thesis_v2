@@ -437,10 +437,10 @@ ML models are composed of two different types of parameters called model paramet
 
 \vspace{-1mm}
 \begin{itemize}[noitemsep]
-    \item \textbf{Linear model:} degree of polynomial features.
-    \item \textbf{Clustering}: number of clusters in a K-means clustering.
-    \item \textbf{Tree and tree-ensemble}: maximum depth of the decision tree~(DT), the minimum number of samples at a leaf node in the DT, number of trees to include in a random forest model. 
-    \item \textbf{Neural networks:} number of neurons in a hidden layer, number of layers, learning rate for stochastic gradient descent for backpropagation. 
+    \item \textbf{Linear model} - degree of polynomial features.
+    \item \textbf{Clustering} - number of clusters~(i.e., k) in a k-means clustering.
+    \item \textbf{Tree and tree-ensemble} - maximum depth of the decision tree~(DT), the minimum number of samples at a leaf node in the DT, number of trees to include in a random forest model. 
+    \item \textbf{Neural networks} - number of neurons in a hidden layer, number of layers, learning rate for stochastic gradient descent for backpropagation. 
 \end{itemize} 
 \vspace{-2mm}
 
@@ -645,10 +645,10 @@ Local interpretability of an ML model can be achieved by designing justified mod
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
-    \item \textbf{Feature summary statistics}- summary of each feature and their impact on the model predictions. 
-    \item \textbf{Feature summary visualization}-  summary of the methods used to visualize and in order to make the visual communication easier, where outcomes are  presented with bars, plots, or table. 
-    \item \textbf{Model internals approach}- the interpretation of intrinsically interpretable models, such as linear models in which model weights represent both internals parameters and summary statistics for the features. However, typically, internal parameters of model-agnostic models are not inspected~\cite{molnar2019interpretable}. 
-    \item \textbf{The data point interpretability}- methods that require data points themselves to allow interpretability to  return data points to make model interpretable. 
+    \item \textbf{Feature summary statistics} - summary of each feature and their impact on the model predictions. 
+    \item \textbf{Feature summary visualization} - summary of the methods used to visualize and in order to make the visual communication easier, where outcomes are  presented with bars, plots, or table. 
+    \item \textbf{Model internals approach} - the interpretation of intrinsically interpretable models, such as linear models in which model weights represent both internals parameters and summary statistics for the features. However, internal parameters of model-agnostic models are not typically inspected~\cite{molnar2019interpretable}. 
+    \item \textbf{The data point interpretability} - methods that require data points themselves to allow interpretability to  return data points to make model interpretable. 
 \end{itemize}
 
 \hspace*{3.5mm} To explain and interpret the model predictions these ways, several approaches and methods have been proposed. 
@@ -659,7 +659,7 @@ For the human-level interpretability of a model, we need to know the inner insig
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.7\textwidth,height=90mm]{images/pro_per_surrogation.png}	
+	\includegraphics[width=0.8\textwidth,height=110mm]{images/pro_per_surrogation.png}	
     \caption{Different interpretability method for opening black-box ML model}	
 	\label{fig:pro_per_surroga}
 \end{figure}
@@ -761,19 +761,16 @@ The output layer relevance is calculated before the back-propagation as follows~
     \label{eq:rn}
 \end{align}
 
-\hspace*{3.5mm} However, the shortcomings of LRP lies since it is only considered the target class for the calculation, which can lead to the miss-attribution of input regions to the relevance. To tackle the issue of discriminating the target object’s class with the non-target classes, a class contrastive improvement on LRP called contrastive LRP (CLRP) is proposed~\cite{LRP3}. However, by equally penalizing non-target classes, the relevance produced in CLRP is reduced to zero, which is due to equal weighting of the non-target nodes~\cite{ LRP2}. Conversely, SGLRP is designed to take advantage of the post-softmax probabilities, where the gradient of the softmax output $\hat{y}_{t}$ is computed w.r.t, intermediate value of each output node $z_{n}$ as the relevance of the output layer $R_{n}^{(L)}$. The corresponding relevance map $R_{SGLRP}$ is then defined similar to \cref{eq:rn},
+\hspace*{3.5mm} However, the shortcomings of LRP lies since it is only considered the target class for the calculation, which can lead to the miss-attribution of input regions to the relevance. To tackle the issue of discriminating the target object’s class with the non-target classes, a class contrastive improvement on LRP called contrastive LRP~(CLRP) is proposed~\cite{LRP3}. 
 
-\iffalse
-\vspace{-2mm}
-\begin{align}
-    R_{n}^{(L)}=\left\{\begin{array}{ll}
-    {z_{t}^{(L)}} & {n=t} \\
-    {0} & {\text { otherwise }}
-    \end{array}\right.
-\end{align}
-\fi 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth,height=110mm]{images/lrp.png}	
+    \caption{Overview of LRP for explaining model's decision, based on literature~\cite{binder2016layer}. First, the input image is processed , before the output/prediction is generated. Then, the output value is backpropagated layer-to-layer onto the pixel, where pixel relevances $R_p$ are visualized as heatmap.}	
+	\label{fig:pro_per_surroga}
+\end{figure}
 
-where $R_{1}^{(1)}, \ldots, R_{n}^{(1)}, \ldots, R_{N}^{(1)}$ are the relevance values at the input layer calculated by \cref{eq:rn} and \cref{eq:rn_neg}, except for the output layer relevance $R_{n}^{(L)}$, which is calculated as the gradient of softmax~\cite{LRP2}:
+\hspace*{3.5mm} By equally penalizing non-target classes, the relevance produced in CLRP is, however, reduced to zero, which is due to equal weighting of the non-target nodes~\cite{ LRP2}. Conversely, SGLRP is designed to take advantage of the post-softmax probabilities, where the gradient of the softmax output $\hat{y}_{t}$ is computed w.r.t, intermediate value of each output node $z_{n}$ as the relevance of the output layer $R_{n}^{(L)}$. The corresponding relevance map $R_{SGLRP}$ is then defined similar to \cref{eq:rn}, where $R_{1}^{(1)}, \ldots, R_{n}^{(1)}, \ldots, R_{N}^{(1)}$ are the relevance values at the input layer calculated by \cref{eq:rn} and \cref{eq:rn_neg}, except for the output layer relevance $R_{n}^{(L)}$, which is calculated as the gradient of softmax~\cite{LRP2}:
 
 \vspace{-2mm}
 \begin{align}
@@ -792,12 +789,8 @@ Due to the nested non-linear and complex structure, DNN architectures are mostly
     \item \textbf{Single or multiple decision rules} - although a combination of several rules can be used to make predictions, sometimes a single decision rule is enough to explain the whole outcome.
 \end{itemize}
 
-\hspace*{3.5mm} If derived from intelligible features and the length of the condition is short, decision rules are probably the most interpretable prediction models. Suppose we have a simple model for predicting the body mass index~(BMI). Interpreting a predicted BMI with a decision rule is very easy and can be explained in layman term. For example, IF BMI $\geq$ 30~(condition), THEN you're obese~(prediction). Further explanations can be provided saying that ``an increased BMI is associated with risk for developing \textit{type-2 diabetes}, hypertension, and cardiovascular disease". On the contrary, even this simple concept may not be well understood by patients~\cite{post2015patient} themselves. 
-
-
-
-
-Once we have a transparent and easily explainable AI model, decision rules can be generated using a series of IF-THEN statements. In this thesis, one of the goals is to generate human-interpretable decision rules automatically based on self-explanatory logic for all decisions. 
+\hspace*{3.5mm} If derived from intelligible features and the length of the condition is short, decision rules are probably the most interpretable prediction models. Suppose we have a simple model for predicting the body mass index~(BMI). Interpreting a predicted BMI with a decision rule is very easy and can be explained in layman term. For example, IF BMI $\geq$ 30~(condition), THEN you're obese~(prediction). Further explanations can be provided saying that ``an increased BMI is associated with risk for developing \textit{type-2 diabetes}, hypertension, and cardiovascular disease". 
+On the contrary, even this simple concept may not be well understood by patients~\cite{post2015patient} themselves. Once we have a transparent and easily explainable AI model, decision rules can be generated using a series of IF-THEN statements. In this thesis, one of the goals is to generate human-interpretable decision rules automatically based on self-explanatory logic for all decisions. 
 
 \subsubsection{Neuro-symbolic reasoning and challenges of current XAI methods}
 Alejandro B. A, et al.~\cite{arrieta2020explainable} outline the trade-off between interpretability and accuracy, i.e., between the simplicity of the information given by the system on its internal functioning, and the exhaustiveness of this description
@@ -848,17 +841,17 @@ Cancer is an umbrella term for a large group of lethal diseases. Till date, more
 \subsection{The growth of cancer}
 In this section, we focus on the different types and subtypes of cancer and their growth and metastasis. The idea is to acquire some biological interpretations of the genomics data for our DSS. Cancer mainly caused when abnormal cells divide rapidly, and spread to other tissue and organs~\cite{pancan}. Cancer is often  driven by a series of genetic mutations of genes induced by selection pressures of carcinogenesis in the cells~\cite{ghazani2017assigning, baker2015cancer}. Those genes often called called marker genes ~(or biomarkers) include both onco- and tumor suppressor genes. When biomarkers over- or under-express in cancer cells as differentially expressed genes, they become uncontrollable proliferation or immorality of cancer cells~\cite{ghazani2017assigning, baker2015cancer}. 
 
-\hspace*{3.5mm} Although the difference in the average of expression between two sample classes are often employed in many transcriptomics analyses, such difference is not the only way that a gene can be expressed differentially~\cite{xie2018adaptively}. In fact, there exist a number of regulators or mediators in cells such as transcriptional factors or miRNA, regulate a target gene in a collective way and accordingly shape a complex and heterogeneous expression pattern across inter- or intra-classes for the target gene~\cite{ghazani2017assigning, baker2015cancer}, albeit they work quite independently. Such regulatory mechanisms may account for the high biological variability where, for example, samples in one condition show a bimodal pattern of expression versus the other condition which show a unimodal pattern of expression across samples~\cite{xie2018adaptively}. In short, following are a few biological processes responsible for the growth of cancer: 
+\hspace*{3.5mm} Although the difference in the average of expression between two sample classes are often employed in many transcriptomics analyses, such difference is not the only way that a gene can be expressed differentially~\cite{xie2018adaptively}. In fact, there exist a number of regulators or mediators in cells such as transcriptional factors or miRNA, regulate a target gene in a collective way and accordingly shape a complex and heterogeneous expression pattern across inter- or intra-classes for the target gene~\cite{ghazani2017assigning, baker2015cancer}, albeit they work quite independently. Such regulatory mechanisms may account for the high biological variability where, for example, samples in one condition show a bi-modal pattern of expression versus the other condition which show a unimodal pattern of expression across samples~\cite{xie2018adaptively}. In a nutshell, following biological processes are mainly responsible for the growth of cancer: 
 
 \begin{itemize}[noitemsep]
-    \item \textbf{Minor mutations}: when a minor changes such as mutations happened to the DNA in the cells, our body cells correct these mistakes, by converting it into a healthy cell. However, when a mistake cannot be corrected, a cell can become cancerous. 
-    \item \textbf{Major mutations}: mutations can cause cells that should be replaced to survive instead of die, and new cells to form when they're not needed. These extra cells can divide uncontrollably, causing growths called tumors~\cite{82Tomczak}. Besides, genetic mutations can be inherited. Cancer disrupts grow and divide process of healthy cells, which leads to abnormal growths~\cite{pancan}. 
-    \item \textbf{Gene alterations}: cancer also caused by gene alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, copy numbers~(CN), profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,13cancerdef,19Cruz}. 
+    \item \textbf{Minor mutations} - when a minor change happened to the DNA in the cells, our body cells correct these mistakes, by converting it into a healthy cell. However, when a mistake cannot be corrected, a cell can become cancerous. 
+    \item \textbf{Major mutations} - when a minor change causes the cells to be replaced to survive instead of dying, and new cells to form when they're not needed. These extra cells can divide uncontrollably, causing growths called tumors~\cite{82Tomczak}. Besides, genetic mutations can be inherited. Cancer disrupts grow and divide process of healthy cells, which leads to abnormal growths~\cite{pancan}. 
+    \item \textbf{Gene alterations} - changes in the structure of occurring genetic aberrations, such as somatic mutations, copy numbers~(CN), profiles, and different epigenetic alterations can form tumor or cancerous cells as they affect normal cell division and  growth~\cite{82Tomczak,13cancerdef,19Cruz}. 
 %It’s caused by changes or mutations in DNA. DNA exists in the individual genes of every cell. It has instructions that tell the cell what functions to perform and how to grow and divide. 
 \end{itemize}
 
 \subsection{Cancer metastasis and subtypes}
-When gene expression~(GE) is disrupted by cell division, environmental effects, or genetically inherited from parents, it also changes the production of different proteins, affecting normal cell behavior. Then the damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}. Tumors can cause a variety of health problems, depending on where they grow in the body~\cite{zuo2019identification}. They can grow large and cause problems when they press against neighboring organs and tissue, although not all tumors are cancerous. For example, all malignant tumors are cancerous and can invade other parts of the body, benign tumors are noncancerous and do not spread to nearby tissues~\cite{13cancerdef}. 
+When gene expression~(GE) is disrupted by cell division, environmental effects, or genetically inherited from parents, it also changes the production of different proteins, affecting normal cell behavior. Cancer cells that gone wrong no longer respond to many of the signals that control cellular growth and death. Subsequently, damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}. Tumors can cause a variety of health problems, depending on where they grow in the body~\cite{zuo2019identification}. They can grow large and cause problems when they press against neighboring organs and tissue, although not all tumors are cancerous. During the early stages of cancer, tumors are typically benign\footnote{Benign tumors are noncancerous and do not spread to nearby tissues~\cite{o2010unit}} and remain confined within the normal boundaries of a tissue. As tumors grow and become malignant, they gain the ability to break through these boundaries and invade adjoining tissues~\cite{o2010unit}. Subsequently, all malignant tumors can invade other parts of the body~\cite{13cancerdef}. 
 
 \hspace*{3.5mm} Cancers are named for the area in which they begin and the type of cell they are made of~\cite{19Cruz}, even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer. This process is called metastasis is how the cancer spreads to  different parts of the body from where it started growing~\cite{13cancerdef}. Some cancer cells can also migrate through the bloodstream or lymphatic system to distant areas of the body. When this spread over, an oncologist refers saying the cancer has ``metastasized"~\cite{22Ding}. Cancers that have metastasized are considered more fatal and advanced than those that have not, hence are harder to treat. On the other hand, cancer subtypes describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells. Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}:
 
@@ -950,9 +943,9 @@ The expression datasets in PCAt have unique characteristics that are different f
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
-    \item High dimensionality: up to tens of thousands of genes.
-    \item Very small sample size: less than $100$.
-    \item Majority of genes are not related to cancer classification.
+    \item \textbf{High dimensionality} - up to tens of thousands of genes.
+    \item \textbf{Very small sample size} - less than $100$.
+    \item \textbf{Very sparse feature space} as majority of genes are not responsible for cancer, i.e., not related to cancer types classification.
 \end{itemize}
 \vspace{-2mm}
 
@@ -973,9 +966,10 @@ The largest uniformly processed cancer genomic data provided is TCGA, giving ove
 \end{itemize}
 
 \section{Chapter Summary}
-In this chapter, we provides the preliminaries and foundations of several aspects required for the foundation of an ML-based DSS. We covered basics of decision support system, machine learning, deep learning and neural networks, representation learning, neural ensemble methods, interpretable methods, and the mechanism of cancer growth and metastasis. 
-It turns out that cancer is not only a lethal disease but tremendously complex to diagnose and treat. Therefore, not only recommending accurate diagnosis and subsequent treatment, but also knowing the biological mechanisms is important, e.g., oncogenes. 
+In this chapter, we provide preliminaries and several aspects required for the foundation of an AI DSS. We covered basics of decision support systems, machine learning, deep learning and neural networks, hyperparameter tuning, representation learning, neural ensemble methods, explainability and interpretability, different interpretable methods, and the mechanism of cancer growth and metastasis. 
+It is now understandable that cancer is not only a lethal disease, but also tremendously complex to diagnose and treat. Therefore, not only recommending accurate diagnosis, but also knowing the biological mechanisms is important, e.g., oncogenes in order to provide subsequent treatments. 
 
-\hspace*{3.5mm} Nevertheless, as research suggested~\cite{alirezaie2019semantic}, introducing semantics into deep learning through ontological-reasoning a new era towards XAI, where the ML model reads input data, generates the predictions, observe the results, use the existing knowledge from the KB as a semantic reasoner, and produces new knowledge to provide more human-interpretable answers and explanations. The benefit is that the model learns not only from the data but also from explicit and encoded prior knowledge, which not only helps avoiding making similar mistakes in successive iterations, but also helps reducing the biases. 
+\hspace*{3.5mm} Nevertheless, as research suggested~\cite{alirezaie2019semantic} that introducing semantics into deep learning model through ontological-reasoning will likely start a new era towards XAI, where the ML model reads input data, generates the predictions, observe the results, use the existing knowledge from the KB as a semantic reasoner, and produces new knowledge to provide more human-interpretable answers and explanations. The benefit is that the model learns not only from the data but also from explicit and encoded prior knowledge, which not only helps avoiding making similar mistakes in successive iterations, but also helps reducing the biases. 
+Eventually, if an explainable DSS system can explain its reasoning, we can verify whether that reasoning is sound with respect to these auxiliary criteria for real clinical setting. 
 
-\hspace*{3.5mm}Eventually, if an explainable DSS system can explain its reasoning, we can verify whether that reasoning is sound with respect to these auxiliary criteria, hence can be used in real clinical setting. In the next chapter, we start our explainable journey towards making the cancer diagnosis fair and trustworthy. We'll use single modality, e.g., CNV data and investigate the feasibility weather we can effectively predict cancer types. We will explore some advanced techniques concerning neural networks, such as neural ensemble. 
+\hspace*{3.5mm}In the next chapter, we start our explainable journey towards developing a DSS to leverage the cancer diagnosis and making the decision explainable and trustworthy.~We will use CNV data~(i.e., single modality) and investigate weather it effectively helps to predict cancer types. We will employ neural ensemble method to make the prediction pipeline robust. 
