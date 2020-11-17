@@ -123,7 +123,7 @@ From given genomics profiles of PCAt cohorts covering  different cancer types~(e
     \scriptsize
     \caption{Sample distribution across tumor types: rows: tumour type, column: data types~\cite{weinstein2013cancer}}
     \label{table:alldatadetails2}
-    \vspace{-2mm}
+    %\vspace{-2mm}
     \begin{tabular}{l|l|l|l|l|l|l}
         \hline
         \rowcolor{Gray}
@@ -145,7 +145,7 @@ From given genomics profiles of PCAt cohorts covering  different cancer types~(e
             %PRAD & 501 & 536 & Prostate adenocarcinoma \\\hline 
             %STAD & 442 & 464 & Stomach adenocarcinoma \\\hline 
     \end{tabular}
-    \vspace{-4mm}
+    \vspace{-2mm}
 \end{table}
 
 \hspace*{3.5mm} While using single modality, we classify samples directly in it's original data space $X$. In the latter approach, instead of classifying samples directly in it's original data space $X$, we first transform each data with a nonlinear mapping $F_{\theta}: X \rightarrow Z$, where $\theta$ are learnable parameters and $Z \in {R}^{K}$ is the learned or embedded feature space, where $K \ll D$. Then we create a shared representation of class-discriminating features from each modality, followed by parametrizing $F_{\theta}$ by representation learning based on multimodal convolutional autoencoders~(MCAE) is employed due to it's function approximation properties and feature learning capabilities~\cite{xie2016unsupervised,karim2019drug} from genomic data. Based on embedding $Z$, the classifier then $F$ maps an input $x$ to an output $F(x) \in y, F: {R}^{d} \mapsto y$. When we assume $F$ has a parametric form, we write $F_{\theta}$, where ${L}(F(x), y)$ denotes the loss function used to train $F$ on a dataset $D$ of input-output pairs $(x(i), y(i))$. Local explainability refers to an explanation for why $F$ predicted $F(x)$ for a fixed point $x$. 
