@@ -20,13 +20,13 @@ The expert systems based on collections of `if-then' rules were the dominant tec
 \hspace*{3.5mm} To tackle these challenges, approaches based on DL work better with such high dimensional data, recent studies focused on using different DNN architectures based on autoencoders, convolutional neural network~(CNN), and recurrent neural network~(RNN). Although many existing approaches based on DNN have shown tremendous success in solving such problems, DNN models are perceived mostly as `black box' methods because of their not well-understood internal functioning. Subsequently, they cannot reason their underlying decisions, leaving them incapable of providing transparent and trustworthy decisions. 
 To understand the negative impacts of `black-box'-based DSS and explain how the lack of transparency may cause problems, we provide two case studies. 
 
-\subsection{Impacts of `black-box' DSS in financial sector}
+\subsection{Impacts of black-box DSS in financial sector}
 The financial sector was one of the first to start experimenting with ML applications for a variety of use-cases. In recent years, financial institutions such as banks and other lenders~(e.g., a bank) are looking to ML as a way to win market share and stay competitive in a changing landscape, and automating many things to handle all of their banking needs. Besides, banks face several unique difficulties when it comes to implementing ML, particularly with regards to ML-based credit models. Even many are not fully aware of the challenges that come with adopting ML in finance. The negative impacts of `black-box'-based DSS in finance can cause serious impacts for banks and consumers that interact with ML-based credit models.
 
-\vspace{-4mm}
+\vspace{-2mm}
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth,height=70mm]{images/loan.png}
+	\includegraphics[scale=0.7]{images/loan.png}
 	\caption{A black-box DSS cannot explain why a customer's loan application was rejected}
     \label{fig:model_bbm1}
     \vspace{-2mm}
@@ -49,20 +49,19 @@ However, without rigorous explainability, banks are not able to provide applican
 
 \hspace*{3.5mm} Since there is a chance that John might get a better job with higher salary and/or his current loan could already be paid, which will increase his chance in subsequent applications. Then it is trivial to explain the decision to the borrower. However, depending upon lender's credit model, there might be hundreds of other variables involved, where the interactions among each of those variables can be variables too. Such interactions should be observed rigorously, by zooming into individual data points. Nevertheless, since often the relation might not be linear as we thought, they might not be even linearly separable. Subsequently, a linear or tree-based model might not be able to model the relationship. We might even need a complex model such as neural networks, ending up higher accuracy, but less interpretable.  
 
+\subsection{Impacts of black-box DSS in healthcare}
+In healthcare, one of the most common applications of traditional ML is precision medicine, e.g., predicting what treatment protocols are likely to succeed on a patient based on patient phenotype, demography, and the treatment contexts~\cite{davenport2019potential}. Recently, AI-guided DSS that used in healthcare is increasingly been applied and adopted in clinical diagnosis, treatment recommendations, patient engagement, and administrative activities in clinical setting~\cite{deepmindhealth}. Even there are many instances, where AI is already outperforming healthcare tasks. AI-guided system is outperforming radiologists at spotting malignant tumours, model the progression, and treatment of cancerous conditions~\cite{deepmindhealth}. Besides, AI is guiding researchers in how to construct cohorts for costly clinical trials~\cite{davenport2019potential}. 
+
 \begin{figure*}
 	\centering
-	\includegraphics[width=0.9\linewidth,height=50mm]{images/bbm.png}
-	\caption{A `black-box' DSS cannot trace back decisions to inputs, i.e., how and why an input is mapped to a output, and vice versa}
+	\includegraphics[scale=0.6]{images/bbm.png}
+	\caption{A `black-box' model cannot trace back decisions to inputs, i.e., how and why an input is mapped to a output, and vice versa}
     \label{fig:model_bbm2}
     \vspace{-2mm}
 \end{figure*}
 
-\subsection{Impacts of `black-box' DSS in healthcare}
-In healthcare, one of the most common applications of traditional ML is precision medicine, e.g., predicting what treatment protocols are likely to succeed on a patient based on patient phenotype, demography, and the treatment contexts~\cite{davenport2019potential}. Recently, AI-guided DSS that used in healthcare is increasingly been applied and adopted in clinical diagnosis, treatment recommendations, patient engagement, and administrative activities in clinical setting~\cite{deepmindhealth}. Even there are many instances, where AI is already outperforming healthcare tasks. AI-guided system is outperforming radiologists at spotting malignant tumours, model the progression, and treatment of cancerous conditions~\cite{deepmindhealth}. Besides, AI is guiding researchers in how to construct cohorts for costly clinical trials~\cite{davenport2019potential}. 
-
 \hspace*{3.5mm} A more concrete example of using AI-guided DSS in healthcare is carcinogenesis. Cancer has been characterized as a heterogeneous disease consisting of many different types and subtypes, making it is one of the deadliest diseases to treat. Diagnosis and prognosis for specific cancer types is not straightforward. For example, diagnosis of a breast cancer patient depends on several distinct molecular subtypes and multiple factors involved, such as estrogen receptor, progesterone receptor, and human epidermal growth factor receptor. %, providing AI-based diagnoses might not be accurate solely based on CNVs. 
 This requires using multimodal features based on DNA methylation, gene expression, miRNA expression, and CNVs data by creating a multiplatform network to support each data type, where the DSS based on genomics data from different cohorts will be more reliable. Subsequently, an early diagnosis of cancer, by classifying cancer patients into high or low risk groups have become essential in cancer research, as it can facilitate the subsequent clinical management of patients~\cite{kourou2015machine}.  
-
 \subsection{Legal aspects}
 Given the rapid advances in AI in for healthcare imaging analysis, it seems most radiology and pathology images will be examined at some point by a AI-guided machine. Besides, the day when such AI-guided machines take life decisions for humans is not very far ahead. Consequently, the opaqueness raises numerous legal, ethical, and practical concerns, transparency and accountability in AI-based systems have to ensure. So, if we cannot see how the predictions were made, we cannot know what impact will happen on human lives. Black-box and opaque ML-based credit models can have legal consequences for the lenders. The legal landscape is complex and fast-moving across countries, such as the Equal Credit Opportunity Act and Fair Credit Reporting Act~\cite{act2009fair}. In particular, section 609(f)(1) of the Fair Credit Reporting Act %Nevertheless, failure to do so accurately can result in large fines and/or a suspension of banking license. %Noncompliance is perhaps the most vital reason that lenders have been cautious to adopt machine learning for credit scoring and underwriting.
 requires that consumers be provided ``all of the key factors that adversely affected the credit score of the consumer in the model used, the total number of which shall not exceed 4". This enforces lenders to be able to explain the models they use to approve and deny credit applicants. 
@@ -80,25 +79,28 @@ Coming back to our cancer diagnosis case study. Current cancer typing methods fo
 %Eventhough, they perform well, but lack the capability of explain the diagnoses decisions. 
 It is well-known that interpretable models and their inner working mechanism are simple. However, such a simple model lacks the capacity and flexibility to capture complex relations and interactions between high dimensional genomic data. In principle, except for the linear and tree-based models, DNN models are perceived mostly as `black box'. Hence often we don't fully understand how and which factors tend the model itself to reach a diagnosis decision, e.g., prediction. % right and why it will fail in certain cases methods as w of their not well-understood internal functioning. Often, . These are serious drawbacks.
 
+\iffalse
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.7\linewidth,height=70mm]{images/acc_vs_xai.png}
 		\caption{The accuracy vs. interpretability trade-off}
         \label{fig:acc_vs_xai}
 \end{figure}
+\fi
 
 \begin{figure*}
 	\centering
-	\includegraphics[width=\linewidth,height=65mm]{images/xai_interface.png}
+	\includegraphics[scale=0.55]{images/xai_interface.png}
 	\caption{An explainable DSS is capable to answer ``what", ``why", ``how", and ``where" type of questions}
     \label{fig:model_bbm3}
     \vspace{-2mm}
 \end{figure*}
 
 %Higher interpretability of an ML model means easier comprehension and explanation of future predictions for end-users. 
-\hspace*{3.5mm} This evolves a fundamental trade-off between accuracy and interpretability: the more interpretable a model is, the less accurate it is. In other words, the most accurate ML models are the least interpretable, as shown in \cref{fig:acc_vs_xai}. Knowing the cancer type and identifying most relevant biomarkers are the prerequisites for an oncologist to recommend more accurate treatments and drug repositioning. The latter only can be achieved with meaningful explanations, which helps healthcare experts to make reasonable and data-driven decisions to provide personalized diagnosis or treatment decisions that can lead to higher quality of service in healthcare~\cite{stiglic2020interpretability}. Based on a model that is both highly interpretable and accurate, developing an explainable DSS to improve the transparency and trustworthiness for cancer diagnosis is the main goal of this thesis, such that the DSS Will be able to: 
+\hspace*{3.5mm} This evolves a fundamental trade-off between accuracy and interpretability: the more interpretable a model is, the less accurate it is. In other words, the most accurate ML models are the least interpretable. %, as shown in \cref{fig:acc_vs_xai}. 
+Knowing the cancer type and identifying most relevant biomarkers are the prerequisites for an oncologist to recommend more accurate treatments and drug repositioning. The latter only can be achieved with meaningful explanations, which helps healthcare experts to make reasonable and data-driven decisions to provide personalized diagnosis or treatment decisions that can lead to higher quality of service in healthcare~\cite{stiglic2020interpretability}. Based on a model that is both highly interpretable and accurate, developing an explainable DSS to improve the transparency and trustworthiness for cancer diagnosis is the main goal of this thesis, such that the DSS will be able to: 
 
-\vspace{-2mm}
+%\vspace{-2mm}
 \begin{enumerate}[noitemsep]
     \item Generate accurate and trustworthy predictions in a transparent way
     \item Provide human-interpretable explanations of the decisions made
@@ -106,9 +108,9 @@ It is well-known that interpretable models and their inner working mechanism are
     \item Validate the decisions based on domain-knowledge from a knowledge base~(KB)
     \item Produce and help disseminate new knowledge. 
 \end{enumerate}
-\vspace{-2mm}
+%\vspace{-2mm}
 
-\hspace*{3.5mm} From accurate predictions and human-interpretable explanations, we can identify cancer types and learn similarities between cancer patients. Nevertheless, given that different stakeholders in the ML ecosystem can be aligned with different questions about ``what", ``why", ``how", and ``where" a computer program is carried out~\cite{zednik2019solving}, these will help the doctors to answer different types of questions asked by the end users such as stakeholders, doctors, and patients.  
+\hspace*{3.5mm} Since ML ecosystem can be aligned with different questions about ``what", ``why", ``how", and ``where" a computer program is carried out~\cite{zednik2019solving}, knowing answers to these will assist the doctors to answer different types of questions asked by the end users during the diagnosis process. For example, cancer types can be identified by learning similarities from patients genomic profiles.   
 
 \section{Problem Formulation} \label{problem_challenges}
 The problem of classifying the patients is grouping into a specific cancer types based on their multimodal genomic profiles. In other words, the cancer typing method can be formulated as a prediction task in a multi-class classification problem. Before, we formally define the problem, we introduce some notations necessary to grasps the cancer typing method necessary in our DSS. We start by introducing cancer types and subtypes in the context of a DSS for cancer diagnosis: 
@@ -129,14 +131,12 @@ The problem of classifying the patients is grouping into a specific cancer types
 
 \begin{figure*}[h]
 	\centering
-		\includegraphics[width=\linewidth,height=90mm]{images/g_t_l_xai.png}
+		\includegraphics[scale=0.6]{images/g_t_l_xai.png}
 		\caption{Workflow of the proposed approach to make the model explainable}
         \label{fig:chapter_2_wf}
 \end{figure*}
 
-\hspace*{3.5mm} To parametrize $F_{\theta}$, we employ neural network-based representation learning~(e.g., autoencoders) due to their function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} from genomic data. The input is fed into the encoder $f_{\theta_{i}}$ to generate a modality specific latent representation. Subsequently, the latent representation is then fed into the decoder module to reconstruct ${X}_{i}^{\prime}$ similar to the original input $X_i$. The parameters of the modality specific network are then then trained to minimize the error between the decoder’s output and the input signal~(i.e., the input and the reconstruction). 
-
-\hspace*{3.5mm} The latent representations of all modalities are then concatenated into a single representation $Z$ = $h_{i,j} \in \mathbb{R}^{D}$. Then based on the embedding $Z$, classifier $F$ then maps the input $X$ to an output $F: \mathbb{R}^{D} \mapsto Y$. Since either the decision made by the model $F$ cannot be traced back to the inputs, nor it is clear why the outputs are transformed the way they are, we treat $F$ a `black-box' model. We now introduce the concept of `black-box' and `white-box' in ML systems:   
+\hspace*{3.5mm} To parametrize $F_{\theta}$, we employ neural network-based representation learning~(e.g., autoencoders) due to their function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} from genomic data. The input is fed into the encoder $f_{\theta_{i}}$ to generate a modality specific latent representation. Subsequently, the latent representation is then fed into the decoder module to reconstruct ${X}_{i}^{\prime}$ similar to the original input $X_i$. The parameters of the modality specific network are then then trained to minimize the error between the decoder’s output and the input signal. The latent representations of all modalities are then concatenated into a single representation $Z$ = $h_{i,j} \in \mathbb{R}^{D}$. Then based on the embedding $Z$, classifier $F$ then maps the input $X$ to an output $F: \mathbb{R}^{D} \mapsto Y$. Since either the decision made by the model $F$ cannot be traced back to the inputs, nor it is clear why the outputs are transformed the way they are, we treat $F$ a `black-box' model. We now introduce the concept of `black-box' and `white-box' in ML systems:   
 
 \begin{itemize}[noitemsep]
     \item \textbf{Black-box model} - an ML model $f$ is considered black-box' if the model parameters and network architectures are hidden from the end-users~\cite{das2020opportunities}. 
@@ -147,7 +147,7 @@ The problem of classifying the patients is grouping into a specific cancer types
 
 \begin{itemize}[noitemsep]
     \item \textbf{Interpretability} - is the degree to which a human can understand the cause of a decision.
-    \item \textbf{Global interpretability} - how does the trained model make predictions~\cite{molnar2019interpretable}? It enables an explainable model to explain the conditional interaction between dependent and independent variables based on the training set, i.e., it involves explaining the overall relationship between features and labels.
+    \item \textbf{Global interpretability} - how does the trained model make predictions~\cite{molnar2019interpretable}? It enables a model to explain conditional interactions between dependent and independent variables, i.e., it involves explaining the overall relationship between features and labels.
     \item \textbf{Local interpretability} - why did the model make a certain prediction for an instance~\cite{molnar2019interpretable}? It enables an explainable model to explain the conditional interaction between dependent and single prediction, i.e., focuses on explaining the prediction of an individual instance. 
 \end{itemize}
 
@@ -156,29 +156,27 @@ The problem of classifying the patients is grouping into a specific cancer types
 \begin{itemize}[noitemsep]
     \item Which feature $x \in X$ was most important for a certain prediction with $F$? 
     \item Which training data point $z \in \mathbb{R}^{K}$ was most important to $F(x)$? 
-    \item What minimal change is necessary to input $x$ to change the output $F(x)$~(e.g., sensitivity analysis)? 
+    \item What minimal change is necessary to input $x$ to change the output $F(x)$~(e.g., sensitivity analysis)?
 \end{itemize}
 
-\hspace*{3.5mm} As the global interpretability signifies the overall transparency of the model inside a model on an abstract level, a surrogate model is often used to explain it's global behaviour, by approximating the behaviour of the original oracle model. We now introduce the concept of `algorithmic transparency' and `model surrogate strategy' for ML system: 
+\hspace*{3.5mm} As the global interpretability signifies the overall transparency of a model on an abstract level, a surrogate model is often used to explain it's global behaviour by approximating the behaviour of the original  model, where the `algorithmic transparency' and `model surrogate strategy' can be described as: 
 
 \begin{itemize}[noitemsep]
     \item {\textbf{Algorithmic transparency}} - is the principle that the factors that influence the decisions made by algorithms should be visible, or transparent, to the people who use, regulate, and are affected by systems that employ those algorithms.It also signifies how a learning algorithm learns a model from the data by mapping relations to make prediction for unknown sample.
-    \item \textbf{Surrogate strategies} - model surrogation is a model interpretation strategies, which involve training an inherently interpretable model using the same data as a `black-box' model to approximate the predictions of the `black-box' model. 
+    \item \textbf{Model surrogation} - a model interpretation strategies, which involve training an inherently interpretable model using the same data to approximate the predictions of the `black-box' model. 
 \end{itemize}
 
 \hspace*{3.5mm} Using an oracle or a surrogate model, we answer following questions with global explanation methods: 
 
-\vspace{-2mm}
 \begin{itemize}[noitemsep]
     \item Which features in $X$ were most important across predictions for $F$? 
     \item Which training data points $z \in \mathbb{R}^{K}$ were most important to $F(X)$? 
-    \item What minimal change is necessary to input $X$ to change the output $F(X)$~(e.g., sensitivity analysis)? 
+    \item What minimal change is necessary to input $X$ to change the output $F(X)$~(e.g., sensitivity analysis)?
 \end{itemize}
-\vspace{-2mm}
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[width=\textwidth]{images/reasoning_wf.png}	
+	\includegraphics[scale=0.8]{images/reasoning_wf.png}
     \caption{Workflow for improving the explainability and transparency of a clinical DSS}
 	\label{fig:wf_overall_approach}
 \end{sidewaysfigure*}
@@ -186,14 +184,14 @@ The problem of classifying the patients is grouping into a specific cancer types
 \hspace*{3.5mm} Further, we validate our findings through functional analysis to make sure the selected genes are biologically trustworthy for the corresponding tumor types. In particular, based on annotations from the TumorPortal\footnote{
 TumorPortal provides knowledge and annotations about genes, cancers, and DNA mutations, link-\url{www.tumorportal.org}}, we will validate our findings to ensure biological relevance. \Cref{fig:wf_overall_approach} depicts the workflow of the proposed approach for making the DSS transparent and explainable for cancer diagnosis. As depicted, we train several unimodal and multimodal DNN architectures on genomics data and clinical outcome to learn high-level abstract features. Neural ensemble method, which is more effective than structures solely based on a single model is then employed to get the most stable model from multiple model snapshots. Subsequently, we identify cancer-specific driver genes and provide explanations of the predictions based on decision rules focusing both local and global interpretability. 
 
-\hspace*{3.5mm} To improve adversarial robustness, we introduce different adversarial attacks on the models and perform adversarial training to adversaries and behaves as intended in real-life scenario, a is necessary. As a part of the symbolic reasoning~(SR), we develop a domain-specific knowledge graph~(KG) by integrating knowledge and facts about cancer from external sources, which provides the foundation of the semantic layer. A semantic reasoner then characterizes and learns hierarchical relations from the KG and provides the reasoning of diagnosis decision by minimizing prediction biases. 
-Finally, we update the decision rules by combining reasoning and predictions to make the clinical diagnosis more trustworthy. This way, the role of a reasoner would be answering queries based on the prediction whose answers will be derived from the symbolic rules stored in the KG itself.  
+\hspace*{3.5mm} To improve adversarial robustness, we introduce different adversarial attacks on the models and perform adversarial training to adversaries and behaves as intended in real-life scenario, a is necessary. As a part of the symbolic reasoning~(SR), we develop a domain-specific knowledge graph~(KG) by integrating knowledge and facts about cancer from external sources, which provides the foundation of the semantic layer. A semantic reasoner that characterizes and learns hierarchical relations from the KG, is used to provide the reasoning about diagnosis decision. 
+Finally, decision rules are updated by combining reasoning and predictions to make the clinical diagnosis. The role of a reasoner would be answering queries based on the prediction whose answers will be derived from the symbolic rules stored in the KG.  
 
 \section{Hypotheses and Research Questions} \label{hypotheses}
 To improve the transparency and explainability of a DSS and to disseminate biological knowledge about carcinogenics, we attempt to solve the research questions that are driven by several hypotheses.  
 
 \subsection{Research questions}
-In this thesis, we attempt to solve the following 5 research questions on which the DSS is built upon:  
+This thesis attempts to solve the following 5 research questions on which the DSS is built upon:  
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -229,12 +227,12 @@ This thesis makes the following 8 hypotheses, which will lead towards potential 
 The main contributions of this thesis can be summarized as follows:
 
 \begin{itemize}[noitemsep]
-    \item We prepare a labelled multimodal genomics data for cancer type prediction, which can be used to develop an explainable DSS.  
-    \item We train several robust neural network architectures in which different interpretable methods and explainable logic are embedded. These approach enhance the capability of the learning algorithm to identify most significant biomarkers and provide class-specific explanations giving the top-k and common genes across cancer types. 
-    \item We perform adversarial training to make the explainable model robust against different types of attacks, such as content moderation and out-of-distribution attacks. 
-    \item We propose a novel method of generating decision rules for cancer diagnosis by combing model prediction, top biomarkers, and reasoning based on symbolic reasoning. 
-    \item We took both proactive and reactive measures to make the diagnosis decision trustworthy by mitigating different types of bias. 
-    \item We provide comprehensive evaluations of our approach with detailed analyses of outcomes and comparisons with state-of-the-art. 
+    \item A labelled multimodal genomics data is prepared for cancer type prediction, which can be used to develop an explainable DSS.  
+    \item Several robust neural network architectures were trained in which different interpretable methods and explainable logic are embedded. These approach enhance the capability of the learning algorithm to identify most significant biomarkers and provide class-specific explanations giving the top-k and common genes across cancer types. 
+    \item Adversarial training is performed to make the explainable model robust against different types of attacks, such as content moderation and out-of-distribution attacks. 
+    \item A novel method for generating decision rules is proposed for cancer diagnosis, by combing model prediction, top biomarkers, and reasoning based on symbolic reasoning. 
+    \item Both proactive and reactive measures were taken to make the diagnosis decision trustworthy by mitigating different types of bias. 
+    \item Comprehensive evaluations were carried out with detailed analyses of outcomes and comparisons with state-of-the-art. 
 \end{itemize}
 
 \hspace*{3.5mm} These contributions were disseminated into 3 directions: i) peer-reviewed scientific publications, ii) public talks and presentations, iii) open source contributions. %, e.g., implementations of some approaches presented. %A number of peer-reviewed publications were produced while conducting the work in this thesis. They are mentioned below, and a note is made to their relevant chapters. 

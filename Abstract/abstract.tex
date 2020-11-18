@@ -5,39 +5,43 @@
     %Learning and Reasoning''}}
     %\centerline{Md. Rezaul Karim}
     \small{
-        \textbf{Background:} deep learning based on neural networks~(DNN) has shown tremendous success in automated decision-making, covering numerous domains such as industrial and chemical engineering, computer vision, healthcare, financial institutions, etc. However, due to  nested non-linear and complex structures, DNN architectures are mostly opaque and perceived as `black box' methods. 
+        \textbf{Background:} deep learning based on neural networks~(DNN) has shown tremendous success in automated decision-making in domains like industrial and chemical engineering, computer vision, healthcare, financial institutions, etc. However, due to  nested non-linear and complex structures, DNN architectures are mostly opaque and perceived as `black box' methods. 
         %without providing enough insights. 
-        Subsequently, they not only suffer from a lack of transparency but also cannot reason their underlying decisions. Such opaqueness raises numerous legal, ethical, and practical concerns. AI-based systems have already been utilized in critical domain like healthcare for automated diagnoses, treatment, and prognosis in a clinical setting. 
+        `Black-box' models not only suffer from a lack of transparency, but also cannot reason about underlying decisions. Such opaqueness raises numerous legal, ethical, and practical concerns. AI-based systems have already been utilized in critical domain like healthcare for automated diagnoses, treatment, and prognosis in a clinical setting. 
         %, e.g. aiming to model the progression and treatment of cancerous conditions. 
         However, if we cannot see how a clinical decision is made, we cannot know what impact it will create on a patient. %, because the day when such AI-guided systems will make life decisions for humans is not very far ahead. 
         %AI-based techniques have been utilized in numerous scenarios, including automated diagnoses and treatment in clinical settings\cite{karimBIB2019}. 
-        For example, cancer is one of the deadliest diseases caused by abnormal behaviours of genes that control cell division and growth. As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, producing large-scale omics data. Since appropriate diagnoses depend on accurate prediction of cancer types, it is crucial to analyze genomics data and clinical outcomes before recommending necessary treatments. In particular, acquiring deep insights of omics data, can provide profound insights to reveal genetic predispositions of cancer before it grows. Besides, treatment can be focused on preventive measures.  %Eventually, . %Analyzing such data can provide profound insights to reveal genetic predispositions of cancer before it grows. 
-        Further, the `right to explanation' of GDPR that enforces `algorithmic transparency', gives patients the right to know why and how a decision is made by a decision support system~(DSS). 
+        For example, cancer is one of the deadliest diseases caused by abnormal behaviours of genes that control cell division and growth. As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, producing large-scale omics data. Appropriate diagnoses depend on accurate prediction of cancer types. Therefore, it is crucial to analyze genomics data and clinical outcomes before recommending necessary treatments. Acquiring deep insights of omics data, can provide profound insights to reveal genetic predispositions of cancer before it grows. %Besides, treatment can be focused on preventive measures.  %Eventually, . %Analyzing such data can provide profound insights to reveal genetic predispositions of cancer before it grows. 
+        Further, `right to explanation' of GDPR that enforces `algorithmic transparency', gives patients the right to know why and how a diagnosis decision is made. 
         %In this case, interpretability attained with neuro-symbolic reasoning can provide insights into the reasons. % why a given cancer case is of a specific type. 
         %can help in finding more suitable treatments, cures, or drug repositioning. 
         
         \vspace{1mm}
-        \textbf{Motivations}: one of the main differences between ML and symbolic reasoning~(SR) is where the learning happens: a learning algorithm learns rules to establish correlations between inputs and outputs, but rules are generated through human intervention in SR. To build an explainable AI~(XAI) system, first humans must learn the rules by which two phenomena relate before embedding those relationships into a static and hard-coded program. A hard-coded rule is a preconception. While DNN architectures are trained on assumptions on how they should learn, rather than what conclusion they should reach. One effective way is to choose assumptions that allow a system to learn flexibly and produce accurate decisions about their inputs. In this case, explicit representation of domain knowledge and data provenance through the layers of a DNN can pave the path to an explainable DSS and improve the transparency and interpretability based on human-understandable decision rules and SR.  
+        \textbf{Motivations}: 
+        %one of the main differences between ML and symbolic reasoning~(SR) is where the learning happens: a learning algorithm learns rules to establish correlations between inputs and outputs, but rules are generated through human intervention in SR. 
+        to build an explainable decision support system~(DSS), humans must learn the rules by which two phenomena relate before embedding those relationships into a static and hard-coded program.
+        %A hard-coded rule is a preconception. 
+        While a DNN architecture is trained on an assumption on how it should learn rather than what conclusion it should reach, a more effective way is choosing developing a system to learn flexibly and produce accurate decisions. In this case, explicit representation of domain knowledge and data provenance through the layers of a DNN can pave the path to an explainable DSS and improve the transparency and interpretability based on human-understandable decision rules and SR.  
         %generate human-understandable explanations and ensure fairness 
         %by mitigating biases.
         %, where human-understandable decision rules and SR can help improve the transparency and interpretability, generate human-understandable explanations and ensure fairness by mitigating biases. 
-        This thesis aims at: i) improving the algorithmic transparency and explainability of a black-box DSS with symbolic reasoning and decision rules, ii) discovery and disseminating knowledge of molecular mechanisms of carcinogenesis. 
+        This thesis aims to: i) improve algorithmic transparency and explainability of a `black-box' DSS for cancer diagnosis, ii) discovery and disseminating knowledge of molecular mechanisms of carcinogenesis. 
         
         \vspace{1mm}
         
-        \textbf{Methods:} we train several unimodal and multimodal neural network architectures on genomics data %and clinical outcome 
+        \textbf{Methods:} several unimodal and multimodal neural network architectures are first trained on genomics data %and clinical outcome 
         and learn high-level abstract features. Neural ensemble method, 
         %which is more effective than structures solely based on a single model
-        is then employed to get the most stable model from multiple model snapshots. To improve algorithmic transparency and  interpretability and for the biomarker discovery different probing techniques~(e.g., class activation maps and layer-wise relevance propagation). To improve adversarial robustness, we introduce different adversarial attacks on the models and perform adversarial training.
-        Model surrogation strategy is then employed to approximate the predictions of the partially `white-box' model and to generate the explanations in terms of decision rules, focusing both local and global interpretability. %to adversaries and behaves as intended in real-life scenario, a is necessary
-        As a part of the SR, we develop a domain-specific knowledge graph~(KG) by integrating knowledge and facts about cancer from external sources. %, which provides the foundation of our semantic layer. 
+        is then employed to get the most stable model from multiple model snapshots. To improve algorithmic transparency and interpretability, different probing techniques~(e.g., class activation maps and layer-wise relevance propagation) were employed. To improve adversarial robustness, adversarial training was performed considering different  attacks scenarios.
+        Model surrogation strategy is then employed to  generate the explanations in terms of decision rules, focusing both local and global interpretability. %to adversaries and behaves as intended in real-life scenario, a is necessary
+        As a part of the SR, a domain-specific knowledge graph~(KG) is developed by integrating knowledge and facts about cancer from external sources. %, which provides the foundation of our semantic layer. 
         A semantic reasoner is then used to learn the hierarchical relations from the KG and to provides the reasoning of diagnosis decision. %, a semantic reasoner is used. %
         %by minimizing prediction biases. 
-        Finally, we update the decision rules by combining reasoning and predictions to make the clinical diagnosis more trustworthy. % by the CDSS. %Finally, we assess the explainability and fairness of the overall approach. 
+        Finally, decision rules are updated by combining reasoning and predictions to make the clinical diagnosis more trustworthy. % by the CDSS. %Finally, we assess the explainability and fairness of the overall approach. 
         
         \vspace{1mm}
         
-        \textbf{Results:} quantitative and qualitative analyses show that our approach exhibits not only high confidence at predicting the cancer types correctly giving an average precision of 96.25\%, but also provides human-interpretable explanations of the predictions by exposing top genes and cancer-specific driver genes. 
+        \textbf{Results:} quantitative and qualitative analyses show that our approach exhibits not only high confidence at predicting the cancer types correctly giving an average precision of 96.25\%, but also provides human-interpretable explanations of the predictions by exposing top genes and cancer-specific driver genes.} 
         %Nevertheless, findings are validated through pathway analysis and annotations provided by the TumorPortal. 
-        We hope our approach will be a useful contribution, particularly towards the development of AI-assisted applications and an acceleration of their adoption in the clinical practice.} 
+        %We hope our approach will be a useful contribution, particularly towards the development of AI-assisted applications and an acceleration of their adoption in the clinical practice.} 
 \end{abstract}
