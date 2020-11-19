@@ -111,7 +111,8 @@ Knowing the cancer type and identifying most relevant biomarkers are the prerequ
 \hspace*{3.5mm} Since ML ecosystem can be aligned with different questions about ``what", ``why", ``how", and ``where" a computer program is carried out~\cite{zednik2019solving}, knowing answers to these will assist the doctors to answer different types of questions asked by the end users during the diagnosis process. For example, cancer types can be identified by learning similarities from patients genomic profiles.   
 
 \section{Problem Formulation} \label{problem_challenges}
-Before, we formally define the problem, we introduce some notations necessary to grasps the cancer typing method necessary in our DSS. We start by introducing cancer types and subtypes in the context of a DSS for cancer diagnosis: 
+Before, defining the problem formally, we introduce the notations of cancer types and subtypes in the context of a DSS for cancer diagnosis: 
+
 \begin{itemize}[noitemsep]
     \item \textbf{Cancer types} - cancers are named for the area in which they begin and the type of cell they are made of, even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer~\cite{19Cruz}. 
     \item \textbf{Cancer subtypes} - it describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells.  %Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}.
@@ -128,9 +129,10 @@ The problem of classifying the patients is grouping into a specific cancer types
 
 \hspace*{3.5mm} Let $X$ = $\left(x_{1}, x_{2}, \ldots, x_{n}\right)$ be a genomic dataset of $n$ samples, where a sample $x_i$ composed of $m$ independent genes $G$ = $\left(g_{1}, g_{2}, \ldots, g_{m}\right)$, $X \in \mathbb{R}^{D}$, and $G \in \mathbb{R}^{D}$. In other words, sample $x_i$ consists of a set of $m$ attribute-value pairs $\left(a_{i}, v_{i}\right)$, where $a_i$ is a feature and $v_i$ is its value, such that both $a_{i}$ and $v_i \in \mathbb{R}^{D}$. To solve the multiclass-classification problem, first we train a DNN architecture and generate a robust `black-box' model, instead of relying on interpretable models. 
 
-\hspace*{3.5mm} However, in case of additional input modalities~(i.e., another types of genomic data), it will contribute as another input modality towards multimodality, where to generate the modality specific latent representation of the input modalities. From a given multimodal genomic dataset $D=\{X_1, X_2,..., X_n\}$ about $n$ patients, we can consider classifying an individual $x_i$ into a specific cancer type based on his or her genomic profile, where $x_k \in \mathbb{R}^{D}$, where $X_i$ = ${\mathbf{\{x_1,x_2,..., x_n}}\}$ is represent an individual input modality. 
+\hspace*{3.5mm} However, in case of additional input modalities~(i.e., another types of genomic data), it will contribute as another input modality towards multimodality, where to generate the modality specific latent representation of the input modalities. From a given multimodal genomic dataset $D=\{X_1, X_2,..., X_k\}$ about $n$ patients, we can consider classifying an individual $x_i$ into a specific cancer type based on his or her genomic profile, where %$x_k \in \mathbb{R}^{D}$,
+where $X_k$ = ${\mathbf{\{x_1,x_2,..., x_n}}\}$ is represent an individual input modality. 
 
-\hspace*{3.5mm} Since each modality is comprising very high dimensional genomic data, we embedded each input modality $X_i$ into lower dimensional feature space instead of classifying them using their original representation. In other words, using learned representation from individual modalities, we train a `black-box' DNN model, as shown in \cref{fig:chapter_2_wf}, such that we transform each input modality $X$ with a nonlinear mapping $f_{\theta}: X_i \rightarrow Z_i$, where $\theta$ are learnable parameters and $Z_i \in \mathbb{R}^{K}$ is the learned embedding in which $K \ll D$. 
+\hspace*{3.5mm} Since each modality is comprising very high dimensional genomic data, we embedded each input modality $x_i$ into lower dimensional feature space instead of classifying them using their original representation. In other words, using learned representation from individual modalities, we train a `black-box' DNN model, as shown in \cref{fig:chapter_2_wf}, such that we transform each input modality $X$ with a nonlinear mapping $f_{\theta}: x_i \rightarrow z_i$, where $\theta$ are learnable parameters and $z_i \in \mathbb{R}^{K}$ is the learned embedding in which $K \ll D$. 
 
 \begin{figure*}[h]
 	\centering
@@ -139,11 +141,11 @@ The problem of classifying the patients is grouping into a specific cancer types
         \label{fig:chapter_2_wf}
 \end{figure*}
 
-\hspace*{3.5mm} To parametrize $f_{\theta}$, we employ neural network-based representation learning~(e.g., autoencoders) due to their function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} from genomic data. The input is fed into the encoder $f_{\theta_{i}}$ to generate a modality specific latent representation. Subsequently, the latent representation is then fed into the decoder module to reconstruct ${X}_{i}^{\prime}$ similar to the original input $X_i$. The parameters of the modality specific network are then then trained to minimize the error between the decoder’s output and the input signal. The latent representations of all modalities are then concatenated into a single representation $Z$ = $h_{i,j} \in \mathbb{R}^{D}$. Then based on the embedding $Z$, classifier $f$ then maps the input $X$ to an output $f: \mathbb{R}^{D} \mapsto Y$. Since either the decision made by the model $f$ cannot be traced back to the inputs, nor it is clear why the outputs are transformed the way they are, we treat $f$ a `black-box' model. We now introduce the concept of `black-box' and `white-box' in ML systems:   
+\hspace*{3.5mm} To parametrize $f_{\theta}$, we employ neural network-based representation learning~(e.g., autoencoders) due to their function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} from genomic data. The input is fed into the encoder $f_{\theta_{i}}$ to generate a modality specific latent representation. Latent representation is then fed into the decoder module to reconstruct ${x}_{i}^{\prime}$, similar to the original input $x_i$. The parameters of the modality specific network are then then trained to minimize the error between the decoder’s output and the input signal. The latent representations of all modalities are then concatenated into a single representation $Z$ = $h_{i,j} \in \mathbb{R}^{D}$. Then based on the embedding $Z$, classifier $f$ then maps a data point $x_i$ to an output $f(x_i) \mapsto y_i$. Since either the decision made by the model $f$ cannot be traced back to the inputs, nor it is clear why the outputs are transformed the way they are, we treat $f$ a `black-box' model. We now introduce the concept of `black-box' and `white-box' in ML systems:   
 
 \begin{itemize}[noitemsep]
-    \item \textbf{Black-box model} - an ML model $f$ is considered black-box' if the model parameters and network architectures are hidden from the end-users~\cite{das2020opportunities}. 
-    \item \textbf{White-box model} - an ML model $f$ is `white-box' if its parameters $\boldsymbol{\theta}$ and architecture are known to the end users, and users have sufficient know-how and why it provides decision/prediction~\cite{das2020opportunities}.  
+    \item \textbf{Black-box model} - an ML model $f$ is considered black-box if the model parameters and network architectures are hidden from  end-users~\cite{das2020opportunities}. 
+    \item \textbf{White-box model} - an ML model $f$ is white-box if its parameters $\boldsymbol{\theta}$ and architecture are known to the end users, and users have sufficient know-how and why it provides decision/prediction~\cite{das2020opportunities}.  
 \end{itemize}
 
 \hspace*{3.5mm} By emphasizing specific characteristics of a patient that represents the characteristics of a smaller group of cancer patients such as breast cancer, yet different in other patients~(rather than all the patients in a dataset). By embedding both local and global interpretability logic, we make ``black-box" model $f$ interpretable in a post-hoc manner. We now introduce the concept of `interpretability', `local interpretability', and `global interpretability' of ML systems: 
@@ -154,12 +156,12 @@ The problem of classifying the patients is grouping into a specific cancer types
     \item \textbf{Local interpretability} - why did the model make a certain prediction for an instance~\cite{molnar2019interpretable}? It enables an explainable model to explain the conditional interaction between dependent and single prediction, i.e., focuses on explaining the prediction of an individual instance. 
 \end{itemize}
 
-\hspace*{3.5mm} We explain a data point $x$ using an explanation function $g$. Local interpretability refers to an explanation giving reasoning why the model $F$ has predicted $F(x)$ for a data point $x$, during inferencing. Since providing human-level interpretability by ``zooming in" individual predictions makes the explanation more evident~\cite{ribeiro2018anchors}, we answer the following questions based on local explanation methods: 
+\hspace*{3.5mm} We explain a data point $x_i$ using an explanation function $g$. Local interpretability refers to an explanation giving reasoning why the model $f$ has predicted $f(x_i)$ for a data point $x_i$, during inferencing. Since providing human-level interpretability by ``zooming in" individual predictions makes the explanation more evident~\cite{ribeiro2018anchors}, we answer the following questions based on local explanation methods: 
 
 \begin{itemize}[noitemsep]
-    \item Which feature $x \in X$ was most important for a certain prediction with $F$? 
-    \item Which training data point $z \in \mathbb{R}^{K}$ was most important to $F(x)$? 
-    \item What minimal change is necessary to input $x$ to change the output $F(x)$~(e.g., sensitivity analysis)?
+    \item Which feature $x_i \in X$ was most important for a certain prediction with $f$? 
+    \item Which training data point $x_i \in X$ was most important to $f(x_i)$? 
+    \item What minimal change is necessary to input $x$ to change the output $f(x_i)$?
 \end{itemize}
 
 \hspace*{3.5mm} As the global interpretability signifies the overall transparency of a model on an abstract level, a surrogate model is often used to explain it's global behaviour by approximating the behaviour of the original  model, where the `algorithmic transparency' and `model surrogate strategy' can be described as: 
@@ -172,9 +174,9 @@ The problem of classifying the patients is grouping into a specific cancer types
 \hspace*{3.5mm} Using an oracle or a surrogate model, we answer following questions with global explanation methods: 
 
 \begin{itemize}[noitemsep]
-    \item Which features in $X$ were most important across predictions for $F$? 
-    \item Which training data points $z \in \mathbb{R}^{K}$ were most important to $F(X)$? 
-    \item What minimal change is necessary to input $X$ to change the output $F(X)$~(e.g., sensitivity analysis)?
+    \item What feature(s) $x_i \in X$ are most important across predictions for $f$?
+    \item What training data points $x_i \in X$ are most important to $f(x_i)$? 
+    \item What minimal change is necessary to input sample $x_i$ to change the output $f(x_i)$?
 \end{itemize}
 
 \begin{sidewaysfigure*}
