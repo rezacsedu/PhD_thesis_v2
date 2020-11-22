@@ -3,7 +3,7 @@
 \textit{``The beginning of knowledge is the discovery of something we do not understand''}- Frank Herbert 
 
 \section{Chapter Overview}
-In this chapter, we cover the foundations and concepts that will be found in all the subsequent chapters. We start with a basic of decision support systems~(DSS) and move towards an intelligent DSS. Subsequently, we cover the necessary foundations for building an explainable DSS for to provide accurate diagnoses decisions about different cancer types. In particular, we cover in detail the concepts of machine learning~(ML) and deep learning~(DL), artificial intelligence~(AI), decision rules, neuro-symbolic reasoning, and representation learning~(RL), with a focus on explainability and algorithmic transparency. Later in the chapter, we discuss different types and subtypes of cancer, growth and metastasis of cancer, in order to know the biological interpretations of genomics data. 
+In this chapter, we cover the foundations and concepts that will be found in all the subsequent chapters. We start with a basic of decision support systems~(DSS) and move towards an intelligent DSS. Subsequently, we cover the necessary foundations for building an explainable DSS for to provide accurate diagnoses decisions about different cancer types. In particular, we cover in detail the concepts of machine learning~(ML) and deep learning~(DL), artificial intelligence~(AI), decision rules, neuro-symbolic reasoning, and representation learning~(RL), with a focus on explainability and algorithmic transparency. We also discuss cancer types, subtypes, and growth and metastasis of cancer w.r.t biological interpretations of genomics data. 
 
 \section{Decision Support Systems}\label{sec:DSS}
 Decision support systems~(DSS) are information system that support business or organizational decision-making activities~\cite{hackathorn1981organizational}. A typical DSS takes a set of input and analyzes them to generate actionable insights and recommendation based on which `decisions' are generated. 
@@ -52,8 +52,9 @@ Haettenschwiler et al.~\cite{haettenschwiler1999neues} differentiates three type
 As long as there are a few rules in the rule set, they work well and easy to understand. However, when the number of rules is large, including conflicting rules, they tend to break down. Moreover, if the underlying domain knowledge changes, updating the rules can be difficult and time consuming~\cite{davenport2019potential}. Moreover, rule-based clinical DSS are difficult to maintain as medical knowledge changes and are often not able to handle the explosion of data and knowledge based on genomic, proteomic, metabolic and other ‘omic-based’ approaches to care~\cite{das2020opportunities}.
 Subsequently, they gradually being replaced with ML-based systems with AI capabilities. 
 
-\hspace*{3.5mm} DSSs that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}.  In an AI-guided or intelligent DSS, a set of learning algorithms are embedded to perform cognitive decision-making in which ML often act as one of the most common forms of AI~\cite{das2020opportunities}. An intelligent DSS is often ML or DL-based DSS, where a ML or DL algorithm is employed to improve the learning outcome so that the decision-making process becomes automatic by reducing the level of human interaction as much as possible~\cite{davenport2019potential}. 
-In this thesis, we aim at developing an intelligent DSS by leveraging both data-, knowledge-, and model-driven characteristic; such that an ML model trained on the data forms the foundations of the DSS's decision making process and the domain-knowledge will be used to aid the users to validate the outcome. Nevertheless, since the `black-box' nature and opaqueness in predictive model raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of the DSS. In the subsequent sections, we discuss some fundamental components required to develop the DSS such as ML, DL, RL, multimodal learning, interpretability, and different types of data required. 
+\hspace*{3.5mm} DSSs that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}.  In an intelligent DSS, a set of learning algorithms are embedded to perform cognitive decision-making in which ML often act as one of the most common forms of AI~\cite{das2020opportunities}. An intelligent DSS is often ML or DL-based DSS, where a ML or DL algorithm is employed to improve the learning outcome so that the decision-making process becomes automatic by reducing the level of human interaction as much as possible~\cite{davenport2019potential}. 
+
+\hspace*{3.5mm} In this thesis, we aim at developing an intelligent DSS by leveraging both data-, knowledge-, and model-driven characteristic; such that an ML model trained on the data forms the foundations of the DSS's decision making process and the domain-knowledge will be used to aid the users to validate the outcome. Nevertheless, since the `black-box' nature and opaqueness in predictive model raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of the DSS. In the subsequent sections, we discuss some fundamental components required to develop the DSS such as ML, DL, RL, multimodal learning, interpretability, and different types of data required. 
 
 \section{Machine Learning}
 ML is about using a set of statistical and mathematical algorithms to perform tasks such as concept learning, predictive modeling, clustering, and mining useful patterns can be performed, where a learner or ML algorithm is the program used to learn a ML model from data. Subsequently, a ML model is the learned program that maps inputs to predictions. Tom M. Mitchell~\cite{mitchell1997machine} explained what learning really means from a computer science perspective: \textit{``a computer program is said to learn from experience $E$ with respect to some class of tasks $T$ and performance measure $P$, if its performance at tasks in $T$, as measured by $P$, improves with experience $E$"}. We can interpret the above definition in another way: based on a set of observation or data~(i.e., experience $E$), a learning algorithm can be used to solve a problem~(i.e., task $T$) iteratively, i.e., as long as the performance~(i.e., $P$) is not satisfactory. 
@@ -69,8 +70,8 @@ ML is about using a set of statistical and mathematical algorithms to perform ta
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth,height=60mm]{images/B08452_01_02.png}
-	\caption{Lifecycle of a typical ML pipeline~\cite{karimScalaML2019}} 
+	\includegraphics[scale=0.6]{images/B08452_01_02.png}
+	\caption{Lifecycle of a typical  pipeline involve in an ML system~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline}
 \end{figure}
 
@@ -79,7 +80,7 @@ ML is about using a set of statistical and mathematical algorithms to perform ta
 The challenge of ML is to allow training a model so that it can recognize complex patterns and make decisions not only in an automated way but also as intelligently as possible. 
 However, if the performance is not satisfactory, additional tuning or retraining would be necessary to get the best model, before % based on hyperparameter optimization.
 deploying the best model in a production-ready environment. 
-\Cref{fig:ml_pipeline} summarizes these steps in a nutshell. Following are a few commonly used terminologies in ML: 
+\Cref{fig:ml_pipeline} summarizes these steps in a nutshell, where an instance and prediction can be described as follows: 
 
 \begin{itemize}[noitemsep]
     \item \textbf{An instance} is a row in the dataset~(also called data point, example, or observation). An instance consists of the features $x^{(i)}$ and~(if known) the target outcome ${y}$, where target is the information that the model learned to predict.
@@ -92,7 +93,7 @@ Although every ML problem is more or less an optimization problem, the way they 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth,height=50mm]{images/sup.png}
+	\includegraphics[scale=0.7]{images/sup.png}
 	\caption{Workflow of supervised learning technique~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline_sup}
 \end{figure}
@@ -103,7 +104,7 @@ Although every ML problem is more or less an optimization problem, the way they 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth,height=50mm]{images/unsup.png}
+	\includegraphics[scale=0.9]{images/unsup.png}
 	\caption{Workflow of unsupervised learning technique~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline_unsup}
 \end{figure}
@@ -141,12 +142,12 @@ Feed-forward neural networks~(FFNNs) are neural networks that have a complex and
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth,height=65mm]{images/ffnn_1.png}
+    \includegraphics[scale=0.7]{images/ffnn_1.png}
     \caption{The architecture of a MLP with an input layer, 2 hidden layers, and an output layer}
     \label{fig:mlp_1}
 \end{figure}
 
-\hspace*{3.5mm} RBMs are the basic building blocks for DBNs. Unlike MLP, which is an FFNN that's trained in a supervised way, DBNs are trained in two phases: unsupervised pretraining and supervised fine-tuning. In unsupervised pretraining, layers are stacked in order and trained in a layer-wise manner with used unlabeled data. In supervised fine-tuning, an output classifier layer is stacked and the complete neural network is optimized by retraining with labeled data. One problem with MLP is that it often overfits the data, so it doesn't generalize well. To overcome this issue, DBN was proposed , which uses a greedy, layer-by-layer, pretraining algorithm and composed of a visible layer and multiple hidden unit layers. However, despite numerous successes, DBNs have been replaced with AEs. 
+\hspace*{3.5mm} RBMs are the basic building blocks for DBNs. Unlike MLP, which is an FFNN that's trained in a supervised way, DBNs are trained in two phases: unsupervised pretraining and supervised fine-tuning. In unsupervised pretraining, layers are stacked in order and trained in a layer-wise manner with used unlabeled data. In supervised fine-tuning, an output classifier layer is stacked and the complete neural network is optimized by retraining with labeled data. One problem with MLP is that it often overfits the data, so it doesn't generalize well. To overcome this issue, DBN was proposed, which uses a greedy, layer-by-layer, pretraining algorithm and composed of a visible layer and multiple hidden unit layers. However, despite numerous successes, DBNs have been replaced with AEs. 
 
 \subsection{Autoencoders}
 \label{preli:AEs}
@@ -154,7 +155,7 @@ A regular AE consists of multi-layer dense networks called encoder and decoder, 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.55\textwidth,height=65mm]{images/ae.png}
+    \includegraphics[scale=0.5]{images/ae.png}
     \caption{An unsupervised autoencoder as a network for latent feature learning~\cite{karimDLTF2018}}
     \label{fig:ae_theory1}
     \vspace{-2mm}
@@ -185,7 +186,7 @@ DNNs have no prior knowledge of how the pixels are organized because they do not
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth,height=50mm]{images/cnn.png}
+    \includegraphics[scale=0.6]{images/cnn.png}
     \caption{A schematic architecture of a CNN used for facial recognition~\cite{karim2017predictive,zaccone2018deep}}
     \label{fig:cnn_theory1}
 \end{figure}
@@ -198,13 +199,13 @@ Traditional neural networks instead ignore past events, as it is not possible fo
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth,height=45mm]{images/B09698_06_4.png}
+    \includegraphics[scale=0.3]{images/B09698_06_4.png}
     \caption{In RNN all the weights in all the layers have to be learned with time~\cite{karimDLTF2018}}
     \label{fig:rnn_theory1}
     \vspace{-2mm}
 \end{figure}
 
-\hspace*{3.5mm} The preceding diagram~(\cref{fig:rnn_theory1}) is a schematic architecture of a RNN, where all the weights in all the layers have to be learned with time~\cite{karimDLTF2018}. However, the computed and back-propagated gradient tends to decrease~(or increase) at each instant of time and then, after a certain number of instants of time, the cost function tends to converge to zero (or explode to infinity). However, improved RNN variants such as LSTM, bi-directional LSTM, and GRU can combat the vanishing gradients and offers excellent results and performance. LSTM-based networks are ideal for the prediction and classification of temporal sequences and are replacing many traditional approaches to DL. As the name signifies, that short-term patterns are not forgotten in the long term. 
+\hspace*{3.5mm} The preceding diagram~(\cref{fig:rnn_theory1}) is a schematic architecture of a RNN, where all the weights in all the layers have to be learned with time~\cite{karimDLTF2018}. However, computed and back-propagated gradient tends to decrease~(or increase) at each instant of time and then, after a certain number of instants of time, the cost function tends to converge to zero~(or explode to infinity). However, improved RNN variants such as LSTM and GRU can combat the vanishing gradients and offers excellent results and performance. LSTM-based networks are ideal for the prediction and classification of temporal sequences. As the name signifies, that short-term patterns are not forgotten in the long term. 
 
 \subsection{Emergent architectures}
 Many other emergent DL architectures have been suggested, such as Redidual networks~(ResNets), Deep SpatioTemporal Neural Networks~(DST-NNs), Multi-Dimensional Recurrent Neural Networks~(MD-RNNs), and densely-connected neural networks~(DenseNet). Other neural networks such as CapsNets - an improved version of a CNN, RNN for image recognition, and Generative Adversarial Networks~(GANs) for simple image generation. Apart from these, factorization machines for penalization and DL are also used. 
@@ -280,7 +281,7 @@ Since a vanilla AE is not suitable for handling data with spatial invariance~(e.
 \begin{sidewaystable*}
    \caption{Comparison of autoencoders-based representation learning approaches~\cite{karimBIB2019}} 
    \label{tab:fe}
-   %\scriptsize % text size of table content
+   \scriptsize % text size of table content
    \centering % center the table
    \begin{tabular}{p{3.5cm}|p{10.3cm}|p{10cm}}
     \hline
@@ -300,8 +301,8 @@ Generative variants of AE called Variational autoencoders~(VAE) are used in lite
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=\textwidth,height=70mm]{images/vae.png}	
-	\caption{Schematic representation of a VAE used for clustering GE data, where an individual GE sample is fed into the model for learning representation~\cite{karimBIB2019}.}	
+	\includegraphics[scale=0.5]{images/vae.png}	
+	\caption{Schematic representation of a VAE used for clustering GE data, where an individual GE sample is fed into the model for learning representation~\cite{karimBIB2019}}	
 	\label{fig:vae}
 	\vspace{-4mm} 
 \end{figure*}
@@ -331,7 +332,7 @@ VAE or CAE are not the best options for handling sequence or time-series data, e
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=\textwidth,height=70mm]{images/lstm_ae_v2.PNG}
+	\includegraphics[scale=0.5]{images/lstm_ae_v2.PNG}
     \caption{Schematic representation of the LSTM-AE, used for biomedical text clustering, where individual drug review texts are embedded using word2vec before feeding as a sequence~\cite{karimBIB2019}}	
 	\label{fig:lstm_ae}
 	\vspace{-2mm} 
@@ -382,13 +383,13 @@ A multimodal representation is a representation of data using information from m
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=0.95\linewidth,height=70mm]{images/rl_1.png}
+		\includegraphics[scale=0.4]{images/rl_1.png}
 		\caption{Latent representation concatenation}
         \label{fig:lrc_1}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=0.95\linewidth,height=70mm]{images/shared.png}
+		\includegraphics[scale=0.4]{images/shared.png}
 		\caption{Shared latent representation}
         \label{fig:slr_1}
 	\end{subfigure}
@@ -396,7 +397,7 @@ A multimodal representation is a representation of data using information from m
 	\label{fig:mm_rL_example}
 \end{figure*}
 
-\hspace*{3.5mm} To develop a DSS, we might need to feed one~(\textit{unimodal}) or multiple types of data~(i.e., \textit{multimodal}) such as genomics, proteomics, or imaging data into the neural networks. Although several works have focused on unimodal RL, recent approaches are more focused on multimodal representations from different types of data involving simple or shared concatenation of unimodal ones~\cite{mmsurvey}. \Cref{fig:mm_rL_example} shows two fusion architectures in multimodal RL. The latent representation concatenation architecture is depicted in \cref{fig:lrc_1} consists of learning simultaneously a single latent representation from each modality. In the subsequent chapters, we'll show how to use the concatenation of all the modality-specific latent representations to train a classifier. 
+\hspace*{3.5mm} Depending upon requirements, we may need one~(\textit{unimodal}) or multiple types of data~(i.e., \textit{multimodal}) such as genomics, proteomics, or imaging data into the neural networks. Although several works have focused on unimodal RL, recent approaches are more focused on multimodal representations from different types of data involving simple or shared concatenation of unimodal ones~\cite{mmsurvey}. \Cref{fig:mm_rL_example} shows two fusion architectures in multimodal RL. The latent representation concatenation architecture is depicted in \cref{fig:lrc_1} consists of learning simultaneously a single latent representation from each modality. In the subsequent chapters, we'll perform modality-specific latent representations to train a classifier. 
 
 \begin{figure*}[htp!]
 	\centering
@@ -508,31 +509,16 @@ A `white-box' model is not necessarily explainable or interpretable~\cite{das202
 \end{definition}
 
 \hspace*{3.5mm} In contrast, interpretable ML refers to methods that make the behavior and predictions of a system understandable to humans~\cite{molnar2019interpretable}. 
-%This is a serious drawback since interpretability is essential to generate insights on why a given cancer case is of a certain type, and since knowing the most important biomarkers can help in recommending more accurate treatments and drug repositioning. 
-%Further, the `right to explanation' of the EU GDPR~\cite{kaminski2019right} gives patients the right to know why and how an algorithm made a diagnosis decision. However, existing approaches can neither ensure the diagnosis transparently nor are they trustworthy. 
-%AI-aided system has to be well-interpretable and explainable.
-Interpretability of an ML system is the ability to explain or to present in understandable terms to a human~\cite{doshi2017towards}. Miller et al.~\cite{XAI_miller} defines interpretability as the degree to which a human can understand the cause of a decision. Although a white-box model improves model-debugging and promotes trust, knowing it's architecture and parameters alone won't make the model essentially explainable~\cite{das2020opportunities}.  %~(\cref{def:xai_1}) and Kim et al.~\cite{XAI_kim}~(\cref{def:xai_2}), respectively:
-\iffalse
-\begin{definition}
-    \textbf{interpretability}: is the degree to which a human can understand the cause of a decision.
-    \label{def:xai_1}
-\end{definition}
-\vspace{-6mm}
-\begin{definition}
-    \textbf{interpretability}: is the degree to which a human can consistently predict model's result.
-    \label{def:xai_2}
-\end{definition}
-\fi 
-%\vspace{-6mm}
+Interpretability of an ML system is the ability to explain or to present in understandable terms to a human~\cite{doshi2017towards}. Miller et al.~\cite{XAI_miller} defines interpretability as the degree to which a human can understand the cause of a decision. Although a white-box model improves model-debugging and promotes trust, knowing it's architecture and parameters alone won't make the model essentially explainable~\cite{das2020opportunities}.  
 Model interpretation is an extension of the model evaluation, which helps to foster a better understanding of a model’s learned decision policies and gives the ability to explain a model in a way which is human understandable such that the outcomes are self-descriptive and needs no further explanation. 
 The higher the interpretability, the easier it is for human to comprehend why a particular decision or prediction is made~\cite{stiglic2020interpretability,bhatt2020explainable}, i.e., trustworthiness for the human. In either way, good interpretability is desired both locally, e.g., individual predictions and globally, e.g., entire model behavior. 
 
-\begin{figure*}[h]
+\begin{sidewaysfigure*}[h]
 	\centering
-	\includegraphics[width=0.9\textwidth,height=60mm]{images/xai_tec.png}	
+	\includegraphics[scale=0.6]{images/xai_tec.png}	
     \caption{Categorization of the survey in terms of scope, methodology, and usage~(based on~\cite{das2020opportunities})}	
 	\label{fig:survey_xai}
-\end{figure*}
+\end{sidewaysfigure*}
 
 \hspace*{3.5mm} Although many authors used interpretability and explainability interchangeably, the former means that the cause and effect~(e.g., of a certain outcome) can be determined in a system. The latter is the extent to which the internal working mechanism of an AI system can be explained to humans, in human-interpretable language. Miller et al.~\cite{miller2018explanation} defined explanation as the answer to `why' and `how' types of questions. For example, in the cancer diagnosis context, a patient may have the following questions: i) why do I have colon cancer?, ii) Why did the treatment not work on me?, iii) how did the model predict the decision?, etc. However, there is a trade-off between explianability and accuracy. How well does an explanation predict unseen data is a measurement of accuracy~\cite{molnar2019interpretable}. High accuracy is important if the explanation is used for predictions in place of the ML model. However, if the goal is to explain what the `black-box' model does~(i.e., algorithmic transparency), only `fidelity' is important~\cite{molnar2019interpretable}. 
 
@@ -671,18 +657,46 @@ Local interpretability of an ML model can be achieved by designing justified mod
 \label{subsubsec:FI_shap}
 For the human-level interpretability of a model, we need to know the inner insights, e.g., what features does a model think are most important and significant? Some of the features have higher impact than the others. This concept is called feature importance, which can be computed based on permutation importance~(PI). Intuitively, we can think of such importance both locally and globally, e.g., for a single prediction, we can compute the effect of each feature in the data, or, effect of each feature over a large number samples and overall the predictions.
 
-\begin{figure*}[h]
+\begin{sidewaysfigure*}[htp!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{images/pro_per_surrogation.png}
+	\begin{subfigure}{.48\linewidth}
+		\centering
+		\includegraphics[scale=0.5]{images/probing.png}
+		\caption{Probing}
+        \label{fig:probing}
+	\end{subfigure}
+	\hspace{2mm}
+	\begin{subfigure}{0.48\linewidth}
+		\centering
+		\includegraphics[scale=0.5]{images/purturbing.png}
+		\caption{Stacking}
+        \label{fig:purturbing}
+	\end{subfigure}
+		\begin{subfigure}{0.48\linewidth}
+		\centering
+		\includegraphics[scale=0.5]{images/surrogation.png}
+		\caption{Stacking}
+        \label{fig:surrogation}
+	\end{subfigure}
+	\caption{Different interpretability method for opening black-box ML model} 
+	\label{fig:pro_per_surroga}
+	\vspace{-2mm}
+\end{sidewaysfigure*}
+
+\iffalse
+\begin{sidewaysfigure*}[h]
+	\centering
+	\includegraphics[scale=0.8]{images/pro_per_surrogation.png}
     \caption{Different interpretability method for opening black-box ML model}	
 	\label{fig:pro_per_surroga}
-\end{figure*}
+\end{sidewaysfigure*}
+\fi 
 
 \hspace*{3.5mm} Feature importance methods define an explanation function $g: F \times \mathbb{R}^{d} \mapsto \mathbb{R}^{d}$ that takes in a model $F$ and a point of interest $x$ and returns importance scores $g(F,x) \in \mathbb{R}^{d}$ for all features is the importance or attribution for feature $x_i$ of sample $x$. In other words, PI works by randomly permuting or shuffling a single column in the validation dataset leaving all the other columns intact, where a feature is considered ``important” if and only if the model's accuracy drops significantly and the error is increased. On the other hand, a feature is considered ``unimportant’ if shuffling its values does not affect the model's accuracy significantly. Explanation functions roughly fall into two categories: i) perturbation-based techniques, ii) saliency map and gradient-based techniques. 
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[width=0.9\textwidth]{images/xai_roadmap.png}	
+	\includegraphics[scale=0.6]{images/xai_roadmap.png}	
     \caption{A timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on survery on XAI techniques by Das et al.~\cite{das2020opportunities})}	
 	\label{fig:xai_timeline}
 \end{sidewaysfigure*}
@@ -776,15 +790,13 @@ The output layer relevance is calculated before the back-propagation as follows~
 \end{align}
 
 \hspace*{3.5mm} Shortcomings of LRP is that it only considers the target class for the calculation, which can lead to the miss-attribution of input regions to the relevance. To tackle the issue of discriminating the target object’s class with the non-target classes, a class contrastive improvement on LRP called contrastive LRP~(CLRP) is proposed~\cite{LRP3}. 
-
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth,height=110mm]{images/lrp.png}	
+	\includegraphics[scale=0.6]{images/lrp.png}	
     \caption{Overview of LRP for explaining model's decision, based on literature~\cite{binder2016layer}. First, the input image is processed , before the output/prediction is generated. Then, the output value is backpropagated layer-to-layer onto the pixel, where pixel relevances $R_p$ are visualized as heatmap.}	
 	\label{fig:explain_with_lrp}
 \end{figure}
-
-\hspace*{3.5mm} By equally penalizing non-target classes, the relevance produced in CLRP is, however, reduced to zero, which is due to equal weighting of the non-target nodes~\cite{ LRP2}. Conversely, SGLRP is designed to take advantage of the post-softmax probabilities, where the gradient of the softmax output $\hat{y}_{t}$ is computed w.r.t, intermediate value of each output node $z_{n}$ as the relevance of the output layer $R_{n}^{(L)}$. The corresponding relevance map $R_{SGLRP}$ is then defined similar to \cref{eq:rn}, where $R_{1}^{(1)}, \ldots, R_{n}^{(1)}, \ldots, R_{N}^{(1)}$ are the relevance values at the input layer calculated by \cref{eq:rn} and \cref{eq:rn_neg}, except for the output layer relevance $R_{n}^{(L)}$, which is calculated as the gradient of softmax~\cite{LRP2}:
+By equally penalizing non-target classes, the relevance produced in CLRP is, however, reduced to zero, which is due to equal weighting of the non-target nodes~\cite{ LRP2}. Conversely, SGLRP is designed to take advantage of the post-softmax probabilities, where the gradient of the softmax output $\hat{y}_{t}$ is computed w.r.t, intermediate value of each output node $z_{n}$ as the relevance of the output layer $R_{n}^{(L)}$. The corresponding relevance map $R_{SGLRP}$ is then defined similar to \cref{eq:rn}, where $R_{1}^{(1)}, \ldots, R_{n}^{(1)}, \ldots, R_{N}^{(1)}$ are the relevance values at the input layer calculated by \cref{eq:rn} and \cref{eq:rn_neg}, except for the output layer relevance $R_{n}^{(L)}$, which is calculated as the gradient of softmax~\cite{LRP2}:
 
 \vspace{-2mm}
 \begin{align}

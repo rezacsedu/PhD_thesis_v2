@@ -111,28 +111,23 @@ Knowing the cancer type and identifying most relevant biomarkers are the prerequ
 \hspace*{3.5mm} Since ML ecosystem can be aligned with different questions about ``what", ``why", ``how", and ``where" a computer program is carried out~\cite{zednik2019solving}, knowing answers to these will assist the doctors to answer different types of questions asked by the end users during the diagnosis process. For example, cancer types can be identified by learning similarities from patients genomic profiles.   
 
 \section{Problem Formulation} \label{problem_challenges}
-Before, defining the problem formally, we introduce the notations of cancer types and subtypes in the context of a DSS for cancer diagnosis: 
+The problem of classifying the patients is grouping into a specific cancer types based on their unimodal or multimodal genomic profiles. In other words, the cancer typing method can be formulated as a prediction in a multi-class classification setting, where cancer types and subtypes can be defined as follows: % in the context of a DSS for cancer diagnosis: 
 
 \begin{itemize}[noitemsep]
     \item \textbf{Cancer types} - cancers are named for the area in which they begin and the type of cell they are made of, even if they spread to other parts of the body, e.g., a cancer that begins in the lungs and spreads to the liver is still called lung cancer~\cite{19Cruz}. 
     \item \textbf{Cancer subtypes} - it describes the smaller groups that a type of cancer can be divided into, based on certain characteristics of the cancer cells.  %Besides, there are several clinical terms used to describe certain types of cancer\footnote{\url{https://www.healthline.com/health/cancer\#types}}.
 \end{itemize}
 
-\hspace*{3.5mm} 
-%For example, a CNV sample $x$ consists of a set of $m$ attribute-value pairs $\left(a_{i}, v_{i}\right)$, where $a_i$ is a feature and $v_i$ is its value from $a_{i}$, where both $a_{i}$ and $v_i \in \mathbb{R}^{D}$. 
-The problem of classifying the patients is grouping into a specific cancer types based on their unimodal or multimodal genomic profiles. In other words, the cancer typing method can be formulated as a prediction in a multi-class classification setting. We consider the following input modalities for the proposed DSS:    
+\hspace*{3.5mm} Often decision support systems have to provide decision based on different types of data. In such case, each input type can can be considered as individual input modalities. On the other hand, multimodality refers to the way to integrate multiple such input modalities~\cite{mmsurvey}. Let $X$ = $\left(x_{1}, x_{2}, \ldots, x_{n}\right)$ be a genomic dataset of $n$ samples, where a sample $x_i$ composed of $m$ independent real-valued genes $G$ = $\left(g_{1}, g_{2}, \ldots, g_{m}\right)$. %, $X \in \mathbb{R}^{D}$, and $G \in \mathbb{R}^{D}$.
+In other words, sample $x_i$ consists of a set of $m$ real-valued attribute-value pairs $\left(a_{i}, v_{i}\right)$, where $a_i$ is a feature and $v_i$ is its value.
+%, such that both $a_{i}$ and $v_i \in \mathbb{R}^{D}$. 
+To solve the multiclass-classification problem, first we train a DNN architecture and generate a robust `black-box' model, instead of relying on interpretable models. 
 
-\begin{itemize}[noitemsep]
-    \item \textbf{Input modality} - a decision support systems, which provides decision~(e.g., clinical) relies on different types of data and in terms of dataset is characterized as multimodal. 
-    \item \textbf{Multimodality} - refers to the way to integrate multiple input modalities~\cite{mmsurvey}.
-\end{itemize}  
-
-\hspace*{3.5mm} Let $X$ = $\left(x_{1}, x_{2}, \ldots, x_{n}\right)$ be a genomic dataset of $n$ samples, where a sample $x_i$ composed of $m$ independent genes $G$ = $\left(g_{1}, g_{2}, \ldots, g_{m}\right)$, $X \in \mathbb{R}^{D}$, and $G \in \mathbb{R}^{D}$. In other words, sample $x_i$ consists of a set of $m$ attribute-value pairs $\left(a_{i}, v_{i}\right)$, where $a_i$ is a feature and $v_i$ is its value, such that both $a_{i}$ and $v_i \in \mathbb{R}^{D}$. To solve the multiclass-classification problem, first we train a DNN architecture and generate a robust `black-box' model, instead of relying on interpretable models. 
-
-\hspace*{3.5mm} However, in case of additional input modalities~(i.e., another types of genomic data), it will contribute as another input modality towards multimodality, where to generate the modality specific latent representation of the input modalities. From a given multimodal genomic dataset $D=\{X_1, X_2,..., X_k\}$ about $n$ patients, we can consider classifying an individual $x_i$ into a specific cancer type based on his or her genomic profile, where %$x_k \in \mathbb{R}^{D}$,
-where $X_k$ = ${\mathbf{\{x_1,x_2,..., x_n}}\}$ is represent an individual input modality. 
-
-\hspace*{3.5mm} Since each modality is comprising very high dimensional genomic data, we embedded each input modality $x_i$ into lower dimensional feature space instead of classifying them using their original representation. In other words, using learned representation from individual modalities, we train a `black-box' DNN model, as shown in \cref{fig:chapter_2_wf}, such that we transform each input modality $X$ with a nonlinear mapping $f_{\theta}: x_i \rightarrow z_i$, where $\theta$ are learnable parameters and $z_i \in \mathbb{R}^{K}$ is the learned embedding in which $K \ll D$. 
+\hspace*{3.5mm} However, in case of multiple $k$ input modalities, 
+%it will contribute as another input modality towards multimodality, where to generate the modality specific latent representation of the input modalities. 
+i.e., multimodal genomic dataset $D=\{X_1, X_2,..., X_k\}$, we  consider classifying an individual $x_i$ into a specific cancer type by learning the modality specific latent representation based on his or her genomic profile. %, where %$x_k \in \mathbb{R}^{D}$,
+%where $X_k$ = ${\mathbf{\{x_1,x_2,..., x_n}}\}$ is represent an individual input modality. 
+Since each modality is comprising very high dimensional genomic data, we embedded each input modality $x_i$ into lower dimensional feature space instead of classifying them using their original representation. In other words, using learned representation from individual modalities, we train a `black-box' DNN model, as shown in \cref{fig:chapter_2_wf}, such that we transform each input modality $X$ with a nonlinear mapping $f_{\theta}: x_i \rightarrow z_i$, where $\theta$ are learnable parameters and $z_i \in \mathbb{R}^{K}$ is the learned embedding in which $K \ll D$. 
 
 \begin{figure*}[h]
 	\centering
@@ -141,7 +136,8 @@ where $X_k$ = ${\mathbf{\{x_1,x_2,..., x_n}}\}$ is represent an individual input
         \label{fig:chapter_2_wf}
 \end{figure*}
 
-\hspace*{3.5mm} To parametrize $f_{\theta}$, we employ neural network-based representation learning~(e.g., autoencoders) due to their function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} from genomic data. The input is fed into the encoder $f_{\theta_{i}}$ to generate a modality specific latent representation. Latent representation is then fed into the decoder module to reconstruct ${x}_{i}^{\prime}$, similar to the original input $x_i$. The parameters of the modality specific network are then then trained to minimize the error between the decoder’s output and the input signal. The latent representations of all modalities are then concatenated into a single representation $Z$ = $h_{i,j} \in \mathbb{R}^{D}$. Then based on the embedding $Z$, classifier $f$ then maps a data point $x_i$ to an output $f(x_i) \mapsto y_i$. Since either the decision made by the model $f$ cannot be traced back to the inputs, nor it is clear why the outputs are transformed the way they are, we treat $f$ a `black-box' model. We now introduce the concept of `black-box' and `white-box' in ML systems:   
+\hspace*{3.5mm} To parametrize $f_{\theta}$, we employ neural network-based representation learning~(e.g., autoencoders) due to their function approximation properties and feature learning capabilities~\cite{xie2016unsupervised} from genomic data. The input is fed into the encoder %$f_\theta$ 
+to generate a modality specific latent representation $z$. Latent representation is then fed into the decoder module to reconstruct ${x}_{i}^{\prime}$, similar to the original input $x_i$. The parameters of the modality specific network are then trained to minimize the error between the decoder’s output and the input signal. The latent representations of all modalities are then concatenated into a single representation $Z$ = $h_{i,j} \in \mathbb{R}^{D}$. A classifier $f$ then maps a data point $x_i$ to an output $f(x_i) \mapsto y_i$ in the embedded space $Z$. Since neither the decision made by $f$ be traced back to the inputs, nor it is clear why the outputs are transformed the way they are,  it is arguable to treat $f$ a `black-box' model, where the concept of 'black-box' and `white-box' can be described as follows:   
 
 \begin{itemize}[noitemsep]
     \item \textbf{Black-box model} - an ML model $f$ is considered black-box if the model parameters and network architectures are hidden from  end-users~\cite{das2020opportunities}. 
@@ -340,7 +336,7 @@ Besides, semantic web technologies such as OWL, RDF, SPARQL, Jena, and Virtuoso 
 
 \begin{figure*}
 	\centering
-		\includegraphics[width=0.9\linewidth,height=115mm]{images/chapter_outline.png}
+		\includegraphics[scale=0.6]{images/chapter_outline.png}
 		\caption{A bottom-up layout of the thesis, outlining the chapters}
         \label{fig:chapter_organization}
 \end{figure*}
