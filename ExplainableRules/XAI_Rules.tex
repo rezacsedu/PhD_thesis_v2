@@ -76,12 +76,12 @@ To know the local and global-behaviour of a model, the task is to generate as se
 
 \begin{sidewaysfigure*}
 	\centering
-		\includegraphics[width=\linewidth]{images/rules_wf.png}
-	    \caption{The rule generation and explanation workflow: (1) multimodal genomics data is used to create for learning representation, (2) a model is trained, (3) model produces a rule list by approximating it's behaviour, (4) rule list is filtered based on given support and confidence, before (5) explaining the decision} 
+		\includegraphics[scale=0.75]{images/rules_wf.png}
+	    \caption[The rule generation and explanation workflow]{The rule generation and explanation workflow: (1) multimodal genomics data is used to create for learning representation, (2) a model is trained, (3) model produces a rule list by approximating it's behaviour, (4) rule list is filtered based on given support and confidence, before (5) explaining the decision} 
 	    \label{fig:rules_wf}
 \end{sidewaysfigure*}
 
-\hspace*{3.5mm} Let $R$ be a rule~(in the form of set of predicates) to provide interpretable representation, such that $R(x)$ returns 1 if all its feature predicates are true for instance $x$, 0 otherwise. For example, in \cref{ge:ancor_example} when x=\{1, 0.3195, -0.2154, -0.154, 0.4767, 0.652\} or x=\{1, 0.230, -0.552, 0.715, 0.924, 0.652\}, $F(x)=Y$, $A(x)=1$ where $A=\{TP53, TBX3, MPO, AMBN\}$. On the other hand, when x=\{0, -0.240, 0.252, 0.350, -0.642, -0.985\} or x=\{0, -0.450, 0.012, 0.650, -0.325, -0.357\}, $ F(x)=N$, $R(x)=0$ where $R=\{TP53, TBX3, MTOR, MPO\}$. Representing a decision this intuitive way, however, is not very user friendly given the continuous nature of the data and huge number of protein-coding genes~(i.e., more then 20k). Therefore, we need a better rule list to approximate the behaviour of the original  models trained on dataset $X$. 
+\hspace*{3.5mm} Let $R$ be a rule~(in the form of set of predicates) to provide interpretable representation, such that $R(x)$ returns 1 if all its feature predicates are true for instance $x$, 0 otherwise. For example, in \cref{ge:ancor_example} when x=\{1, 0.3195, -0.2154, -0.154, 0.4767, 0.652\} or x=\{1, 0.230, -0.552, 0.715, 0.924, 0.652\}, $F(x)=Y$, $A(x)=1$ where $A=\{TP53, TBX3, MPO, AMBN\}$. On the other hand, when x=\{0, -0.240, 0.252, 0.350, -0.642, -0.985\} or x=\{0, -0.450, 0.012, 0.650, -0.325, -0.357\}, $ F(x)=N$, $R(x)=0$ where $R=\{TP53, TBX3, MTOR, MPO\}$. Representing a decision this intuitive way is not very user friendly given the continuous nature of the data and huge number of feature space. Therefore, we need a better rule list to approximate the behaviour of the original  models trained on dataset $X$. 
 
 \subsection{Generating decision rules}
 Our approach is based on RuleMatrix~\cite{ming2018rulematrix}, which is Bayesian rule approach to generate and explain model's decision. The overall workflow is shown in \cref{fig:rules_wf}: first the multimodal genomics data is used to create for learning representation on which a model is trained. Then a surrogate model produces a rule list by approximating original model's behaviour. Since not every rule has better coverage, support, and confidence, filtering can be performed by a user~(a doctor) based on support and confidence before explaining the final decision to another user~(e.g., a patient).\\ 
@@ -271,39 +271,39 @@ We explain both global and local behaviours of the model~($F_2$) trained on the 
 The data flow in \cref{fig:decision_rules_explain}, shows how all the gene expression data is captured by each of the rules. The width of the flow indicates the number of data captured and uncaptured by each rule, while the color of the flow indicates different labels. In the right of the matrix shows the fidelity and evidences. Fidelity means how accurate a rule is in approximating the $F_2$ model on the gene expression data captured by this rule. 
 As stated in \cref{eq:fidelity}, fidelity ranges between 0 and 1. Hence, we plot the fidelity of the rule between 0 to 100 scale to on the subset of data satisfying the rule. As fidelity represents how accurately the rule represents the original model on this subset~\cite{ming2018rulematrix}, the higher the fidelity, the more reliable the rule is in representing the original model. The evidence or support signifies the number of data with different labels. For example, the data captured by rule 2, 3, 4, 7, 8, and 11 represent breast cancer cases. The stripped part encodes the part of data wrongly classified by the model as a certain label represent by the color.
 
-\begin{sidewaysfigure}
+\begin{sidewaysfigure*}
 	\centering
-	\captionsetup{justification=centering}
-		\includegraphics[width=0.6\textwidth,height=60mm]{images/decision_rules_explain.png}
-	    \caption{The rule matrix presents each rule as a row and each feature as a column,\\ where clauses are visualized as glyphs in the corresponding cells. The support\\ slide-bar shows the fidelity of the rule for the sampled data, whereas the\\ evidence signifies model's predictions and errors under a certain rule.}
-	    \label{fig:decision_rules_explain}
-\end{sidewaysfigure}
-
-\begin{figure}
-	\centering
-		\includegraphics[width=\textwidth]{images/simple_tree_pre.png}
+		\includegraphics[scale=0.25]{images/simple_tree_pre.png}
 	    \caption{Decision tree showing global decision and explanation.}
 	    \label{fig:skater_global}
-\end{figure}
+\end{sidewaysfigure*}
 
 \hspace*{3.5mm} We plot the evidence w.r.t., error distribution of the model on  test set of each single modality. The horizontally stacked boxes are used to present the predictions of the model. The width of a box encodes the amount of data with a certain type of predictions. The striped boxes represent erroneous predictions, i.e., wrongly classified  sample as class blue and has true labels different from class blue. To demonstrated an example, a end user extracts a list of 10 rules from the trained model, where the default support was set to 0.1. Subsequently, he observes that rule 3 to 6 do not have enough support from the training data. Hence, he can filter the minimum evidence in the rule filter to 0.05 to collapse the last 5 rules~(rules 6 to 10). Then he finds that the first rule outputs LGG~(i.e., brain lower grade glioma) with a high probability~(i.e., 0.95) and a high fidelity~(i.e., 0.95). 
 
+\begin{figure*}
+	\centering
+	\captionsetup{justification=centering}
+		\includegraphics[scale=1.4]{images/decision_rules_explain.png}
+	    \caption[Visualization of rules using rule matrix.]{The rule matrix presents each rule as a row and each feature as a column, where clauses are visualized as glyphs in the corresponding cells. The support slide-bar shows the fidelity of the rule for the sampled data, whereas the evidence signifies model's predictions and errors under a certain rule.}
+	    \label{fig:decision_rules_explain}
+\end{figure*}
+
 \hspace*{3.5mm} Based on this rule matrix, he can thn learn that if the marginal adhesion score is larger than 5, the model will very likely predict brain lower grade glioma. This aligns with his knowledge that the loss of adhesion is a strong sign of cancer cells. Then he can check other rules, for example rule 2, which has the largest support from the dataset. The rule shows that if the bland chromatin is smaller or equal than 1, the cell should be kidney cancer. He then should finds this rule interesting since it indicates that one can quickly identify benign cells in the examination by checking if the nucleus is coarse. 
 
-\begin{figure}
+\begin{figure*}
 	\centering
-		\includegraphics[width=0.4\textwidth,height=90mm]{images/dr_global_1.png}
+		\includegraphics[scale=0.7]{images/dr_global_1.png}
 	    \caption{Global decision as text based on pruned tree}
 	    \label{fig:skater_decision_as_text}
 	    \vspace{-2mm}
-\end{figure}
+\end{figure*}
 
-\begin{figure}
+\begin{figure*}
 	\centering
-		\includegraphics[width=0.8\textwidth]{images/single_pred_feature.png}
-	    \caption{Local prediction for a single instance, left: 20 features of the supplied input sample, right bottom: ground truth and the predicted labels by the oracle and the surrogate models}
+		\includegraphics[scale=0.8]{images/single_pred_feature.png}
+	    \caption[Local prediction for a single instance.]{Local prediction for a single instance, left: 20 features of the supplied input sample, right bottom: ground truth and the predicted labels by the oracle and the surrogate models}
 	    \label{fig:decision_as_text_local_1}
-\end{figure}
+\end{figure*}
 
 \hspace*{3.5mm} \Cref{fig:skater_global} shows the global inference tree on the basis of the complete gene expression data set, where only the leaf nodes containing the respective class labels are colored~(gray, pink, purple, dark purples, green, etc.). As seen, the decision tree clearly explains how the model makes the diagnosis decision, which is already better than other charts such as feature importance and partial dependency plots, especially for the exploration and discovery. However, interpreting and explaining them to patients might be still difficult. Therefore, we use Skater to draw the global decision as text based on pruned tree in \cref{fig:skater_decision_as_text}. %The full tree for the same inferencing can be found in appendix. 
 

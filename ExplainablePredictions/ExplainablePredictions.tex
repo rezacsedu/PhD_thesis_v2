@@ -1,12 +1,11 @@
 \chapter{Interpreting Black-box Models}\label{chapter:xai}
 %\chapter{Interpreting Unimodal and Multimodal Models}
 
-\textit{"When it comes to explaining decisions made by algorithms, there is no single approach that works best. There are many ways to explain. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline"} - Aleksandra Mojilovic, Head of AI Foundations at IBM. 
+\textit{"Predicting the future isn't magic, it's artificial intelligence."} -- Dave Waters 
 
 \section{Chapter Overview}
-In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, we incorporated different modalities to develop CDSS for predicting cancer types, subtypes, and survival rates. However, in both cases, the predictive models we developed were black-box methods. Since, precise prediction of cancer types is vital for cancer diagnosis and therapy, revealing  marker or driver genes and providing subsequent interpretation are most significant steps. In this chapter, we employed two different approaches to open the `black box' model towards making them explainable based on genomics data, including mutations, CNV, GE and clinical data, covering 33 different cancer types from the Pan-Cancer Atlas~(PCAt) project~\cite{weinstein2013cancer} of TCGA on which we trained a vanilla CNN, VGG16, multimodal autoencoder~(MAE), and multimodal convolutional autoencoder~(MCAE) networks.
-
-\hspace*{3.5mm} To identify significant biomarkers\footnote{\textit{How to identify relevant features or factors for a certain decision?}}, we generate class-specific heat maps using GradCAM++, attention mechanism, and LRP. Further, we computed feature importance w.r.t mean absolute impact, followed by ranking top-k genes across cancer types. Nevertheless, we study the effects of tissue of origin that can potentially bias the identification of cancer markers. Finally, we provide explanations of the predictions. Quantitative and qualitative analyses show that approach based on multimodal data exhibit more reliable diagnosis, even though the single modal approach shows higher confidence at predicting the cancer types. \label{chapter_5:cw}
+In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were incorporated to develop a DSS for predicting cancer types and subtypes, respectively. However, in both cases, the predictive models developed were black-box methods. Since, precise prediction of cancer types is vital for cancer diagnosis and therapy, revealing marker or driver genes and providing subsequent interpretation are insignificant. In this chapter, two different probing approaches will be employed to open the `black-box' models towards making them explainable. Similar to chapter 4, copy number variations~(CNVs), miRNA expression, and gene expression~(GE), along with clinical will be used t form multimodal input for the training. Data from the Pan Cancer Atlas~(PCAt) project~\cite{weinstein2013cancer} of TCGA, covering 33 different cancer types will be used to train a vanilla CNN, VGG16, multimodal autoencoder~(MAE), and multimodal convolutional autoencoder~(MCAE) networks. To identify significant biomarkers\footnote{\textit{How to identify relevant features or factors for a certain decision?}}, we generate class-specific heat maps using GradCAM++, attention mechanism, and LRP. Further, we compute feature importance w.r.t mean absolute impact, followed by ranking top-k genes across cancer types. Nevertheless, we study the effects of tissue of origin that can potentially bias the identification of cancer markers. Finally, we provide explanations of the predictions. 
+%Quantitative and qualitative analyses show that approach based on multimodal data exhibit more reliable diagnosis, even though the single modal approach shows higher confidence at predicting the cancer types. \label{chapter_5:cw}
 
 \section{Introduction}\label{chapter_5:intro}
 Cancer is caused by gene alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, CNV, profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,19Cruz}. As a result, GE can be disrupted by cell division or environmental effects, or genetically inherited from parents. Changes in GE often change the production of different proteins, affecting normal cell behavior. These damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}, making it one of the utmost reasons cancer incidences are gradually increasing every year and become the second leading cause of death worldwide. Consequently, more than 200 types of cancer identified, each of which can be characterized by different molecular profiles requiring unique therapeutic strategies~\cite{82Tomczak}. According to a statistics from the National Cancer Institute\footnote{\url{https://www.cancer.gov/about-cancer/understanding/statistics}} 14.1 million deathly cancer cases were reported in 2012, out of which 8.8 million patients died of five leading cancers of lung, liver, colon/rectum, stomach, and breast~\cite{zuo2019identification}. 
@@ -114,9 +113,9 @@ In this section, we discuss our approach in detail, including data collection, p
 
 \subsection{Problem statement}
 %Given genomics profiles (e.g., gene expressions, DNA methylation, miRNA expressions, mutations, etc.) of $n$ samples, $X$ = $\{\mathbf{x}^{(1)},\mathbf{x}^{(2)}, ..., \mathbf{x}^{(n)}\}$ in dataset $D$, where $X \in \mathbb{R}^{D}$. We consider classifying an individual $x_i$ into a specific into a specific cancer type based on its respective profiles, but in two different ways: i) using single modality, ii) based on multimodality. 
-From given genomics profiles of PCAt cohorts covering  different cancer types~(e.g., GE, DNA methylation, miRNA expressions, mutations), the problem is to classify the patients into specific cancer types based on its respective profiles. Given $n$ samples, $X$ = ${{\{x_1,x_2, ..., x_n}}\}$ in dataset $D$, where $X \in {R}^{D}$. We consider classifying an individual $x$ into a specific cancer type based on its respective profiles, but in two different ways: i) using single modality, ii) based on multimodality, where a predictor~(a classifier in this case), is a function $F: {X}^{(m)} \rightarrow {Y}$, which maps a data instance $x$ from a feature space ${X}^{(m)}$ with $m$ input features to a labels $y$ in a target space ${Y}$, where $F(x)=y$ denotes the decision $y$, predicted by $F$. %We refer $f(X)=Y$ short for $\{f(x) | x \in \mathbb{R}^{X}\}=Y$. 
+From given genomics profiles of PCAt cohorts consisting of GE, DNA methylation, and miRNA expressions, the problem is to classify the patients into specific cancer types. Given $n$ samples, $X$ = ${{\{x_1,x_2, ..., x_n}}\}$ in dataset $D$, where $X \in {R}^{D}$. We consider classifying an individual $x$ into a specific cancer type based on its respective profiles, but in two different ways: i) based on single modality, ii) based on multimodality, where a  classifier is a function $f: {X}^{(m)} \rightarrow {Y}$, which maps a data instance $x$ from a feature space ${X}^{(m)}$ with $m$ input features to a labels $y$ in a target space ${Y}$, where $f(x)=y$ denotes the decision $y$ predicted by $f$, and input instance $x$ consists of a set of $m$ attribute-value pairs $\left(a_{i}, v_{i}\right)$ in which $a_i$ is a feature and $v_i$ is a value from the domain of $a_i$. 
 
-\hspace*{3.5mm} An input instance $x$ consists of a set of $m$ attribute-value pairs $\left(a_{i}, v_{i}\right)$, where $a_i$ is a feature and $v_i$ is a value from the domain of $a_i$. In \cref{chapter:uni_modality}, we developed two `black-box' predictors: let's say $F$ is the first predictor whose internal functioning is either unknown to the observer or they are known but not interpretable by a human. In this chapter, we assume $F$ lacks of explainability by default, in which we embed local and global explainability logic to make it interpretable, which we hope to explain a data point $x$ using an explanation function $g$. We denote ${F}$ - an interpretable predictor, whose internal processing yielding a decision ${F}(x)=y$ can be given a symbolic interpretation understandable by a human. 
+\hspace*{3.5mm} In \cref{chapter:uni_modality}, we developed two `black-box' predictors: let's say $F$ is the first predictor whose internal functioning is either unknown to the observer or they are known but not interpretable by a human. In this chapter, we assume $F$ lacks of explainability by default, in which we embed local and global explainability logic to make it interpretable, which we hope to explain a data point $x$ using an explanation function $g$. We denote ${F}$ - an interpretable predictor, whose internal processing yielding a decision ${F}(x)=y$ can be given a symbolic interpretation understandable by a human. 
 
 \begin{table} [h]
 \centering
@@ -148,7 +147,7 @@ From given genomics profiles of PCAt cohorts covering  different cancer types~(e
     \vspace{-2mm}
 \end{table}
 
-\hspace*{3.5mm} While using single modality, we classify samples directly in it's original data space $X$. In the latter approach, instead of classifying samples directly in it's original data space $X$, we first transform each data with a nonlinear mapping $F_{\theta}: X \rightarrow Z$, where $\theta$ are learnable parameters and $Z \in {R}^{K}$ is the learned or embedded feature space, where $K \ll D$. Then we create a shared representation of class-discriminating features from each modality, followed by parametrizing $F_{\theta}$ by representation learning based on multimodal convolutional autoencoders~(MCAE) is employed due to it's function approximation properties and feature learning capabilities~\cite{xie2016unsupervised,karim2019drug} from genomic data. Based on embedding $Z$, the classifier then $F$ maps an input $x$ to an output $F(x) \in y, F: {R}^{d} \mapsto y$. When we assume $F$ has a parametric form, we write $F_{\theta}$, where ${L}(F(x), y)$ denotes the loss function used to train $F$ on a dataset $D$ of input-output pairs $(x(i), y(i))$. Local explainability refers to an explanation for why $F$ predicted $F(x)$ for a fixed point $x$. 
+\hspace*{3.5mm} While using single modality, we classify samples directly in it's original data space $X$. In the latter approach, instead of classifying samples directly in it's original data space $X$, we first transform each data with a nonlinear mapping $f_{\theta}: X \rightarrow Z$, where $\theta$ are learnable parameters and $Z \in {R}^{K}$ is the learned or embedded feature space, where $K \ll D$. Then we create a shared representation of class-discriminating features from each modality, followed by parametrizing $f_{\theta}$ by representation learning based on multimodal convolutional autoencoders~(MCAE) is employed due to it's function approximation properties and feature learning capabilities~\cite{xie2016unsupervised,karim2019drug} from genomic data. Based on embedding $Z$, the classifier then $f$ maps an input $x$ to an output $f(x) \in y, f: {R}^{d} \mapsto y$. When we assume $f$ has a parametric form, we write $f_{\theta}$, where ${L}(f(x), y)$ denotes the loss function used to train $f$ on a dataset $D$ of input-output pairs $(x(i), y(i))$. Local explainability refers to an explanation for why $f$ predicted $f(x)$ for a fixed point $x$. 
 %The local explanation methods we discuss come in one of the following forms: which feature $x_i$ of $x$ was most important for prediction with $f$? Which training data point $Z \in \mathbb{R}^{K}$ was most important to $f(x)$? What is the minimal change to the input $x$ required to change the output $f(x)$? 
 
 \subsection{Datasets}
@@ -329,7 +328,7 @@ In this subsection, we discuss construction and training of the unimodal vanilla
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=\textwidth,height=120mm]{images/wf_2D_CNN.png}
+	\includegraphics[scale=0.7]{images/wf_2D_CNN.png}
     \caption{Workflow of the unimodal CNN modality approach}	
 	\label{fig:workflow_2D_CNN}
 \end{figure*}
@@ -339,16 +338,16 @@ Since we are interested in finding the relations between instances, e.g., GE of 
 
 \subsubsection{Network construction and training}
 %However, prior applying the convolutional~(conv) operations, similar to \cref{chapter:uni_modality}, we first embed the samples into 2D images in which respective features for each sample are transformed into gray-scale image by zero padding around the edges and normalized to [0,255]. All the images are then normalized to [0,255], without losing any information. 
-We train a vanilla CNN and VGG16 architectures from scratch alongside data augmentation in which the output of each conv layer is passed to dropout and Gaussian noise layer~(GNL) to avoid overfitting and thus regularize the learning~\cite{vardropout}. This involves the input feature space into a lower-dimensional representation, which is then further down-sampled by two different pooling layers and a max-pooling layer~(MPL) by setting the pool size. The output of an MPL is considered as an `extracted feature' from each 2D GE image. Since each MPL `flattens' the output space by taking the highest value in a FM, this produces a sequence vector from the last conv layer, which we expect to force the GE value of specific genes that are highly indicative of being responsible for a specific cancer type. Then this vector is passed through another dropout, and then softmax layers for the probability distribution over the classes.
+Both vanilla CNN and VGG16 architectures are trained from scratch alongside data augmentation in which the output of each convolutional layer is passed to dropout and Gaussian noise layer to avoid overfitting and thus regularize the learning~\cite{vardropout}. This involves the input feature space into a lower-dimensional representation, which is then further down-sampled by two different pooling layers and a max-pooling layer~(MPL) by setting the pool size. The output of an MPL is considered as an `extracted feature' from each 2D GE image. Since each MPL `flattens' the output space by taking the highest value in a FM, this produces a sequence vector from the last convolutional layer, which we expect to force the GE value of specific genes that are highly indicative of being responsible for a specific cancer type. Then this vector is passed through another dropout, and then softmax layers for the probability distribution over the classes.
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[width=\textwidth,height=65mm]{images/clstm.png}
-    \caption{Schematic representation of our approach, which starts from taking a raw GE sample and passing to conv layers before obtaining rectified conv feature maps~(with guided-backprop and GradCAM++) to pass through dense, dropout, and softmax layer}	
+	\includegraphics[scale=0.55]{images/clstm.PNG}
+    \caption{Schematic representation of CNN-based approach, which starts by taking a raw GE sample as input and passing it through convolutional and pooling layers to generate rectified convolutional feature maps. Feature maps are then passed through fully connected softmax layer for classification. Guided back-propagation and Grad-CAM++ are applied to identify important important genes w.r.t pixel values.}	
 	\label{fig:clstm}
 \end{figure*}
 
-\hspace*{3.5mm} Besides, VGG16 is also trained from scratch instead of initializing it's network weight from pretrained models. The reason is that, for example, ImageNet contains photos of general objects, which would activate the internal representation of network's hidden layers with geometrical forms, colorful patterns, or irrelevant shapes that are usually not present in biological datasets~\cite{Karim2020DeepCOVIDExplainer}. Both CNN architectures are trained with the first-order gradient-based optimization AdaGrad to optimize the categorical cross-entropy~(CCE) loss~\cref{eq:cross_entropy_loss_2} of the predicted cancer subtype $Y^{\prime}$ vs. actual subtype $Y$: 
+\hspace*{3.5mm} Besides, VGG16 is also trained from scratch instead of initializing it's network weight from pretrained models. The reason is that, for example, ImageNet contains photos of general objects, which would activate the internal representation of network's hidden layers with geometrical forms, colorful patterns, or irrelevant shapes that are usually not present in biological datasets~\cite{Karim2020DeepCOVIDExplainer}. Both CNN architectures are trained with first-order gradient-based AdaGrad optimizer to optimize following categorical cross-entropy loss between predicted $Y^{\prime}$ and actual cancer type $Y$: 
 
 \vspace{-2mm}
 \begin{equation} 
@@ -356,12 +355,12 @@ We train a vanilla CNN and VGG16 architectures from scratch alongside data augme
     \label{eq:cross_entropy_loss_2}
 \end{equation} 
 
-\hspace*{3.5mm} Softmax activation function is used in the output layer for the probability distribution over the classes for breast cancer subtype prediction. Further, we observe the performance by adding the GNL followed by the dense layer to improve model generalization and reduce overfitting, where the Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. Since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through random search and 5-fold cross-validation tests. 
+\hspace*{3.5mm} Softmax activation function is used in the output layer for the probability distribution over the classes for breast cancer subtype prediction. Further, we observe the performance by adding the Gaussian noise layer followed by the dense layer to improve model generalization and reduce overfitting, where the Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. Since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through random search and 5-fold cross-validation tests. 
 
 \begin{figure*}[h]
-		\centering
-		\includegraphics[width=\linewidth,height=40mm]{images/3_mode.png}
-	\caption{Heat map examples for a single cancer type prediction, where the image-pixel of specific biomarkers are highlighted with Grad-CAM, Grad-CAM++, and LRP.} 
+	\centering
+	\includegraphics[scale=0.8]{images/3_mode.png}
+	\caption{Heat map examples for a single cancer type prediction, where the image-pixel of specific biomarkers are highlighted by probing the network with Grad-CAM, Grad-CAM++, and LRP.} 
 	\label{fig:3hms}
 \end{figure*}
 
@@ -484,13 +483,14 @@ Nevertheless, sometimes features that seems to have low importance for a bad mod
 %\subsection{}
 
 \subsection{Constructions and training of multimodal classifiers}
-The multimodality nature of the data motivated us to develop two deep architectures, MAE and MCAE. The former is based on the vanilla AE, which has a similar architecture we constructed in \cref{chapter:multiodality}, while the latter is based on CAE-based representation learning we described in \cref{chapter:preli}. In both approach, we employed latent representation concatenation~(LRC)~(as outlined in \cref{fig:lrc_11}) instead of shared latent representation~(SLR)~(see \cref{fig:slr_11}) to generate the shared representation of the multimodal features. There are three reasons for employing the LRC as outlined as follows: 
+The multimodality nature of the data motivated us to develop two deep architectures, MAE and MCAE. The former is based on the vanilla AE, which has a similar architecture we constructed in \cref{chapter:multiodality}, while the latter is based on CAE-based representation learning we described in \cref{chapter:preli}. In both approaches, latent representation concatenation~(LRC)~(as outlined in \cref{fig:lrc_11}) is employed instead of shared latent representation~(SLR)~(see \cref{fig:slr_11}) to generate a shared feature representation of the multimodal input. Following are three motivating factors for employing LRC-based representation: 
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
-    \item In \cref{chapter:multiodality}, we have seen that the performance was hindered due to high pretraining errors. 
-    \item Literature~\cite{mmdcae} has shown covering several use cases that reconstruction loss~(e.g., MSE) with the LRC is significantly lower than that of SLR. 
-    \item Literature~\cite{mmdcae} has shown covering several use cases that the classification performance can be improved significantly in case if the classifier is trained on LRC instead of the SLR. 
+    \item In \cref{chapter:multiodality}, moderately lower performance was observed, due to high pretraining and reconstruction errors during the SRL and vanilla AE-based representation learning. 
+    \item Patrick T. et al.~\cite{mmdcae} observed, based on several use cases~(text classification, sequence data, and imaging), that the reconstruction loss~(e.g., MSE) for LRC-based representation learning is significantly lower compared to SLR.
+    
+    \item Patrick T. et al.~\cite{mmdcae} also observed significant accuracy improvement while classifiers are trained on LRC-based learned representation, which is largely backed by lower reconstruction loss. 
 \end{itemize}
 \vspace{-2mm}
 
@@ -498,15 +498,15 @@ The multimodality nature of the data motivated us to develop two deep architectu
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=140mm]{images/lrc_cls.png}
-		\caption{Classification on LRC}
+		\includegraphics[scale=0.8]{images/lrc_cls.png}
+		\caption{Representation learning based on LRC and classification}
         \label{fig:lrc_11}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=140mm]{images/joint_rl_cls.png}
-		\caption{Classification on SLR}
+		\includegraphics[scale=0.8]{images/joint_rl_cls.png}
+		\caption{Representation learning based on SLR and classification}
         \label{fig:slr_11}
 	\end{subfigure}
 	\caption{Fusion architectures in multimodal representation learning and classification} 
@@ -520,7 +520,7 @@ Although a single and simple AE discussed in \cref{preli:AEs} can reconstruct an
 \begin{figure*}[htp!]
 	\centering
 	\includegraphics[width=\textwidth]{images/mcae.png}	
-    \scriptsize{\caption{schematic representation of the cancer typing method based on multimodal convolutional autoencoder, which starts from taking GE, miRNA, mutations, and clinical outcomes and passing to conv layers before obtaining rectified conv feature maps~(with guided-backprop and GradCAM++) to pass through dense, dropout, and softmax layer}}.	
+    \scriptsize{\caption{schematic representation of the cancer typing method based on multimodal convolutional autoencoder, which starts from taking GE, miRNA, mutations, and clinical outcomes and passing to convolutional layers before obtaining rectified conv feature maps~(with guided-backprop and GradCAM++) to pass through dense, dropout, and softmax layer}}.	
 	\label{fig:mcae}
 \end{figure*}
 \fi 
@@ -565,7 +565,7 @@ Training a single-layer autoencoder corresponds to optimizing the learning param
 \hspace*{3.5mm} where $\odot$ denotes the element-wise product and $h \in$ $\mathbb{R}^{\eta}$ is the final representation~\cite{mmdcae}, which is subsequently fed to the classifier for the classification. 
 
 \subsubsection{Supervised training of MCAE}
-The final concatenated latent representation is fed into the fully-connected layer for the classification, which is trained to optimize the CCE loss~\cref{eq:cross_entropy_loss_2}. Softmax activation function is used in the output layer for the probability distribution over the classes for cancer type prediction. Eventually, the parameters of the entire MAE  architecture are optimized by minimizing the following objective function~\cite{mmdcae}:
+The final concatenated latent representation is fed into the fully-connected layer for the classification, which is trained to optimize the categorical cross-entropy loss (see \cref{eq:cross_entropy_loss_2}). Softmax activation function is used in the output layer for the probability distribution over the classes. Overall, the parameters of the entire MCAE architecture are optimized by minimizing the following objective function~\cite{mmdcae}:
 
 \vspace{-4mm}
 \begin{align}
@@ -573,22 +573,21 @@ The final concatenated latent representation is fed into the fully-connected lay
     \label{eq:sum_2}
 \end{align}
 
-\hspace*{3.5mm} where the parameters $\alpha_{rcae}$ and $\alpha_{ccae}$ are regularization weights assigned to each error function~\cite{mmdcae}. Before the training, the MAE network parameters were initialized with Xavier initialization~\cite{xavier} and trained using first-order gradient-based optimization techniques AdaGrad. The training process is performed through a total of 100 epochs with the batch size set to $128$. The activity regularization term of \cref{eq:recons_loss} is set between $\lambda=[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{0}=\alpha_{1}=\alpha_{2}=0.1$, and $\alpha_{c}$=0.25. %The weight of the classifier's loss function is set greater than the others to focus more on the classification performance of the whole architecture. 
-Further, we observe the performance by adding the GNL followed by the dense layer to improve model generalization and reduce overfitting, where the Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
+\hspace*{3.5mm} where the parameters $\alpha_{rcae}$ and $\alpha_{ccae}$ are regularization weights assigned to each error function~\cite{mmdcae}. Before the training, the MCAE network parameters were initialized with Xavier initialization~\cite{xavier} and trained using first-order gradient-based optimization techniques AdaGrad. 
 
 \subsubsection{Interpreting black-box MCAE model}
 %We discuss details of the construction and training of the MCAE architecture, followed by providing explanations of the interpretability in this sub-section. 
 %\Cref{fig:tsne_ge} shows the t-SNE visualization based on GE  profiles. 
-Majority of the approaches based on multimodal learning directly merge the learned or latent vectors. Consequently, the learned representations from CAE are not easily interpretable, which is a very critical drawback. However, disentangling them is essential to provide insight into what features did the representations capture and what attributes of the samples are the classification based on~\cite{karimTCBB2020}. As mentioned earlier, there is not huge difference between GE, miRNA, or CNV features values. Therefore, merging them blindly could ignore that subtle differences w.r.t feature contributions and may increase dimensions of the representation. 
+Majority of the approaches based on multimodal learning directly merge the learned or latent vectors. Consequently, the learned representations from CAE are not easily interpretable, which is a very critical drawback. However, disentangling them is essential to provide insight into what features did the representations capture and what attributes of the samples are the classification based on~\cite{karimTCBB2020}. As mentioned earlier, there is not huge difference between GE, miRNA, or CNV features values. Therefore, merging them blindly could ignore subtle differences between different input modalities w.r.t feature contributions and may increase dimensions of the representation. 
 
-\begin{sidewaysfigure*}[h]
+\begin{sidewaysfigure*}
 	\centering
-	\includegraphics[width=\textwidth,height=70mm]{images/attention.png}	\caption{The schematic representation of the attention mechanism}.	
+	\includegraphics[scale=0.6]{images/attention.png}	\caption{The schematic representation of the attention mechanism}.	
     \vspace{-2mm}
 	\label{fig:attention}
 \end{sidewaysfigure*}
 
-\hspace*{3.5mm} Unlike the unimodal CNN models, where we performed CNN-based feature selection, we let the MCAE model to do so, using attention mechanism. In particular, motivated by the facts that attention networks have already been applied in numerous research domains, as shown in \cref{fig:attention}, we employ this technique to learn the latent representations by fusing different features and their dimensions before the actual concatenation. From the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. Let $K$ denote the dimensions of latent vectors. Then, we learn the representations from the latent vectors of individual features. The representation of a feature $i$ can be defined as follows: 
+\hspace*{3.5mm} Unlike the unimodal CNN models, where CNN-based feature selection is performed, it is more reasonable to let the MCAE model to perform feature selection. One of the widely used techniques is called attention mechanism. Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added to compute important features by fusing different features and their dimensions before the actual concatenation, as shown in \cref{fig:attention}. Then, from the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. From $K$  dimensional latent vector space, the representation is learned from the latent vectors of individual features. The resulting representation of feature $i$ can be defined as follows: 
 
 \vspace{-6mm}
 \begin{align}
@@ -596,14 +595,14 @@ Majority of the approaches based on multimodal learning directly merge the learn
 \end{align}
 \vspace{-6mm}
 
-\hspace*{3.5mm} where $\odot$ is the element-wise product, $a_{i,j}$ = $\left(a_{i,j,1}, a_{i,j,2}, \cdots, a_{i,j,K}\right)$ is a $K$ dimensional attention vector to reflect the different importance of $K$ dimensions in fusing latent vectors $h_{i}$ and $h_{j}$.  Specifically, $f_{i,j}=$ $\left(f_{1}, f_{2}, \cdots, f_{K}\right)$ and $f_{k}=a_{i,j,k} \odot\left(h_{i,k} \odot h_{j,k}\right) \cdot a_{i,j,k}$ is the attention weight responsible for $k^{th}$ dimension. Subsequently, the attention vector $a_{i,j}$ is calculated as follows: 
+\hspace*{3.5mm} where $\odot$ is the element-wise product, $a_{i,j}$ = $\left(a_{i,j,1}, a_{i,j,2}, \cdots, a_{i,j,K}\right)$ is a $K$ dimensional attention vector to reflect the different importance by fusing latent vectors $h_{i}$ and $h_{j}$. Specifically, $f_{i,j}=$ $\left(f_{1}, f_{2}, \cdots, f_{K}\right)$ and $f_{k}=a_{i,j,k} \odot\left(h_{i,k} \odot h_{j,k}\right) \cdot a_{i,j,k}$ is the attention weight assigned to $k^{th}$ dimension. The attention vector $a_{i,j}$ is calculated as follows: 
  
  \vspace{-6mm}
  \begin{align}
     a_{i, j, k}=\frac{\exp \left(\hat{a}_{i, j, k}\right)}{\sum_{m=1}^{k} \exp \left(a_{i, j, m}\right)}
 \end{align}
 
-\hspace*{3.5mm} where $\hat{a}_{i,j}=V^{T} \operatorname{ReLU}\left(W\left(Y_{i} \odot Y_{i}\right)+b\right)$ and $\operatorname{ReLU}$ is ReLU activation function, $b$ and $W$ are the bias vector and the weight matrix, and $V^{T}$ is the weight vector. The final outcome of the attention module takes into account the different contributions of different features w.r.t their dimensions. The attention neural network outputs the representation of the multimodal features to be feed into the fully-connected layer to predict cancer types. The attention neural network has parameters $b,W$ and $V^{T}$, and these parameters are optimized along with deep neural network in an end-to-end way.
+\hspace*{3.5mm} where $\hat{a}_{i,j}=V^{T} \operatorname{ReLU}\left(W\left(Y_{i} \odot Y_{i}\right)+b\right)$ and $\operatorname{ReLU}$ is ReLU activation function, $b$ and $W$ are the bias vector and the weight matrix, and $V^{T}$ is the weight vector. These parameters are optimized along with deep neural network in an end-to-end way. The final outcome of the attention module takes into account the different contributions of different features w.r.t their dimensions. Output from the attention layer, i.e., multimodal features is then feed into a fully-connected layer for making the prediction. 
 
 %\Cref{algo:hm_2} and \ref{algo:imp_area_2} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. We averaged all the normalized HM from the same class to generate a class-specific HM inspired by Selvaraju et al.~\cite{mostavi2019convolutional,karim2019onconetexplainer}.
 
@@ -735,15 +734,18 @@ In this section, we discuss the evaluation results, both quantitatively and qual
 \subsection{Experiment setup}
 %All the programs were written in Python\footnote{\url{https://github.com/rezacsedu/XAI_Cancer_Prediction}}. The software stack consists of scikit-learn and Keras with TensorFlow backend. The network was trained on an Nvidia GTX 1080i GPU with CUDA and cuDNN enabled to make the overall pipeline faster. 
 %Further, since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through a random search and 5-fold cross-validation tests. In each of 5 runs, 70\% of the data is used for the training, 30\% for the evaluation, while 10\% of the training set is used for validation of the networks to optimize the cross-entropy loss based on the best learning rate, batch size, number of filters, kernel size, and dropout/Gaussian noise probability. 
-Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. 
+Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term of \cref{eq:recons_loss} is set between $\lambda=[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{0}=\alpha_{1}=\alpha_{2}=0.1$, and $\alpha_{c}$=0.25. %The weight of the classifier's loss function is set greater than the others to focus more on the classification performance of the whole architecture. 
+Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are  observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
+
+\hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. 
 %Hence, we did not report F1-scores. 
 When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. 
 
-\subsection{Performance: single modality}
+\subsection{Performance analysis: single modality}
 The average accuracy obtained was 89.75\% and 96.25\% using CNN and VGG16 models, respectively. However, since the classes are imbalanced, only the accuracy will give a very distorted estimation of the cancer types. Thus, we report the class-specific classification reports along with the corresponding MCC scores in \cref{table:class_specific}. As can be seen, precision and recall for the majority cancer types were high and for these the VGG16 model performs mostly better. Notably, the VGG16 model classifies BRCA, UCEC, LUAD, HNSC, LUSC, THCA, PRAD, BLCA, STAD, KIRC, LIHC, COAD, CESC, KIRP, SARC, OV, PCPG, TGCT, GBM, READ, LAML, MESO, and DLBC cancer cases more confidently, whereas the CNN model classifies PAAD, CHOL, and UCS cancer cases more accurately. 
 
 \begin{table*}[h]
-    \caption{Cancer type prediction: CNN vs VGG16}
+    \caption{Class-specific performance between CNN vs. VGG16 for cancer type prediction}
       \label{table:class_specific} %RF Confusion Matrix Oncogene Subtype
         \begin{center}
         \vspace{-6mm}
@@ -795,13 +797,44 @@ The average accuracy obtained was 89.75\% and 96.25\% using CNN and VGG16 models
     \end{center}
 \end{table*}
 
-\begin{figure*}[h]
+\iffalse
+\begin{figure}
 \centering
-	\includegraphics[width=0.8\linewidth,height=80mm]{images/conf_uni_modal.png}
-	\caption{Confusion matrix of the vanilla VGG16 model}
+	\includegraphics[scale=0.5]{images/conf_uni_modal.png}
+	\caption{Confusion matrix of the VGG16 model}
     \label{fig:conf_cnn}
     \vspace{-4mm}
+\end{figure}
+\fi 
+
+\begin{figure*}
+	\centering
+	\begin{subfigure}{.48\linewidth}
+		\centering
+		\includegraphics[scale=0.5]{images/conf_uni_modal.png}
+		\caption{Confusion matrix}
+        \label{fig:conf_cnn}
+	\end{subfigure}
+	\begin{subfigure}{0.48\linewidth}
+		\centering
+		\includegraphics[scale=0.5]{images/pvr_value.png}
+		\caption{Precision and recall}
+        \label{fig:pr_vgg16}
+	\end{subfigure}
+	\caption{Confusion matrix, precision, and recall for VGG16 model.} 
+	\label{fig:conf_precision_recall_vgg16}
+	\vspace{-4mm}
 \end{figure*}
+
+\iffalse
+\begin{figure*}
+\centering
+	\includegraphics[width=0.85\linewidth,height=80mm]{images/pvr_value.png}
+	\caption{Precision and recall of VGG16 model}
+    \label{fig:pr_vgg16}
+    \vspace{-4mm}
+\end{figure*}
+\fi 
 
 \hspace*{3.5mm} The downside is that both classifiers made substantial mistakes, e.g., VGG16 could classify HNSC and LUSC tumor samples accurately in only 79\% and 81\% of the cases. On the other hand, the CNN model made more mistakes particularly on the STAD, HNSC, LUSC, and LGG tumor samples. In summary, both classifiers performed moderately well except for certain types of tumor cases such as STAD, HNSC, BLCA, THCA, UCEC, LUAD, LUSC, and LGG. The ROC curves generated by the VGG16 model 
 %in \cref{fig:both_dataset} 
@@ -845,32 +878,25 @@ show that the AUC scores are consistent across the folds showing stable predicti
 		\caption{Grad-CAM++}
         \label{fig:hm_gcam++}
 	\end{subfigure}
+	\hspace{2mm}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=1.1\linewidth,height=65mm]{images/lrp.png}
+		\includegraphics[width=1.1\linewidth,height=65mm]{images/lrp_viz.png}
 		\caption{LRP}
         \label{fig:lrp}
 	\end{subfigure}
-	\caption{Heat map examples for BRCA, KIRC, COAD, LUAD, and PRAD cancer types with Grad-CAM++ and LRP: each row represents one fold and columns represent cancer type} 
+	\caption[Heatmap example to mark driver biomarker for different cancer types]{Heat map examples based on Grad-CAM++ and LRP that highlight driver biomarkers for BRCA, KIRC, COAD, LUAD, and PRAD cancer types. Gene positions on 2D pixel space are marked with red circle~(genes may overlap in the marked region). Rows represent folds,  columns cancer types.} 
 	\label{fig:hm_all}
 	\vspace{-2mm}
 \end{figure*}
 
 %This part still needs to be calculated and updated 
-\subsection{Performance: multimodality}
+\subsection{Performance analysis: multimodality}
 The average accuracy and F1-scores by the multimodal $MCAE_{lrc}$, and $MCAE_{slr}$ models are slightly lower than the single networks. Still, $MCAE_{lrc}$ gave competitive results compared to vanilla CNN and VGG16 with a single type of input as well as $MCAE_{slr}$ for most of the cancer types. 
 %as well as other best ML baselines, e.g., GBT and RF. 
 In particular, GE + miRNA expression giving the best results for the classification.
 %and decent results for survival rate prediction. 
 Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE because of three main reasons: i) number of samples across modalities have been increased 1000 vs 10,000, ii) the reconstruction errors for both multimodal architectures based on CAE have decreased, iii) compared to ML baselines and MAE model, both $MCAE_{lrc}$ and $MCAE_{slr}$ models can learn more complex concepts from the GE + miRNA multimodal features. This results in a lower bias, which can be observed from higher training scores than the validation scores for the maximum number of samples i.e. adding more training samples does increase model generalization. 
-
-\begin{figure*}
-\centering
-	\includegraphics[width=0.85\linewidth,height=80mm]{images/pvr_value.png}
-	\caption{Precision and recall of VGG16 model}
-    \label{fig:pr_vgg16}
-    \vspace{-4mm}
-\end{figure*}
 
 \hspace*{3.5mm} Nevertheless, the latter two reasons helped improve the generalization by mitigating both bias and variance errors. However, we closely observed the performance of $MCAE_{lrc}$ and $MCAE_{slr}$ models. We found that $MCAE_{lrc}$ model based on LRC clearly outperforms the $MCAE_{slr}$ model. Further, we perform the Wilcoxon signed rank test with a significance level of 5\%. Then it becomes more evident from the comparison of reconstruction losses and accuracies for $MCAE_{lrc}$ and $MCAE_{slr}$ from \cref{fig:ce_multimodal_models_1} and \cref{fig:ce_multimodal_models_2}. Within each box-plot, mean and median values of the reconstruction losses are depicted with a dot and a horizontal line. As seen in \cref{fig:ce_multimodal_models_1} and \cref{fig:ce_multimodal_models_2}, $MCAE_{slr}$ model based on SLR performs worst in each and every combination of input modalities, irrespective of reconstruction loss and f1-score. 
 
