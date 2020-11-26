@@ -18,7 +18,7 @@ Yuan et al.~\cite{yuan2018cancer} exposed that  CNVs are not only associated wit
 \begin{figure*}
 	\centering
 	\includegraphics[scale=0.5]{images/cnv_v1.png} 
-	\caption{CNVs is classified into deletion, duplication, segmental duplication and inversion. These variations can affect an entire gene or a segment of a particular gene~\cite{almal2012implications}}	
+	\caption[Copy number variations, showing deletion, duplication, and inversion]{CNVs is classified into deletion, duplication, segmental duplication and inversion. These variations can affect an entire gene or a segment of a particular gene~\cite{almal2012implications}}	
 	\label{fig:cnv_v1}
 	\vspace{-2mm}
 \end{figure*}
@@ -269,7 +269,7 @@ Conv-LSTM determines the future state of a certain cell in the input hyperspace 
 \begin{figure*}
 	\centering
 	\includegraphics[scale=0.5]{images/conv_lstm.png} 
-	\caption{Schematic representation of the Conv-LSTM network starts from taking input CNV samples and passing to CNN layers before getting a sequence vector representation from the LSTM layers to pass to dense, dropout, and softmax layers~\cite{karimACCA2019}}	
+	\caption[Schematic representation of the convolutional-LSTM network]{Schematic representation of the Conv-LSTM network starts from taking input CNV samples and passing to CNN layers before getting a sequence vector representation from the LSTM layers to pass to dense, dropout, and softmax layers~\cite{karimACCA2019}}	
 	\label{fig:conv_lstm}
 	\vspace{-2mm}
 \end{figure*}
@@ -333,7 +333,7 @@ Each of Conv-LSTM and CAE is trained in two steps. Training is performed indepen
 \begin{figure*}
     \centering
     \includegraphics[scale=0.6]{images/cac.png}
-    \caption{Training loss of Conv-LSTM network with standard learning rate~(blue) vs. cosine annealing~(red): intermediate models~(dotted lines) form an ensemble at the end of training~\cite{karimACCA2019}}
+    \caption[Cosine cyclic annealing-based training]{Training loss of Conv-LSTM network with standard learning rate~(blue) vs. cosine annealing~(red): intermediate models~(dotted lines) form an ensemble at the end of training~\cite{karimACCA2019}}
     \label{fig:ca}
     \vspace{-2mm}
 \end{figure*}

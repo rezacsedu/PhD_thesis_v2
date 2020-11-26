@@ -54,12 +54,12 @@ Subsequently, they gradually being replaced with ML-based systems with AI capabi
 
 \hspace*{3.5mm} DSSs that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}.  In an intelligent DSS, a set of learning algorithms are embedded to perform cognitive decision-making in which ML often act as one of the most common forms of AI~\cite{das2020opportunities}. An intelligent DSS is often ML or DL-based DSS, where a ML or DL algorithm is employed to improve the learning outcome so that the decision-making process becomes automatic by reducing the level of human interaction as much as possible~\cite{davenport2019potential}. 
 
-\hspace*{3.5mm} In this thesis, we aim at developing an intelligent DSS by leveraging both data-, knowledge-, and model-driven characteristic; such that an ML model trained on the data forms the foundations of the DSS's decision making process and the domain-knowledge will be used to aid the users to validate the outcome. Nevertheless, since the `black-box' nature and opaqueness in predictive model raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of the DSS. In the subsequent sections, we discuss some fundamental components required to develop the DSS such as ML, DL, RL, multimodal learning, interpretability, and different types of data required. 
+\hspace*{3.5mm} This thesis aims at developing an DSS by leveraging both data-, knowledge-, and model-driven characteristic, such that an ML model trained on the data forms the foundation of the DSS. Then the decision making process and the domain-knowledge will be used to aid the users to validate the outcome. Since the `black-box' nature and opaqueness in predictive model raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of the DSS. In the subsequent sections, fundamental concepts of ML, multimodal learning, and interpretability are discussed along with different types of data that required. % to develop the DSS such as  required. 
 
 \section{Machine Learning}
-ML is about using a set of statistical and mathematical algorithms to perform tasks such as concept learning, predictive modeling, clustering, and mining useful patterns can be performed, where a learner or ML algorithm is the program used to learn a ML model from data. Subsequently, a ML model is the learned program that maps inputs to predictions. Tom M. Mitchell~\cite{mitchell1997machine} explained what learning really means from a computer science perspective: \textit{``a computer program is said to learn from experience $E$ with respect to some class of tasks $T$ and performance measure $P$, if its performance at tasks in $T$, as measured by $P$, improves with experience $E$"}. This definition can be interpreted as follows: based on a set of observation or data~(i.e., experience $E$), a learning algorithm can be used to solve a problem~(i.e., task $T$) iteratively untill the performance~(i.e., $P$) is not satisfactory. 
+ML is using a set of statistical and mathematical algorithms to solve tasks such as concept learning, predictive modeling, clustering, and mining useful patterns. Learners or algorithm are a program used to learn a ML model from data. An ML model is a learned program that maps inputs to predictions. Tom Mitchell~\cite{mitchell1997machine} defined machine learning as \textit{``a computer program is said to learn from experience $E$ with respect to some class of tasks $T$ and performance measure $P$, if its performance at tasks in $T$, as measured by $P$, improves with experience $E$"}. This definition can be interpreted as follows: based on a set of observation or data~(i.e., experience $E$), a learning algorithm can be used to solve a problem~(i.e., task $T$) iteratively until the performance~(i.e., $P$) is not satisfactory. 
 
-\hspace*{3.5mm}Based on this interpretation, a machine can learn from data/observations and can be improved with experience to predict an outcome more accurately. When it comes to data, what we mean is a set of features/inputs and targets from which the machine learns. Subsequently, a learned program called a ML model can map inputs to predictions. The resultant is weights for a linear model or for a neural network~(we'll shortly discuss about). Training a ML model is an optimization problem, where the objective is finding a minimizer of a convex function $f$ and a weight vector $w$ on $d$ data points. Subsequently, we can formulate the learning task as $\min _{w \in \mathbb{R}^{d}} f(w)$, where the objective function is as follows~\cite{karim2018scala}:
+\hspace*{3.5mm} Based on this interpretation, a machine can learn from data/observations and can be improved with experience to predict an outcome more accurately. When it comes to data, what we mean is a set of features/inputs and targets from which the machine learns. Subsequently, a learned program called a ML model can map inputs to predictions. The resultant is weights for a linear model or for a neural network~(we'll shortly discuss about). Training a ML model is an optimization problem, where the objective is finding a minimizer of a convex function $f$ and a weight vector $w$ on $d$ data points. Subsequently, we can formulate the learning task as $\min _{w \in \mathbb{R}^{d}} f(w)$, where the objective function is as follows~\cite{karim2018scala}:
 
 \vspace{-4mm}
 \begin{align}
@@ -78,9 +78,9 @@ ML is about using a set of statistical and mathematical algorithms to perform ta
 \hspace*{3.5mm} The regularization parameter defines the trade-off between minimizing the training error and the model's complexity in an effort to avoid overfitting problems. More elaborately, when using an ML algorithm, the goal is to obtain the best hyperparameters of a function that return the minimum error when making predictions. 
 %Given that a problem is convex, it is usually easier to analyze the asymptotic behavior of the algorithm, which shows how fast it converges as the model observes more and more training data. 
 The challenge of ML is to allow training a model so that it can recognize complex patterns and make decisions not only in an automated way but also as intelligently as possible. 
-However, if the performance is not satisfactory, additional tuning or retraining would be necessary to get the best model, before % based on hyperparameter optimization.
-deploying the best model in a production-ready environment. 
-\Cref{fig:ml_pipeline} summarizes these steps in a nutshell, where an instance and prediction can be described as follows: 
+However, if the performance is not satisfactory, additional tuning or retraining would be necessary to get the best model. %, before % based on hyperparameter optimization.
+%deploying the best model. % in a production-ready environment. 
+\Cref{fig:ml_pipeline} summarizes these steps, where an instance and prediction can be described as: 
 
 \begin{itemize}[noitemsep]
     \item \textbf{An instance} is a row in the dataset~(also called data point, example, or observation). An instance consists of the features $x^{(i)}$ and~(if known) the target outcome ${y}$, where target is the information that the model learned to predict.
@@ -143,7 +143,7 @@ Feed-forward neural networks~(FFNNs) are neural networks that have a complex and
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.7]{images/ffnn_1.png}
-    \caption{The architecture of a MLP with an input layer, 2 hidden layers, and an output layer}
+    \caption[Architecture of multilayer perceptron~(MLP)]{The architecture of a MLP with an input layer, 2 hidden layers, and an output layer}
     \label{fig:mlp_1}
 \end{figure}
 
@@ -152,17 +152,8 @@ Feed-forward neural networks~(FFNNs) are neural networks that have a complex and
 \subsection{Autoencoders}
 \label{preli:AEs}
 A regular AE consists of multi-layer dense networks called encoder and decoder, which is architecturally an MLP~\cite{karimDLTF2018}. AE also acts data compression technique where the compression and decompression functions are data-specific, lossy, and learned automatically from samples rather than human-crafted manual features~\cite{karimDLTF2018}. The encoder learns the representation of input $X$ in a compressed format in which the data is mapped and transformed into an embedding $Z$.  
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.5]{images/ae.png}
-    \caption{An unsupervised autoencoder as a network for latent feature learning~\cite{karimDLTF2018}}
-    \label{fig:ae_theory1}
-    \vspace{-2mm}
-\end{figure}
-
 %The decoder module of the AE network maps $Z$ to the reconstruction $X^{\prime}$~\cite{karimACCESS2019}, i.e., by approximating a function, $h_{W, b}(x) \approx x$, the decoder module to the identity function in order to output $\chi^{\wedge}$, which is similar original input x. 
-\hspace*{3.5mm} Then the decoder tries to reconstruct $X$ from $Z$ by reducing the reconstruction loss between $X$ and its corresponding reconstruction $X^{\prime} \in \mathbb{R}^{D}$ such that useful information is not lost in the encoding phase~\cite{KarimIEEEAccess2019}.
+Then the decoder tries to reconstruct $X$ from $Z$ by reducing the reconstruction loss between $X$ and its corresponding reconstruction $X^{\prime} \in \mathbb{R}^{D}$ such that useful information is not lost in the encoding phase~\cite{KarimIEEEAccess2019}.
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -170,6 +161,14 @@ A regular AE consists of multi-layer dense networks called encoder and decoder, 
     \item \textbf{Decoder}: reconstructs the input from the latent space representation using function $\tilde{x} = g(h)$. 
 \end{itemize}
 \vspace{-2mm}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.6]{images/ae.png}
+    \caption{An unsupervised autoencoder as a network for latent feature learning~\cite{karimDLTF2018}}
+    \label{fig:ae_theory1}
+    \vspace{-2mm}
+\end{figure}
 
 Usually, reconstruction loss is the distance measure~($d_{AE}$) between input $x_i$ and network's output $f(x_i)$: 
 
@@ -179,7 +178,7 @@ Usually, reconstruction loss is the distance measure~($d_{AE}$) between input $x
     \label{eq:Loss1}
 \end{equation}
 
-\hspace*{3.5mm} The identity function seems a particularly trivial function to be trying to learn, but by placing constraints on the network, such as by limiting the number of hidden units, we can discover interesting features of the data~\cite{karimDLTF2018}. Although used for learning representations from numeric data and LQ images, AE is mostly not suitable for 2D/3D finite and discrete signals or digital images~\cite{min2018survey}, primarily because of their weak RL capability. In \cref{sec:rep_learn}, we discuss different variants of autoencoders for the RL. %, which we will use in subsequent chapters. 
+\hspace*{3.5mm} The identity function seems a particularly trivial function to be trying to learn, but by placing constraints on the network, such as by limiting the number of hidden units, we can discover interesting features of the data~\cite{karimDLTF2018}. Although used for learning representations from numeric data, AE is mostly not suitable for 2D/3D finite and discrete signals or digital images~\cite{min2018survey}, primarily because of their weak RL capability. In \cref{sec:rep_learn}, we discuss different variants of autoencoders for the RL. %, which we will use in subsequent chapters. 
 
 \subsection{Convolutional neural networks}
 DNNs have no prior knowledge of how the pixels are organized because they do not know that nearby pixels are close. CNNs embed this prior knowledge using lower layers by using feature maps in small areas of the image, while the higher layers combine lower-level features into larger features. This setting works well with most of the natural images, giving CNN a decisive head start over DNNs~\cite{karimIoT2019}. CNNs have achieved much and have been widely adopted in computer vision, e.g., image recognition. The connection schemes in a CNN are significantly different compared to an MLP or DBN. A few of the convolutional~(conv) layers are connected in a cascade style. 
@@ -257,20 +256,19 @@ Second example would be visual question answering system or an e-commerce site, 
 In this section, we discuss different RL techniques for both unimodal and multimodal datasets. 
 
 \subsection{Learning representation from unimodal data}
-Although the development of unimodal representations has been extensively studied, there has been a shift from hand-designed for specific applications to data-driven~\cite{mmsurvey}. Different neural network architectures have been proposed to improve the quality of the RL~\cite{min2018survey} from multimodal datasets. For example, visual representations based on CNNs and acoustic representations using epectrograms or with autoencoders, are among a few examples where the network learn unimodal features~\cite{ito2018effects}. 
+Although the development of unimodal representations have widely studied, there has been a shift to multimodal data-driven~\cite{mmsurvey}. Deep belief networks~(DBN) is used as feature extractor in which restricted Boltzmann machines~(RBM)~\cite{jaitly2011learning} formed the basic building block. Each successive layer of a deep RBM is stacked together to represent the data at a higher level of abstraction. One advantage of RBM for RL is it does not need much labeled data for the training. Being the graphical models, the representation of data is probabilistic. Since the scale invariant feature transform was often used in imaging, which is the reason RBM and DBN were gradually shifted to CNN with which most visual descriptions are learned from data. 
 
-\hspace*{3.5mm} In some early approaches, deep belief networks~(DBN) is employed as the feature extractor in which restricted Boltzmann machines~(RBM)~\cite{jaitly2011learning} formed the basic building block. Each successive layer of a deep RBM is stacked together to represent the data at a higher level of abstraction. One advantage of RBM for RL is it does not need much labeled data for the training. Being the graphical models, the representation of data is probabilistic. 
-However, since the scale invariant feature transform was often used in imaging, which is gradually shifted to CNN with which most visual descriptions are learned from data.
-However, despite of numerous successes of DBNs and CNNs, RL techniques have gradually been replaced with different variants of AEs. In particular, convolutional autoencoders~(CAEs), variational autoencoders~(VAEs), adversarial autoencoders~(AAE), and LSTM-AE are used depending upon the types, structure, and nature of data,~(e.g., imaging, sequence) for the RL. 
+\hspace*{3.5mm} Subsequently, different neural network architectures are proposed to improve the quality of the RL~\cite{min2018survey} from multimodal datasets. For example, visual representations based on CNNs and acoustic representations using epectrograms or with autoencoders, are among a few examples where the network learn unimodal features~\cite{ito2018effects}.
+Despite of numerous successes of DBN and CNN, RL techniques have gradually been replaced with different variants of AE. In particular, convolutional autoencoders~(CAE), variational autoencoders~(VAE), adversarial autoencoders~(AAE), and LSTM-AE are used depending upon the types, structure, and nature of data,~(e.g., imaging, sequence) for the RL. 
 
 \subsubsection{CAE}
-Since a vanilla AE is not suitable for handling data with spatial invariance~(e.g., HQ images), they are incapable of preserving spatial relationships between pixels in an object. However, CNN can be a better feature extractor as it can preserve local structure in which output from the deepest convolutional~(conv) layer can be extracted as LF. In contrast, instead of manually engineered conv filters, conv and pooling layers can be added to construct a CAE, where each layer consists of an encoder~(that performs convolution and pooling operations), and a decoder~(to perform unpooling and deconvolution operations), and a convolutional layer of the encoder calculates the $j^{th}$ feature map as follows~\cite{alirezaie2019semantic}:
+Since a vanilla AE is not suitable for handling data with spatial invariance~(e.g., high resolution images), they are incapable of preserving spatial relationships between pixels in an object. However, CNN can be a better feature extractor as it can preserve local structure in which output from the deepest convolutional layer can be extracted as LF. In contrast, instead of manually engineered convolutional filters, convolutional and pooling layers can be added to construct a CAE, where each layer consists of an encoder~(that performs convolution and pooling operations), and a decoder~(to perform unpooling and deconvolution operations), and a convolutional layer of the encoder calculates the $j^{th}$ feature map as follows~\cite{alirezaie2019semantic}:
 
 \begin{equation}
     h^{j}=\sigma\left(x_{i} * W_{ij}^{j}+b^{j}\right),
 \end{equation}
 
-\hspace*{3.5mm} where $x_i$ is the input sample, $W_{ij}^{j}$ is the $j^{th}$ filter from input channel $i$ and filter $j$, $b^j$ is the bias for the $j^{th}$ filter, i.e., single bias per latent map~(one bias per GV would introduce many degrees of freedom), $\sigma$ is an activation function~(i.e., rectified linear unit~(ReLu)), and $*$ denotes the conv operation. To obtain translation-invariant representations, max-pooling is performed by downsampling convolutional layer's output and taking the maximum value in each $m \times n$ non-overlapping sub-region~\cite{alirezaie2019semantic}. In the decoding phase, unpooling and deconvolution operations performed to preserve the positional-invariance information during the pooling operations. Then the deconvolution operation is performed to reconstruct $x_i$ as follows~\cite{alirezaie2019semantic}:
+\hspace*{3.5mm} where $x_i$ is the input sample, $W_{ij}^{j}$ is the $j^{th}$ filter from input channel $i$ and filter $j$, $b^j$ is the bias for the $j^{th}$ filter, i.e., single bias per latent map~(one bias per GV would introduce many degrees of freedom), $\sigma$ is an activation function, i.e., rectified linear unit~(ReLu), and $*$ denotes the convolutional operation. To obtain translation-invariant representations, max-pooling is performed by downsampling convolutional layer's output and taking the maximum value in each $m \times n$ non-overlapping sub-region~\cite{alirezaie2019semantic}. In the decoding phase, unpooling and deconvolution operations are performed to preserve the positional-invariance information. Deconvolution operation is then performed to reconstruct $x_i$ as~\cite{alirezaie2019semantic}:
 
 \begin{equation}
    x_i = \sigma\left(o^{j} * W_{oj}^{j}+c^{j}\right),
@@ -297,12 +295,12 @@ Since a vanilla AE is not suitable for handling data with spatial invariance~(e.
 \end{sidewaystable*}
 
 \subsubsection{Variational autoencoders} 
-Generative variants of AE called Variational autoencoders~(VAE) are used in literature in combination with a mixture of Gaussian. VAE enforces the latent code of AE to follow a predefined distribution, which combines variational Bayesian methods and increases the flexibility of the base network. Architecturally, VAE is different compared to AE or CAE and deeply rooted in the methods of variational Bayesian and graphical models, where the input is into distribution, as shown in \cref{fig:vae}. This distribution, say $p_{\theta}$, is parameterized by $\theta$, where $p_{\theta}(\mathbf{z})$ is the prior, $p_{\theta}(\mathbf{x} | \mathbf{z})$ is the likelihood, and $p_{\theta}(\mathbf{z}|\mathbf{x})$ is the posterior given that the real parameter $\theta^*$ is known for the distribution. 
+Generative variants of AE called variational autoencoders~(VAE) are used in literature in combination with a mixture of Gaussian. VAE enforces the latent code of AE to follow a predefined distribution, which combines variational Bayesian methods and increases the flexibility of the base network. Architecturally, VAE is different compared to AE or CAE and deeply rooted in the methods of variational Bayesian and graphical models, where the input is into distribution, as shown in \cref{fig:vae}. This distribution, say $p_{\theta}$, is parameterized by $\theta$, where $p_{\theta}(\mathbf{z})$ is the prior, $p_{\theta}(\mathbf{x} | \mathbf{z})$ is the likelihood, and $p_{\theta}(\mathbf{z}|\mathbf{x})$ is the posterior given that the real parameter $\theta^*$ is known for the distribution. 
 
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.5]{images/vae.png}	
-	\caption{Schematic representation of a VAE used for clustering GE data, where an individual GE sample is fed into the model for learning representation~\cite{karimBIB2019}}	
+	\caption[Schematic representation of a variational autoencoder]{Schematic representation of a VAE used for clustering GE data, where an individual GE sample is fed into the model for learning representation~\cite{karimBIB2019}}	
 	\label{fig:vae}
 	\vspace{-4mm} 
 \end{figure*}
@@ -328,12 +326,12 @@ Generative variants of AE called Variational autoencoders~(VAE) are used in lite
 \hspace*{3.5mm} VAE and its variants like LSTM-VAE~\cite{park2018multimodal}) are widely used across use cases,e.g., anomaly detection in which anomalous or outliers can be identified based on the reconstruction probability~(RP)~\cite{an2015variational}. RP is a probabilistic measure that takes into account the variability of the distribution of variables as: i) it has a theoretical background, and ii) more principled and objective anomaly score than the reconstruction loss. 
 
 \subsubsection{LSTM-AE}
-VAE or CAE are not the best options for handling sequence or time-series data, e.g., length of the input sequence in case of text clustering may vary while the network requires fixed-length inputs. Further, the temporal ordering of the observations makes the feature extraction difficult. Hence, regular AEs will fail to generate a sample sequence for a given input distribution in generative mode, whereas LSTM-AE can handle variable lengths as the encoder learns fixed-length vector representation of the input~\cite{KarimNCCA2019,karim2019drug}. Given $X$ = $\{\mathbf{x}^{(1)},\mathbf{x}^{(2)}, ..., \mathbf{L}^{(1)}\}$ a input sequence, $\mathbf{h}_E^{(i)} \in {R}^c$ is encoder's hidden state at time $t_i$ for each $i \in \{1,2,...,L\}$, and $c$ is the number of LSTM units~\cite{LSTM_Autoencoder}. The encoder and decoder are jointly trained to reconstruct the original vector in reverse order by minimizing the following objective~\cite{zhu2018hidden}:  
+VAE or CAE are not the best options for handling sequence or time-series data, e.g., length of the input sequence may vary while the network requires fixed-length inputs. Further, the temporal ordering of the observations makes the feature extraction difficult. Hence, regular AEs will fail to generate a sample sequence for a given input distribution in generative mode, whereas LSTM-AE can handle variable lengths as the encoder learns fixed-length vector representation of the input~\cite{KarimNCCA2019,karim2019drug}. Given $X$ = $\{\mathbf{x}^{(1)},\mathbf{x}^{(2)}, ..., \mathbf{L}^{(1)}\}$ a input sequence, $\mathbf{h}_E^{(i)} \in {R}^c$ is encoder's hidden state at time $t_i$ for each $i \in \{1,2,...,L\}$, and $c$ is the number of LSTM units~\cite{LSTM_Autoencoder}. The encoder and decoder are jointly trained to reconstruct the original vector in reverse order by minimizing the following objective~\cite{zhu2018hidden}:  
 
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.5]{images/lstm_ae_v2.PNG}
-    \caption{Schematic representation of the LSTM-AE, used for biomedical text clustering, where individual drug review texts are embedded using word2vec before feeding as a sequence~\cite{karimBIB2019}}	
+    \caption[Schematic representation of the LSTM-autoencoder]{Schematic representation of the LSTM-AE, used for biomedical text clustering, where individual drug review texts are embedded using word2vec before feeding as a sequence~\cite{karimBIB2019}}	
 	\label{fig:lstm_ae}
 	\vspace{-2mm} 
 \end{figure*}
@@ -393,7 +391,7 @@ A multimodal representation is a representation of data using information from m
 		\caption{Shared latent representation}
         \label{fig:slr_1}
 	\end{subfigure}
-	\caption{Fusion architectures in multimodal representation learning (only encoder module is shown)} 
+	\caption[Fusion architectures in multimodal representation learning]{Fusion architectures in multimodal representation learning (only encoder module is shown)} 
 	\label{fig:mm_rL_example}
 \end{figure*}
 
@@ -414,7 +412,7 @@ A multimodal representation is a representation of data using information from m
 		\caption{Stacking}
         \label{fig:stacking}
 	\end{subfigure}
-	\caption{Bagging vs. stacking: a) each model is individually trained and the predictions are voted upon, b) multiple weak learners are summed upon} 
+	\caption[Bagging vs. stacking]{Bagging vs. stacking: a) each model is individually trained and the predictions are voted upon, b) multiple weak learners are summed upon} 
 	\label{fig:bagging_and_stacking}
 	\vspace{-2mm}
 \end{figure*}
@@ -516,7 +514,7 @@ The higher the interpretability, the easier it is for human to comprehend why a 
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.55]{images/xai_tec.png}	
-    \caption{Categorization of the survey in terms of scope, methodology, and usage~(based on~\cite{das2020opportunities})}	
+    \caption[Categorization of XAI techniques]{Categorization of XAI techniques in terms of scope, methodology, and usage~(based on~\cite{das2020opportunities})}	
 	\label{fig:survey_xai}
 \end{figure*}
 
@@ -614,7 +612,7 @@ Three most important concerns identified by Das et al.~\cite{das2020opportunitie
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.7]{images/lvg_cancer.png}	
-    \caption{Scopes and types of ML models in healthcare based on their interpretability characteristics~(inspired by scopes and types by Stiglic et al.~\cite{stiglic2020interpretability}), showing an example of cancer types prediction}	
+    \caption[Scopes and types of ML models in healthcare]{Scopes and types of ML models in healthcare based on their interpretability characteristics~(inspired by scopes and types by Stiglic et al.~\cite{stiglic2020interpretability}), showing an example of cancer types prediction}	
 	\label{fig:local_vs_global_ex}
 \end{figure*}
 
@@ -697,7 +695,7 @@ For the human-level interpretability of a model, we need to know the inner insig
 \begin{sidewaysfigure*}
 	\centering
 	\includegraphics[scale=0.6]{images/xai_roadmap.png}	
-    \caption{A timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on survery on XAI techniques by Das et al.~\cite{das2020opportunities})}	
+    \caption[Timeline of XAI methods and algorithms]{A timeline of XAI methods, covering scopes, methodology, and usage level~(based on survey of XAI techniques by Das et al.~\cite{das2020opportunities})}	
 	\label{fig:xai_timeline}
 \end{sidewaysfigure*}
 
@@ -712,7 +710,7 @@ SA explains a prediction based on the model's locally evaluated gradient, aka. p
 \subsubsection{Grad-CAM, Grad-CAM++, and Score-CAM}
 Guided backpropagation~(GB)~\cite{springenberg2014striving} is another method, where absolute values of the gradient of the output with respect to the input nodes are shown as heatmap, with the additional twist that negative gradients are set to zero at the rectification layers of the network is based on the fact is ``rectifying” the gradients in the backward pass leads to more focused heatmap~\cite{bohle2019layer}. While class-discriminating attention map visualization are appended to exhibit significant features for class assignment. To overcome the opaqueness of CNN, class activation maps (CAM)~\cite{zhou2016learning} is proposed. 
 
-\hspace*{3.5mm} To explain where the model provides more attention, CAM computes the amount of weights of each feature map from the final convolutional layer. CAM calculates the contribution to prediction $y_c$ at location $(i,j)$, where the goal is to obtain $L_{ij}^{c}$ that satisfies $y^{c}=\sum_{i, j} L_{ij}^{c}$. The last feature map $A_{ijk}$ and prediction $y_c$ are represented in a linear relationship in which linear layers consist  of global average pooling (GAP) and FCL: i) GAP outputs $F_{k}=\sum_{i,j} A_{ijk}$, ii) FCL that holds weight $w_{k}^{c}$, generates the following output~\cite{kim2020extending}: 
+\hspace*{3.5mm} To explain where the network provides more attention, CAM computes the weights w.r.t each feature map from the final convolutional layer. CAM calculates the contribution to prediction $y_c$ at location $(i,j)$. To obtain $L_{ij}^{c}$ that satisfies $y^{c}=\sum_{i, j} L_{ij}^{c}$. The last feature map $A_{ijk}$ and prediction $y_c$ are represented in a linear relationship in which linear layers consist  of global average pooling (GAP) and FCL: i) GAP outputs $F_{k}=\sum_{i,j} A_{ijk}$, ii) FCL that holds weight $w_{k}^{c}$, generates the following output~\cite{kim2020extending}: 
  
  \vspace{-4mm}
  \begin{align}
@@ -793,7 +791,7 @@ The output layer relevance is calculated before the back-propagation as follows~
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.65]{images/lrp.png}	
-    \caption{Overview of LRP for explaining model's decision, based on LRP method by Binder et al.~\cite{binder2016layer}. First, the input image is processed , before the output/prediction is generated. Then, the output value is backpropagated layer-to-layer onto the pixel, where pixel relevances $R_p$ are visualized as heatmap.}	
+    \caption[Overview of LRP for explaining model's decision]{Overview of LRP for explaining model's decision, based on LRP method by Binder et al.~\cite{binder2016layer}. First, the input image is processed , before the output/prediction is generated. Then, the output value is backpropagated layer-to-layer onto the pixel, where pixel relevances $R_p$ are visualized as heatmap.}	
 	\label{fig:explain_with_lrp}
 \end{figure}
 

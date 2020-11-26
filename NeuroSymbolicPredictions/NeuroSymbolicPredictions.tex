@@ -51,15 +51,10 @@ Neuro-symbolic or symbolic AI was the dominant paradigm between the second world
 
 \hspace*{3.5mm} What makes the KB side of AI so influential in recent years, given that rules are repeatable, consistently producing the same output, whereas conventional ML model's outputs are oftentimes not deterministic~\cite{alshahrani2017neuro}. The reason lies on the fact that due to the stochastic nature of DNN, the prediction and feature importance generated would be slightly different across runs. However, incorporating knowledge-based AI systems involving SR can codify intricate explanations of results of ML models into sustainable rules that are more transparent and reliable in healthcare. Unlike ML, semantic inferencing of the KB side of AI understands the meaning of its processing results, which is valuable for deriving rules that are very useful in clinical decision making and aligns EU GDPR algorithmic transparency~\cite{kaminski2019right}. 
 
-\vspace{1mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Inference and reasoning]
-    %INFO: \faBook \\
-    \scriptsize{
-        \textbf{Inference}: is the derivation of new knowledge from existing knowledge and axioms. Based on a set of axioms~(typically expressed in OWL-2 ontologies) and explicit facts, a reasoner is able to derive implicit, but previously unknown facts. \\
-        \textbf{Reasoning}: refers to the ability to decide whether a propositional formula is satisfiable or not, which is, however, carried out via a search process involving multiple inferences.
-        }
-\end{tcolorbox}
-\vspace{-2mm}
+\begin{itemize}[noitemsep]
+    \item \textbf{Inference} - is the derivation of new knowledge from existing knowledge and axioms. Based on a set of axioms~(typically expressed in OWL-2 ontologies) and explicit facts, a reasoner is able to derive implicit, but previously unknown facts. 
+    \item \textbf{Reasoning} - refers to the ability to decide whether a propositional formula is satisfiable or not, which is, however, carried out via a search process involving multiple inferences.
+\end{itemize}
 
 \hspace*{3.5mm} Ontological reasoning can be can be applied in the form of symbolic reasoning to inferred more complex rules. Suppose you're very hungry and you like pizza very much. Assume you're a vegetarian and you go to a nearby shop and asked the waiter if they have an option for the vegetarian. However, he replied saying that ``I'm not sure but probably Margherita pizza could be suitable for the vegetarian''. How will you be sure that the waiter is right? Well, the simplest answer to this question would be reading the food ingredients, which is fine. However, for a machine or for someone who is trying to order pizza for the first time, how s/he may derive a logical conclusion as shown in \cref{fig:sparqlEx1}.  
 
@@ -175,7 +170,7 @@ doid:BreastCancer$\sqsubseteq$doid:BreastDisease$\sqsubseteq$doid:ThoracicDiseas
 
 \begin{figure*}
 	\centering
-	\includegraphics[width=0.75\linewidth,height=70mm]{images/do.png}
+	\includegraphics[scale=0.5]{images/do.png}
 	\caption{High-level view of some part of the DOID ontology} 
 	\label{fig:oncoontology14}
 	\vspace{-2mm}
@@ -194,8 +189,8 @@ ogg:BRCA1$\sqsubseteq$ogg:ProteinCodingGeneOfHomoSapiens$\sqsubseteq$ogg:GeneOfH
 \vspace{-2mm}
 \begin{figure*}
 	\centering
-	\includegraphics[width=0.7\linewidth,height=70mm]{images/go.png}
-	\caption{High-level view of some part of the OGG ontology} 
+	\includegraphics[scale=0.5]{images/go.png}
+	\caption{Partial high-level view of the OGG ontology} 
 	\label{fig:ogg_ontology}
 	\vspace{-2mm}
 \end{figure*}
@@ -301,15 +296,12 @@ The `Disease' class consists of a subclasses named  `DiseaseOfCellularProliferat
 \end{figure*}
 
 %\subsubsection{Enriching gene specific evidence}
-\hspace*{3.5mm} Further, we included the class `Feature' to express the relation between a disease and the responsible genes associated with it. More specifically, we indicate the significance degree of a particular gene, regarding a disease. Besides, we included biomarker type and the evidence type information. Furthermore, since depending on the types gene biomarkers can be categorized as `Oncogene', `Protein-coding', and `POTSF', we considered these as the subclasses of `BiomarkerType'. As many as 83 POTSF genes identified by Libing Shen et al.~\cite{POSTF} through database search and literature annotation are used to enrich the list. \\
+\hspace*{3.5mm} Further, we included the class `Feature' to express the relation between a disease and the responsible genes associated with it. More specifically, we indicate the significance degree of a particular gene, regarding a disease. Besides, we included biomarker type and the evidence type information. Furthermore, since depending on the types gene biomarkers can be categorized as `Oncogene', `Protein-coding', and `POTSF', we considered these as the subclasses of `BiomarkerType'. As many as 83 POTSF genes identified by Libing Shen et al.~\cite{POSTF} through database search and literature annotation are used to enrich the list. 
 
-\vspace{-2mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Proto-oncogenes with tumor-suppressor function~(POTSF):]
-    \scriptsize{
-        \textbf{Proto-oncogenes with tumor-suppressor function}: some genes have both oncogenic and tumor-suppressor functions, i.e., they have both oncogenic and tumor-suppressor functionality~\cite{POSTF}.\\
-        \textbf{List of POTSF genes}: BRCA1, CAMTA1, CBFA2T3, CDX2, CREB3L1, CREBBP, DDB2, DNMT1, DNMT3A, ETV6, EZH2, FOXA1, FOXL2, FOXO1, FOXO3, FOXO4, FOXP1, FUS, IRF4, KLF4, KLF5, NCOA4, NOTCH1, NOTCH2, NOTCH3, NPM1, NR4A3, PAX5, PML, PPARG, RB1, RUNX1, SMAD4, STAT3, TCF3, TCF7L2, TP53, TP63, TRIM24, WT, ZBTB16, BCR, CHEK2, EPHA1, EPHA3, EPHB4, FLT3, MAP2K4, MAP3K4, MST1R, NTRK3, PRKAR1A, PRKCB, SYK, ARHGEF12, BCL10, BRCA2, CBL, CDC73, CDH11, CDKN1B, DCC, DDX3×, DICER1, FAS, FAT1, GPC3, IDH1, IKZF2, LIFR, NF2, NUP98, PHF6, PTPN1, PTPN11, RHOA, RHOB, SH2B3, SLC9A3R1, SOCS1, SPOP, SUZ12, WHSC1L1~\cite{POSTF}. 
-        }
-\end{tcolorbox}
+\begin{itemize}[noitemsep]
+    \item \textbf{Proto-oncogenes with tumor-suppressor function} - some genes have both oncogenic and tumor-suppressor functions, i.e., they have both oncogenic and tumor-suppressor functionality~\cite{POSTF}.
+    \item \textbf{List of POTSF genes} - BRCA1, CAMTA1, CBFA2T3, CDX2, CREB3L1, CREBBP, DDB2, DNMT1, DNMT3A, ETV6, EZH2, FOXA1, FOXL2, FOXO1, FOXO3, FOXO4, FOXP1, FUS, IRF4, KLF4, KLF5, NCOA4, NOTCH1, NOTCH2, NOTCH3, NPM1, NR4A3, PAX5, PML, PPARG, RB1, RUNX1, SMAD4, STAT3, TCF3, TCF7L2, TP53, TP63, TRIM24, WT, ZBTB16, BCR, CHEK2, EPHA1, EPHA3, EPHB4, FLT3, MAP2K4, MAP3K4, MST1R, NTRK3, PRKAR1A, PRKCB, SYK, ARHGEF12, BCL10, BRCA2, CBL, CDC73, CDH11, CDKN1B, DCC, DDX3×, DICER1, FAS, FAT1, GPC3, IDH1, IKZF2, LIFR, NF2, NUP98, PHF6, PTPN1, PTPN11, RHOA, RHOB, SH2B3, SLC9A3R1, SOCS1, SPOP, SUZ12, WHSC1L1~\cite{POSTF}. 
+\end{itemize}
 
 \hspace*{3.5mm} PubMed, MeSH, and CancerIndex are considered as the source of the evidence. \Cref{fig:biomarker_subclass} shows the general structure of the `Feature' class. These features~(in terms of annotations and object properties) are used to indicate the relation between entities from different classes, as shown in \cref{fig:biomarker_subclass}, which in turn annotations allow the rules generation. 
 
