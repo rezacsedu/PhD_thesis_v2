@@ -4,22 +4,27 @@
 \textit{"Predicting the future isn't magic, it's artificial intelligence."} -- Dave Waters 
 
 \section{Chapter Overview}
-In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were incorporated to develop a DSS for predicting cancer types and subtypes, respectively. However, in both cases, the predictive models developed were black-box methods. Since, precise prediction of cancer types is vital for cancer diagnosis and therapy, revealing marker or driver genes and providing subsequent interpretation are insignificant. In this chapter, two different probing approaches will be employed to open the `black-box' models towards making them explainable. Similar to chapter 4, copy number variations~(CNVs), miRNA expression, and gene expression~(GE), along with clinical will be used t form multimodal input for the training. Data from the Pan Cancer Atlas~(PCAt) project~\cite{weinstein2013cancer} of TCGA, covering 33 different cancer types will be used to train a vanilla CNN, VGG16, multimodal autoencoder~(MAE), and multimodal convolutional autoencoder~(MCAE) networks. To identify significant biomarkers\footnote{\textit{How to identify relevant features or factors for a certain decision?}}, we generate class-specific heat maps using GradCAM++, attention mechanism, and LRP. Further, we compute feature importance w.r.t mean absolute impact, followed by ranking top-k genes across cancer types. Nevertheless, we study the effects of tissue of origin that can potentially bias the identification of cancer markers. Finally, we provide explanations of the predictions. 
+In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were incorporated to develop a DSS for predicting cancer types and subtypes, respectively. However, in both cases, the predictive models developed were black-box methods. Since, precise prediction of cancer types is vital for cancer diagnosis and therapy, revealing marker or driver genes and providing subsequent interpretation are insignificant. Data from Pan Cancer Atlas~(PCAt) project~\cite{weinstein2013cancer} is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. In particular, vanilla CNN, VGG16, multimodal autoencoder~(MAE), and multimodal convolutional autoencoder~(MCAE) networks are trained end-to-end to learn latent representation from the multimodal genomics data and classification. DNA methylation, miRNA expression, and gene expression~(GE) data, along with clinical will form the multimodal input. 
+
+\hspace*{3.5mm} To improve the algorithmic transparency, different probing techniques are employed to open the `black-box' models. %towards making them explainable. 
+To identify relevant biomarkers\footnote{RQ2: \textit{How to identify relevant features or factors for a certain decision?}}, GradCAM++, attention mechanism, and LRP are used to generate class-specific heat maps. To provide explanations of the predictions, top-k genes across cancer types are ranked w.r.t mean absolute impact, followed by computing feature importance of the marker genes. We provide functional analysis of the marker genes.  
 %Quantitative and qualitative analyses show that approach based on multimodal data exhibit more reliable diagnosis, even though the single modal approach shows higher confidence at predicting the cancer types. \label{chapter_5:cw}
 
 \section{Introduction}\label{chapter_5:intro}
 Cancer is caused by gene alterations and abnormal behaviors of genes that control cell division and cell growth. The change in the structure of occurring genetic aberrations, such as somatic mutations, CNV, profiles, and different epigenetic alterations are unique for each type of cancer~\cite{82Tomczak,19Cruz}. As a result, GE can be disrupted by cell division or environmental effects, or genetically inherited from parents. Changes in GE often change the production of different proteins, affecting normal cell behavior. These damaged cells start reproducing more rapidly than usual and gradually increase in the affected area by forming a tumor. Intermittently, such tumors turn into a type of cancer~\cite{zuo2019identification,24Podolsky}, making it one of the utmost reasons cancer incidences are gradually increasing every year and become the second leading cause of death worldwide. Consequently, more than 200 types of cancer identified, each of which can be characterized by different molecular profiles requiring unique therapeutic strategies~\cite{82Tomczak}. According to a statistics from the National Cancer Institute\footnote{\url{https://www.cancer.gov/about-cancer/understanding/statistics}} 14.1 million deathly cancer cases were reported in 2012, out of which 8.8 million patients died of five leading cancers of lung, liver, colon/rectum, stomach, and breast~\cite{zuo2019identification}. 
 
-\hspace*{3.5mm}The most common cancers diagnosed in men are prostate, lung, and colorectal cancers, while breast, lung, and colorectal cancers are among women~\cite{li2017comprehensive}.
+%\hspace*{3.5mm} Most common cancers diagnosed in men are prostate, lung, and colorectal cancers, while breast, lung, and colorectal cancers are among women~\cite{li2017comprehensive}.
 %In 2018, an estimated 17.35 million cancer cases were diagnosed in the United States in which 609,640 people died. The number of new cancer cases per year is expected to rise to 23.6 million by 2030, which is anticipated to increase further to 70\% by 2035~\cite{71Torre}. 
-As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer, which fostered the accomplishment of the PCAt, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNV~\cite{lyu2018deep}. 
+\hspace*{3.5mm} As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer, which fostered the accomplishment of the PCAt, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNV~\cite{lyu2018deep}. 
 
-\hspace*{3.5mm} These data, however, are highly variable, high-dimensional, and sourced from heterogeneous platforms, which imposes significant challenges to existing bioinformatics tools. In particular, machine learning~(ML) methods have gained wider adoption to discover new biomarkers has become one of the key driving factors in many clinical and translational applications~\cite{mostavi2019convolutional}. Subsequently, these challenges have stimulated the development of deep learning~(DL)-based diagnosis and prognosis systems. Since DL algorithms work better with such high dimensional data, recent studies focused on using deep architectures such as autoencoders and CNN for both feature learning and classification. Although these models have shown tremendous success in exhibiting high confidence, they are mostly perceived as `black box' methods because of a lack of understanding of their internal functioning. This is a serious drawback since interpretability is essential to generate insights on why a given cancer case is of a certain type, and since knowing the most important biomarkers can help in recommending more accurate treatments and drug repositioning. 
+\hspace*{3.5mm} These data are highly variable, high-dimensional, and sourced from heterogeneous platforms, which imposes significant challenges to existing bioinformatics tools. In particular, machine learning~(ML) methods have gained wider adoption to discover new biomarkers has become one of the key driving factors in many clinical and translational applications~\cite{mostavi2019convolutional}. Subsequently, these challenges have stimulated the development of deep learning~(DL)-based diagnosis and prognosis systems. Since DL algorithms work better with such high dimensional data, recent studies focused on using deep architectures such as autoencoders and CNN for both feature learning and classification. Although these models have shown tremendous success in exhibiting high confidence, they are mostly perceived as `black box' methods because of a lack of understanding of their internal functioning. This is a serious drawback since interpretability is essential to generate insights on why a given cancer case is of a certain type, and since knowing the most important biomarkers can help in recommending more accurate treatments and drug repositioning. 
 
 \hspace*{3.5mm} Further, the `right to explanation' of the EU GDPR~\cite{kaminski2019right} gives patients the right to know why and how an algorithm made a diagnosis decision. However, existing approaches can neither ensure the diagnosis transparently nor are they trustworthy. Since DNA methylation, GE, miRNA expression, and CNVs data are very high dimensional and a significant number of genes have a trivial effect on the tumor making them very weak features, we hypothesize that our approach  based on neural networks and ML baselines with the explanation capability can be more effective at learning hierarchical features, which eventually increase the accuracy of the cancer type prediction. Further, as argued in \cref{chapter:multiodality}, multiple factors are involved in cancer diagnosis\footnote{For example, estrogen, progesterone, and epidermal growth receptors in BRCA}, AI-based diagnoses might not be trustworthy solely based on a single modality, but requires multimodal features of DNA methylation, GE, miRNA expression, and CNVs data. 
 
-\hspace*{3.5mm} In our approach, we consider classifying patients of into specific cancer types based on its respective profiles, in two different ways: based on single modality~(i.e., using single genomics data) and based on multimodality~(i.e., using different genomics data). There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Based on this insights, we rely on several interpretability as discussed in \cref{chapter:preli}. First, after necessary preprocessing of the data, we construct and train multiple DNN architectures with GradCAM++~\cite{chattopadhay2018grad} and LRP~\cite{LRP1}. Since genomics data are high dimensional, we hypothesize\footnote{\textbf{H4}: \textit{Since genomics data is high dimensional, embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers.}} that embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers. 
-Using GradCAM++ and LRP, we generated heat maps~(HM) for all the classes showing prominent pixels across GE values and computed the feature importance in terms of mean absolute impact~(MAI) to identify important biomarkers and provide interpretations of the predictions to make the diagnosis transparent\footnote{Algorithmic transparency, w.r.t, post-model explainability.}. Further, we validated our findings through functional analysis to make sure biomarkers are biologically trustworthy. % for the corresponding tumor types. 
+\hspace*{3.5mm} In our approach, we consider classifying patients of into specific cancer types based on its respective profiles, in two different ways: based on single modality~(i.e., using single genomics data) and based on multimodality~(i.e., using different genomics data). There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Based on this insights, we rely on several interpretability as discussed in \cref{chapter:preli}. First, after necessary preprocessing of the data, we construct and train multiple DNN architectures with GradCAM++~\cite{chattopadhay2018grad} and LRP~\cite{LRP1}. 
+
+\hspace*{3.5mm} Since genomics data are high dimensional, we hypothesize\footnote{\textbf{H4}: \textit{Since genomics data is high dimensional, embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers.}} that embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers. 
+Using GradCAM++ and LRP, we generate heat maps~(HM) for all the classes showing prominent pixels across GE values and computed the feature importance in terms of mean absolute impact~(MAI) to identify important biomarkers and provide interpretations of the predictions to make the diagnosis transparent\footnote{Algorithmic transparency, w.r.t, post-model explainability.}. Further, we validated our findings through functional analysis to make sure biomarkers are biologically trustworthy\footnote{Supporting publication: \textbf{Md. Rezaul Karim}, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", Proc. of \emph{IEEE International Conference on Bioinformatics and Bioengineering~(BIBE'2019)}, Athens, Greece, October 28-30, 2019}. % for the corresponding tumor types. 
 
 \iffalse
 The overall contributions of this chapter can be summarized as follows:  
@@ -326,12 +331,12 @@ The distributions of miRNA of somatic mutations samples are shown in \cref{table
 \subsection{Unimodal CNN models}
 In this subsection, we discuss construction and training of the unimodal vanilla CNN and VGG16 models. Then we cover the detail of interpreting these black-box models. To show the effectiveness, only GE profiles are used to train each CNN architecture. Workflow of the overall approach is shown in \cref{fig:workflow_2D_CNN}.
 
-\begin{figure*}[h]
+\begin{sidewaysfigure*}
 	\centering
-	\includegraphics[scale=0.7]{images/wf_2D_CNN.png}
+	\includegraphics[scale=1.0]{images/wf_2D_CNN.png}
     \caption{Workflow of the unimodal CNN modality approach}	
 	\label{fig:workflow_2D_CNN}
-\end{figure*}
+\end{sidewaysfigure*}
 
 \subsubsection{Preprocessing}
 Since we are interested in finding the relations between instances, e.g., GE of a particular cohort in relation to other types tumors, we use the the normalized version of the `GE RNA-seq' data. The expression values are generated at UCSC by first combining `GE RNA-seq' values higher than that of all TCGA cohorts and then mean normalizing all values per gene. The data is subsequently divided into the 30-40\% types to make the distribution balanced across cancer types and can serve as a proxy of background distribution of GE. To perform 2D  convolutional~(conv) operations, first we embed GE samples into 2D images in which GE values for each sample are reshaped from a 20,501$\times$1 array into a 144$\times$144 image by zero padding around the edges and normalized to [0,255].%, without losing any information.
@@ -367,7 +372,7 @@ Both vanilla CNN and VGG16 architectures are trained from scratch alongside data
 \subsubsection{Interpreting black-box CNN models}
 Since the data is very high dimensional, we chose not to go for manual feature selection. Rather, we let both CNN and VGG16 networks extract the most important features. \Cref{algo:hm} and \ref{algo:imp_area} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. We averaged all the normalized HM from the same class to generate a class-specific HM inspired by Selvaraju et al.~\cite{mostavi2019convolutional,karim2019onconetexplainer}. Since GradCAM++ requires all the samples to run through the network once, we let the trained CNN models set and record the activation maps in the forward pass, and the gradient maps in the back-propagation phase to collect the HM for each sample from the trained model. A higher intensity pixel represents a higher significance to the final prediction, which indicates higher importance of corresponding genes and GE values. Top genes are then selected based on the intensity rankings and MAI threshold. 
 
-\begin{algorithm*}
+\begin{algorithm*}[h]
 \small
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
       \SetKwInOut{Output}{Output}%
@@ -459,26 +464,24 @@ Since the data is very high dimensional, we chose not to go for manual feature s
 \end{algorithm*}
 
  %The idea is also to find the most important biomarkers by ranking them based on MAI threshold. 
+\hspace*{3.5mm} However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, for trained CNN models, LRP-based heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. Sometimes features that seem to have lower importance for a bad model could be very important for a better fitted model. In other words,  permutation importance does not necessarily reflect to the intrinsic predictive value of a feature by itself, albeit it signifies how important this feature is for a particular model. Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. 
 
-\hspace*{3.5mm} However, since SM use true gradients, the trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Subsequently, we generate LRP and CAM-based heatmaps for each sample in the test set based on the trained CNN models, where each heatmap indicates class-discriminating pixels/features and relevance for the particular classification decision. 
-Nevertheless, sometimes features that seems to have low importance for a bad model, could be very important for a better fitted model. 
-
-\hspace*{3.5mm}Therefore, we decided to evaluate the predictive power of our model using a held-out set prior to computing importance. More specifically, the permutation importance does not necessarily reflect to the intrinsic predictive value of a feature by itself, albeit it signifies how important this feature is for a particular model. First, we employ eli5 library\footnote{\url{https://eli5.readthedocs.io/en/latest/index.html}} to compute permutation feature importance on top of the trained model. We take input the fitted predictive model $m$ and the tabular dataset $D$ to compute the reference score $s$ of the model on data~(in our case, we use `accuracy' score). Then for each feature $j$, we repeat for each repetition $k$ in $1, \ldots, K$, where we randomly shuffle column $j$ of $D$ to generate a corrupted version of the data - say $\tilde{D}_{k,j}$, followed by computing the score $s_{k,j}$ of the model on the corrupted version of the dataset. Subsequently, we compute the importance $i_{j}$ for feature $f_{j}$ defined as follows:
+\hspace*{3.5mm} In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $m$. For the dataset $D$, the reference `accuracy' score $s$ is computed. For each feature $x_j$ and for each repetition $k$ in $1, 2, \ldots, K$, column $j$ is randomly shuffled to generate a corrupted version of the data - say $\tilde{D}_{k,j}$. Then the score $s_{k,j}$ is computed, followed by computing the mean importance $i_{j}$ of $x_{j}$ is computed as follows~\cite{SHAP}:
 
 \vspace{-2mm}
 \begin{align}
-    i_{j}=s-\frac{1}{K} \sum_{k=1}^{K} s_{k, j}
+    i_{j}=s-\frac{1}{K} \sum_{k=1}^{K} s_{k,j}
 \end{align}
 
-\hspace*{3.5mm} Furthermore, Shapley values are used to calculate the importance of a feature by comparing what a model predicts with and without a feature from all possible combinations of $n$ features in the dataset $S$. Given a GE value of feature $i \in S$, SHAP calculates the prediction $p$ of the model with $i$, followed by Shapely value $\phi$ calculation as follows~\cite{NIPS2017_7062}. 
+\hspace*{3.5mm} Besides, SHAP is used to compute the importance of a feature $x_i$ w.r.t Shapley values $\phi$, by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in the dataset $D$. For $x_i$, prediction $p$ and $\phi$ for $i$ are then as~\cite{NIPS2017_7062}. 
 
 \vspace{-2mm}
 \begin{align}
-    \phi_{i}(p)=\sum_{S \subseteq N / i} \frac{|S| !(n-|S|-1) !}{n !}(p(S \cup i)-p(S))
+    \phi_{i}(p)=\sum_{D \subseteq N / i} \frac{|D| !(n-|D|-1) !}{n !}(p(D \cup i)-p(D))
     \label{eq:shap}
 \end{align}
 
-\hspace*{3.5mm} However, since the order in which a model sees features can affect the predictions, this computation is repeated in all possible orders to compare the features fairly. Feature that have no effect on the predicted value are expected to produce a Shapley value of 0. However, if two features contribute equally to the prediction, the Shapley values should be the same~\cite{NIPS2017_7062}. 
+\hspace*{3.5mm} However, the order in which a model sees features can affect the predictions. Therefore, the computation is repeated in all possible orders to compare the features fairly: i) feature that have no effect on the predicted value are expected to produce a Shapley value of 0, ii) if two features contribute equally to the prediction, Shapley values should be the same~\cite{NIPS2017_7062}. 
 
 %\subsection{}
 
@@ -498,14 +501,13 @@ The multimodality nature of the data motivated us to develop two deep architectu
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/lrc_cls.png}
+		\includegraphics[scale=0.7]{images/lrc_cls.png}
 		\caption{Representation learning based on LRC and classification}
         \label{fig:lrc_11}
 	\end{subfigure}
-	\hfill
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/joint_rl_cls.png}
+		\includegraphics[scale=0.7]{images/joint_rl_cls.png}
 		\caption{Representation learning based on SLR and classification}
         \label{fig:slr_11}
 	\end{subfigure}
@@ -797,27 +799,18 @@ The average accuracy obtained was 89.75\% and 96.25\% using CNN and VGG16 models
     \end{center}
 \end{table*}
 
-\begin{figure*}
-\centering
-	\includegraphics[scale=0.6]{images/conf_uni_modal.png}
-	\caption{Confusion matrix of the VGG16 model}
-    \label{fig:conf_cnn}
-    \vspace{-4mm}
-\end{figure*}
-
-\iffalse
 \begin{sidewaysfigure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[scale=0.42]{images/conf_uni_modal.png}
+		\includegraphics[width=0.8\textwidth,height=100mm]{images/conf_uni_modal.png}
 		\caption{Confusion matrix}
         \label{fig:conf_cnn}
 	\end{subfigure}
 	\hspace{-4mm}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[scale=0.65]{images/pvr_value.png}
+		\includegraphics[width=0.9\textwidth,height=100mm]{images/pvr_value.png}
 		\caption{Precision and recall}
         \label{fig:pr_vgg16}
 	\end{subfigure}
@@ -825,15 +818,16 @@ The average accuracy obtained was 89.75\% and 96.25\% using CNN and VGG16 models
 	\label{fig:conf_precision_recall_vgg16}
 	\vspace{-4mm}
 \end{sidewaysfigure*}
-\fi 
 
-\begin{figure*}
+\iffalse
+\begin{figure*}[h]
 \centering
-	\includegraphics[scale=0.7]{images/pvr_value.png}
+	\includegraphics[scale=0.6]{images/pvr_value.png}
 	\caption{Precision and recall of VGG16 model}
     \label{fig:pr_vgg16}
     \vspace{-4mm}
 \end{figure*}
+\fi 
 
 \hspace*{3.5mm} The downside is that both classifiers made substantial mistakes, e.g., VGG16 could classify HNSC and LUSC tumor samples accurately in only 79\% and 81\% of the cases. On the other hand, the CNN model made more mistakes particularly on the STAD, HNSC, LUSC, and LGG tumor samples. In summary, both classifiers performed moderately well except for certain types of tumor cases such as STAD, HNSC, BLCA, THCA, UCEC, LUAD, LUSC, and LGG. The ROC curves generated by the VGG16 model 
 %in \cref{fig:both_dataset} 
@@ -846,20 +840,26 @@ show that the AUC scores are consistent across the folds showing stable predicti
 	\caption{Marker genes identified by vanilla CNN per class with a gene effect score of minimum 0.3}
     \label{fig:dg_cnn}
 \end{figure*}
-\fi 
+\begin{figure*}[h]
+\centering
+	\includegraphics[scale=0.5]{images/conf_uni_modal.png}
+	\caption{Confusion matrix of the VGG16 model}
+    \label{fig:conf_cnn}
+    \vspace{-4mm}
+\end{figure*}
 
 \begin{figure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[scale=0.5]{images/roc_1000_genome.PNG}
+		\includegraphics[scale=0.7]{images/roc_1000_genome.PNG}
 		\caption{CNN}
         \label{fig:roc_cnn}
 	\end{subfigure}
-	\hspace{4mm}
+	\hspace{2mm}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[scale=0.5]{images/roc_1000_genome.PNG}
+		\includegraphics[scale=0.7]{images/roc_1000_genome.PNG}
 		\caption{VGG16}
         \label{fig:roc_vgg16}
 	\end{subfigure}
@@ -867,28 +867,29 @@ show that the AUC scores are consistent across the folds showing stable predicti
 	\label{fig:rocs}
 	\vspace{-4mm}
 \end{figure*}
+\fi 
 
 \hspace*{3.5mm} Further, class-specific MCC scores of VGG16 model is 4\% higher than the CNN model, which suggests that the predictions were strongly correlated with the ground truth, yielding a Pearson product-moment correlation coefficient higher than 0.70 for all the classes except for the CHOL tumor samples. The downside, however, is that both classifiers made a number of mistakes too, e.g., VGG16 can classify ESCA, READ, UCS, and CHOL tumor cases in only 89\% of the cases accurately, while the CNN model made more mistakes particularly for the READ, LUAD, LIHC, KIRP, COAD, and STAD tumor samples. Nevertheless, as is shown 17 of 23 normal classes are classified into their corresponding cancer type, where normal samples from kidney~(KICH, KIRC and KIRP), liver~(CHOL and LIHC), lung~(LUAD and LUSC) or digestive system~(ESCA and STAD) are clearly grouped together. This indicates probably the model learned to recognize tissues of origin. While we analysed the classification results of tumor samples, the major classification errors are also within kidney, lung, colon, and rectum adenocarcinomas.
 
-\begin{figure*}
+\begin{sidewaysfigure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=1.1\linewidth,height=65mm]{images/gcam+.png}
+		\includegraphics[scale=0.9]{images/gcam+.png}
 		\caption{Grad-CAM++}
         \label{fig:hm_gcam++}
 	\end{subfigure}
-	\hspace{2mm}
+	%\hspace{2mm}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=1.1\linewidth,height=65mm]{images/lrp_viz.png}
+		\includegraphics[scale=0.9]{images/lrp_viz.png}
 		\caption{LRP}
         \label{fig:lrp}
 	\end{subfigure}
 	\caption[Heatmap example to mark driver biomarker for different cancer types]{Heat map examples based on Grad-CAM++ and LRP that highlight driver biomarkers for BRCA, KIRC, COAD, LUAD, and PRAD cancer types. Gene positions on 2D pixel space are marked with red circle~(genes may overlap in the marked region). Rows represent folds,  columns cancer types.} 
 	\label{fig:hm_all}
 	\vspace{-2mm}
-\end{figure*}
+\end{sidewaysfigure*}
 
 %This part still needs to be calculated and updated 
 \subsection{Performance analysis: multimodality}
@@ -900,17 +901,17 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 
 \hspace*{3.5mm} Nevertheless, the latter two reasons helped improve the generalization by mitigating both bias and variance errors. However, we closely observed the performance of $MCAE_{lrc}$ and $MCAE_{slr}$ models. We found that $MCAE_{lrc}$ model based on LRC clearly outperforms the $MCAE_{slr}$ model. Further, we perform the Wilcoxon signed rank test with a significance level of 5\%. Then it becomes more evident from the comparison of reconstruction losses and accuracies for $MCAE_{lrc}$ and $MCAE_{slr}$ from \cref{fig:ce_multimodal_models_1} and \cref{fig:ce_multimodal_models_2}. Within each box-plot, mean and median values of the reconstruction losses are depicted with a dot and a horizontal line. As seen in \cref{fig:ce_multimodal_models_1} and \cref{fig:ce_multimodal_models_2}, $MCAE_{slr}$ model based on SLR performs worst in each and every combination of input modalities, irrespective of reconstruction loss and f1-score. 
 
-\begin{figure*}
+\begin{figure*}[h]
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=0.9\linewidth,height=55mm]{images/ce_mcae_1.png}
+		\includegraphics[width=\linewidth,height=60mm]{images/ce_mcae_1.png}
 		\caption{GE+miRNA vs. GE+CNV modality}
         \label{fig:ce_ge_mirna}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=0.9\linewidth,height=55mm]{images/ce_mcae_2.png}
+		\includegraphics[width=\linewidth,height=60mm]{images/ce_mcae_2.png}
 		\caption{CNV+miRNA vs. GE+CNV=miRNA modality}
         \label{fig:ce_ge_cnv}
 	\end{subfigure}
@@ -918,17 +919,17 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 	\label{fig:ce_multimodal_models_1}
 \end{figure*}
 
-\begin{figure*}
+\begin{figure*}[h]
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=0.8\linewidth,height=55mm]{images/acc_mcae_1.png}
+		\includegraphics[width=\linewidth,height=55mm]{images/acc_mcae_1.png}
 		\caption{GE+miRNA vs. GE+CNV modality}
         \label{fig:ce_ge_mirna_2}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=0.8\linewidth,height=55mm]{images/acc_mcae_2.png}
+		\includegraphics[width=\linewidth,height=55mm]{images/acc_mcae_2.png}
 		\caption{CNV+miRNA vs. GE+CNV=miRNA modality}
         \label{fig:ce_ge_cnv_2}
 	\end{subfigure}
@@ -941,12 +942,12 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 \subsection{Identification of marker genes}
 We identified top genes for which the change in expression has significant impact on patients. \Cref{fig:hm_all} shows examples of HM generated for each class~(each column for one cancer type) across 5 different folds. As seen, there are similarities across folds and displaying distinct and similar patterns when comparing different cancer types. Red circles highlight similar patterns, e.g., between KIRC and BRCA, and PRAD and LUAD across folds, whereas COAD shows very different patterns. Although there are differences among folds, some patterns are clearly visible. Since intensities did not follow any regular pattern, we chose top 660 genes across 33 tumor types~(top-20 genes per class) as more significant based MAI. 
 
-\begin{figure}
+\begin{figure*}[h]
     \centering
-	\includegraphics[width=0.7\linewidth,height=75mm]{images/driver_genes.png}
-	\caption{Marker genes identified by $MCAE_{lrc}$ model per class with a gene effect score of minimum 0.3}
+	\includegraphics[scale=0.8]{images/driver_genes.png}
+	\caption{Marker genes identified by $MCAE_{lrc}$ model per class with a gene effect score of $\geq$ 0.25}
     \label{fig:dg_cnn}
-\end{figure}
+\end{figure*}
 
 \hspace*{3.5mm} Since we have more than 20K protein-coding genes, our choice of 660 is still a reasonable choice, as the number of important biomarkers should be small whose GE changes are sensitive to cancer growth~\cite{zuo2019identification}. All genes in the top-20 list can thus be viewed as tumor-specific biomarkers, which contribute most toward making the predictions. As for the other 29 tumor types, only 3 genes were in the list. Further hyperparameter tuning and training of both CNN models might improve this outcome. Then we further narrowed down the list to the top-5 genes in which only 5 tumor types~(i.e., BRCA, KIRC, COAD, LUAD, and PRAD) have at least five genes with feature importance of at least 0.5 w.r.t. MAI; they are shown in \cref{table:proteinimportance} from the 20,500 protein-coding genes. 
 
