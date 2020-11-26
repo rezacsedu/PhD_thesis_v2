@@ -17,9 +17,7 @@
 \def\advisortwo#1{\gdef\@advisortwo{#1}}
 
 \def\maketitle{
-    
   \begin{titlepage}{
-    
     \centering{
     \includegraphics[width=0.8\columnwidth]{images/rwth_i5_en_rgb.png}} \par
     
@@ -27,15 +25,15 @@
     \Large {\bf \@title}
     
     \vskip 1in \par
-    \normalsize {A dissertation submitted in partial fulfillment of the requirements\\ for the degree of \bf \@degree}
+    \normalsize {A dissertation submitted in partial fulfillment of the requirements for the\\ degree of \bf \@degree}
 
   }
-  \vskip 0.4in \par
-  by  \vskip 0.15in \par
+  \vskip 0.6in \par
+  by  \vskip 0.05in \par
   \large {\bf \@author} \par
   \small {\bf \@studentid}
   
-  \vskip 0.6in \par
+  \vskip 0.75in \par
   \normalsize  {\bf Supervisor: \@supervisor}
   \vskip 0.05in \par
   \normalsize  {\bf Advisor 1: \@advisorone}
@@ -44,17 +42,19 @@
   \vskip 0.05in \par
   \normalsize  {\bf Examiner: \@examiner}
   \vskip 1in \par
-  \normalsize {Department of Computer Science \par
-  RWTH Aachen University, Germany}
+  \normalsize {Computer Science 5- Information Systems and Databases \par Department of Computer Science \par
+  RWTH Aachen University \par Aachen, Germany}
 
   %\vskip 0.5in \par
  % \normalsize {I hereby declare that this dissertation is all my own work, except as indicated in the text: }
 
+\iffalse
   \vskip 0.5in 
   \normalsize {Signature \underline{\hspace{1.5in}}}
   
   \vskip 0.1in
   \normalsize {Date \underline{\hspace{0.5in}} / \underline{\hspace{0.5in}} / \underline{\hspace{0.5in}}}
+  \fi
   
   %%%%%%%%%%
   %*Only include this sentence below if you do have all necessary rights and consents. For example, if you have including photographs or images from the web or from other papers or documents then you need to obtain explicit consent from the original copyright owner. If in doubt, delete this sentence. See Copyright Information: http://eprints.nottingham.ac.uk/copyrightinfo.html for more details.
@@ -99,6 +99,18 @@
   \normalsize
 }
 \def\endabstract{
+  \par
+}
+\def\abstractgerman{
+  \begin{center}{
+    \large\bf Abstract}
+  \end{center}
+  \small
+  %\def\baselinestretch{1.5}
+  \linespread{1.5}
+  \normalsize
+}
+\def\abstractgerman{
   \par
 }
 
