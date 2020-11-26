@@ -123,13 +123,13 @@ Fairness literature also uses the term protected attribute in a similar sense as
 Bias mitigation algorithms attempt to improve the fairness metrics by modifying the training data, the learning algorithm, or the predictions. So, unfairness can be mitigated during the pre-processing, in-processing, and post-processing, respectively.  
 In both assessment and mitigation scenarios, fairness is quantified using disparity metrics. However, this study does not yet considered the external validation in a clinical setting. Rather in our approach, we try to improve the decision fairness by mitigating the biases in 3 different ways: i) mitigating sampling biases before the model training, ii) reducing prediction biases, and iii) model selection biases, before generating fair decision rules for the cancer diagnosis. We try to mitigate the biases in both binary and multiclass classification settings. 
 
-\begin{figure}[h]
+\begin{sidewaysfigure*}
 	\centering
 	\includegraphics[width=\linewidth]{images/reasoning_wf.png}
     \label{fig:nsreasoning}
-	\caption{Overview of fair decision rules generation based symbolic reasoning. The reasoner reasons about the predictions and decision rules made by the model based on ontological concepts and provides additional information back to the interactive visualization module.} 
+	\caption[Overview of fair decision rules generation based symbolic reasoning]{Overview of fair decision rules generation based symbolic reasoning. The reasoner reasons about the predictions and decision rules made by the model based on ontological concepts and provides additional information back to the interactive visualization module.} 
 	\vspace{-4mm}
-\end{figure}
+\end{sidewaysfigure*}
 
 \subsection{Mitigating sampling biases}
 %\subsubsection{Mitigating heterogeneity}
@@ -204,13 +204,13 @@ However, due to randomness, model's performance changes from a shuffling a colum
 
 \hspace*{3.5mm} On the other hand, SHAP gives very different feature importance as showin in \cref{fig:shap}, where a base value that indicates the direction of the first prediction made by the RF model and shows how much each feature is pushing the model's output from the base value\footnote{The average model output over the training dataset passed} 0.55 to the predicted output. Features pushing the prediction higher are shown in red; those pushing the prediction lower are in blue.
 
-\begin{figure}[h]
+\begin{figure*}[h]
 \centering
 	\includegraphics[width=0.4\textwidth]{images/fi.png}
 	\caption{Clinical features ordered by ascending importance on the y-axis~(dots represent SHAP values)} 
 	\label{fig:shap_FI}
 	\vspace{-2mm}
-\end{figure}
+\end{figure*}
 
 \hspace*{3.5mm} Further, to get an overview of which biomarkers are most important for the RF model, we plot the SHAP values of each feature for each sample. The plot in \cref{fig:shap_FI} sorts features by the sum of SHAP value magnitudes over all the samples, shows the distribution of the impact of each feature on the model output, and gives the top-20 common biomarkers, where red represents high feature values, blue low. This reveals, e.g., that a low NACA2~(low GE value) lowers the predicted value across 33 cancer types. Since the common biomarkers predicted by VGG16 and RF are very different, a more detailed analysis of biological signaling pathways is further required to validate these findings. 
 
@@ -219,7 +219,8 @@ However, due to randomness, model's performance changes from a shuffling a colum
 In the previous chapters, we have created several snapshot models before generating the final and best performing model. However, worse snapshot models can contaminate the overall predictive powers of the ensemble model. Therefore, it is important to take into consideration against model selection bias given the fact that we tried to evaluate the best performing model and subsequently the CDSS was backed by it. Nevertheless, full convergence to best hyperparameters is often not necessary because a best-fitting model will perform better on unseen data. To mitigate model selection bias, we employ WeightWatcher~\cite{martin2019traditional} in following two levels: 
 
 \begin{itemize}[noitemsep]
-    \item \textbf{level 1 } - top-5 snapshots models were selected to generate the full model, ii) \item \textbf{level 2} - only the best model is selected for the final ensemble. 
+    \item \textbf{Level 1 } - top-5 snapshots models were selected to generate the full model
+    \item \textbf{Level 2} - only the best model is selected for the final ensemble. 
 \end{itemize}
 
 \hspace*{3.5mm} In level 2, WeightWatcher is used to compare top models before choosing the one with the lowest log norm and highest weighted alpha. A low weighted/average log-norm signifies better generalization of network weights, where a pretrained model having low average log-norm will most likely show generalization capability and perform better on unseen data~\cite{martin2019traditional}. 

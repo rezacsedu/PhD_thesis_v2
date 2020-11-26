@@ -4,31 +4,21 @@
 \textit{"Learning is lifelong; we forget rules when they no longer apply or revise them when the environment changes."} - Ethem Alpaydin 
 
 \section{Chapter Overview}
-In the previous chapter, we used only CNVs, i.e., single modality to develop a decision support system~(DSS). It was based on snapshot neural ensemble method of two independent deep architectures called \texttt{Conv-LSTM} and \texttt{CAE} networks. Eventhough, it was technically a black-box model, the DSS performed moderately well at predicting cancer types. As discussed earlier that in order to develop a more reliable and accurate DSS for cancer diagnosis, multiple factors have to be considered. For example, breast cancer patients can be broadly categorized into different groups depending upon the presence and involvement of estrogen receptor~(ER), progesterone receptor~(PGR), and human epidermal growth factor receptor 2~(HER2/neu protein in normal cell growth. Since CNV data does not cover these biomarkers of the patient, providing AI-based diagnoses solely based on CNV might not be accurate and reliable. 
-
-\hspace*{3.5mm} Nevertheless, our real world experience is multimodal~\cite{mmsurvey}, e.g., while watching a movie, we not only observe the movie itself, but also the acting, background music, action sequences, background scenario, and landscapes, etc. Similarly, the multimodal machine learning~(ML) aims to build a ML model capable of processing and relating information from multiple modalities~\cite{mmsurvey}. Multimodal representation learning generates distributed vectors by mapping multiple modalities of information to a single mathematical space, where the similarities are attributed based on a distance measure. A unimodal representation technique is sufficient for each respective modality in the multimodal space~\cite{ito2018effects}. Cheerla et al.~\cite{cheerla2019deep} and Phan et al.~\cite{phan2016integration} have exposed that cancer diagnosis based on multimodal data is both clinically and biologically effective and accurate. A multimodal genomics dataset can be prepared to perform multimodal representation learning, by: i) combining DNA methylation, gene expression~(GE), and miRNA expression from different cohorts, ii) creating a multiplatform network to support each modality. 
-
-\hspace*{3.5mm} In this chapter, the single modality-based DSS is extended to multimodality by employing a multimodal autoencoder~(MAE) classifier. The MAE network is trained on genomics data to classify breast cancer patients based on the presence of PGR, ER, and HER/2 neu statuses\footnote{RQ1: How to use multimodal genomic data to accurately predict cancer
-types?}. The effect of different modalities are observed and assess the performance of our CDSS across breast cancer subtype classification. The idea is based on the hypothesis\footnote{\textbf{H3}: Multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision.} that multimodal genomics data and clinical outcome can be used to train the MAE architecture to provide more accurate clinical diagnostic decision\footnote{Supporting publication: \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Multimodal Autoencoders for Prognostically Relevant Subtypes and Survival Prediction for Breast Cancer", \emph{IEEE Access}, DOI: 10.1109/ACCESS.2019.2941796, September 2019.}. %Besides, we 
-%and survival rates. 
-%In particular, we used DNA methylation, gene expression~(GE), and miRNA expression data by creating a multiplatform network called multimodal autoencoders~(MAE) classifier to support each data type\footnote{RQ1: How to use multimodal genomic data to accurately predict cancertypes?}. 
-%We will observe the effect of different modalities and assess the performance of our CDSS across breast cancer subtype classification. 
-%Experiment results demonstrate that our approach is promising with high confidence for predicting both breast cancer subtypes and survival rates. In particular, we achieved state-of-the-art results with accuracies of $91\%$ and $86\%$, respectively for the ER and PGR-based subtype prediction and moderately low accuracy for the HER2-based subtype prediction as well as we perceived reasonably low MSE and positive coefficient of determination~($R^2$) scores in case of survival prediction. 
-%Additionally, we created unimodal and multimodal features from each input type and trained decision tree~(DT), Naive Bayes~(NB), K-nearest neighbors~(KNN), logistic regression~(LR), support vector machine~(SVM), random forest~(RF), and gradient boosting trees~(GBT) as ML baseline models. We use the model averaging Ensembl of top-3 models to report the final prediction based on how the clinical DSS recommends decision. Further, we provide in details analysis of the MAE model. 
+In the previous chapter, we used only CNVs, i.e., single modality to develop a decision support system~(DSS). It was based on snapshot neural ensemble method of two independent deep architectures called \texttt{Conv-LSTM} and \texttt{CAE} networks. Eventhough, it was technically a black-box model, the DSS performed moderately well at predicting cancer types. As discussed earlier that to develop a more reliable and accurate DSS for cancer diagnosis, multiple factors have to be considered. In this chapter, the single modality-based DSS is extended to multimodality. A multimodal autoencoder~(MAE) classifier is trained on genomics data to classify breast cancer patients based on the presence of PGR, ER, and HER/2 neu statuses\footnote{\textbf{RQ1}: How to use multimodal genomic data to accurately predict cancer
+types?}. Effects of different modalities are observed and assess the performance of our CDSS across breast cancer subtype classification. The idea is based on the hypothesis\footnote{\textbf{H3}: Multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision.} that multimodal genomics data and clinical outcome can be used to train the MAE architecture to provide more accurate clinical diagnostic decision\footnote{\textbf{Supporting publication}: \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Multimodal Autoencoders for Prognostically Relevant Subtypes and Survival Prediction for Breast Cancer", \emph{IEEE Access}, DOI: 10.1109/ACCESS.2019.2941796, September 2019.}. 
 
 \section{Introduction}
 \label{secIntroduction_Motivation}
 Accurate diagnosis and prognosis to cancer are specific to patients with particular cancer subtypes and molecular traits. For example, diagnosis and subsequent treatments for breast cancer patients depends on distinct molecular subtypes such as `Luminal A', `Luminal B', `HER2-enriched', and `Triple-negative'~(TN)~\cite{sorlie,dai}. `Luminal A' patients generally requires only endocrine therapy. On the other hand, chemotherapy is considered necessary for the `Luminal B', `HER2-enriched', and `Triple-negative' patients~\cite{goldhirsch}. Besides, breast cancer characterize by ER, PGR, and HER2, represents a subset of breast cancer with different biologic behavior: ER, PGR, and HER2 statuses are mainly involved in determining breast cancer subtypes. %and survival rates. 
 Further, breast cancer patients can be categorized into ER `POSITIVE', `NEGATIVE', or `INDETERMINATE' in which ER negative tumors are associated with a worse clinical outcome compared to ER-positives~\cite{karimACCA2019}. 
-%An accurate estimate of the hazard ratio between ER-negative tumors and ER-positive tumors remains difficult and prone to higher misclassification~\cite{karimACCA2019}. 
-%As cancer is a disease that was caused by genetic mutations, more extensive knowledge of each mutation might result in the further distinction of breast cancer subtypes.
-%The survival rate, on the other hand, suggests the chance of survival based on patients clinical and pathology information, which are further dependent on the in-depth analysis of these status biomarkers. %An analysis of genetic mutations directly on the survival rate data might tell the whole picture of why some genetic mutations might cause the worst cancer than other mutations.
 
-\hspace*{3.5mm} Therefore, knowing the subtypes of a breast cancer patient is prerequisite before recommending the best possible treatment. The cancer sub-typing task involves: i) learning useful and distinctive biological features from a set of genomic input modalities, and ii) and using machine learning~(ML) techniques to classify similar patients that share similar biological characteristics. Although tree-based ensemble such as random forest and gradient boosting trees are widely used at variety tasks, they are not suitable for handling multiple input modalities. Given they only able to learn from the intersection of samples, which are both clean and labeled. Major advantage of DNN-based joint representations comes from their often superior performance and the ability to pre-train the representations in an unsupervised manner. A well-trained model is subject to enough data as DNNs require a lot of labeled training data. The multilayer nature in DNN and it's successive layer is hypothesized to represent the data in a more abstract way~\cite{mmsurvey}. Each modality starts with several individual neural layers followed by a hidden layer that projects the modalities into a joint space~\cite{serban2016multi}. It is common to capture the output of the deepest layer as a form of data representation from individual modalities~\cite{mmsurvey,serban2016multi}. 
+\hspace*{3.5mm} Therefore, knowing the subtypes of a breast cancer patient is prerequisite before recommending the best possible treatment. The cancer sub-typing task involves: i) learning useful and distinctive biological features from a set of genomic input modalities, and ii) and using machine learning~(ML) techniques to classify similar patients that share similar biological characteristics. Although tree-based ensemble such as random forest and gradient boosting trees are widely used at variety tasks, they are not suitable for handling multiple input modalities. Given they only able to learn from the intersection of samples, which are both clean and labeled. Major advantage of DNN-based joint representations comes from their often superior performance and the ability to pre-train the representations in an unsupervised manner. 
 
-\hspace*{3.5mm} The joint multimodal representation is then passed through multiple hidden layers itself or used directly for prediction. A multimodal neural network can be trained end-to-end to represent the data to perform both supervised and unsupervised tasks. In such a network topology, multimodal representation and multimodal fusion are learned together~\cite{wang2018associativemulti}.
-Performance of a conventional unimodal information fusion architecture is greatly affected by its ability to detect and combine useful and complementary information from heterogeneous representations stemming from a set of distinctive modalities~\cite{ito2018effects}. 
-However, one of the disadvantages comes from the model not being able to handle missing data, which is mainly due to the reconstruction losses during the pre-training goes unbound. Therefore, it is common to pre-train such representations using an autoencoder on unsupervised data~\cite{mmsurvey}. 
+\hspace*{3.5mm} A well-trained model is subject to enough data as DNNs require a lot of labeled training data. The multilayer nature in DNN and it's successive layer is hypothesized to represent the data in a more abstract way~\cite{mmsurvey}. Each modality starts with several individual neural layers followed by a hidden layer that projects the modalities into a joint space~\cite{serban2016multi}. It is common to capture the output of the deepest layer as a form of data representation from individual modalities~\cite{mmsurvey,serban2016multi}. For example, breast cancer patients can be broadly categorized into different groups depending upon the presence and involvement of estrogen receptor~(ER), progesterone receptor~(PGR), and human epidermal growth factor receptor 2~(HER2/neu protein in normal cell growth. Since CNV data does not cover these biomarkers of the patient, providing AI-based diagnoses solely based on CNV might not be accurate and reliable. Nevertheless, our real world experience is multimodal~\cite{mmsurvey}, e.g., while watching a movie, we not only observe the movie itself, but also the acting, background music, action sequences, background scenario, and landscapes, etc. Similarly, the multimodal machine learning~(ML) aims to build a ML model capable of processing and relating information from multiple modalities~\cite{mmsurvey}. 
+
+\hspace*{3.5mm} Multimodal representation learning generates distributed vectors by mapping multiple modalities of information to a single mathematical space, where the similarities are attributed based on a distance measure. A unimodal representation technique is sufficient for each respective modality in the multimodal space~\cite{ito2018effects}. Cheerla et al.~\cite{cheerla2019deep} and Phan et al.~\cite{phan2016integration} have exposed that cancer diagnosis based on multimodal data is both clinically and biologically effective and accurate. A multimodal genomics dataset can be prepared to perform multimodal representation learning, by: i) combining DNA methylation, gene expression~(GE), and miRNA expression from different cohorts, ii) creating a multiplatform network to support each modality. 
+
+\hspace*{3.5mm} The joint multimodal representation is then passed through multiple hidden layers itself or used directly for prediction. A multimodal neural network can be trained end-to-end to represent the data to perform both supervised and unsupervised tasks. In such a network topology, multimodal representation and multimodal fusion are learned together~\cite{wang2018associativemulti}. Performance of a conventional unimodal information fusion architecture is greatly affected by its ability to detect and combine useful and complementary information from heterogeneous representations stemming from a set of distinctive modalities~\cite{ito2018effects}. However, one of the disadvantages comes from the model not being able to handle missing data, which is mainly due to the reconstruction losses during the pre-training goes unbound. Therefore, it is common to pre-train such representations using an autoencoder on unsupervised data~\cite{mmsurvey}. 
 
 \hspace*{3.5mm} Multimodal information fusion is the concept of integrating information from multiple modalities with the goal of predicting an outcome measure~\cite{mmsurvey,mmdcae}. Multimodal fusion provides three main benefits over unimodal learning~\cite{mmsurvey}: i) having access to multiple modalities that observe the same phenomenon may allow for more robust predictions, making the clinical DSS more reliable, ii) having access to multiple modalities might allow us to capture complementary information, e.g., we can often integrate genomics, proteomics, bioimaging, texts, or even clinical outcomes to support each other, iii) a multimodal system can still operate when one of the modalities is missing, e.g., in case of missing bioimaging, we can still rely on genomics, proteomics, and clinical outcomes.
 
@@ -72,7 +62,7 @@ In the proposed method, the heterogeneity of expression across samples is captur
 
 \subsection{Datasets}
 \label{dc}
-Although genomics data covers all data related to DNA on living organisms, we use transcriptomics data, including RNA and miRNA. These genomics data are usually accompanied by clinical outcomes, which comprise of general clinical information as well as cancer status~(e.g., cancer location, cancer stage). These data are also very high-dimensional, e.g., GE data for each patient, which is structured based on gene id reaches around 60,000 types, meaning a predictor based on GE comes with 60,000 different features. Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{icgc}, and COSMIC~\cite{forbes}. Based on public availability and amount of data~(w.r.t. number of patients data), the breast invasive carcinoma~(BRCA) branch of TCGA was considered as the main data source\footnote{TCGA has 39 projects for 39 different cancer types~(v89)}. Clinical data and biospecimens are collected through the Genomics Data Commons~(GDC) data portal\footnote{\url{https://portal.gdc.cancer.gov/}}. 
+Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{icgc}, and COSMIC~\cite{forbes}. Based on public availability and amount of data~(w.r.t. number of patients data), the breast invasive carcinoma~(BRCA) branch of TCGA was considered as the main data source\footnote{TCGA has 39 projects for 39 different cancer types~(v89)}. Clinical data and biospecimens are collected through the Genomics Data Commons~(GDC) data portal\footnote{\url{https://portal.gdc.cancer.gov/}}. Clinical data comprise of general clinical information as well as cancer status~(e.g., cancer location, cancer stage).
 
 \begin{table}[h]
     \scriptsize
@@ -138,12 +128,10 @@ CNS and masked CNS were not used because of extremely high dimension and variabl
 %Since BP's start refers observed, CNS data and stop positions in a chromosome, which will always vary at a BP resolution.
 %We do not use here copy number and DNA variation gave the extremely high dimension and complex structure of the data, i.e., variant position, will always vary at a base pair resolution.
 
-\hspace*{3.5mm} With above considerations, DNA methylation, GE, and miRNA expression data along with their clinical data w.r.t pathology responses are used. 
-%and the survival rate data are used.
-Since GE quantification data covers the amount of RNA synthesized by each gene on a single time, we treat each data per row and consider if the gene's Ensembl ID belongs to the data release. 
+\hspace*{3.5mm} Since GE quantification data covers the amount of RNA synthesized by each gene on a single time, we treat each data per row and consider if the gene's Ensembl ID belongs to the data release. 
 %miRNA and GE quantification data from TCGA were already in the desired format, so no preprocessing was required. 
 %From the masked somatic data, gene data containing both the Ensembl ID and Hugo gene symbol considered only. Since both CNS and masked CNS data cover entire gene mutation cases on base-pair sequences instead of a single BP case, which was covered in masked somatic data, we find corresponding Ensembl gene ID from the chromosome position and extract the data using Ensembl API~\cite{yates}. 
-Processing DNA methylation data was a complex task due to different platform. In particular, some patients were measured with the HumanMethylation27 platform, while the remaining patients were measured with HumanMethylation450 arrays. Only 26K DNA methylation sites were common in both platforms. These data were used to form the following seven different modalities\footnote{Last two modalities were used for the training and evaluation but not reported due to low accuracies.}: 
+Processing DNA methylation data was a complex task due to different platform. In particular, some patients were measured with the HumanMethylation27 platform, while the remaining patients were measured with HumanMethylation450 arrays. Only 26K DNA methylation sites were common in both platforms. With above considerations, gene expression, miRNA expression, and DNA methylation data along with clinical outcomes~(w.r.t pathology responses) are used. These data are very high-dimensional, e.g., GE data for each patient, which is structured based on gene id reaches around 60,000 types. A predictor based on GE comes with 60,000 different features. Following seven different modalities\footnote{Last two modalities were used for the training and evaluation but not reported due to low accuracies.} are subsequently formed: 
 
 \begin{enumerate}[noitemsep]
     \item DNA methylation 
@@ -155,25 +143,20 @@ Processing DNA methylation data was a complex task due to different platform. In
     \item DNA methylation + gene expression + miRNA expression. 
 \end{enumerate}
 
-\hspace*{3.5mm} \Cref{tab:all_data_brca} shows the statistics of the preprocessed data for each modality. We find corresponding Ensembl gene IDs from the chromosome position based on GDC API. The samples having the latest gene Ensembl IDs from release 89 are only considered valid. Clinical data covers clinical outcomes of cancer patient treated as general, pathology, treatments, and surgery. We categorized each patient data into different groups, but only the pathology response 
-%and the survival data 
-from the whole clinical outcomes are used. 
-
-%\subsection{Selection of neural networks}
-%We restrict our selection on DNN architecture based on the types of data: since we don't have enough labeled data, using CNN was not a viable option at first place because an end-to-end CNN requires huge data to get trained well. Secondly, since the data at our hand is not in sequence format (e.g., raw DNA sequence or protein sequence), we decided not to use RNN types networks. 
-%Thirdly, the multimodality nature of the input data further motivated us developing a deep multimodal architecture called Multimodal Autoencoders~(MAE).% input which includes different type of data (e.g., audio and video), which was first proposed by Ngiam et al\cite{NgiamKKNLN11}. 
+\hspace*{3.5mm} \Cref{tab:all_data_brca} shows the statistics of the preprocessed data for each modality. We find corresponding Ensembl gene IDs from the chromosome position based on GDC API. The samples having the latest gene Ensembl IDs from release 89 are only considered valid. Clinical data covers clinical outcomes of cancer patient treated as general, pathology, treatments, and surgery. We categorized each patient data into different groups, but only the pathology response from the whole clinical outcomes are used. 
 
 \subsection{Network construction and training}
-%The multimodality nature of the input data further motivated us developing the MAE. 
-Although a single and simple AE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). In contrast, the weights of the MAE encoder learn from both clean, unsupervised data with no labels, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Architecturally, MAE is similar to a three-stage AE: the first stage represents a particular modality for each type of data, and the second stage represents the cross-modality. 
-%The AE is used to find a low-dimensional representation of multimodal data, taking advantage of the information that one modality provides about another. 
-%We illustrate the construction of an MAE as a quad-modal AE for this problem. Where DNA methylation, GE, miRNA expression, and clinical outcomes form four different modalities. 
-The individual modality AE is not only a one-layer AE, but a multilayer and gradually shrinking AE with the possibilities of a different number of layers for each modality, which is due to the difference in dimension between modalities are pretty large, e.g. GE data consists of around 60,000 features, while miRNA data only consists of around 1,800. 
+Although a single and simple AE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). In contrast, the weights of the MAE encoder learn from both clean, unsupervised data with no labels, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Architecturally, MAE is similar to a three-stage AE: the first stage represents a particular modality for each type of data, second stage represents the cross-modality, and third stage is supervised MAE. 
 
-\hspace*{3.5mm} The AE network fusing multiple modalities consists of a variable number of ReLU layers, which are densely connected. The cross-modality AE is also a multilayer gradually shrinking AE with different size of output layer for each prediction, where the number of layers and units per layer in both encoder and decoder are symmetric. The third stage is the supervised MAE in which only the encoder part is utilized by adding a fully connected layer. % for the classification. %and regression operations. 
+\begin{itemize} [noitemsep]
+    \item The individual modality AE is not only a one-layer AE, but a multilayer and gradually shrinking AE with the possibilities of a different number of layers for each modality, which is due to the difference in dimension between modalities are pretty large, e.g. GE data consists of around 60,000 features, while miRNA data only consists of around 1,800. 
+    \item The cross-modality AE is also a multilayer gradually shrinking AE with different size of output layer for each prediction, where the number of layers and units per layer in both encoder and decoder are symmetric. The AE network fusing multiple modalities consists of a variable number of ReLU layers, which are densely connected. 
+    \item Third stage is the supervised MAE, where only encoder's output is used by adding a fully connected softmax layer on top for the classification. . 
+\end{itemize}
+
+\subsubsection{Stage-1: single modality}
 First, data $X_{i,j} \in \mathbb{R}^{D}$, for each modality $i \in \mathbb{N}$\footnote{N represents the dimensionality of the $i^{th}$ input modality} is fed into the encoder $f_{\theta_{i}}$ in order to generate a modality specific latent representation $h_{i, j}$ as follows~\cite{mmdcae}: 
 
-\vspace{-4mm}
 \begin{align}
     h_{i, j}=f_{\theta_{i}}\left({X}_{i, j}\right)
 \end{align}
@@ -182,7 +165,6 @@ where $f_\theta$ signifies trainable parameters of the encoder specific to the $
 
 \hspace*{3.5mm} The architecture depicted in \cref{fig:slr_1} generates the shared representation for all input modalities, instead of one latent representation for each input modality. For the simplicity, only the shared representation for all input modalities is considered in this chapter. In either approach, resulting concatenated generates a single vector $u=\left[u_{0}, u_{1}, \ldots, u_{n}\right] \in[-1,1]^{(n+1) \eta}$, where the weights of the corresponding components are generated with  softmax layer as~\cite{mmdcae}:
 
-\vspace{-6mm}
 \begin{align}
     \omega=\operatorname{softmax}\left(W_{\omega} u+b_{\omega}\right),
 \end{align}
@@ -190,14 +172,12 @@ where $f_\theta$ signifies trainable parameters of the encoder specific to the $
 \hspace*{3.5mm} where $\omega=\left[\omega_{0}, \omega_{1}, \ldots, \omega_{n}\right] \in[0,1]^{(n+1) \eta}$ $\left(\forall i, \omega_{i} \in[0,1]^{\eta}\right)$, and  $W_{\omega} \in$
 $\mathbb{R}^{(n+1) \eta \times(n+1) \eta}$ and $b_{\omega} \in \mathbb{R}^{(n+1) \eta}$ is the trainable parameters~\cite{mmdcae}. The final latent representation is generated through a weighted sum of all the modalities specific latent representation $\left(h_{i,j}\right)$ based on the computed weights $\left(\omega_{i}\right)$ as~\cite{mmdcae}: 
 
-\vspace{-4mm}
 \begin{align}
    h_{i,j}=\sum_{i=1}^{n}\left(h_{i} \odot \omega_{i}\right),
 \end{align}
 
 \hspace*{3.5mm} where $\odot$ denotes the element-wise product and $h \in$ $\mathbb{R}^{\eta}$ is the final representation~\cite{mmdcae}, which is subsequently fed to the classifier for the classification. DNA methylation vector  $x_m$, GE vector $x_e$, miRNA expression vector $x_r$, and clinical data vector $x_c$ are transformed to hidden representations~\cite{wang2018associativemulti}.
 
-\vspace{-4mm}
 \begin{align}
     \begin{array}{l}
         {h_{m}=g\left(W_{m} x_{t}+b_{m}\right)} \\
@@ -210,21 +190,18 @@ $\mathbb{R}^{(n+1) \eta \times(n+1) \eta}$ and $b_{\omega} \in \mathbb{R}^{(n+1)
 
 Then the hidden representations are concatenated together and mapped to a common space~\cite{liu2016multimodal}:
 
-\vspace{-4mm}
 \begin{equation}
     h_{mae}=g\left(W_{mme}\left[h_{m} ; h_{e} ; h_{r} ; h_{c}\right]+b_{mme}\right)
 \end{equation}
 
 The model is trained to reconstruct the hidden representations of the three modalities $h_{mae}$:
 
-\vspace{-4mm}
 \begin{equation}
     \left[\hat{h}_{m} ; \hat{h}_{e} ; \hat{h}_{r} ; \hat{h}_{c} \right]=g\left(W_{mae}^{\prime} h_{mae}+b_{\hat{mae}}\right)
 \end{equation}
 
 The original representation of different modalities is then reconstructed as~\cite{wang2018associativemulti}: 
 
-\vspace{-4mm}
 \begin{align}
     \begin{aligned}
         \hat{x}_{m} &=g\left(W_{m}^{\prime} \hat{h}_{m}+b_{\hat{m}}\right) \\
@@ -251,15 +228,16 @@ Unsupervised pre-training is performed for the whole layer, followed by a superv
 %During the pre-training, the whole datasets is used for the training and validation. %with 10\% for the validation. 
 Training a single-layer autoencoder corresponds to optimizing the learning parameters to minimize the overall loss between inputs and their reconstructions as:
 
-\vspace{-2mm}
 \begin{equation}
    L_{r} = \min _{\theta} \sum_{i=1}^{n} \left\|x_{t}^{i}-\hat{x}_{t}^{i}\right\|^{2}+\left\|x_{v}^{i}-\hat{x}_{v}^{i}\right\|^{2}+\left\|x_{a}^{i}-\hat{x}_{a}^{i}\right\|^{2}
    \label{eq:recons_loss}
 \end{equation}
 
-\hspace*{3.5mm} where $i$ denotes the $i^{th}$ feature. The latent representations of all the input modalities are subsequently concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$ and used into the feed-forward neural network for the classification, which is trained to optimize the following categorical cross-entropy~(CE) loss: %~\cref{eq:cross_entropy_loss} of the predicted cancer subtype $Y \prime$ vs. actual subtype $Y$. 
+\hspace*{3.5mm} where $i$ denotes the $i^{th}$ feature.
 
-\vspace{-2mm}
+\subsubsection{Supervising finetuning}
+The latent representations of all the input modalities are subsequently concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$ and used into the feed-forward neural network for the classification, which is trained to optimize the following categorical cross-entropy~(CE) loss: %~\cref{eq:cross_entropy_loss} of the predicted cancer subtype $Y \prime$ vs. actual subtype $Y$. 
+
 \begin{equation} 
     L_{c}=-\sum_{k=1}^{D}\left[Y_{k} \log Y_{k}^{\prime}+\left(1-Y_{k}\right) \log \left(1-Y_{k}^{\prime}\right)\right]
     \label{eq:cross_entropy_loss}
@@ -269,7 +247,6 @@ Training a single-layer autoencoder corresponds to optimizing the learning param
 %On the other hand, for the survival prediction, we optimize the MSE between the predicted survival rate vs actual survival rates. 
 Eventually, the parameters of the entire MAE  architecture are optimized by minimizing the following objective function~\cite{mmdcae}:
 
-\vspace{-4mm}
 \begin{align}
     {L}=\sum_{i=0}^{n} \alpha_{r} {L}_{r}+\alpha_{c} {L}_{c}
     \label{eq:sum}
