@@ -39,18 +39,17 @@ MAE~\cite{liu2016multimodal,serban2016multi,wang2018associativemulti} can be use
 %several modalities consisting of masked somatic mutations, copy number segment~(CNS) and mask CNS, DNA methylation, GE, miRNA expression along with clinical outcomes were used, instead of a single modality.
 
 \section{Methods}\label{chapter_4:mm}
-%In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training. 
-%\subsection{Problem statement}
-%Although breast cancer patients now have one of the best survival rates among other cancer types, improved studies on breast cancer are still a non-trivial research problem. 
-%We focus here on the difficult problem of finding sub types of breast cancers. 
-%Since knowledge about genetic mutations in breast cancer is important in the discovery of more suitable treatments, the problem we addressed is to observe which
-% or have direct correlations on the survival rates.  %, which is because certain genetic mutations might have a direct correlation on survival rates. %To summarize, the following tasks will be completed:
-%Since knowledge about genetic mutations is important in the discovery of more suitable treatments,  
+In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training. 
+
+\subsection{Problem statement}
 The problem of cancer sub-typing is to observe which genetic mutations are responsible for which breast cancer subtypes, based on multimodal genomics data containing ER, PGR, and HER2/neu statuses of breast cancer patients, either separately or in a multimodal way. 
-In the proposed method, the heterogeneity of expression across samples is captured in a gene regulation space, instead of gene expression space. This also involves transforming gene expression, miRNA expression, and DNA methylation profiles into regulation profiles for characterizing differential expression of genes between different subtypes.% for breast cancer. 
-%In the context of survival rate prediction, our network should tell us the chance of survival for each cancer patient based on individual patient's clinical and pathology information. The survival rate ranges between [0-1], with 1 being the highest chance of survival.
-%Since data is essential for training the MAE model, 
-%We provide the details of the data collection, processing, and feature selection in details. 
+The heterogeneity of expression across samples is captured in a gene regulation space, instead of gene expression space. This also involves transforming gene expression, miRNA expression, and DNA methylation profiles into regulation profiles for characterizing differential expression of genes between different subtypes. Since breast cancer subtype classification consists of following three sub-tasks based on ER, PGR, and HER2/neu status, each of these will correspond to different neural networks: 
+
+\begin{itemize}
+    \item The ER status classification is the task for determining the existence of ER protein inside breast cancer patient. Each patient can be classified into one of ER- `POSITIVE', `NEGATIVE', or `INDETERMINATE'\footnote{Patients can't be grouped as positive, negative, or equivocal}. 
+    \item The PGR status classification is the task for determining the existence of PGR protein inside breast cancer patient. Similar to ER status, each patient can be classified into one of PGR- `POSITIVE', `NEGATIVE', or `INDETERMINATE'. 
+    \item The HER2/neu status classification is the task for determining the existence of HER2 in the breast cancer patient. Unlike ER and PGR status, HER2/neu status is the most important predictive and prognostic biomarker for breast cancer. Each patient can be classified into one of four types: `POSITIVE', `NEGATIVE', `INDETERMINATE', and `EQUIVOCAL'\footnote{Assessments without information on how to treat a patient}. 
+\end{itemize}
 
 \begin{sidewaysfigure*}
 	\centering
@@ -63,6 +62,10 @@ In the proposed method, the heterogeneity of expression across samples is captur
 \subsection{Datasets}
 \label{dc}
 Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{icgc}, and COSMIC~\cite{forbes}. Based on public availability and amount of data~(w.r.t. number of patients data), the breast invasive carcinoma~(BRCA) branch of TCGA was considered as the main data source\footnote{TCGA has 39 projects for 39 different cancer types~(v89)}. Clinical data and biospecimens are collected through the Genomics Data Commons~(GDC) data portal\footnote{\url{https://portal.gdc.cancer.gov/}}. Clinical data comprise of general clinical information as well as cancer status~(e.g., cancer location, cancer stage).
+Besides, some preprocessed data were reused\footnote{Based on a Master thesis I co-supervised with Dr. Oya Beyan: "Analysis of Breast Cancer Genomic Data with Multimodal Deep Belief Network", by Galih Wicaksono, Software Systems Engineering, RWTH Aachen University, 2018}. Besides, some data came in different formats. For example, $70\%$ of the DNA methylation data came from a different platform than the remaining $30\%$, having two structures. It is to be noted that several factors refrained us from using each type of data, e.g., masked somatic mutation data are the base pair~(BP) position in a chromosome, making not all the mutations are significant. CNS and masked CNS were not used because of extremely high dimension and variable structure~(in fact, there was no fixed dimension for each data per patient). Since BP's start refers observed, CNS data and stop positions in a chromosome, which will always vary at a BP resolution. We do not use here copy number and DNA variation gave the extremely high dimension and complex structure of the data, i.e., variant position, will always vary at a base pair resolution.
+
+\hspace*{3.5mm} Since GE quantification data covers the amount of RNA synthesized by each gene on a single time, we treat each data per row and consider if the gene's Ensembl ID belongs to the data release. miRNA and GE quantification data from TCGA were already in the desired format, so no preprocessing was required. From the masked somatic data, gene data containing both the Ensembl ID and Hugo gene symbol considered only. Since both CNS and masked CNS data cover entire gene mutation cases on base-pair sequences instead of a single BP case, which was covered in masked somatic data, we find corresponding Ensembl gene ID from the chromosome position and extract the data using Ensembl API~\cite{yates}. 
+Processing DNA methylation data was a complex task due to different platform. In particular, some patients were measured with the HumanMethylation27 platform, while the remaining patients were measured with HumanMethylation450 arrays. Only 26K DNA methylation sites were common in both platforms. With above considerations, gene expression, miRNA expression, and DNA methylation data along with clinical outcomes~(w.r.t pathology responses) are used. 
 
 \begin{table}[h]
     \scriptsize
@@ -123,15 +126,9 @@ Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{
     	\vspace{-4mm}
 \end{table}
 
-\hspace*{3.5mm} Besides, some preprocessed data were reused\footnote{Based on a Master thesis I co-supervised with Dr. Oya Beyan: "Analysis of Breast Cancer Genomic Data with Multimodal Deep Belief Network", by Galih Wicaksono, Software Systems Engineering, RWTH Aachen University, 2018}. Besides, some data came in different formats. For example, $70\%$ of the DNA methylation data came from a different platform than the remaining $30\%$, having two structures. It is to be noted that several factors refrained us from using each type of data, e.g., masked somatic mutation data are the base pair~(BP) position in a chromosome, making not all the mutations are significant. %Even if we use them, the generated dataset will be very sparse. %giving too many zero entries. 
-CNS and masked CNS were not used because of extremely high dimension and variable structure~(in fact, there was no fixed dimension for each data per patient). 
-%Since BP's start refers observed, CNS data and stop positions in a chromosome, which will always vary at a BP resolution.
-%We do not use here copy number and DNA variation gave the extremely high dimension and complex structure of the data, i.e., variant position, will always vary at a base pair resolution.
+\hspace*{3.5mm} These data are very high-dimensional, e.g., GE data for each patient, which is structured based on gene id reaches around 60,000 types. A predictor based on GE comes with 60,000 different features. \Cref{tab:all_data_brca} shows the statistics of the preprocessed data for each modality. We find corresponding Ensembl gene IDs from the chromosome position based on GDC API. The samples having the latest gene Ensembl IDs from release 89 are only considered valid. Clinical data covers clinical outcomes of cancer patient treated as general, pathology, treatments, and surgery. We categorized each patient data into different groups, but only the pathology response from the whole clinical outcomes are used. 
 
-\hspace*{3.5mm} Since GE quantification data covers the amount of RNA synthesized by each gene on a single time, we treat each data per row and consider if the gene's Ensembl ID belongs to the data release. 
-%miRNA and GE quantification data from TCGA were already in the desired format, so no preprocessing was required. 
-%From the masked somatic data, gene data containing both the Ensembl ID and Hugo gene symbol considered only. Since both CNS and masked CNS data cover entire gene mutation cases on base-pair sequences instead of a single BP case, which was covered in masked somatic data, we find corresponding Ensembl gene ID from the chromosome position and extract the data using Ensembl API~\cite{yates}. 
-Processing DNA methylation data was a complex task due to different platform. In particular, some patients were measured with the HumanMethylation27 platform, while the remaining patients were measured with HumanMethylation450 arrays. Only 26K DNA methylation sites were common in both platforms. With above considerations, gene expression, miRNA expression, and DNA methylation data along with clinical outcomes~(w.r.t pathology responses) are used. These data are very high-dimensional, e.g., GE data for each patient, which is structured based on gene id reaches around 60,000 types. A predictor based on GE comes with 60,000 different features. Following seven different modalities\footnote{Last two modalities were used for the training and evaluation but not reported due to low accuracies.} are subsequently formed: 
+\hspace*{3.5mm} Following seven different modalities\footnote{Last two modalities were used for the training and evaluation but not reported due to low accuracies.} are subsequently formed. In other words, the training sets are formed from any combinations of three genomics data, including DNA methylation, GE, and miRNA expression: 
 
 \begin{enumerate}[noitemsep]
     \item DNA methylation 
@@ -143,89 +140,100 @@ Processing DNA methylation data was a complex task due to different platform. In
     \item DNA methylation + gene expression + miRNA expression. 
 \end{enumerate}
 
-\hspace*{3.5mm} \Cref{tab:all_data_brca} shows the statistics of the preprocessed data for each modality. We find corresponding Ensembl gene IDs from the chromosome position based on GDC API. The samples having the latest gene Ensembl IDs from release 89 are only considered valid. Clinical data covers clinical outcomes of cancer patient treated as general, pathology, treatments, and surgery. We categorized each patient data into different groups, but only the pathology response from the whole clinical outcomes are used. 
+Therefore, the input to the network can be a single or multimodality in combination with DNA methylation, GE, or miRNA expression data. Single type input is considered with a regular AE and multiple types of input with an MAE. For both ER, PGR, and HER2/neu-based sub-typing are done based on both unimodal inputs with a regular AE and multimodal input with MAE are used. %, as shown in~\cref{tab:all_data_brca}. 
 
 \subsection{Network construction and training}
-Although a single and simple AE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). In contrast, the weights of the MAE encoder learn from both clean, unsupervised data with no labels, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Architecturally, MAE is similar to a three-stage AE: the first stage represents a particular modality for each type of data, second stage represents the cross-modality, and third stage is supervised MAE. 
+The difference in dimension between modalities are pretty large, e.g. GE data consists of around 60,000 features, while miRNA data only consists of around 1,800. This is a non-trivial challenge in modality specific representation learning as the Individual latent representation is require to have the same dimensionality~\cite{mmdcae}.
 
-\begin{itemize} [noitemsep]
-    \item The individual modality AE is not only a one-layer AE, but a multilayer and gradually shrinking AE with the possibilities of a different number of layers for each modality, which is due to the difference in dimension between modalities are pretty large, e.g. GE data consists of around 60,000 features, while miRNA data only consists of around 1,800. 
-    \item The cross-modality AE is also a multilayer gradually shrinking AE with different size of output layer for each prediction, where the number of layers and units per layer in both encoder and decoder are symmetric. The AE network fusing multiple modalities consists of a variable number of ReLU layers, which are densely connected. 
-    \item Third stage is the supervised MAE, where only encoder's output is used by adding a fully connected softmax layer on top for the classification. . 
+%s.t. $\forall i \in\{0,1, \ldots, n\}, d_{i}=$ $\eta \in \mathbb{N}$. 
+Although a single and simple AE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). In contrast, the weights of the MAE encoder learn from both clean, unsupervised data with no labels, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Architecturally, MAE is similar to a three-stages AE: first stage is modality specific, second stage represents the cross-modality, and third stage is supervised MAE. Technically, stage-1 and 2 corresponds to unsupervised pre-training. The architecture depicted in \cref{fig:slr_1} generates the shared representation for all input modalities, instead of one latent representation for each input modality.
+
+\subsubsection{Stage-1: Individual modality}
+The first stage of an MAE represents a particular modality for each type of data. The individual modality AE is not only a one-layer AE, but a multilayer and gradually shrinking AE with the possibilities of a different number of layers for each modality. A regular AE consist of following two sub-networks: 
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Encoder} - encodes the input $X_{k}$ into a latent-space representation using function $h = f(X_{k})$.
+    \item \textbf{Decoder} - reconstructs the input from the latent space representation using function $\tilde{X} = g(h)$. 
 \end{itemize}
 
-\subsubsection{Stage-1: single modality}
-First, data $X_{i,j} \in \mathbb{R}^{D}$, for each modality $i \in \mathbb{N}$\footnote{N represents the dimensionality of the $i^{th}$ input modality} is fed into the encoder $f_{\theta_{i}}$ in order to generate a modality specific latent representation $h_{i, j}$ as follows~\cite{mmdcae}: 
+\hspace*{3.5mm} For input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ input modalities, encoder encoder $f_{\theta_{k}}$ learns the representation of $X_{k}$ in a compressed form. In other words, the input space is mapped and transformed into an embedding space, i.e., modality specific latent representation~\cite{mmdcae}: 
 
-\begin{align}
-    h_{i, j}=f_{\theta_{i}}\left({X}_{i, j}\right)
-\end{align}
+\begin{equation}
+    h_{k}=f_{\theta_{k}}\left({X}_{k}\right)
+\end{equation}
 
-where $f_\theta$ signifies trainable parameters of the encoder specific to the $i^{th}$ modality. Subsequently, the latent representation is then fed into the decoder module to reconstruct ${X}_{i, j}^{\prime}$ similar to the original input. The parameters of the modality specific AE are then then trained to minimize the RL1 between the decoder’s output and the input signal, where the RL1 is similar \cref{eq:Loss1}. The latent representations of all modalities are further concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$. Individual latent representation is require to have the same dimensionality s.t. $\forall i \in\{0,1, \ldots, n\}, d_{i}=$ $\eta \in \mathbb{N}$~\cite{mmdcae}. 
+\hspace*{3.5mm} where $\theta$ signifies trainable parameters of the encoder, which is specific to respective modality. During the decoding phase, the latent representation is fed into the decoder module. Decoder tries to reconstruct ${X}_{k}^{\prime}$ similar to original input ${X}_{k}$ from $h_{k}$. Reconstruction loss between $X_{k}$ and its reconstructed version is iteratively optimized, such that useful information is not lost~\cite{KarimIEEEAccess2019}. Following distance measure - $d_{AE}$ between input $X_{k}$ and network's output $f(X_{k})$, is a typical reconstruction loss: 
 
-\hspace*{3.5mm} The architecture depicted in \cref{fig:slr_1} generates the shared representation for all input modalities, instead of one latent representation for each input modality. For the simplicity, only the shared representation for all input modalities is considered in this chapter. In either approach, resulting concatenated generates a single vector $u=\left[u_{0}, u_{1}, \ldots, u_{n}\right] \in[-1,1]^{(n+1) \eta}$, where the weights of the corresponding components are generated with  softmax layer as~\cite{mmdcae}:
+\begin{equation}
+    L_{AE}=\text{$d_{AE}$}(X_{k}, f(X_{k}) = \sum_{i} ||X_{k}-f(X_{k})||^{2}.
+    %\label{eq:Loss1}
+\end{equation}
 
-\begin{align}
-    \omega=\operatorname{softmax}\left(W_{\omega} u+b_{\omega}\right),
-\end{align}
+\hspace*{3.5mm} By replacing $f(X_{k})$ with ${X}_{k}^{\prime}$, above equation is changed to following: 
 
-\hspace*{3.5mm} where $\omega=\left[\omega_{0}, \omega_{1}, \ldots, \omega_{n}\right] \in[0,1]^{(n+1) \eta}$ $\left(\forall i, \omega_{i} \in[0,1]^{\eta}\right)$, and  $W_{\omega} \in$
-$\mathbb{R}^{(n+1) \eta \times(n+1) \eta}$ and $b_{\omega} \in \mathbb{R}^{(n+1) \eta}$ is the trainable parameters~\cite{mmdcae}. The final latent representation is generated through a weighted sum of all the modalities specific latent representation $\left(h_{i,j}\right)$ based on the computed weights $\left(\omega_{i}\right)$ as~\cite{mmdcae}: 
+\begin{equation}
+    L_{AE}=\text{$d_{AE}$}(X_{k}, {X}_{k}^{\prime}) = \sum_{i} ||X_{k}-{X}_{k}^{\prime})||^{2}.
+    %\label{eq:Loss1}
+\end{equation}
 
-\begin{align}
-   h_{i,j}=\sum_{i=1}^{n}\left(h_{i} \odot \omega_{i}\right),
-\end{align}
+\hspace*{3.5mm} Let's, $X_m$, $X_e$, and $X_r$ are DNA methylation, gene expression, and miRNA expression input modalities, respectively. Each input is transformed into following hidden representations~\cite{KarimIEEEAccess2019}.
 
-\hspace*{3.5mm} where $\odot$ denotes the element-wise product and $h \in$ $\mathbb{R}^{\eta}$ is the final representation~\cite{mmdcae}, which is subsequently fed to the classifier for the classification. DNA methylation vector  $x_m$, GE vector $x_e$, miRNA expression vector $x_r$, and clinical data vector $x_c$ are transformed to hidden representations~\cite{wang2018associativemulti}.
-
-\begin{align}
+\begin{equation}
     \begin{array}{l}
-        {h_{m}=g\left(W_{m} x_{t}+b_{m}\right)} \\
-        {h_{e}=g\left(W_{e} x_{v}+b_{e}\right)} \\
-        {h_{r}=g\left(W_{r} x_{a}+b_{r}\right)} \\
-        {h_{c}=g\left(W_{c} x_{t}+b_{c}\right)}
+        {h_{m}=f\left(W_{m} x_{t}+b_{m}\right)} \\
+        {h_{e}=f\left(W_{e} x_{v}+b_{e}\right)} \\
+        {h_{r}=f\left(W_{r} x_{a}+b_{r}\right)}
     \end{array}
     \label{eq:m1}
-\end{align}  
+\end{equation}  
+
+\hspace*{3.5mm} where $\left\{W_{m}, W_{e}, W_{r}\right\}$ are network's weight matrices, $\left\{b_{m}, b_{e}, b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, respectively, and $f$ is the $ReLU(.)$ activation function. 
+
+\subsubsection{Stage-2: Cross-modality}
+Similar to stage-1, cross-modality is also a multilayer gradually shrinking AE with different size of output layer for each prediction. However, number of layers and units per layer in both encoder and decoder are symmetric. The latent representations of all modalities are concatenated into a single representation. The AE network fusing multiple modalities consists of a variable number of ReLU layers, which are densely connected.
 
 Then the hidden representations are concatenated together and mapped to a common space~\cite{liu2016multimodal}:
 
 \begin{equation}
-    h_{mae}=g\left(W_{mme}\left[h_{m} ; h_{e} ; h_{r} ; h_{c}\right]+b_{mme}\right)
+    h_{mae}=g\left(W_{mme}\left[h_{m}; h_{e}; h_{r}\right]+b_{mme}\right)
 \end{equation}
 
-The model is trained to reconstruct the hidden representations of the three modalities $h_{mae}$:
+Then model is trained to reconstruct the hidden representations of the three modalities $h_{mae}$:
 
 \begin{equation}
-    \left[\hat{h}_{m} ; \hat{h}_{e} ; \hat{h}_{r} ; \hat{h}_{c} \right]=g\left(W_{mae}^{\prime} h_{mae}+b_{\hat{mae}}\right)
+    \left[\hat{h}_{m}; \hat{h}_{e}; \hat{h}_{r}
+    \right]=g\left(W_{mae}^{\prime} h_{mae}+b_{\hat{mae}}\right)
 \end{equation}
 
 The original representation of different modalities is then reconstructed as~\cite{wang2018associativemulti}: 
 
-\begin{align}
+\begin{equation}
     \begin{aligned}
-        \hat{x}_{m} &=g\left(W_{m}^{\prime} \hat{h}_{m}+b_{\hat{m}}\right) \\
-        \hat{x}_{e} &=g\left(W_{e}^{\prime} \hat{h}_{e}+b_{\hat{e}}\right) \\
-        \hat{x}_{r} &=g\left(W_{r}^{\prime} \hat{h}_{r}+b_{\hat{r}}\right) \\
-        \hat{x}_{c} &=g\left(W_{c}^{\prime} \hat{h}_{c}+b_{\hat{c}}\right)
+        \hat{x}_{m} &=f\left(W_{m}^{\prime} \hat{h}_{m}+b_{\hat{m}}\right) \\
+        \hat{x}_{e} &=f\left(W_{e}^{\prime} \hat{h}_{e}+b_{\hat{e}}\right) \\
+        \hat{x}_{r} &=f\left(W_{r}^{\prime} \hat{h}_{r}+b_{\hat{r}}\right)
         \end{aligned}
-\end{align}
+\end{equation}
 
-\hspace*{3.5mm} where $\hat{x}_{m}$, $\hat{x}_{e}$,  $\hat{x}_{r}$, $\hat{x}_{c}$ are the reconstruction of input vectors $x_{m}$, $x_{e}$, $x_{r}$, $x_{c}$, where by randomly blocking out different modalities from the training data and learning to reconstruct them, the MAE attempts to reconstruct the original data $\hat{h}_{m}$, $\hat{h}_{e}$, $\hat{h}_{r}$, and $\hat{h}_{c}$ are the reconstruction of hidden representations ${h}_{m}$, ${h}_{e}$, ${h}_{r}$, and ${h}_{c}$~\cite{wang2018associativemulti}. The last element of the hidden dimension is the dimensionality of the latent space representation and the decoder module has similar gradual increasing architecture. The learning parameters $   \theta=\left\{W_{m},W_{e},W_{r},W_{c},W_{m}^{\prime},W_{e}^{\prime},W_{r}^{\prime},W_{c}^{\prime},W_{mae},W_{mae}^{\prime}\right\}$ are weight matrices, $\left\{b_{m}, b_{e}, b_{r}, b_{c}, b_{\hat{m}}, b_{\hat{e}}, b_{\hat{r}}, b_{\hat{c}}, b_{mae}, b_{\hat{mae}}\right\}$ are bias vectors, $[.;.]$ denotes the vector concatenation, and $g$ denotes the $ReLU(.)$ activation function~\cite{wang2018associativemulti}. 
+\hspace*{3.5mm} where $\hat{x}_{m}$, $\hat{x}_{e}$, and $\hat{x}_{r}$ are the reconstruction of input vectors $x_{m}$, $x_{e}$, and $x_{r}$. Then MAE attempts to reconstruct the original input $\hat{h}_{m}$, $\hat{h}_{e}$, and $\hat{h}_{r}$ are the reconstruction of hidden representations ${h}_{m}$, ${h}_{e}$, and ${h}_{r}$~\cite{wang2018associativemulti}. 
 
-\hspace*{3.5mm} Similar to literature~\cite{wang2018associativemulti,serban2016multi}, noise distributions are taken into account employing Bregman divergences~(BD), which corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. Each modality can have its own BD as loss function, thereby assuming a specific noise of output distribution. The unsupervised pre-training is performed greedily on each layer of the MAE, which corresponds to the nature of AE. The three-stage MAE creates hierarchical hidden units, which have strong connections between nodes not only for individual modality but also across the modalities. 
-%For example, the survival rate prediction will only consist of one neuron in the output layer, while 
-The breast cancer subtype classification 
-%and the treatment response classification both will
-consists of more multiple units in the output layer. 
-%We generalize the MAE for both breast cancer subtype classification and survival rate prediction. 
+The last element of the hidden dimension is the dimensionality of the latent space representation and the decoder module has similar gradual increasing architecture. 
 
-\hspace*{3.5mm} The datasets are formed from any combinations of three genomics data, including DNA methylation, GE, and miRNA expression. Since the breast cancer subtype classification consists of three sub-tasks based on ER, PGR, and HER2/neu status, each of these will correspond to their neural networks. First, we focus on the ER status classification by determining the existence of ER protein inside breast cancer patient. The status can be `POSITIVE', `NEGATIVE', or `INDETERMINATE'\footnote{Patients can't be grouped as positive, negative, or equivocal}, which means our network predicts one of three classes. The input to the network can be a single or multimodality in combination with DNA methylation, GE, or miRNA expression data as shown in~\cref{tab:all_data_brca}. The second type of breast classification is the PGR status classification, which determines the existence of PGR protein inside breast cancer patient. Just as ER status, PGR status is also classified into `POSITIVE', `NEGATIVE', or `INDETERMINATE', which means the model will predict one of three classes. Nevertheless, we use single type input with a regular AE and multiple types of input with an MAE. 
 
-\hspace*{3.5mm} For each model, specific input modality is considered as shown in~\cref{tab:all_data_brca}. The third type of breast subtype classification is based on the HER2/neu, which determines the existence of HER2 in the breast cancer patient. Unlike ER and PGR status, HER2/neu status is the most important predictive and prognostic biomarker in breast cancer, which is classified into four types: `POSITIVE', `NEGATIVE', `INDETERMINATE', and `EQUIVOCAL'\footnote{Assessments without information on how to treat a patient}. Similar to ER and PGR subtyping, both unimodal inputs with a regular AE and multimodal input with MAE are used for the HER2/neu based classification as shown in~\cref{tab:all_data_brca}. 
-%The survival rate ranges between 0-1, where 1 indicates the highest chance of survival. Due to the continuous nature of the output, we model this as the regression task, which we implement using both single type input with a regular AE and multiple types of input with an MAE. 
+Overall network weights ($\left\{W_{m},W_{e},W_{r},W_{m}^{\prime},W_{e}^{\prime},W_{r}^{\prime},W_{mae},W_{mae}^{\prime}\right\}$) and bias vectors~($\left\{b_{m}, b_{e}, b_{r}, b_{\hat{m}}, b_{\hat{e}}, b_{\hat{r}}, b_{mae}, b_{\hat{mae}}\right\}$) frm the learning parameters $\theta$.
+
+\hspace*{3.5mm} Similar to literature~\cite{wang2018associativemulti,serban2016multi}, noise distributions are taken into account employing Bregman divergences, which corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. Each modality can have its own Bregman divergences as loss function, thereby assuming a specific noise of output distribution. 
+
+\subsubsection{Stage-3: Unsupervised pre-training}
+The unsupervised pre-training is performed greedily on each layer of the MAE, which corresponds to the nature of AE. From network topological point of view, MAE creates hierarchical hidden units, which have strong connections between nodes not only for individual modality but also across the modalities. For example, the survival rate prediction will only consist of one neuron in the output layer, while the breast cancer subtype classification and the treatment response classification both will consists of more multiple units in the output layer. 
+
+\hspace*{3.5mm} For each model, specific input modality is considered as shown in~\cref{tab:all_data_brca}. 
+
+
+
 Unsupervised pre-training is performed for the whole layer, followed by a supervised fine-tuning for the subtype classification. 
-%During the pre-training, the whole datasets is used for the training and validation. %with 10\% for the validation. 
+
+\iffalse
 Training a single-layer autoencoder corresponds to optimizing the learning parameters to minimize the overall loss between inputs and their reconstructions as:
 
 \begin{equation}
@@ -234,8 +242,28 @@ Training a single-layer autoencoder corresponds to optimizing the learning param
 \end{equation}
 
 \hspace*{3.5mm} where $i$ denotes the $i^{th}$ feature.
+\fi 
 
-\subsubsection{Supervising finetuning}
+\subsubsection{Stage-4: supervising finetuning}
+This is the supervised MAE, where only encoder's output is used by adding a fully connected softmax layer on top for the classification. 
+\hspace*{3.5mm} Resulting concatenated generates a single vector $u=\left[u_{0}, u_{1}, \ldots, u_{n}\right] \in[-1,1]^{(n+1) \eta}$, where the weights of the corresponding components are generated with  softmax layer as~\cite{mmdcae}:
+
+\begin{equation}
+    \omega=\operatorname{softmax}\left(W_{\omega} u+b_{\omega}\right),
+\end{equation}
+
+\hspace*{3.5mm} where $\omega=\left[\omega_{0}, \omega_{1}, \ldots, \omega_{n}\right] \in[0,1]^{(n+1) \eta}$ $\left(\forall i, \omega_{i} \in[0,1]^{\eta}\right)$, and  $W_{\omega} \in$ $\mathbb{R}^{(n+1) \eta \times(n+1) \eta}$ and $b_{\omega} \in \mathbb{R}^{(n+1) \eta}$ is the trainable parameters~\cite{mmdcae}. 
+
+The final latent representation is generated through a weighted sum of all the modalities specific latent representation $\left(h_{i,j}\right)$ based on the computed weights $\left(\omega_{i}\right)$ as~\cite{mmdcae}: 
+
+\begin{equation}
+   h_{i,j}=\sum_{i=1}^{n}\left(h_{i} \odot \omega_{i}\right),
+\end{equation}
+
+\hspace*{3.5mm} where $\odot$ denotes the element-wise product and $h \in$ $\mathbb{R}^{\eta}$ is the final representation~\cite{mmdcae}, which is subsequently fed to the classifier for the classification. 
+
+
+
 The latent representations of all the input modalities are subsequently concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$ and used into the feed-forward neural network for the classification, which is trained to optimize the following categorical cross-entropy~(CE) loss: %~\cref{eq:cross_entropy_loss} of the predicted cancer subtype $Y \prime$ vs. actual subtype $Y$. 
 
 \begin{equation} 
