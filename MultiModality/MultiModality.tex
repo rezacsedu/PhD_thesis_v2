@@ -46,9 +46,9 @@ The problem of cancer sub-typing is to observe which genetic mutations are respo
 The heterogeneity of expression across samples is captured in a gene regulation space, instead of gene expression space. This also involves transforming gene expression, miRNA expression, and DNA methylation profiles into regulation profiles for characterizing differential expression of genes between different subtypes. Since breast cancer subtype classification consists of following three sub-tasks based on ER, PGR, and HER2/neu status, each of these will correspond to different neural networks: 
 
 \begin{itemize}
-    \item The ER status classification is the task for determining the existence of ER protein inside breast cancer patient. Each patient can be classified into one of ER- `POSITIVE', `NEGATIVE', or `INDETERMINATE'\footnote{Patients can't be grouped as positive, negative, or equivocal}. 
-    \item The PGR status classification is the task for determining the existence of PGR protein inside breast cancer patient. Similar to ER status, each patient can be classified into one of PGR- `POSITIVE', `NEGATIVE', or `INDETERMINATE'. 
-    \item The HER2/neu status classification is the task for determining the existence of HER2 in the breast cancer patient. Unlike ER and PGR status, HER2/neu status is the most important predictive and prognostic biomarker for breast cancer. Each patient can be classified into one of four types: `POSITIVE', `NEGATIVE', `INDETERMINATE', and `EQUIVOCAL'\footnote{Assessments without information on how to treat a patient}. 
+    \item \textbf{ER status classification} - diagnosing individual patients into one of POSITIVE, NEGATIVE, and INDETERMINATE\footnote{Patients can't be grouped as positive, negative, or equivocal}, based on existence of ER protein breast tissue. 
+    \item \textbf{PGR status classification} - diagnosing individual patients into one of POSITIVE, NEGATIVE, and INDETERMINATE, based on existence of PGR protein in breast tissue. 
+    \item \textbf{HER2/neu status classification} - diagnosing individual patients into one of `POSITIVE, NEGATIVE, INDETERMINATE, and EQUIVOCAL\footnote{Assessments without information on how to treat a patient}, based on existence of HER2 protein in breast tissue. Unlike ER and PGR status, HER2/neu is the most important prognostic biomarkers. 
 \end{itemize}
 
 \begin{sidewaysfigure*}
