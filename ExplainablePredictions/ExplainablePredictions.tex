@@ -514,6 +514,23 @@ Although a single and simple AE discussed in \cref{preli:AEs} can reconstruct an
 \hspace*{3.5mm} We illustrate the construction of an MCAE as a quad-modal AE, where CNV, GE, miRNA expression, and clinical outcomes form 4 different modalities from the same patient cohorts. The individual modality CAE is not only a one-layer AE, but a multilayer and gradually shrinking CAE with the possibilities of a different number of layers for each modality, which is due to difference in dimension between modalities are pretty large. By default, MCAE fuses multiple modalities consists of a variable number of ReLU layers, which are densely connected. The cross-modality CAE is also a multilayer gradually shrinking CAE with different output layer for each prediction. However, number of layers and units per layer of the encoder and decoder networks are symmetric. The $3^{rd}$ stage is the supervised MCAE in which the decoder part is removed, and only the encoder part is utilized by adding a fully connected layer for the classification. % and regression operations. 
 
 \subsubsection{Unsupervised pertaining of MCAE}
+The only difference is using Exponential Linear Unit~(ELU)~\cite{clevert2015fast} activation function defined as: 
+
+\begin{equation}
+    ELU_{\alpha}(X_k)=\left\{\begin{array}{ll}
+    \alpha(\exp (x)-1) & \text { if } x<0 \\
+    x & \text { if } x \geq 0.
+    \end{array}\right.
+\end{equation}
+
+\hspace*{3.5mm} where $\lambda$ is the activity regularization term and $\alpha$ is the regularization weights. 
+
+signal $X_{i, j}$. In the current work, we use the mean squared error function:
+$$
+\mathcal{E}_{i}=\frac{1}{N} \sum_{j=1}^{N}\left\|X_{i, j}-\tilde{X}_{i, j}^{\prime}\right\|_{2}^{2}+\lambda\left\|W_{i}\right\|_{2}^{2}
+$$
+where $\lambda\left\|W_{i}\right\|_{2}^{2}$ represents the regularization term (with $W_{i}$ representing the set of all trainable param-
+
 As shown in~\cref{fig:mm_rL_example1}, our model first embeds data of each input modality into 2D images in which each sample is reshaped into a 144$\times$144 image by zero padding around the edges and normalized to [0,255]. 
 %Let's $x_m$ be the DNA methylation vector, $x_e$ is the GE vector, $x_r$ is the miRNA expression vector, and $x_c$ is the clinical data vector to hidden representations~\cite{wang2018associativemulti}.
 Data $X_{i,j} \in \mathbb{R}^{D}$ for each modality $i \in \mathbb{N}$\footnote{N represents the dimensionality of the $i^{th}$ input modality} is then fed into the encoder $f_{\theta_{i}}$~(let's assume $x_m$ be the DNA methylation modality, $x_e$ is the GE modality, $x_r$ is the miRNA expression modality, and $x_c$ is the clinical data modality) in order to generate a modality specific latent representation $h_{i, j}$ as follows~\cite{mmdcae}: 
