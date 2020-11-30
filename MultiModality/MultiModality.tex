@@ -127,9 +127,9 @@ Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{
 
 \hspace*{3.5mm} These data are very high-dimensional, e.g., GE data for each patient, which is structured based on gene id reaches around 60,000 types. A predictor based on GE comes with 60,000 different features. \Cref{tab:all_data_brca} shows the statistics of the preprocessed data for each modality. We find corresponding Ensembl gene IDs from the chromosome position based on GDC API. The samples having the latest gene Ensembl IDs from release 89 are only considered valid. Clinical data covers clinical outcomes of cancer patient treated as general, pathology, treatments, and surgery. We categorized each patient data into different groups, but only the pathology response from the whole clinical outcomes are used. 
 
-\hspace*{3.5mm} 
-As shown in \cref{fig:data_per_patients}, there are 8 different data types in TCGA. Out of all 1098 breast cancer patients, majority types contribute to 1000, by discarding the rest. Following seven different modalities\footnote{Last two modalities were used for the training and evaluation but not reported due to low accuracies.} are subsequently formed. In other words, the training sets are formed from any combinations of three genomics data, including DNA methylation, GE, and miRNA expression: 
+\hspace*{3.5mm} Out of all 1098 breast cancer patients, majority types contribute to 1000, by discarding the rest. Following seven different modalities\footnote{Last two modalities were used for the training and evaluation but not reported due to low accuracies.} are subsequently formed. In other words, the training sets are formed from any combinations of DNA methylation, GE, and miRNA expression data, as shown in \cref{fig:data_per_patients}. Besides, some preprocessed data were reused\footnote{Based on a Master thesis I co-supervised with Dr. Oya Beyan: "Analysis of Breast Cancer Genomic Data with Multimodal Deep Belief Network", by Galih Wicaksono, Software Systems Engineering, RWTH Aachen University, 2018}. Based on above consideration, the input to the network can be a single or multimodality in combination with DNA methylation, GE, or miRNA expression data, as shown in. Single type input is considered with a regular AE and multiple types of input with an MAE. For both ER, PGR, and HER2/neu-based sub-type classification are done based on both unimodal inputs with a regular AE and multimodal input with MAE. 
 
+\iffalse
 \begin{enumerate}[noitemsep]
     \item DNA methylation 
     \item Gene expression 
@@ -139,8 +139,7 @@ As shown in \cref{fig:data_per_patients}, there are 8 different data types in TC
     \item miRNA expression + DNA methylation  
     \item DNA methylation + gene expression + miRNA expression. 
 \end{enumerate}
-
-\hspace*{3.5mm} Besides, some preprocessed data were reused\footnote{Based on a Master thesis I co-supervised with Dr. Oya Beyan: "Analysis of Breast Cancer Genomic Data with Multimodal Deep Belief Network", by Galih Wicaksono, Software Systems Engineering, RWTH Aachen University, 2018}. Based on above consideration, the input to the network can be a single or multimodality in combination with DNA methylation, GE, or miRNA expression data, as shown in. Single type input is considered with a regular AE and multiple types of input with an MAE. For both ER, PGR, and HER2/neu-based sub-type classification are done based on both unimodal inputs with a regular AE and multimodal input with MAE. %, as shown in~\cref{tab:all_data_brca}. 
+\fi 
 
 \begin{figure*}
 	\centering
@@ -167,9 +166,9 @@ Training MAE involves pre-training to leverage the learning representation, foll
 \end{sidewaysfigure*}
 
 \subsubsection{Unsupervised pre-training} 
-Pre-training the MAE architecture is similar to training a two-stage AE network. The first stage represents modality specific learning. On the other had, the second stage is equivalent to cross-modality learning. 
+Pre-training is similar to training a two-stage AE network: first stage represents modality specific learning. The second stage corresponds to cross-modality. 
 %Once the unimodal and cross-modal stages are constructed, training both stages is similar to unsupervised pre-training of the whole MAE architecture.
-Overall, pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual AEs. 
+Pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual AEs. 
 
 \paragraph{First stage}\noindent of the MAE represents a particular modality for each type of data. Individual modality AE is not only a one-layer AE, but also a multilayer and gradually shrinking AE with different number of layers per modality. A regular AE consist of following two sub-networks: 
 
@@ -266,13 +265,22 @@ The latent representations of all the input modalities are subsequently concaten
 \hspace*{3.5mm} where the parameters $\alpha_{r}$ and $\alpha_{c}$ are the regularization weights assigned to modality specific~(i.e., ${L}_{k}$) and cross-entropy specific~(${L}_{ce}$) function, respectively~\cite{mmdcae}. MAE network parameters were initialized with Xavier initialization~\cite{xavier} and trained using first-order gradient-based optimization techniques AdaGrad. 
 
 \section{Experiments}\label{chapter_4:results}
-In this section, we analyse the results both quantitative and qualitatively. 
-%All program were implemented in Python using scikit-learn and Keras with TensorFlow backend\footnote{\url{https://github.com/rezacsedu/MultimodalAE-BreastCancer}}. The network training was done on an Nvidia GTX 1050 GPU with CUDA and cuDNN enabled to make the overall pipeline faster. 
+The objective of the breast cancer subtype classification tasks is to observe the following:
+
+\begin{enumerate}[noitemsep]
+    \item What types of neural network architectures are for more for handing multimodal inputs. 
+    \item What individual genomic modalities are more suitable for more accurate diagnosis. 
+    \item What multimodal input combinations are more suitable for more accurate diagnosis.
+    \item What types of data can express biological characteristics of the patients? 
+\end{enumerate}
+
+\hspace*{3.5mm} Results each observation is analysed, both quantitative and qualitatively. 
 
 \subsection{Experiment setup}
-The training process is performed through a total of 100 epochs with the batch size set to $32$. The activity regularization term of \cref{eq:recons_loss} is set between $\lambda=[0.001, 0.005]$, while the regularization weights of the loss functions are set as  $\alpha_{0}=\alpha_{1}=\alpha_{2}=0.1$, and $\alpha_{c}$=0.25. 
-The full training set is used for pretraining the MAE in which 10\% data is used for the validation, followed by supervised fine-tuning on 70\% of the training data. The trained model is then evaluated on the 20\% held-out test set. Further, we observe the performance by adding the Gaussian noise layers followed by the dense layer to improve model generalization and reduce overfitting, where the Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. Results based on best hyperparameters produced through random search and 5-fold cross-validation tests empirically are reported in which macro-averaged precision, recall, F1, and Matthias correlation coefficient~(MCC) score, confusion matrices, and receiver operating characteristic~(ROC) curves are interpreted.
-%; while the standard mean squared error~($MSE$) and coefficient of determination~($R^2$) are computed to assess the performance of the survival rate prediction.% of the clinical DSS. %Since this is one of the very first works on multimodality learning, comparing our approach with baseline models was not a viable option. 
+The training process is performed through a total of 100 epochs with the batch size set to $32$. The activity regularization parameter is set between $\lambda=0.005$, while the regularization weights of the loss functions are set as $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. The full training set is used for pretraining the MAE in which 10\% data is used for the validation, followed by supervised fine-tuning on 70\% of the training data. Trained models are then evaluated on the 20\% held-out test set. Further, we observe the performance by adding the Gaussian noise layers to improve model generalization and to reduce overfitting. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
+
+\subsection{Performance metrics}
+Results based on best hyperparameters produced through random search and 5-fold cross-validation tests empirically are reported in which macro-averaged precision, recall, F1, and Matthias correlation coefficient~(MCC) scores, along with confusion matrices are interpreted. Since this is one of the very first works on multimodality learning, comparing our approach with baseline models was not a viable option. 
 
 \iffalse
 \begin{sidewaysfigure*}[htp!]
@@ -301,9 +309,17 @@ The full training set is used for pretraining the MAE in which 10\% data is used
 \fi 
 
 \subsection{Analysis of subtype classification}
-The best results for ER status prediction are shown in in~\cref{tab:all_results} for each modality, where a combined input of GE and miRNA expression data performs the best than any single input modality. The confusion matrix in~\cref{fig:er_confusion} shows predictions about 288 breast cancer patients in which 197 were `ER Positive', 58 where `ER Negative', and 33 samples for `ER Indeterminate'. Out of 197 samples, the classifier classified 187 `ER Positive' cases correctly, making only 10 mistakes~(misclassification) in which 3 were misclassified as `ER Negative' and 7 of them were classified as `ER Indeterminate', giving overall high model confidence. 
-%Furthermore, as shown in the ROC curve in~\cref{fig:er_roc}, AUC scores for class 0, 1, and 2 are 0.91, 0.89, and 0.94, respectively, albeit we had only a few `Indeterminate' samples in the test set. 
-The best results of PGR status prediction for each type of input is shown in~\cref{tab:all_results}. Similar to ER status prediction task, the predictor performs the best with the input of GE data combined with miRNA expression data. The other predictor with combined input of DNA methylation + gene expression + miRNA expression also performs relatively well. 
+Results for breast cancer subtype classification based on ER, PGR, and HER2/neu are analysed separately. 
+
+\paragraph{Subtype classification based on ER status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}. As seen, MAE on a combined input of GE and miRNA expression data performs the best compared to any individual input modalities. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:er_confusion}. As shown, the MAE model was evaluated on 288 samples, including 197 `Positive', 55 `Negative', and 36 `Indeterminate' samples. 
+
+\begin{itemize}[noitemsep]
+    \item Out of 197 samples, 187 `Positive' cases were classified correctly, making only 10 mistakes in which 3 were classified as `Negative' and 7 as `Indeterminate'. 
+
+    \item Out of 55 `Negative' cases, 47 were correctly classified, making 8 mistakes in which 3 were classified as `Positive' and 5 as `Indeterminate'. 
+
+    \item Out of 36 `Indeterminate' cases, 25 were correctly classified, making 11 mistakes in which 4 were classified as `Negative' and 7 as `Positive'.  
+\end{itemize}
 
 \begin{table}[h]
     \centering
@@ -349,23 +365,33 @@ The best results of PGR status prediction for each type of input is shown in~\cr
     \vspace{-2mm}
 \end{table}
 
+\paragraph{Subtype classification based on PGR status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}, where the best results are highlighted in green. Similar to ER status prediction task, MAE on a combined input of GE and miRNA expression data performed the best compared to any individual input modalities. Other predictors with combined input of DNA methylation + gene expression + miRNA expression also performs relatively well. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:pgr_confusion}. As shown, the MAE model was evaluated on 263 samples, including 168 `Positive', 76 `Negative', and 21 `Indeterminate' samples. 
+
+\begin{itemize}[noitemsep]
+    \item Out of 168 `Positive' cases, 155 were classified correctly, making only 13 mistakes in which only 2 were classified as `Negative' and 11 as `Indeterminate'. 
+
+    \item Out of 19 `Indeterminate' cases, 14 were correctly classified, making 5 mistakes in which 3 were classified as `Negative' and 2 as `Indeterminate'. 
+
+    \item Out of 76 `Indeterminate' cases, 61 were correctly classified, making 15 mistakes in which 10 were classified as `Positive' and 5 as `Negative'.  
+\end{itemize}
+
 \begin{figure*}[h]
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=60mm]{images/conf_er.png}
+		\includegraphics[scale=0.8]{images/conf_er.png}
 		\caption{ER status classification}
         \label{fig:er_confusion}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=60mm]{images/conf_pgr.png}
+		\includegraphics[scale=0.8]{images/conf_pgr.png}
 		\caption{PGR status classification}
         \label{fig:pgr_confusion}
 	\end{subfigure}\\[1ex]
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=60mm]{images/conf_her2.png}
+		\includegraphics[scale=0.8]{images/conf_her2.png}
 		\caption{HER2 status classification }
         \label{fig:her2_confusion}
 	\end{subfigure}
@@ -373,28 +399,41 @@ The best results of PGR status prediction for each type of input is shown in~\cr
 	\label{fig:multi_cms}
 \end{figure*}
 
-\hspace*{3.5mm} Best results are highlighted in green in~\cref{tab:all_results}. As seen from the confusion matrix in~\cref{fig:pgr_confusion}, the model is evaluated on 263 samples in which 167 were `PGR Positive', 75 `PGR Negative', and only 21 `PGR Indeterminate'. The best result was observed with the GE + miRNA expression input modality. 
-%As seen from~\cref{fig:pgr_roc}, AUC score for class 0~(`PGR Positive') and class 1~(`PGR Negative') are both 0.79, while 0.86 for class 2~(`PGR Indeterminate').
-%\subsubsection{Breast cancer subtype classification (HER2/neu status)}
-The best results for HER2/neu status prediction for each type of input is shown in \cref{tab:all_results}. Similar to the ER and PGR status prediction tasks, the predictor performs the best with the input of GE data combined with miRNA expression data.  However, we observed overall a low accuracy score for each type of data, although, the performance on the training set itself was near to perfect. Even after applying several regularization techniques such as l2-regularization and Gaussian dropout layers, the result is still poor, which might be because of the overfitting. One of the possible causes for such overfitting is the smaller number of samples~(i.e. 860 samples) compared to ER and PGR statuses~(i.e. 1,024 samples).
+\paragraph{Subtype classification based on HER2/neu status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}, where the best results are highlighted in green. Similar to ER and PGR status prediction task, MAE on a combined input of GE and miRNA expression data performed the best compared to any individual input modalities. Other predictors with combined input of DNA methylation + gene expression + miRNA expression also performs relatively well. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:her2_confusion}. As shown, the MAE model was evaluated on 219 samples, including 39 `Positive', 130 `Negative', 25  `Indeterminate', and 25 `Equivocal' samples. 
 
-\hspace*{3.5mm} The best result based on gene + miRNA expression modality is highlighted in green in~\cref{tab:all_results}, while the corresponding confusion matrix is shown in~\cref{fig:her2_confusion}. The predictor is evaluated on 225 samples in which 40 are `HER2/neu Positive', 121 of `HER2/neu Negative', 21 of `HER2/neu Indeterminate', and 32 of are `HER2/neu Equivocal'. The classifier predicted 182 `HER2' cases correctly. Such high mistakes suggests the classifier is  suitable for clinical setting. %, as it gives 81\% accuracy). 
+\begin{itemize}[noitemsep]
+    \item Out of 39 `Positive' cases, 25 were classified correctly, making 14 mistakes in which 2 were classified as `Negative', 7 as `Indeterminate', and 5 as `Equivocal'. 
+
+    \item Out of 130 `Negative' cases, 118 were correctly classified, making 12 mistakes in which 3 were classified as `Indeterminate', 4 as `Positive', and 5 as `Equivocal'. 
+
+    \item Out of 25 `Indeterminate' cases, 15 were correctly classified, making 10 mistakes in which 5 were classified as `Positive', 2 as `Negative', and 3 as `Equivocal'.
+    
+    \item Out of 25 `Equivocal' cases, 19 were correctly classified, making 6 mistakes in which 2 were classified as `Positive', 3 as `Negative', and 1 as `Indeterminate'.  
+\end{itemize}
+
+%\hspace*{3.5mm} The best results for HER2/neu status prediction for each type of input is shown in \cref{tab:all_results}. 
+
+%Similar to ER and PGR status prediction tasks, predictor performs the best with the input of GE data combined with miRNA expression data. However, overall a low accuracy score is observed for each type of data.
+
+%Even after applying several regularization techniques like l2-regularization and Gaussian dropout, result is still poor, which might be because of the overfitting. One of the possible causes for such overfitting is the smaller number of samples~(i.e. 860 samples) compared to ER and PGR statuses~(i.e. 1,024 samples).
+
+%The best result based on gene + miRNA expression modality is highlighted in green in~\cref{tab:all_results}. As shown in confusion matrix in~\cref{fig:her2_confusion}, the predictor is evaluated on 225 samples in which 40 are `HER2/neu Positive', 121 of `HER2/neu Negative', 21 of `HER2/neu Indeterminate', and 32 of are `HER2/neu Equivocal'. The classifier predicted 182 `HER2' cases correctly. Such high mistakes suggests the classifier is probably not yet suitable for clinical setting. %, as it gives 81\% accuracy). 
 %Furthermore, the ROC curve of this experiment is shown in~\cref{fig:her2_roc}. As observed, with 2 out of 4 classes achieve lower than 0.5 AUC score: the AUC score for class 0 (`HER2/neu Positive') is 0.83, for class 1 (`HER2/neu Negative') is 0.73, for class 2~(`HER2/neu Indeterminate') is 0.36, and for class 3~(`HER2/neu Indeterminate') is 0.48.
 
 \subsection{Qualitative analysis of learned representation}
-Further, inspired from literature~\cite{rhee2017hybrid} and to qualitatively study whether the learned representation can express biological characteristics of the patients, t-SNE of the MAE encoder's output i.e. latent feature map and the t-SNE plot with raw GE are plotted in \cref{fig:tnse}. We can observe moderately high distinctive patterns between three subtype patients. Since, all the input modality has high dimension, we consider the association between each feature. Further, we can see that the order of subtypes in the t-SNE plot is identical to prognosis of breast cancer subtypes. 
+Inspired by literature~\cite{rhee2017hybrid} and to qualitatively study whether the learned representation can express biological characteristics of cohorts, t-SNE plots for the latent feature map and the raw GE are depicted in \cref{fig:tnse}. As observed, moderately high distinctive patterns exists between three subtype patients. Since, all the input modality has high dimension, association between each feature is considered. Further, order of subtypes in the t-SNE plot is identical to prognosis of breast cancer subtypes. 
 
-\begin{figure*}[h]
+\begin{figure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=60mm]{images/raw_tsne.png}
+		\includegraphics[scale=0.7]{images/raw_tsne.png}
 		\caption{t-SNE plot of raw gene expression}
         \label{fig:tsne_raw}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=60mm]{images/ae_tsne.png}
+		\includegraphics[scale=0.7]{images/ae_tsne.png}
 		\caption{t-SNE plot of encoder's latent feature}
         \label{fig:tsne_ae}
 	\end{subfigure}
@@ -404,166 +443,20 @@ Further, inspired from literature~\cite{rhee2017hybrid} and to qualitatively stu
 	%\vspace{-2mm}
 \end{figure*}
 
-\hspace*{3.5mm} Research~\cite{91Caruana} has exposed that 80\% of all breast cancers are `ER-positive' in which cancer cells grow in response to the hormone estrogen. On the other hand, about 65\% of these are also `PR-positive' in which the cancer cells grow in response to another hormone, progesterone. ER/PR-positive tumors are much more likely to respond to hormone therapy than tumors that are ER/PR-negative. In about 20\% of breast cancers, the cells make too much HER2 protein and tend to be aggressive and fast-growing\footnote{\url{https://www.webmd.com/breast-cancer/}}. In breast cancer, certain subtype has the worst prognosis e.g. basal, followed by HER2, Luminal B, and Luminal A. The reason is that basal subtype has distinctive molecular characteristics from other subtypes~\cite{bertucci2012basal}. However, not all these patterns clearly visible in the t-SNE plot with raw GE, which signifies that the MAE learned the latent molecular properties better from the patient expression profiles.
+\hspace*{3.5mm} Caruana et al.~\cite{91Caruana} has identified that 80\% of all breast cancers are `ER-positive' in which cancer cells grow in response to the hormone estrogen. On the other hand, about 65\% of these are also `PR-positive' in which the cancer cells grow in response to another hormone, progesterone. ER/PR-positive tumors are much more likely to respond to hormone therapy than tumors that are ER/PR-negative. In about 20\% of breast cancers, cells make too much HER2 protein and tend to be aggressive and fast-growing\footnote{\url{https://www.webmd.com/breast-cancer/}}. In breast cancer, certain subtypes have the worst prognosis e.g. basal, followed by HER2, Luminal B, and Luminal A. The reason is that basal subtype has distinctive molecular characteristics from other subtypes~\cite{bertucci2012basal}. However, all of these patterns are not clearly visible in the raw GE-based t-SNE plots, which signifies that the MAE learned latent molecular properties better from patient expression profiles.
 
 \iffalse
 \subsection{Consistency of subtype prognosis}
 Inspired from literature~\cite{rhee2017hybrid} and to qualitatively study whether the learned representation can express biological characteristics of the patients, t-SNE of the MAE encoder's output i.e. latent feature map and the t-SNE plot with raw GE are plotted in \cref{fig:tnse}. We can observe moderately high distinctive patterns between three subtype patients. Since, all the input modality has high dimension, we consider the association between each feature. 
 
-\begin{figure*}[h]
-	\centering
-	\begin{subfigure}{.48\linewidth}
-		\centering
-		\includegraphics[width=0.9\linewidth,height=55mm]{images/raw_tsne.png}
-		\caption{t-SNE plot of raw gene expression}
-        \label{fig:tsne_raw}
-	\end{subfigure}
-	\begin{subfigure}{0.48\linewidth}
-		\centering
-		\includegraphics[width=0.9\linewidth,height=55mm]{images/ae_tsne.png}
-		\caption{t-SNE plot of encoder's latent feature}
-        \label{fig:tsne_ae}
-	\end{subfigure}
-	 \setlength{\belowcaptionskip}{-8pt}
-	\caption{t-SNE visualization of gene expressions vs autoencoder latent feature map~\cite{karimACCESS2019}} 
-	\label{fig:tnse}
-\end{figure*}
-
 \hspace*{3.5mm} Further, we can see that the order of subtypes in the t-SNE plot is identical to prognosis of breast cancer subtypes. Research~\cite{91Caruana} has exposed that 80\% of all breast cancers are `ER-positive' in which the cancer cells grow in response to the hormone estrogen. While about 65\% of these are also `PR-positive' in which the cancer cells grow in response to another hormone, progesterone. ER/PR-positive tumors are much more likely to respond to hormone therapy than tumors that are ER/PR-negative. In about 20\% of breast cancers, the cells make too much HER2 protein and tend to be aggressive and fast-growing\footnote{\url{https://www.webmd.com/breast-cancer/}}. In breast cancer, certain subtype has the worst prognosis e.g. basal, followed by HER2, Luminal B, and Luminal A. The reason is that basal subtype has distinctive molecular characteristics from other subtypes~\cite{bertucci2012basal}. However, not all these patterns clearly visible in the t-SNE plot with raw GE, which signifies that the MAE learned the latent molecular properties better from the patient expression profiles.
-
-\subsection{Survival analysis}
-\label{secExperimentationAndResults_ResRegression}
-Similar to breast cancer subtype prediction, survival rate prediction task is performed with multi-type inputs. Best results for each type of input are shown in~\cref{tab:sur_results}, in which the overall lowest $MSE$ was recorded with the gene expression modality, although coefficient of the determination $R^2$ is negative. In case of DNA methylation + gene expression + miRNA expression modality, the MSE score is considerably high and the corresponding $R^2$ score is negative. These two cases indicates that the predictions are worse than the actual average output. In contrast, $R^2$ scores for the DNA methylation, miRNA expression, and gene expression + miRNA expression modalities are also positive, even though the corresponding MSE scores are lower than that of DNA methylation modality. Further, the $R^2$ is a positive value, which indicates it performs better than the actual average output. 
-
-\begin{table}[h]
-	\centering
-	\caption{top results for survival rate prediction~\cite{karimACCESS2019}}
-	\vspace{-3mm}
-	\label{tab:sur_results}
-	\begin{tabular}{l|c|c}
-		\hline
-		\multicolumn{1}{c|}{\textbf{Modality}}   & \textbf{MSE}  & \textbf{$R^2$}  \\ \hline
-		DNA methylation & 0.26537  & 0.13054  \\ \hline
-		Gene expression & {\color[HTML]{009901} 0.16541}  & -0.18753 \\ \hline
-		miRNA expression & 0.34732 & 0.12468 \\ \hline
-		\begin{tabular}[c]{@{}l@{}}Gene expression + miRNA expression\end{tabular}                     & {\color[HTML]{333333} 0.27615} & {\color[HTML]{009901} 0.19542}  \\ \hline
-		\begin{tabular}[c]{@{}l@{}}DNA methylation + gene expression +\\ miRNA expression\end{tabular} & 0.57834 & -0.2735  \\ \hline
-	\end{tabular}
-\end{table}
-
-\hspace*{3.5mm} To further evaluate the ability of the model to comprehend characteristics of molecular subtypes, we performed survival analysis inspired by literature~\cite{rhee2017hybrid}. We clustered the patients into two groups based on raw GE values and the MAE encoder's output i.e. latent feature map. K-means algorithm is used for the clustering and t-SNE is used for the dimension reduction and visualization. To the measure hazard ratios of different patient groups and to analyze the effectiveness of treatment by comparing the Kaplan-meier~(KM) plots (based on non-parametric statistics) of the treated and non-treated patient group are drawn for each of two clustering results as shown in~\cref{fig:km_sur_plot}.
-
-\begin{figure*}[h]
-	\centering
-	\begin{subfigure}{.48\linewidth}
-		\centering
-		\includegraphics[width=\linewidth,height=60mm]{images/raw_cluster.png}
-		\caption{KP plot of raw gene expression $p-value>0.05$}
-        \label{fig:km1}
-	\end{subfigure}
-	\begin{subfigure}{0.48\linewidth}
-		\centering
-		\includegraphics[width=\linewidth,height=60mm]{images/ae_cluster.png}
-		\caption{KP plot of latent feature $p-value<0.05$}
-        \label{fig:km2}
-	\end{subfigure}
-	\caption{Kaplan meier survival plots of the patients~\cite{karimACCESS2019}} 
-	\label{fig:km_sur_plot}
-\end{figure*}
-
-\hspace*{3.5mm} The plot generated by the latent features~(\cref{fig:km2}) shows that the patient samples are more clearly separated into two subgroups showing distinct survival patterns with a $p-value<0.05$, while the plot with raw expression value~(\cref{fig:km1}) failed giving $p-value>0.05$. This is an interesting result as it shows that the model can simultaneously learn the genotypic information of patient from multimodal input features while performing the classification task.
+\fi 
 
 \subsection{Comparison with ML baselines}
-Although our datasets are collected from TCGA, multimodal features are used to train DL algorithms. Nevertheless, none of the related works summarized in~\cref{table:stateofart} used multimodality for breast cancer subtypes. 
-%and survival prediction. 
-Thus, a one-to-one comparison in a DL setting was not viable. Instead, we created unimodal and multimodal features out of each input type and train LR, KNN, NB, SVM, RF, and GBT as ML baseline models classifiers. 
-%On the other hand, linear regression~($\hat{LR}$), Support Vector Regression~(SVR), Gradient Boosted Regression~(GBR), and random forest regression~(RFR) models were trained for predicting survival rates. 
-In this setting, hyperparameters optimization is performed using random search with 5-fold cross validation. 
+%Although our datasets are collected from TCGA, multimodal features are used to train DL algorithms. Nevertheless, n
+None of the related works summarized in~\cref{table:stateofart} used multimodality for breast cancer subtypes. Thus, a one-to-one comparison in a DL setting was not viable. Therefore, ML baseline models classifiers created based on both unimodal and multimodal inputs. In particular, support vector machines~(SVM), Na{\"i}ve Bayes~(NB), logistic regression~(LR), k-nearest neighbors algorithm~(KNN), decision trees~(DT), random forest~(RF), and gradient boosted trees~(GBT). In this setting, hyperparameter optimization is performed using random search with 5-fold cross validation. 
 
-\hspace*{3.5mm} As shown in \cref{table:classification} 
-%and \cref{table:regression}
-, the GBT and RF-based classifiers 
-%and regression models 
-perform consistently best for subtype classification. %and survival prediction. 
-The classification analysis can be further validated by calibrating the best performing MAE classifier against different embedding methods for which the output probability of the classifier can be directly interpreted as a confidence level in terms of `fraction of positives'~(FOP) as shown in~\cref{fig:cal}. As seen the MAE classifier gave a probability value~(i.e. FOP) between 0.82 to 0.93, which means 93\% predictions belong to true positives, whereas the second best GBT and RF generates the FOP values between 0.75 to 0.87 and between 0.76 to 0.89, respectively. 
-
-\begin{table}[htp!]
-	\renewcommand{\arraystretch}{0.9}
-	\caption{survival prediction with ML regressors~(*=modality with best results)~\cite{karimACCESS2019}}
-	\label{table:regression}
-	\scriptsize
-	\vspace{-2mm}
-	\centering
-	\begin{tabular}{p{2.8cm}|l|r|r}
-		\toprule
-		\textbf{Modality} & \textbf{Regressor} & \textbf{MSE} & \textbf{$R^2$} \\ \hline
-		\multirow{4}{*}{DM} & $\hat{LR}$ & 0.4523 & -0.5432 \\
-		& SVR & 0.6536 & -0.1156 \\
-		& GBR & 0.3431 & -0.0135\\
-		& RFR & 0.2314 & 0.0153\\
-		\hline
-		\multirow{4}{*}{GE} & $\hat{LR}$ & 0.6754 & -0.2348 \\
-		& SVR & 0.5437 & -0.1102  \\
-		& GBR & 0.2373 & -0.0653 \\
-		& RFR & 0.1765 & 0.1176 \\
-		\hline
-		\multirow{4}{*}{miRNA} & $\hat{LR}$ & 0.8674 & -0.7832  \\
-		& SVR & 0.6134 & -0.4569  \\
-		& GBT & 0.5762 & -0.1542 \\
-		& RF & 0.2956 & 0.1342\\
-		\hline
-		\multirow{4}{*}{GE+miRNA} & $\hat{LR}$ & 0.3451 & -0.1578  \\
-		& SVR & 0.3538 & -0.3486  \\
-		& GBR & 0.1937 & 0.0954 \\
-		& RFR & 0.1456 & 0.1185 \\
-		\hline
-		\multirow{4}{*}{DM+GE+miRNA} & $\hat{LR}$ & 0.6523 & -0.8981 \\
-		& SVR & 0.7287 & -0.7541  \\
-		& GBR & 0.5123 & -0.6541 \\
-		& RFR & 0.3287 & -0.2485 \\
-        \hline
-	\end{tabular}
-\end{table}
-
-\begin{figure}[htp!]
-	\centering
-	\includegraphics[width=0.8\linewidth]{images/cali.png}	
-	\caption{Calibrating different classifiers~\cite{karimACCESS2019}}	
-	\label{fig:cal}
-\end{figure}
-
-\begin{sidewaysfigure}[htp!]
-	\centering
-	\begin{subfigure}{0.48\linewidth}
-		\centering
-		\includegraphics[width=0.9\linewidth,height=80mm]{images/SVM.png}
-%		\includegraphics[width=\linewidth,height=40mm]{SVM.png}
-		\caption{SVM}
-		\label{fig9a}
-	\end{subfigure}
-	\begin{subfigure}{0.48\linewidth}
-		\centering
-		\includegraphics[width=0.9\linewidth]{images/GBT.png}
-		\caption{GBT}
-		\label{fig9b}
-	\end{subfigure}
-	\begin{subfigure}{0.48\linewidth}
-		\centering
-		\includegraphics[width=0.9\linewidth]{images/RF.png}
-		\caption{RF}
-		\label{fig9c}
-	\end{subfigure}
-	\begin{subfigure}{0.48\linewidth}
-		\centering
-		\includegraphics[width=0.9\linewidth]{images/MAE.png}
-		\caption{MAE}
-		\label{fig9d}
-	\end{subfigure}
-	\caption{Learning curves showing the validation and training scores of top-3 and SVM classifiers} 
-	\label{fig:lc}
-\end{sidewaysfigure}
-
-\begin{table}
+\begin{table*}
 	\renewcommand{\arraystretch}{0.9}
 	\caption{Subtypes prediction with ML classifiers~(*=modality with best results)~\cite{karimACCESS2019}}
 	\label{table:classification}
@@ -614,32 +507,30 @@ The classification analysis can be further validated by calibrating the best per
 		& \textbf{MAE} & 0.84 & 0.85 & 0.69 \\
         \hline
 	\end{tabular}
-\end{table}
+\end{table*}
 
-\hspace*{3.5mm} When it comes to survival prediction with ML regression models, the lowest $MSE$ was recorded with the gene expression modality using GBR regression model but much higher than that of MAE-based one. Whereas, the coefficient of determination $R^2$ is a positive value. In case of DNA methylation + gene expression + miRNA expression modality, the MSE score is considerably high and the corresponding $R^2$ score is also negative. These two cases indicates that the predictions are worse than the actual average output. On the other hand, $R^2$ scores for the miRNA expression, and gene expression + miRNA expression modalities are also positive but lower than that ones generated by MAE, even though the corresponding MSE scores are much higher than that of ones generated with MAE. In summary, the gene expression + miRNA expression modality shows the highest $R^2$  and lowest MSE score, which indicates it performs better than the actual average output showing moderately worse performance than that of MAE. 
-\fi 
+\hspace*{3.5mm} As shown in \cref{table:classification}, GBT and RF classifiers perform consistently better for subtype classification. This finding is further validated by calibrating the best performing MAE classifier for which the output probability of the classifier can be directly interpreted as a confidence level in terms of `fraction of positives'~(FOP). MAE classifier gave a probability value~(i.e. FOP) between 0.82 to 0.93. This signifies that 93\% of the predictions belong to true positives, whereas the second best GBT and RF generates the FOP values between 0.75 to 0.87 and between 0.76 to 0.89, respectively. 
 
 \section{Discussion}\label{chapter_4:discussion}
-Overall the best results for breast cancer subtypes classification~(ER, PGR, and HER2 status) is generated from the MAE implementation with the input of GE and miRNA expression data, which is the best results for individual classification tasks. The HER2 status classification got the worst results by far compared to ER and PGR status ones, which is probably because the HER2 status data has fewer samples than ER and PGR ones. The training accuracy for each classifier far exceeds the test accuracy, probably because of overfitting. One reason is lack of training samples. As shown in~\cref{fig6}, the number of samples across datasets is only 1,000. While, the smallest number of feature~(e.g. 1,881 features in miRNA expression) still exceeds it, where the number of features in DNA methylation and GE exceeds other modalities. 
-%In contrast, we experience varying results on survival prediction, e.g. AE achieves the lowest MSE score with the input of DNA methylation but giving a negative $R^2$ score, which means the prediction itself is not better than the average of the actual output. Positive $R^2$ scores were achieved with miRNA expression and GE + miRNA expression inputs using AE and MAE, respectively. To understand the effects of having more training samples, and to understand whether our classifiers suffer more from variance errors or bias errors, we observed the learning curves of top-3 classifiers~(i.e., RF, GBT, and MAE) and SVM~(a linear model) for varying numbers of training samples.
+The MAE implementation based on GE and miRNA expression modalities gave the best result for breast cancer subtypes classification, covering both ER, PGR, and HER2 status. This is also the best for individual classification tasks. On the other hand, HER2 status classification got the worst results by far compared to ER and PGR status ones. One potential reason is that HER2 status data has fewer samples compared to ER and PGR ones. Besides, both training and validation accuracies for each classifier far exceeds compared to test accuracy, which is probably because of overfitting. This is justifiable as we lack of enough  training samples. As shown in~\cref{fig6}, the number of samples across datasets is only 1,000. While, the smallest number of feature~(e.g. 1,881 features in miRNA expression) still exceeds it, where the number of features in DNA methylation and GE exceeds other modalities. 
 
-\begin{figure*}[h]
+\begin{figure*}
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=55mm]{images/1.png}
+		\includegraphics[scale=0.9]{images/1.png}
 		\caption{ER status classification}
         \label{fig:top_er}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=55mm]{images/2.png}
+		\includegraphics[scale=0.9]{images/2.png}
 		\caption{PGR status classification}
         \label{fig:top_pgr}
 	\end{subfigure}
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=55mm]{images/3.png}
+		\includegraphics[scale=0.9]{images/3.png}
 		\caption{HER2 status classification }
         \label{fig:top_her2}
 	\end{subfigure}
@@ -648,20 +539,27 @@ Overall the best results for breast cancer subtypes classification~(ER, PGR, and
 		\vspace{-2mm} 
 \end{figure*}
 
-\hspace*{3.5mm} In our initial experiments, we observed by training ML models. For SVM the validation and training scores converge to a low value with increasing size of the training set. Consequently, SVM did not benefit much from more training samples. However, RF and GBT are tree-based ensemble methods, and the MAE model can learn more complex concepts from the GE + miRNA multimodal features. This results in a lower bias, which can be observed from higher training scores than the validation scores for the maximum number of samples i.e. adding more training samples does increase model generalization. Overall, MAE gave relatively better results compared to regular AE with a single type of input.
+\hspace*{3.5mm} Among ML baselines, both validation and training scores for SVM model converge to a low value with increasing size of the training set. Consequently, SVM did not benefit much from more training samples. However, being tree-based ensemble methods RF and GBT models can learn more complex concepts from GE + miRNA multimodal features, similar to MAE. The reason is that both RF and GBT models contributes to higher variance and lowering the bias. This is observed from higher training scores compared to validation scores for the maximum number of samples i.e. adding more training samples does increase model generalization. Overall, MAE gave relatively better results compared to regular AE with a single type of input. 
 %as well as other best ML baselines, e.g., GBT and RF. 
 It mostly occurs with the GE + miRNA expression giving the best results for subtypes classification.
 %and decent results for survival rate prediction. 
-Based on this comparison, we can conclude that there is a possibility MAE might surpass AE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
+Based on this comparison, we can evidently conclude that MAE outperforms both AE and ML baselines models, with the right combination of inputs.
+
+\hspace*{3.5mm} Although, the best result for every status classification was recorded by MAE based on  GE + miRNA expression input modality, MAE model also made non-trivial mistakes, specially for  HER2/neu-based subtype classification tasks. Such high mistakes made the classifier not yet suitable for real clinical setting. To diagnose and mitigate the high misclassification error, several regularization techniques such as l2-regularization and Gaussian dropout were employed. However, still poor was observed, which might be due to overfitting of the network. One of the possible causes for such overfitting is the smaller number of samples~(i.e. 860 samples) compared to ER and PGR statuses~(i.e. 1,024 samples). 
 
 \section{Chapter Summary}\label{chapter_4:conclusion}
-In this paper, we developed a clin ical DSS, which is technically based on an MAE for predicting different subtypes of breast cancer patients.
-%and their survival rates. 
-Experiment results for the subtype classification are promising, especially based on the ER and PGR status having 0.93 F1-score, which produced with combined inputs of GE and miRNA expression data. 
-%The performance result of the survival rate prediction shows varying signs. The best $MSE$ score is taken from predictors with DNA methylation as an input, although the $R^2$ score itself is negative, which indicate that it still performs worse than the simple average output. The GE + miRNA expression combination data as input gave very good results in general, although it did not have the best performance on the survival rate prediction.
-However, the overall decision accuracy of DSS is hindered due to several factors: i) limited amount of labeled genomics data, which is probably individual patients privacy. This limitation causes of overfitting while training our neural network. 
+In this chapter, a DSS is developed for predicting different subtypes of breast cancer patients, which is technically based on an multimodal autoencoder architecture. An F1-score of 0.93 for ER and PGR-based diagnosis was recorded with the combined input of GE and miRNA expression data. Although this result looks promising, overall decision accuracy of DSS is hindered due to following factors: 
 
-\hspace*{3.5mm} The training scores is much higher than the validation scores for the maximum number of samples i.e. adding more training samples does increase model generalization. This suggest that the prediction can be made more confidently if we had more labelled training data, ii) secondly, we did not perform any feature selection but let the network to choose from the very high dimensional inputs. Consequently, for some input combinations the pretraining error for the MAE were getting out of bound, ii) limited amount of publicly available genomics data sources because other sources such as ICGC and COSMIC are not comprehensive even requiring restricted access. The DSS based on multimodal data is black-box, hence lack of interpretability. However, interpretability is important to gain insights into the reasons why a given cancer case is of a certain type can help in finding more accurate treatments and drug repositioning. Further, the ``right to explanation'', of EU GDPR~\cite{kaminski2019right} gives patients the right to know why and how an algorithm makes a diagnosis decision. 
+\begin{enumerate}[noitemsep]
+    \item Limited amount of labeled genomics data, which is probably individual patients privacy. This limitation causes of overfitting while training our neural network. The training scores is much higher than the validation scores for the maximum number of samples i.e. adding more training samples does increase model generalization. This suggest that the prediction can be made more confidently if we had more labelled training data, 
+
+    \item No feature selection was performed, but let the network to choose from the very high dimensional inputs. Consequently, for some input combinations the pretraining error for the MAE were getting out of bound
+
+    \item Limited amount of publicly available genomics data sources because other sources such as ICGC and COSMIC are not comprehensive even requiring restricted access. The DSS based on multimodal data is black-box, hence lack of interpretability. 
+\end{enumerate}
+
+
+%However, interpretability is important to gain insights into the reasons why a given cancer case is of a certain type can help in finding more accurate treatments and drug repositioning. Further, the ``right to explanation'', of EU GDPR~\cite{kaminski2019right} gives patients the right to know why and how an algorithm makes a diagnosis decision. 
 %In the future, we intend to develop a more robust multimodal network such as multimodal Convolutional-LSTM to act both feature extractor and classifier and train with an enriched number of samples from other sources to develop an explainable deep architecture might open future opportunity to learn more towards potential gene set biomarkers based diagnosis. 
 
 \hspace*{3.5mm} In the next chapter, we extend both single and multimodality-based cancer typing methods to overcome both limitations. We increase the number of samples, by combining samples from the PanCancerAtlas. We will focus on improving the explanations of the predictions using different probing techniques.
