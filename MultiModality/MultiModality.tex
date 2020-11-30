@@ -172,6 +172,7 @@ Pre-training the MAE architecture is similar to training a two-stage AE network.
 Overall, pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual AEs. 
 
 \paragraph{First stage}\noindent of the MAE represents a particular modality for each type of data. Individual modality AE is not only a one-layer AE, but also a multilayer and gradually shrinking AE with different number of layers per modality. A regular AE consist of following two sub-networks: 
+
 \begin{itemize}[noitemsep]
     \item \textbf{Encoder} - encodes the input $X_{k}$ into a latent-space representation using function $h = f(X_{k})$.
     \item \textbf{Decoder} - reconstructs the input from the latent space representation using function $\hat{X_k} = g(h)$. 
@@ -186,7 +187,7 @@ Overall, pre-training is performed greedily on each layer of the network, which 
 \hspace*{3.5mm} where $\theta_{k}$ are trainable parameters of encoder that are specific to respective modality $k$. During the decoding phase, the decoder tries to reconstruct ${X}_{k}^{\prime}$ similar to original input ${X}_{k}$ from $h_{k}$. The reconstruction loss between $X_{k}$ and its reconstructed version is iteratively optimized, such that useful information is not lost~\cite{KarimIEEEAccess2019}. Following distance measure, $d_{k}$ between input $X_{k}$ and network's output $f(X_{k})$, is used as a typical reconstruction loss: 
 
 \begin{equation}
-    L_{k}=\text{$d_{k}$}(X_{k}, f(X_{k}) = \sum_{i} ||X_{k}-f(X_{k})||^{2}.
+    L_{k}=\text{$d_{k}$}(X_{k}, f(X_{k}) = \sum_{i} \left\|X_{k}-f(X_{k})\right\|^{2}.
     %\label{eq:Loss1}
 \end{equation}
 
@@ -194,7 +195,7 @@ Overall, pre-training is performed greedily on each layer of the network, which 
 
 \begin{equation}
     L_{k}=\text{$d_{k}$}(X_{k}, \hat{X}_{k}) = \sum_{i} ||X_{k}-\hat{X}_{k})||^{2}.
-    %\label{eq:Loss1}
+    \label{eq:ce_loss}
 \end{equation}
 
 \hspace*{3.5mm} Let's, $X_m$, $X_e$, and $X_r$ are DNA methylation, gene expression, and miRNA expression input modalities, respectively. Each input is transformed into following hidden representations~\cite{KarimIEEEAccess2019}.
@@ -208,15 +209,21 @@ Overall, pre-training is performed greedily on each layer of the network, which 
     \label{eq:m1}
 \end{equation}  
 
-\hspace*{3.5mm} where $\left\{W_{m}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{m}, b_{e}, b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, and $\sigma$ is the $ReLU$ activation function. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation $\phi$. %The decoder module has similar gradual increasing architecture. 
+\hspace*{3.5mm} where $\left\{W_{m}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{m}, b_{e}, b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, and $\sigma$ is the $ReLU$ activation function. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation $\phi$. Since the simple distance measure often not suitable for many modalities, especially when there are huge difference in the input modalities w.r.t. dimensionality. Therefore, mean squared error is used as the reconstruction loss to be optimized, which can be defined as follows: 
 
-\paragraph{Stage-2: cross-modality} is also a multilayer gradually shrinking AE, but with different output layer size for each prediction. Number of layers and units per layer in both encoder and decoder are symmetric. In this stage, latent representations of all modalities are concatenated into a single representation~\cite{liu2016multimodal}. 
+\begin{equation}
+    L_{k}=\frac{1}{N} \sum_{j=1}^{N}\left\|X_{k}-\hat{X}_{k}\right\|_{2}^{2}+\lambda\left\|W_{k}\right\|_{2}^{2}
+\end{equation}  
+
+\hspace*{3.5mm} where $\lambda$ is the activity regularizer, $W_{k}$ is network weights, and $N$ is the dimension of input modality $k$. 
+
+\paragraph{Stage-2: cross-modality} is also a multilayer gradually shrinking AE, but with different output layer size for each prediction. Number of layers and units per layer in both encoder and decoder are symmetric. In this stage, latent representations of all modalities are concatenated into a single representation~\cite{liu2016multimodal}, having the same $\phi$ dimensionality similar to individual modalities. 
 
 \begin{equation}
     h_{mae}=\sigma\left(W_{mae}\left[h_{m} \oplus h_{e} \oplus h_{r}\right]+b_{mae}\right),
 \end{equation}
 
-\hspace*{3.5mm} where $\oplus$ is the concatenation operation. Dimensionality of the resulting latent representation is also $\phi$. In the decoding phase, the whole model is pre-trained to reconstruct individual modalities from the hidden representations $h_{mae}$~\cite{liu2016multimodal}:
+\hspace*{3.5mm} where $\oplus$ is the concatenation operation. In the decoding phase, the whole model is pre-trained to reconstruct individual modalities from the hidden representations $h_{mae}$~\cite{liu2016multimodal}:
 
 \begin{equation}
     \left[\hat{h}_{m}\oplus \hat{h}_{e} \oplus \hat{h}_{r}
@@ -233,38 +240,10 @@ Overall, pre-training is performed greedily on each layer of the network, which 
         \end{aligned}
 \end{equation}
 
-%\hspace*{3.5mm} where $\hat{x}_{m}$, $\hat{x}_{e}$, and $\hat{x}_{r}$ are the reconstruction of input vectors $x_{m}$, $x_{e}$, and $x_{r}$. Then MAE attempts to reconstruct the original input $\hat{h}_{m}$, $\hat{h}_{e}$, and $\hat{h}_{r}$ are the reconstruction of hidden representations ${h}_{m}$, ${h}_{e}$, and ${h}_{r}$~\cite{wang2018associativemulti}. 
-
-\hspace*{3.5mm} where $\left\{\hat W_{m}, \hat W_{e}, \hat W_{r}\right\}$ are decoder's weight matrices, $\left\{\hat b_{m}, \hat b_{e}, \hat b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, respectively, and $\sigma$ is the $ReLU$ activation function. Similar to literature~\cite{wang2018associativemulti,serban2016multi}, noise distributions are taken into account employing Bregman divergences. This means, each modality can have its own Bregman divergences as loss function, thereby assuming a specific noise of output distribution. Bregman divergences corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. 
+\hspace*{3.5mm} where $\left\{\hat W_{m}, \hat W_{e}, \hat W_{r}\right\}$ are decoder's weight matrices, $\left\{\hat b_{m}, \hat b_{e}, \hat b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, respectively, and $\sigma$ is the $ReLU$ activation function. Inspired by the multimodality specific activity regularization by Serban et a.~\cite{serban2016multi}, noise distributions are taken into account employing Bregman divergences. Bregman divergences corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. Each modality can have its own Bregman divergences as loss function, thereby assuming a specific noise of output distribution. 
 
 \subsubsection{Supervising finetuning} 
-%Unsupervised pre-training is performed for the whole layer, followed by a supervised fine-tuning for the subtype classification. 
-
-\iffalse
-Training a single-layer autoencoder corresponds to optimizing the learning parameters to minimize the overall loss between inputs and their reconstructions as:
-
-\begin{equation}
-   L_{r} = \min _{\theta} \sum_{i=1}^{n} \left\|x_{t}^{i}-\hat{x}_{t}^{i}\right\|^{2}+\left\|x_{v}^{i}-\hat{x}_{v}^{i}\right\|^{2}+\left\|x_{a}^{i}-\hat{x}_{a}^{i}\right\|^{2}
-   \label{eq:recons_loss}
-\end{equation}
-
-\hspace*{3.5mm} where $i$ denotes the $i^{th}$ feature.
-\fi 
-
-%\subsubsection{Stage-4: supervising finetuning}
-It involves supervised training of MAE for the subtype classification. During the fine-tuning, only encoder's output is used by adding a fully connected softmax layer on top. Resulting concatenated generates a single vector $u=\left[u_{0}, u_{1}, \ldots, u_{n}\right] \in[-1,1]^{(n+1) \eta}$, where the weights of the corresponding components are generated with  softmax layer as~\cite{mmdcae}:
-
-\begin{equation}
-    \omega=\operatorname{softmax}\left(W_{\omega} u+b_{\omega}\right),
-\end{equation}
-
-\hspace*{3.5mm} where $\omega=\left[\omega_{0}, \omega_{1}, \ldots, \omega_{n}\right] \in[0,1]^{(n+1) \eta}$ $\left(\forall i, \omega_{i} \in[0,1]^{\eta}\right)$, and  $W_{\omega} \in$ $\mathbb{R}^{(n+1) \eta \times(n+1) \eta}$ and $b_{\omega} \in \mathbb{R}^{(n+1) \eta}$ is the trainable parameters~\cite{mmdcae}. The final latent representation is generated through a weighted sum of all the modalities specific latent representation $\left(h_{i,j}\right)$ based on the computed weights $\left(\omega_{i}\right)$ as~\cite{mmdcae}: 
-
-\begin{equation}
-   h_{i,j}=\sum_{i=1}^{n}\left(h_{i} \odot \omega_{i}\right),
-\end{equation}
-
-\hspace*{3.5mm} where $\odot$ denotes the element-wise product and $h \in$ $\mathbb{R}^{\eta}$ is the final representation~\cite{mmdcae}, which is subsequently fed to the classifier for the classification. The latent representations of all the input modalities are subsequently concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$ and used into the feed-forward neural network for the classification, by optimizing the categorical cross-entropy~(CE) loss: 
+The latent representations of all the input modalities are subsequently concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$ and used into the feed-forward neural network for the classification. During the supervising finetuning, the final concatenated vector is feed into fully connected softmax layer on top of MAE for the subtype classification, by optimizing the categorical cross-entropy~(CE) loss: 
 
 \iffalse
 \begin{equation} 
@@ -277,9 +256,7 @@ It involves supervised training of MAE for the subtype classification. During th
     L_{ce}=-\sum_{m=1}^{C} y_{k} \log \left(\hat{y}_{k}\right)
 \end{equation} 
 
-\hspace*{3.5mm} where $m \in \mathbb{R}^{C}$ is the number of classes for the breast cancer sub-type classification task, $y_{k}$ is the ground-truth label for modality $k$ and $\hat{y}_{k}$ is the predicted output. The softmax activation function is used in the output layer, which transforms the concatenated latent $\phi$-dimensional vector into a vector of real number in range $\left(0,1\right)$. This can be considered as probabilistic interpretation for the classification, i.e., probability distribution over the classes, before computing the CE loss in the fine-tuning phase. 
-%On the other hand, for the survival prediction, we optimize the MSE between the predicted survival rate vs actual survival rates. 
-Eventually, parameters of the entire MAE architecture are optimized by combining reconstruction losses of individual modalities ${L}_{k}$ and CE loss ${L}_{ce}$ as the following objective function~\cite{mmdcae}: 
+\hspace*{3.5mm} where $m \in \mathbb{R}^{C}$ is the number of classes for the breast cancer sub-type classification task, $y_{k}$ is the ground-truth label for modality $k$ and $\hat{y}_{k}$ is the predicted output. The softmax activation function is used in the output layer, which transforms the concatenated latent $\phi$-dimensional vector into a vector of real number in range $\left(0,1\right)$. This can be considered as probabilistic interpretation for the classification, i.e., probability distribution over the classes, before computing the CE loss in the fine-tuning phase. Eventually, parameters of the entire MAE architecture are optimized by combining reconstruction losses of individual modalities ${L}_{k}$ and CE loss ${L}_{ce}$ as the following objective function~\cite{mmdcae}: 
 
 \begin{align}
     L_{mae}=\sum_{i=0}^{n} \alpha_{r} {L}_{k}+\alpha_{c} {L}_{ce}
@@ -287,12 +264,13 @@ Eventually, parameters of the entire MAE architecture are optimized by combining
 \end{align}
 
 \hspace*{3.5mm} where the parameters $\alpha_{r}$ and $\alpha_{c}$ are the regularization weights assigned to modality specific~(i.e., ${L}_{k}$) and cross-entropy specific~(${L}_{ce}$) function, respectively~\cite{mmdcae}. MAE network parameters were initialized with Xavier initialization~\cite{xavier} and trained using first-order gradient-based optimization techniques AdaGrad. 
+
 \section{Experiments}\label{chapter_4:results}
 In this section, we analyse the results both quantitative and qualitatively. 
 %All program were implemented in Python using scikit-learn and Keras with TensorFlow backend\footnote{\url{https://github.com/rezacsedu/MultimodalAE-BreastCancer}}. The network training was done on an Nvidia GTX 1050 GPU with CUDA and cuDNN enabled to make the overall pipeline faster. 
 
 \subsection{Experiment setup}
-%The training process is performed through a total of 100 epochs with the batch size set to $128$. The activity regularization term of \cref{eq:recons_loss} is set between $\lambda=[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{0}=\alpha_{1}=\alpha_{2}=0.1$, and $\alpha_{c}$=0.25. The weight of the classifier's loss function is set greater than the others to focus more on the classification performance of the whole architecture. 
+The training process is performed through a total of 100 epochs with the batch size set to $32$. The activity regularization term of \cref{eq:recons_loss} is set between $\lambda=[0.001, 0.005]$, while the regularization weights of the loss functions are set as  $\alpha_{0}=\alpha_{1}=\alpha_{2}=0.1$, and $\alpha_{c}$=0.25. 
 The full training set is used for pretraining the MAE in which 10\% data is used for the validation, followed by supervised fine-tuning on 70\% of the training data. The trained model is then evaluated on the 20\% held-out test set. Further, we observe the performance by adding the Gaussian noise layers followed by the dense layer to improve model generalization and reduce overfitting, where the Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. Results based on best hyperparameters produced through random search and 5-fold cross-validation tests empirically are reported in which macro-averaged precision, recall, F1, and Matthias correlation coefficient~(MCC) score, confusion matrices, and receiver operating characteristic~(ROC) curves are interpreted.
 %; while the standard mean squared error~($MSE$) and coefficient of determination~($R^2$) are computed to assess the performance of the survival rate prediction.% of the clinical DSS. %Since this is one of the very first works on multimodality learning, comparing our approach with baseline models was not a viable option. 
 
