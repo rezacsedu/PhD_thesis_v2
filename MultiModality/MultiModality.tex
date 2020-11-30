@@ -311,14 +311,14 @@ Results based on best hyperparameters produced through random search and 5-fold 
 \subsection{Analysis of subtype classification}
 Results for breast cancer subtype classification based on ER, PGR, and HER2/neu are analysed separately. 
 
-\paragraph{Subtype classification based on ER status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}. As seen, MAE on a combined input of GE and miRNA expression data performs the best compared to any individual input modalities. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:er_confusion}. As shown, the MAE model was evaluated on 288 samples, including 197 `Positive', 55 `Negative', and 36 `Indeterminate' samples. 
+\paragraph{Subtype classification based on ER status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}. As seen, MAE on a combined input of GE and miRNA expression data performs the best compared to any individual input modalities. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:er_confusion}. As shown, the MAE model was evaluated on 288 samples, including 197 positive, 55 negative, and 36 indeterminate samples. 
 
 \begin{itemize}[noitemsep]
-    \item Out of 197 samples, 187 `Positive' cases were classified correctly, making only 10 mistakes in which 3 were classified as `Negative' and 7 as `Indeterminate'. 
+    \item Out of 197 samples, 187 positive cases were classified correctly, making only 10 mistakes in which 3 were classified as negative and 7 as indeterminate. 
 
-    \item Out of 55 `Negative' cases, 47 were correctly classified, making 8 mistakes in which 3 were classified as `Positive' and 5 as `Indeterminate'. 
+    \item Out of 55 negative cases, 47 were correctly classified, making 8 mistakes in which 3 were classified as positive and 5 as indeterminate. 
 
-    \item Out of 36 `Indeterminate' cases, 25 were correctly classified, making 11 mistakes in which 4 were classified as `Negative' and 7 as `Positive'.  
+    \item Out of 36 indeterminate cases, 25 were correctly classified, making 11 mistakes in which 4 were classified as negative and 7 as positive.  
 \end{itemize}
 
 \begin{table}[h]
@@ -365,14 +365,14 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
     \vspace{-2mm}
 \end{table}
 
-\paragraph{Subtype classification based on PGR status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}, where the best results are highlighted in green. Similar to ER status prediction task, MAE on a combined input of GE and miRNA expression data performed the best compared to any individual input modalities. Other predictors with combined input of DNA methylation + gene expression + miRNA expression also performs relatively well. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:pgr_confusion}. As shown, the MAE model was evaluated on 263 samples, including 168 `Positive', 76 `Negative', and 21 `Indeterminate' samples. 
+\paragraph{Subtype classification based on PGR status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}, where the best results are highlighted in green. Similar to ER status prediction task, MAE on a combined input of GE and miRNA expression data performed the best compared to any individual input modalities. Other predictors with combined input of DNA methylation + gene expression + miRNA expression also performs relatively well. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:pgr_confusion}. As shown, the MAE model was evaluated on 263 samples, including 168 positive, 76 negative, and 21 indeterminate samples. 
 
 \begin{itemize}[noitemsep]
-    \item Out of 168 `Positive' cases, 155 were classified correctly, making only 13 mistakes in which only 2 were classified as `Negative' and 11 as `Indeterminate'. 
+    \item Out of 168 positive cases, 155 were classified correctly, making only 13 mistakes in which only 2 were classified as negative and 11 as indeterminate. 
 
-    \item Out of 19 `Indeterminate' cases, 14 were correctly classified, making 5 mistakes in which 3 were classified as `Negative' and 2 as `Indeterminate'. 
+    \item Out of 19 indeterminate cases, 14 were correctly classified, making 5 mistakes in which 3 were classified as negative and 2 as indeterminate. 
 
-    \item Out of 76 `Indeterminate' cases, 61 were correctly classified, making 15 mistakes in which 10 were classified as `Positive' and 5 as `Negative'.  
+    \item Out of 76 indeterminate cases, 61 were correctly classified, making 15 mistakes in which 10 were classified as positive and 5 as negative.  
 \end{itemize}
 
 \begin{figure*}[h]
@@ -399,16 +399,16 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
 	\label{fig:multi_cms}
 \end{figure*}
 
-\paragraph{Subtype classification based on HER2/neu status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}, where the best results are highlighted in green. Similar to ER and PGR status prediction task, MAE on a combined input of GE and miRNA expression data performed the best compared to any individual input modalities. Other predictors with combined input of DNA methylation + gene expression + miRNA expression also performs relatively well. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:her2_confusion}. As shown, the MAE model was evaluated on 219 samples, including 39 `Positive', 130 `Negative', 25  `Indeterminate', and 25 `Equivocal' samples. 
+\paragraph{Subtype classification based on HER2/neu status} - overall classification results for individual and multimodalities are shown in~\cref{tab:all_results}, where the best results are highlighted in green. Similar to ER and PGR status prediction task, MAE on a combined input of GE and miRNA expression data performed the best compared to any individual input modalities. Other predictors with combined input of DNA methylation + gene expression + miRNA expression also performs relatively well. To provide a view on misclassified instances, confusion matrix is shown in~\cref{fig:her2_confusion}. As shown, the MAE model was evaluated on 219 samples, including 39 positive, 130 negative, 25 indeterminate, and 25 equivocal samples. 
 
 \begin{itemize}[noitemsep]
-    \item Out of 39 `Positive' cases, 25 were classified correctly, making 14 mistakes in which 2 were classified as `Negative', 7 as `Indeterminate', and 5 as `Equivocal'. 
+    \item Out of 39 positive cases, 25 were classified correctly, making 14 mistakes in which 2 were classified as negative, 7 as indeterminate, and 5 as equivocal. 
 
-    \item Out of 130 `Negative' cases, 118 were correctly classified, making 12 mistakes in which 3 were classified as `Indeterminate', 4 as `Positive', and 5 as `Equivocal'. 
+    \item Out of 130 negative cases, 118 were correctly classified, making 12 mistakes in which 3 were classified as indeterminate, 4 as positive, and 5 as equivocal. 
 
-    \item Out of 25 `Indeterminate' cases, 15 were correctly classified, making 10 mistakes in which 5 were classified as `Positive', 2 as `Negative', and 3 as `Equivocal'.
+    \item Out of 25 indeterminate cases, 15 were correctly classified, making 10 mistakes in which 5 were classified as positive, 2 as negative, and 3 as equivocal.
     
-    \item Out of 25 `Equivocal' cases, 19 were correctly classified, making 6 mistakes in which 2 were classified as `Positive', 3 as `Negative', and 1 as `Indeterminate'.  
+    \item Out of 25 equivocal cases, 19 were correctly classified, making 6 mistakes in which 2 were classified as positive, 3 as negative, and 1 as indeterminate.  
 \end{itemize}
 
 %\hspace*{3.5mm} The best results for HER2/neu status prediction for each type of input is shown in \cref{tab:all_results}. 
