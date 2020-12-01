@@ -212,9 +212,9 @@ Pre-training is performed greedily on each layer of the network, which correspon
 
 \begin{equation}
     \begin{array}{l}
-        {h_{m}=\sigma\left(W_{m} X_{m}+b_{m}\right)} \\
-        {h_{e}=\sigma\left(W_{e} X_{e}+b_{e}\right)} \\
-        {h_{r}=\sigma\left(W_{r} X_{r}+b_{r}\right),}
+        {h_{m}=\Psi\left(W_{m} X_{m}+b_{m}\right)} \\
+        {h_{e}=\Psi\left(W_{e} X_{e}+b_{e}\right)} \\
+        {h_{r}=\Psi\left(W_{r} X_{r}+b_{r}\right),}
     \end{array}
     \label{eq:m1}
 \end{equation}  
@@ -251,20 +251,21 @@ There are various metrics to quantify the difference between two vectors, such a
 
 \begin{equation}
     \left[\hat{h}_{m}\oplus \hat{h}_{e} \oplus \hat{h}_{r}
-    \right]=\sigma\left(\hat W_{mae} h_{mae}+\hat {b}_{mae}\right)
+    \right]=\Psi\left(\hat W_{mae} h_{mae}+\hat {b}_{mae}\right)
 \end{equation}
 
 \hspace*{3.5mm} The decoder module, which has a similar gradual increasing architecture as an encoder, reconstructs the original representation of individual modalities, $\hat{X}_{m}$, $\hat{X}_{e}$, and $\hat{X}_{r}$ as~\cite{wang2018associativemulti}: 
 
 \begin{equation}
     \begin{aligned}
-        \hat{X}_{m} &=f\left(\hat W_{m} \hat{h}_{m}+\hat{b}_{m}\right) \\
-        \hat{X}_{e} &=f\left(\hat W_{e} \hat{h}_{e}+\hat{b}_{e}\right) \\
-        \hat{X}_{r} &=f\left(\hat W_{r} \hat{h}_{r}+\hat{b}_{r}\right).
+        \hat{X}_{m} &=\Psi\left(\hat W_{m} \hat{h}_{m}+\hat{b}_{m}\right) \\
+        \hat{X}_{e} &=\Psi\left(\hat W_{e} \hat{h}_{e}+\hat{b}_{e}\right) \\
+        \hat{X}_{r} &=\Psi\left(\hat W_{r} \hat{h}_{r}+\hat{b}_{r}\right),
         \end{aligned}
 \end{equation}
 
-\hspace*{3.5mm} where $\left\{\hat W_{m}, \hat W_{e}, \hat W_{r}\right\}$ are decoder's weight matrices, $\left\{\hat b_{m}, \hat b_{e}, \hat b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, respectively, and $\sigma$ is the $ReLU$ activation function. However, fusing such multimodalities involves a variable number of densely connected ReLU layers. Inspired by the multimodality specific activity regularization by Serban et a.~\cite{serban2016multi}, noise distributions are also taken into account employing Bregman divergences. Bregman divergences corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. Each modality can have its own Bregman divergences as loss function, thereby assuming a specific noise of output distribution. 
+\hspace*{3.5mm} where $\left\{\hat W_{m}, \hat W_{e}, \hat W_{r}\right\}$ are decoder's weight matrices, $\left\{\hat b_{m}, \hat b_{e}, \hat b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, and $\Psi$ is the sigmoid activation function. However, fusing such multimodalities involves a variable number of densely connected sigmoid layers. Besides, Gaussian noise distributions is also taken into account w.r.t Bregman divergences as activity regularization. 
+%Bregman divergences corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. Each modality can have its own Bregman divergences as loss function, thereby assuming a specific noise of output distribution. 
 
 \subsubsection{Supervising finetuning} 
 The latent representations of all the input modalities are subsequently concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$ and used into the feed-forward neural network for the classification. During the supervising finetuning, the final concatenated vector is feed into fully connected softmax layer on top of MAE for the subtype classification, by optimizing the categorical cross-entropy~(CE) loss: 
@@ -280,7 +281,7 @@ The latent representations of all the input modalities are subsequently concaten
     L_{ce}=-\sum_{m=1}^{C} y_{k} \log \left(\hat{y}_{k}\right)
 \end{equation} 
 
-\hspace*{3.5mm} where $m \in \mathbb{R}^{C}$ is the number of classes for the breast cancer sub-type classification task, $y_{k}$ is the ground-truth label for modality $k$ and $\hat{y}_{k}$ is the predicted output. The softmax activation function is used in the output layer, which transforms the concatenated latent $\phi$-dimensional vector into a vector of real number in range $\left(0,1\right)$. This can be considered as probabilistic interpretation for the classification, i.e., probability distribution over the classes, before computing the CE loss in the fine-tuning phase. Eventually, parameters of the entire MAE architecture are optimized by combining reconstruction losses of individual modalities ${L}_{k}$ and CE loss ${L}_{ce}$ as the following objective function~\cite{mmdcae}: 
+\hspace*{3.5mm} where $m \in \mathbb{R}^{C}$ is the number of classes for the breast cancer sub-type classification task, $y_{k}$ is the ground-truth label for modality $k$ and $\hat{y}_{k}$ is the predicted output. The softmax activation function is used in the output layer, which transforms the concatenated latent $\phi$-dimensional vector into a vector of real number in range $\left(0,1\right)$. This can be considered as probabilistic interpretation for the classification, i.e., probability distribution over the classes, before computing the CE loss. Eventually, parameters of the entire MAE architecture are optimized by combining reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ as the following objective function~\cite{mmdcae}: 
 
 \begin{align}
     L_{mae}=\sum_{i=0}^{n} \alpha_{r} {L}_{k}+\alpha_{c} {L}_{ce}
