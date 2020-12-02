@@ -39,13 +39,13 @@ MAE~\cite{liu2016multimodal,serban2016multi,wang2018associativemulti} can be use
 %several modalities consisting of masked somatic mutations, copy number segment~(CNS) and mask CNS, DNA methylation, GE, miRNA expression along with clinical outcomes were used, instead of a single modality.
 
 \section{Methods}\label{chapter_4:mm}
-In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training. 
+In this section, data collection, preprocessing, network construction, and training are discussed in detail. 
 
 \subsection{Problem statement}
 The problem of cancer sub-typing is to observe which genetic mutations are responsible for which breast cancer subtypes, based on multimodal genomics data containing ER, PGR, and HER2/neu statuses of breast cancer patients, either separately or in a multimodal way. 
 The heterogeneity of expression across samples is captured in a gene regulation space, instead of gene expression space. This also involves transforming gene expression, miRNA expression, and DNA methylation profiles into regulation profiles for characterizing differential expression of genes between different subtypes. Since breast cancer subtype classification consists of following three sub-tasks based on ER, PGR, and HER2/neu status, each of these will correspond to different neural networks: 
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \textbf{ER status classification} - diagnosing individual patients into one of POSITIVE, NEGATIVE, and INDETERMINATE\footnote{Patients can't be grouped as positive, negative, or equivocal}, based on existence of ER protein breast tissue. 
     \item \textbf{PGR status classification} - diagnosing individual patients into one of POSITIVE, NEGATIVE, and INDETERMINATE, based on existence of PGR protein in breast tissue. 
     \item \textbf{HER2/neu status classification} - diagnosing individual patients into one of `POSITIVE, NEGATIVE, INDETERMINATE, and EQUIVOCAL\footnote{Assessments without information on how to treat a patient}, based on existence of HER2 protein in breast tissue. Unlike ER and PGR status, HER2/neu is the most important prognostic biomarkers. 
@@ -143,7 +143,7 @@ Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{
 
 \begin{figure*}
 	\centering
-	\includegraphics[scale=0.7]{images/input_combination.png}
+	\includegraphics[scale=0.6]{images/input_combination.png}
 	\caption[Different uni- and multi-modality input combination]{Unimodal and multimodal input combination with DNA methylation, GE, or miRNA expression}
 	\label{fig:input_comb}
 \end{figure*}
@@ -268,7 +268,7 @@ There are various metrics to quantify the difference between two vectors, such a
 %Bregman divergences corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. Each modality can have its own Bregman divergences as loss function, thereby assuming a specific noise of output distribution. 
 
 \subsubsection{Supervising finetuning} 
-The latent representations of all the input modalities are subsequently concatenated into a single representation $h_{i,j} \in \mathbb{R}^{D}$ and used into the feed-forward neural network for the classification. During the supervising finetuning, the final concatenated vector is feed into fully connected softmax layer on top of MAE for the subtype classification, by optimizing the categorical cross-entropy~(CE) loss: 
+During the finetuning, final latent vector $h_{mae}$ is feed into fully connected softmax layer on top of for the subtype classification, by optimizing the following categorical cross-entropy~(CE) loss: 
 
 \iffalse
 \begin{equation} 
@@ -405,19 +405,19 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/conf_er.png}
+		\includegraphics[scale=0.7]{images/conf_er.png}
 		\caption{ER status classification}
         \label{fig:er_confusion}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/conf_pgr.png}
+		\includegraphics[scale=0.7]{images/conf_pgr.png}
 		\caption{PGR status classification}
         \label{fig:pgr_confusion}
 	\end{subfigure}
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/conf_her2.png}
+		\includegraphics[scale=0.7]{images/conf_her2.png}
 		\caption{HER2 status classification }
         \label{fig:her2_confusion}
 	\end{subfigure}
@@ -453,13 +453,13 @@ Inspired by literature~\cite{rhee2017hybrid} and to qualitatively study whether 
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/raw_tsne.png}
+		\includegraphics[scale=0.6]{images/raw_tsne.png}
 		\caption{t-SNE plot of raw gene expression}
         \label{fig:tsne_raw}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/ae_tsne.png}
+		\includegraphics[scale=0.6]{images/ae_tsne.png}
 		\caption{t-SNE plot of encoder's latent feature}
         \label{fig:tsne_ae}
 	\end{subfigure}
@@ -544,19 +544,19 @@ The MAE implementation based on GE and miRNA expression modalities gave the best
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/1.png}
+		\includegraphics[scale=0.7]{images/1.png}
 		\caption{ER status classification}
         \label{fig:top_er}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/2.png}
+		\includegraphics[scale=0.7]{images/2.png}
 		\caption{PGR status classification}
         \label{fig:top_pgr}
 	\end{subfigure}
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{images/3.png}
+		\includegraphics[scale=0.7]{images/3.png}
 		\caption{HER2 status classification }
         \label{fig:top_her2}
 	\end{subfigure}
