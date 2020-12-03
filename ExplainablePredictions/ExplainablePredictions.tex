@@ -470,7 +470,7 @@ Since Grad-CAM++ requires all the samples to run through the network once, activ
 	\label{fig:3hms}
 \end{figure*}
 
-\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $m$. For the dataset $X_k$, the reference `accuracy' score $s$ is computed. For each feature $x_i$ and for each repetition $p$ in $1, 2, \ldots, P$, column $i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X}_{p,i}$. Score $s_{p,i}$ is then computed, followed by the calculation of mean importance $I_{i}$ of $x_{i}$, as follows~\cite{SHAP}:
+\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $f_k$. For the dataset $X_k$, the reference `accuracy' score $s$ is computed. For each feature $x_i$ and for each repetition $p$ in $1, 2, \ldots, P$, column $i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X}_{p,i}$. Score $s_{p,i}$ is then computed, followed by the calculation of mean importance $I_{i}$ of $x_{i}$, as follows~\cite{SHAP}:
 
 \vspace{-2mm}
 \begin{align}
