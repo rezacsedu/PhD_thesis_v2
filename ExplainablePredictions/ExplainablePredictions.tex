@@ -117,15 +117,15 @@ The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt c
     \scriptsize
     \caption{Sample distribution across tumor types: rows: tumour type, column: data types~\cite{weinstein2013cancer}}
     \label{table:alldatadetails2}
-    %\vspace{-2mm}
+    \vspace{-2mm}
     \begin{tabular}{l|l|l|l|l|l|l}
         \hline
         \rowcolor{Gray}
          \textbf{Cohort} & \textbf{DNA meth.} & \textbf{Copy numbers} & \textbf{Mutations} & \textbf{miRNA} & \textbf{Gene expr.} & \textbf{Carcinoma type} \\\hline
             LUSC & 358 & 345 & 178 & 332 & 227 & Lung squamous cell carcinoma \\\hline
-            READ & 162 & 164 & 69 & 143 & 71 & Rectum adeno-carcinoma \\%
+            READ & 162 & 164 & 69 & 143 & 71 & Rectum adeno-carcinoma \\\hline%
             GBM  & 405 & 578 & 290 & 501 & 495 & Glioblastoma multiforme \\\hline
-            LAML & 194 & 198 & 197 & 187 & 179 & Acute myeloid leukemia	\\%
+            LAML & 194 & 198 & 197 & 187 & 179 & Acute myeloid leukemia	\\\hline%
             HNSC & 310 & 310 & 277 & 309 & 303 & Head \& neck squamous cell carcinoma \\\hline 
             BLCA & 126 & 126 & 99 & 121 & 96 & Bladder urothelial carcinoma \\\hline 
             KIRC & 457 & 457 & 417 & 442 & 431 & Kidney renal clear cell carcinoma  \\\hline
@@ -134,10 +134,27 @@ The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt c
             OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
             BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
             COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
-            %LGG  & 514 & 487 & Brain lower grade glioma \\\hline
-            %THCA & 505 & 513 & Thyroid carcinoma \\\hline 
-            %PRAD & 501 & 536 & Prostate adenocarcinoma \\\hline 
-            %STAD & 442 & 464 & Stomach adenocarcinoma \\\hline 
+            LAML & 194 & 198 & 197 & 187 & 179 & Acute myeloid leukemia	\\\hline%
+            HNSC & 310 & 310 & 277 & 309 & 303 & Head \& neck squamous cell carcinoma \\\hline 
+            BLCA & 126 & 126 & 99 & 121 & 96 & Bladder urothelial carcinoma \\\hline 
+            KIRC & 457 & 457 & 417 & 442 & 431 & Kidney renal clear cell carcinoma  \\\hline
+            UCEC & 512 & 511 & 248 & 497 & 333 & Uterine corpus endometrial carcinoma \\\hline
+            LUAD & 431 & 357 & 229 & 365 & 355 & Lung adenocarcinoma \\\hline
+            OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
+            BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
+            COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
+            OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
+            BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
+            COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
+            LAML & 194 & 198 & 197 & 187 & 179 & Acute myeloid leukemia	\\\hline%
+            HNSC & 310 & 310 & 277 & 309 & 303 & Head \& neck squamous cell carcinoma \\\hline 
+            BLCA & 126 & 126 & 99 & 121 & 96 & Bladder urothelial carcinoma \\\hline 
+            KIRC & 457 & 457 & 417 & 442 & 431 & Kidney renal clear cell carcinoma  \\\hline
+            UCEC & 512 & 511 & 248 & 497 & 333 & Uterine corpus endometrial carcinoma \\\hline
+            LUAD & 431 & 357 & 229 & 365 & 355 & Lung adenocarcinoma \\\hline
+            OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
+            BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
+            COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
     \end{tabular}
     \vspace{-2mm}
 \end{table}
@@ -317,13 +334,15 @@ In this subsection, we discuss construction and training of the unimodal vanilla
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[scale=1.0]{images/wf_2D_CNN.png}
+	\includegraphics[scale=0.9]{images/wf_2D_CNN.png}
     \caption{Workflow of the unimodal CNN modality approach}	
 	\label{fig:workflow_2D_CNN}
 \end{sidewaysfigure*}
 
 \subsubsection{Preprocessing}
-Since we are interested in finding the relations between instances, e.g., GE of a particular cohort in relation to other types tumors, we use the the normalized version of the `GE RNA-seq' data. The expression values are generated at UCSC by first combining `GE RNA-seq' values higher than that of all TCGA cohorts and then mean normalizing all values per gene. The data is subsequently divided into the 30-40\% types to make the distribution balanced across cancer types and can serve as a proxy of background distribution of GE. To perform 2D  convolutional~(conv) operations, first we embed GE samples into 2D images in which GE values for each sample are reshaped from a 20,501$\times$1 array into a 144$\times$144 image by zero padding around the edges and normalized to [0,255].%, without losing any information.
+Since we are interested in finding the relations between instances, e.g., GE of a particular cohort in relation to other types tumors, we use the the normalized version of the `GE RNA-seq' data. The expression values are generated at UCSC by first combining `GE RNA-seq' values higher than that of all TCGA cohorts and then mean normalizing all values per gene. 
+%The data is subsequently divided into the 30-40\% types to make the distribution balanced across cancer types and can serve as a proxy of background distribution of GE. 
+To perform 2D  convolutional~(conv) operations, first we embed GE samples into 2D images in which GE values for each sample are reshaped from a 20,501$\times$1 array into a 144$\times$144 image by zero padding around the edges and normalized to [0,255].%, without losing any information.
 
 \subsubsection{Network construction and training}
 %However, prior applying the convolutional~(conv) operations, similar to \cref{chapter:uni_modality}, we first embed the samples into 2D images in which respective features for each sample are transformed into gray-scale image by zero padding around the edges and normalized to [0,255]. All the images are then normalized to [0,255], without losing any information. 
@@ -336,15 +355,15 @@ Both vanilla CNN and VGG16 architectures are trained from scratch alongside data
 	\label{fig:clstm}
 \end{figure*}
 
-\hspace*{3.5mm} Besides, VGG16 is also trained from scratch instead of initializing it's network weight from pretrained models. The reason is that, for example, ImageNet contains photos of general objects, which would activate the internal representation of network's hidden layers with geometrical forms, colorful patterns, or irrelevant shapes that are usually not present in biological datasets~\cite{Karim2020DeepCOVIDExplainer}. Both CNN architectures are trained with first-order gradient-based AdaGrad optimizer to optimize following categorical cross-entropy loss between predicted $Y^{\prime}$ and actual cancer type $Y$: 
+\hspace*{3.5mm} Besides, VGG16 is also trained from scratch instead of initializing it's network weight from pretrained models. The reason is that, for example, ImageNet contains photos of general objects, which would activate the internal representation of network's hidden layers with geometrical forms, colorful patterns, or irrelevant shapes that are usually not present in genomics datasets~\cite{Karim2020DeepCOVIDExplainer}. Both CNN architectures are trained with gradient-based AdaGrad optimizer, which optimizes the following categorical cross-entropy~(CE) loss: 
 
-\vspace{-2mm}
 \begin{equation} 
-    L_{ccae}=-\sum_{k=1}^{D}\left[Y_{k} \log Y_{k}^{\prime}+\left(1-Y_{k}\right) \log \left(1-Y_{k}^{\prime}\right)\right]
-    \label{eq:cross_entropy_loss_2}
+    L_{ce}=-\sum_{m=1}^{C} y_{k} \log \left(\hat{y}_{k}\right)
 \end{equation} 
 
-\hspace*{3.5mm} Softmax activation function is used in the output layer for the probability distribution over the classes for breast cancer subtype prediction. Further, we observe the performance by adding the Gaussian noise layer followed by the dense layer to improve model generalization and reduce overfitting, where the Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. Since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through random search and 5-fold cross-validation tests. 
+\hspace*{3.5mm} where $m \in \mathbb{R}^{C}$ is the number of classes, $y_{k}$ is the ground-truths for modality $k$ and $\hat{y}_{k}$ is the predicted output. The softmax activation function, which is used in the output layer transforms output of the last dense layer into a vector of real number in range $\left(0,1\right)$. This can be considered as probabilistic interpretation, i.e., probability distribution over the classes, before computing the CE loss. Further, effects of adding Gaussian noise layers is observed, where the objective is to improve model generalization. 
+
+%Since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through random search and 5-fold cross-validation tests. 
 
 \begin{figure*}[h]
 	\centering
@@ -824,10 +843,7 @@ In this section, we discuss the evaluation results, both quantitatively and qual
 \hspace*{3.5mm} Results each observation is analysed, both quantitative and qualitatively. 
 
 \subsection{Experiment setup}
-%All the programs were written in Python\footnote{\url{https://github.com/rezacsedu/XAI_Cancer_Prediction}}. The software stack consists of scikit-learn and Keras with TensorFlow backend. The network was trained on an Nvidia GTX 1080i GPU with CUDA and cuDNN enabled to make the overall pipeline faster. 
-%Further, since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through a random search and 5-fold cross-validation tests. In each of 5 runs, 70\% of the data is used for the training, 30\% for the evaluation, while 10\% of the training set is used for validation of the networks to optimize the cross-entropy loss based on the best learning rate, batch size, number of filters, kernel size, and dropout/Gaussian noise probability. 
-Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{0}=\alpha_{1}=\alpha_{2}=0.1$, and $\alpha_{c}$=0.25. %The weight of the classifier's loss function is set greater than the others to focus more on the classification performance of the whole architecture. 
-Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are  observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
+Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
 
 \hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. 
 %Hence, we did not report F1-scores. 
