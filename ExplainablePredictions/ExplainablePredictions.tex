@@ -349,7 +349,7 @@ As shown in \cref{fig:clstm2}, both vanilla CNN and VGG16 architectures are cons
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[scale=0.55]{images/clstm.PNG}
+	\includegraphics[scale=0.5]{images/clstm.PNG}
     \caption[Schematic representation of CNN-based approach]{Schematic representation of CNN-based approach, which starts by taking a raw GE sample as input and passing it through convolutional and pooling layers to generate rectified convolutional feature maps. Feature maps are then passed through fully connected softmax layer for classification. Guided back-propagation and Grad-CAM++ are applied to identify important important genes w.r.t pixel values.}	
 	\label{fig:clstm2}
 \end{figure*}
@@ -357,7 +357,7 @@ As shown in \cref{fig:clstm2}, both vanilla CNN and VGG16 architectures are cons
 \hspace*{3.5mm} Finally, 2D feature maps from MPL are flattened and transform into feature vector, which is fed into a fully connected softmax layer~(FCL). A FCL consist of 3 dense, a dropout, and a softmax layers. It is to be noted that weights for none of these networks were not initialized from any pretrained models. The reason is that deep CNN architectures are usually trained from ImageNet, which contains photos of general objects. Subsequently, internal representation of network's hidden layers will be activated with geometrical forms, colorful patterns, or irrelevant shapes that are usually not present in genomics datasets. Both vanilla CNN and the VGG16 architectures are trained with gradient-based AdaGrad optimizer, which optimizes the following categorical cross-entropy~(CE) loss: 
 
 \begin{equation} 
-    L_{ce}=-\sum_{m=1}^{C} y_{k} \log \left(\hat{y}_{k}\right)
+    L_{ce}=-\sum_{m=1}^{C} y_{k} \log \left(\hat{y}_{k}\right) \label{eq:ce_loss_function},
 \end{equation} 
 
 \hspace*{3.5mm} where $m \in \mathbb{R}^{C}$ is the number of classes, $y_{k}$ is the ground-truths for modality $k$ and $\hat{y}_{k}$ is the predicted output. The softmax activation function, which is used in the output layer transforms output of the last dense layer into a vector of real number in range $\left(0,1\right)$. This can be considered as probabilistic interpretation, i.e., probability distribution over the classes, before computing the CE loss. Further, effects of adding Gaussian noise layers is observed, where the objective is to improve model generalization. 
@@ -365,9 +365,9 @@ As shown in \cref{fig:clstm2}, both vanilla CNN and VGG16 architectures are cons
 %Since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through random search and 5-fold cross-validation tests. 
 
 \subsubsection{Interpreting black-box CNN models}
-Data for each modality is high dimensional, where majority of features~(genes) are not responsible for cancer, making them irrelevant for the cancer type classification. Therefore, it is more reasonable to probe both CNN and VGG16 networks to leverage the biomarker identification~(most important features). \Cref{algo:hm} and \ref{algo:imp_area} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. Inspired by the Grad-CAM based probing technique by Selvaraju et al.~\cite{mostavi2019convolutional}, all the normalized HMs from the same class are averaged to generate a class-specific HM. 
+Data for each modality is high dimensional, where majority of features~(genes) are not responsible for cancer, making them irrelevant for the cancer type classification. Therefore, it is more reasonable to probe both CNN and VGG16 networks to leverage the biomarker identification~(most important features). \Cref{algo:hm} and \ref{algo:imp_area} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. Inspired by the Grad-CAM based probing technique by Selvaraju et al.~\cite{mostavi2019convolutional}, all the normalized HMs from the same class are averaged to generate a class-specific HM. However, since Grad-CAM++ requires all the samples to run through the network once, activation maps are set and recorded in the forward pass. 
 
-Since Grad-CAM++ requires all the samples to run through the network once, activation maps are set and recorded in the forward pass. On the other hand, to collect the HM for each sample, gradient maps are generated in the backward pass~(during back-propagation). A higher intensity pixel in a HM signifies higher importance of corresponding gene and it's value to the final prediction. Top genes are then selected based on the intensity rankings and MAI threshold. 
+\hspace*{3.5mm} On the other hand, to collect the HM for each sample, gradient maps are generated in the backward pass, i.e., during the back-propagation. A higher intensity pixel in a HM signifies higher importance of corresponding gene and it's value to the final prediction. Top genes are then selected based on the intensity rankings and MAI threshold. However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, for trained CNN models, LRP-based heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. 
 
 \begin{algorithm*}[h]
 \small
@@ -461,23 +461,25 @@ Since Grad-CAM++ requires all the samples to run through the network once, activ
 \end{algorithm*}
 
  %The idea is also to find the most important biomarkers by ranking them based on MAI threshold. 
-\hspace*{3.5mm} However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, for trained CNN models, LRP-based heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. Sometimes features that seem to have lower importance for a bad model could be very important for a better fitted model. In other words,  permutation importance does not necessarily reflect to the intrinsic predictive value of a feature by itself, albeit it signifies how important this feature is for a particular model. 
+%\hspace*{3.5mm} 
 
 \begin{figure*}
 	\centering
-	\includegraphics[scale=0.8]{images/3_mode.png}
+	\includegraphics[scale=0.7]{images/3_mode.png}
 	\caption[Heat map examples for a single cancer type prediction]{Heat map examples for a single cancer type prediction, where the image-pixel of specific biomarkers are highlighted by probing the network with Grad-CAM, Grad-CAM++, and LRP.} 
 	\label{fig:3hms}
 \end{figure*}
 
-\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $f_k$. For the dataset $X_k$, the reference `accuracy' score $s$ is computed. For each feature $x_i$ and for each repetition $p$ in $1, 2, \ldots, P$, column $i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X}_{p,i}$. Score $s_{p,i}$ is then computed, followed by the calculation of mean importance $I_{i}$ of $x_{i}$, as follows~\cite{SHAP}:
+\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $f_k$. For the dataset $X_k$, the reference `accuracy' score $Acc$ is computed. For each feature $x_i$ and for each repetition $p$ in $1, 2, \ldots, P$, column $i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X}_{p,i}$. Score $Acc_{p,i}$ is then computed, followed by the calculation of mean importance $I_{i}$ of $x_{i}$, as follows~\cite{SHAP}:
 
 \vspace{-2mm}
 \begin{align}
     I_{i}=s-\frac{1}{P} \sum_{p=1}^{P} s_{p,i}
 \end{align}
 
-\hspace*{3.5mm} Besides, SHAP is used to compute the importance of a feature $x_i$ w.r.t Shapley values $\phi$, by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in the dataset $X_k$. For $x_i$, prediction $\hat x_i$ and $\phi$ for $i$ are then calculated, as follows~\cite{NIPS2017_7062}. 
+\hspace*{3.5mm} Although, permutation feature importance  provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself. In other words, there is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. Therefore, using SHAP, the computation is repeated in all possible orders to compare the features fairly. 
+
+\hspace*{3.5mm} If $x_i$ is a feature in modality specific input $X_k$, it's importance w.r.t Shapley value $\phi$ is computed by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in $X_k$. For $x_i$, prediction $\hat x_i$ and Shapley value $\phi$ are then calculated, as follows~\cite{NIPS2017_7062}. 
 
 \vspace{-2mm}
 \begin{align}
@@ -485,22 +487,18 @@ Since Grad-CAM++ requires all the samples to run through the network once, activ
     \label{eq:shap}
 \end{align}
 
-\hspace*{3.5mm} However, the order in which a model sees features can affect the predictions. Therefore, the computation is repeated in all possible orders to compare the features fairly: i) feature that have no effect on the predicted value are expected to produce a Shapley value of 0, ii) if two features contribute equally to the prediction, Shapley values should be the same~\cite{NIPS2017_7062}. 
-
-%\subsection{}
+\hspace*{3.5mm} If $x_i$ has no or almost zero effect on the predicted value is expected to produce a Shapley value of 0. If two features $x_i$ $x_{i+1}$ contribute equally to the prediction, Shapley values should be the same~\cite{NIPS2017_7062}. 
 
 \subsection{Constructions and training of multimodal classifiers}
-The multimodality nature of the data motivated us to develop two deep architectures, MAE and MCAE. The former is based on the vanilla AE, which has a similar architecture we constructed in \cref{chapter:multiodality}, while the latter is based on CAE-based representation learning we described in \cref{chapter:preli}. In both approaches, latent representation concatenation~(LRC)~(as outlined in \cref{fig:lrc_11}) is employed instead of shared latent representation~(SLR)~(see \cref{fig:slr_11}) to generate a shared feature representation of the multimodal input. Following are three motivating factors for employing LRC-based representation: 
+The multimodality nature of the data motivated us to develop MAE deep architecture. MAE was based on vanilla AE, where the concept of shared latent representation~(SLR)~(see \cref{fig:slr_11}) is used to generate the shared feature representation of the multimodal input. MAE moderately performed for breast cancer subtype classification tasks, which is largely due to high pretraining and reconstruction losses.
+In a recent approach proposed by Patrick T. et al.~\cite{mmdcae}, another multimodal concept learning called latent representation concatenation~(LRC)~(see \cref{fig:lrc_11}) is proposed. Base on several studies, covering text classification, sequence data, and imaging, they identified the following potential limitations of SLR: 
 
-\vspace{-2mm}
 \begin{itemize}[noitemsep]
-    \item In \cref{chapter:multiodality}, moderately lower performance was observed, due to high pretraining and reconstruction errors during the SRL and vanilla AE-based representation learning. 
-    \item Patrick T. et al.~\cite{mmdcae} observed, based on several use cases~(text classification, sequence data, and imaging), that the reconstruction loss~(e.g., MSE) for LRC-based representation learning is significantly lower compared to SLR.
-    
-    \item Patrick T. et al.~\cite{mmdcae} also observed significant accuracy improvement while classifiers are trained on LRC-based learned representation, which is largely backed by lower reconstruction loss. 
+    \item The reconstruction loss for LRC is significantly lower compared to SLR.
+    \item When a classifier is trained on features learned by LRC, accuracy improves significantly, which is largely backed by lower reconstruction loss. 
 \end{itemize}
-\vspace{-2mm}
 
+\hspace*{3.5mm} Inspired by the success of LRC and considering the limitations of MAE and SLR, multimodal convolutional autoencoder classifier~(MCAE) is constructed to improve the classification accuracy. As shown in \cref{fig:lrc_11}, MCAE is based on convolutional autoencoder~(CAE) and LRC-based representation learning. Besides, to show the effectiveness of MCAE and LRC, another variant of MCAE classifier is trained on SLR-based latent representation, as shown in \cref{fig:slr_11}. 
 \begin{sidewaysfigure*}[htp!]
 	\centering
 	\begin{subfigure}{.48\linewidth}
@@ -536,85 +534,66 @@ Although a single and simple AE discussed in \cref{preli:AEs} can reconstruct an
 \fi 
 
 \subsection{Construction and training of MCAE}
-Although a single and simple AE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). In contrast, weights of the MCAE encoder learn from both clean, unsupervised data with no labels, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Nevertheless, difference w.r.t dimensionality among modalities are pretty large. For example, GE data come with about 60,000 features, but miRNA has only 1,800 features. This non-trivial challenge in modality specific representation learning is enough motivation towards multimodal representation learning and classification, given that an individual latent representation is require to have the same dimensionality~\cite{mmdcae}.
+Although a single and simple CAE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). In contrast, weights of the encoder learn from both clean, unsupervised data with no labels, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Nevertheless, difference w.r.t dimensionality among modalities are pretty large. For example, GE data come with about 60,000 features, but miRNA has only 1,800 features. This non-trivial challenge in modality specific representation learning is enough motivation towards multimodal representation learning and classification, given that an individual latent representation is require to have the same dimensionality~\cite{mmdcae}.
 
 %\subsubsection{Network construction}
-\hspace*{3.5mm} The MAE architecture depicted in \cref{fig:slr_1} is used to generate the shared representation for all input modalities, instead of one latent representation for each input modality. \Cref{fig:input_comb} shows the different input modality combination considered, while \cref{tab:all_data_brca} gives the sample distributions. From network topological point of view, MAE creates hierarchical hidden units, which have strong connections between nodes not only for individual modality, but also across the modalities.  
-%\subsubsection{Network training}
-Training MAE involves pre-training to leverage the learning representation, followed by supervised fine-tuning for the classification based on learned  representation from the multimodal input features. 
+\hspace*{3.5mm} The MCAE architecture depicted in \cref{fig:slr_1} is used to generate the shared representation for all input modalities, instead of one latent representation for each input modality. From network topological point of view, MCAE creates hierarchical hidden units, which have strong connections between nodes not only for individual modality, but also across the modalities. Training MCAE involves pre-training to leverage the representation learning, followed by supervised fine-tuning on learned representation. 
 
 \subsubsection{Unsupervised pertaining of MCAE} 
-Pre-training is similar to training a two-stage AE network: first stage represents modality specific learning. The second stage corresponds to cross-modality. 
-%Once the unimodal and cross-modal stages are constructed, training both stages is similar to unsupervised pre-training of the whole MAE architecture.
-Pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual AEs. 
+Pre-training is similar to training a two-stage CAE network: first stage represents modality specific learning. The second stage corresponds to cross-modality. Pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual CAEs. 
 
-\paragraph{Stage-1: individual modality}\noindent of the MAE represents a particular modality for each type of data. Individual modality AE is not only a one-layer AE, but also a multilayer and gradually shrinking AE with different number of layers per modality. An AE consist of two sub-networks called encoder and decoder. Encoder is a sigmoid function $g(.)$ parameterized by $\phi$, while decoder function $f(.)$ is   parameterized by $\theta$ is an identify function. For input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ modalities, the encoder encodes the original high-dimension input into a lower-dimensional code, where the input size is larger than the output size. Latent-space representation $Z_k=g_{\phi}(X_{k})$ is then learned in the bottleneck layer such that $X_{k}$ is mapped and transformed into embedding space~($Z_k$), where $p$ and $n$ is number of hidden and input units~\cite{mmdcae}: 
+\paragraph{Stage-1: individual modality}\hspace{-3mm} of MCAE represents a specific modality for each type of data. Individual modality CAE is not only a one-layer CAE, but also a multilayer and gradually shrinking CAE with different number of layers per modality. An CAE consist of two sub-networks called encoder and decoder.  Encoder is a sigmoid function $g(.)$ parameterized by $\phi$, while decoder function $f(.)$ is parameterized by $\theta$. For input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ modalities, encoder encodes the input into a lower-dimensional code, such that $X_{k}$ is mapped and transformed into embedding space~($Z_k$). If $p$ and $n$ are number of hidden and input units, latent-space representation $Z_k=g_{\phi}(X_{k})$ is learned in the bottleneck layer~\cite{mmdcae}: 
 
 \begin{equation}
-    Z_k = h_{k}=g_\phi \left({X}_{k}\right)=\sigma\left(W_{k} X_{k}+b_{k}\right)
+    Z_k = h_{k}=g_\phi \left({X}_{k}\right)=\sigma\left(W_{k} * X_{k}+b_{k}\right)
 \end{equation}
 
-\iffalse
-\hspace*{3.5mm} For input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ input modalities, encoder function $g_{\phi{k}}$ learns the representation of $X_{k}$ in a compressed form, where the input space is mapped and transformed into an embedding space~\cite{mmdcae}. Let $p$ and $n$ denote the number of hidden and input units in the encoder, respectively: 
-
+\hspace*{3.5mm} where $\phi$ are trainable parameters, which includes the weight matrix $W_{k} \in \mathbb{R}^{n \times p}$ and the bias vector $b_{k} \in \mathbb{R}^{n}$ that are specific to respective modality $k$, and $\sigma$ is the exponential linear unit~(ELU)~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}, which is defined as~\cite{clevert2015fast}: 
 \begin{equation}
-    h_{k}=f_\theta \left({X}_{k}\right)=\sigma\left(W_{k} X_{k}+b_{k}\right)
-\end{equation}
-\fi 
-
-\hspace*{3.5mm} where $\phi$ are trainable parameters, which includes the weight matrix $W_{k} \in \mathbb{R}^{n \times p}$ and the bias vector $b_{k} \in \mathbb{R}^{n}$ that are specific to respective modality $k$, and $\sigma$ is the $ReLU$ activation function. The only difference is using Exponential Linear Unit~(ELU)~\cite{clevert2015fast} activation function defined as: 
-
-\begin{equation}
-    ELU_{\alpha}(X_k)=\left\{\begin{array}{ll}
-    \alpha(\exp (x)-1) & \text { if } x<0 \\
-    x & \text { if } x \geq 0.
+    ELU_{\alpha_r}(X_k)=\left\{\begin{array}{ll}
+    \alpha_r(\exp (x)-1) & \text { if } x<0 \\
+    x & \text { if } x \geq 0,
     \end{array}\right.
 \end{equation}
 
-\hspace*{3.5mm} where $\lambda$ is the activity regularization term and $\alpha$ is the regularization weights. The decoder tries to reconstruct from $h_k$, the original input $X_{k}$ from the latent space representation $Z_k$ using function $f(.)$. That means, the hidden representation $h_{k}$ is then mapped back by the decoder function to reconstruct $\hat{X}_{k}$, similar to original input ${X}_{k}$, giving the following reconstructed version of the original input:
+\hspace*{3.5mm} where $\alpha_r$ is the regularization weights. The decoder tries to reconstruct from $h_k$, original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
 
 \begin{equation}
-    \hat{X_k}=f_{\theta}\left(Z_k\right)=f_{\theta}\left(g_{\phi}({X_k})\right). 
+    \hat{X_k}=f_{\theta}\left(Z_k\right)=f_{\theta}\left(g_{\phi}({X_k})\right) \label{eq:mcae_eq_1},
 \end{equation}
 
+\hspace*{3.5mm} where parameters $(\theta,\phi)$ are jointly learned to output a reconstructed version of the original input. This is analogous to learn an identity function, such that $\hat{X_k} \approx f_{\theta}\left(g_{\phi}({X_k})\right)$, i.e., $f_{\theta}\left(g_{\phi}({X_k})\right)$ is equivalent to $\Psi \left(\hat W_k * h_k + \hat b_{k}\right)$. Therefore,  \cref{eq:mcae_eq_1} is changed to following form: 
+
 \begin{equation}
-    \hat{X_k}=\Psi \left(\hat W_k h_k + \hat b_{k}\right)
+    \hat{X_k}=\Psi \left(\hat W_k * h_k + \hat b_{k}\right),
 \end{equation}
 
-\hspace*{3.5mm} where $\theta$ are trainable parameters, which includes the weight matrix $\hat W_{k} \in \mathbb{R}^{n \times p}$ and the bias vector $\hat b_{k}$ that are specific to respective modality $k$, and $\Psi$ is the sigmoid activation function. Parameters $(\theta,\phi)$ are jointly learned to output a reconstructed version of the original input such that ${X_k} \approx f_{\theta}\left(g_{\phi}({X_k})\right)$. This is analogous to learn an identity function. A distance measure~($d_{k}$) that quantifies the difference between input $X_{k}$ and network's output $f(X_{k})$, is used as a typical reconstruction loss. The reconstruction loss between $X_{k}$ and its reconstructed version is iteratively optimized~\cite{KarimIEEEAccess2019}: 
+\hspace*{3.5mm} where $\theta$ are trainable parameters, including weight matrix $\hat W_{k} \in \mathbb{R}^{n \times p}$ and bias vector $\hat b_{k}$, that are specific to modality $k$, and $\Psi$ is sigmoid activation function. Distance measure~($d_{k}$) that quantifies difference between input $X_{k}$ and network's output $f_\theta(X_{k})$, is a typical reconstruction loss~\cite{KarimIEEEAccess2019}: 
 
 \begin{equation}
-    L_{\mathrm{k}}(\theta, \phi)==\text{$d_{k}$}(X_{k}, f(X_{k}) = \sum_{i} \left\|X_{k}-f(X_{k})\right\|^{2}.
+    L_{\mathrm{k}}(\theta, \phi)=\text{$d_{k}$}(X_{k}, f(X_{k}) = \sum_{i} \left\|X_{k}-f(X_{k})\right\|^{2}.
     %\label{eq:Loss1}
 \end{equation}
 
-\hspace*{3.5mm} By replacing $f(X_{k})$ with $\hat{X}_{k}$, above equation is changed to following: 
+\hspace*{3.5mm} Above loss is iteratively optimized. Replacing $f(X_{k})$ with $\hat{X}_{k}$, above equation is changed to: 
 
 \begin{equation}
     L_{\mathrm{k}}(\theta, \phi)=\text{$d_{k}$}(X_{k}, \hat{X}_{k}) = \sum_{i} ||X_{k}-\hat{X}_{k})||^{2}.
     \label{eq:ce_loss}
 \end{equation}
 
-\hspace*{3.5mm} Let's, $X_m$, $X_e$, and $X_r$ are DNA methylation, gene expression, and miRNA expression input modalities, respectively. As shown in~\cref{fig:mm_rL_example1}, our model first embeds data of each input modality into 2D images in which each sample is reshaped into a 144$\times$144 image by zero padding around the edges and normalized to [0,255]. Each input is transformed into following hidden representations~\cite{KarimIEEEAccess2019}.
+\hspace*{3.5mm} Let's $X_s$, $X_e$, and $X_r$ are copy number variations~(CNVs), gene expression, and miRNA expression input modalities, respectively. As shown in~\cref{fig:mm_rL_example1}, our model first embeds data of each input modality into 2D images in which each sample is reshaped into a 144$\times$144 image by zero padding around the edges and normalized to [0,255]. Each input is transformed into following hidden representations~\cite{KarimIEEEAccess2019}.
 
 \begin{equation}
     \begin{array}{l}
-        {h_{m}=\Psi\left(W_{m} X_{m}+b_{m}\right)} \\
-        {h_{e}=\Psi\left(W_{e} X_{e}+b_{e}\right)} \\
-        {h_{r}=\Psi\left(W_{r} X_{r}+b_{r}\right),}
+        {h_{m}=\Psi\left(W_{c} * X_{m}+b_{c}\right)} \\
+        {h_{e}=\Psi\left(W_{e} * X_{e}+b_{e}\right)} \\
+        {h_{r}=\Psi\left(W_{r} * X_{r}+b_{r}\right),}
     \end{array}
     \label{eq:m1}
 \end{equation}  
 
-\hspace*{3.5mm} where $\left\{W_{m}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{m}, b_{e}, b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation. Each of $X_m$, $X_e$, and $X_r$ input modalities are very high dimensional, with huge difference w.r.t. dimensionality. In such a case, simple distance measure is not suitable~\cite{thiam2020multimodal}. Subsequently, mean squared error is used as the reconstruction loss:  
-
-\iffalse
-\begin{equation}
-    L_{k}=\frac{1}{N} \sum_{j=1}^{N}\left\|X_{k}-\hat{X}_{k}\right\|_{2}^{2}+\lambda\left\|W_{k}\right\|_{2}^{2}
-\end{equation}  
-
-There are various metrics to quantify the difference between two vectors, such as cross entropy when the activation function is sigmoid, or as simple as MSE loss:
-\fi 
+\hspace*{3.5mm} where $\left\{W_{c}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{c}, b_{e}, b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation. Each of $X_c$, $X_e$, and $X_r$ input modalities are very high dimensional, with huge difference w.r.t. dimensionality. In such a case, simple distance measure is not suitable~\cite{thiam2020multimodal}. Subsequently, mean squared error is used as the reconstruction loss:  
 
 \begin{equation}
     L_{\mathrm{k}}(\theta, \phi)=\frac{1}{n} \sum_{i=1}^{n}\left({X_k}-f_{\theta}\left(g_{\phi}\left({X_k}\right)\right)\right)^{2} +\lambda\left\|W_{k}\right\|_{2}^{2}
@@ -628,59 +607,45 @@ There are various metrics to quantify the difference between two vectors, such a
 
 \hspace*{3.5mm} where $\lambda$ is the activity regularizer and $W_{k}$ is network weights specific to input modality $k$. 
 
-\paragraph{Stage-2: cross-modality~(MAE)}\noindent is also a multilayer gradually shrinking AE, but with different output layer size for each prediction. Number of layers and units per layer in both encoder and decoder are symmetric. Latent representations of all modalities are concatenated into a single representation~\cite{liu2016multimodal}, having the same $\phi$ dimensionality of individual modalities. 
+\paragraph{Stage-2: cross-modality}\hspace{-3mm} is also a multilayer gradually shrinking CAE, but with different output layer size for each prediction. However, number of layers and units per layer in both encoder and decoder are symmetric.  Latent representations of all modalities are concatenated into a single representation~\cite{liu2016multimodal}, such that the dimensionality of individual modalities $\phi$ is the same:  
 
 \begin{equation}
-    h_{mae}=\sigma\left(W_{mae}\left[h_{m} \oplus h_{e} \oplus h_{r}\right]+b_{mae}\right),
+    h_{mcae}=\sigma\left(W_{mcae}\left[h_{m} \oplus h_{e} \oplus h_{r}\right]+b_{mcae}\right),
 \end{equation}
 
-\hspace*{3.5mm} where $\oplus$ is the concatenation operation. Thn the whole MAE is pre-trained to reconstruct individual modalities from the hidden representation $h_{mae}$~\cite{liu2016multimodal}:
+\hspace*{3.5mm} where $\oplus$ is the concatenation operation. Whole MCAE is pre-trained to reconstruct individual modalities from the hidden representation $h_{mcae}$~\cite{liu2016multimodal}:
 
 \begin{equation}
     \left[\hat{h}_{m}\oplus \hat{h}_{e} \oplus \hat{h}_{r}
-    \right]=\Psi\left(\hat W_{mae} h_{mae}+\hat {b}_{mae}\right)
+    \right]=\Psi\left(\hat W_{mcae} h_{mcae}+\hat {b}_{mcae}\right)
 \end{equation}
 
-\hspace*{3.5mm} The decoder module, which has a similar gradual increasing architecture as an encoder, reconstructs the original representation of individual modalities, $\hat{X}_{m}$, $\hat{X}_{e}$, and $\hat{X}_{r}$ as~\cite{wang2018associativemulti}: 
+\hspace*{3.5mm} The decoder module, which has a similar gradual increasing architecture as an encoder, reconstructs the original representation of individual modalities, $\hat{X}_{c}$, $\hat{X}_{e}$, and $\hat{X}_{r}$ as~\cite{wang2018associativemulti}: 
 
 \begin{equation}
     \begin{aligned}
-        \hat{X}_{m} &=\Psi\left(\hat W_{m} \hat{h}_{m}+\hat{b}_{m}\right) \\
+        \hat{X}_{c} &=\Psi\left(\hat W_{c} \hat{h}_{m}+\hat{b}_{m}\right) \\
         \hat{X}_{e} &=\Psi\left(\hat W_{e} \hat{h}_{e}+\hat{b}_{e}\right) \\
         \hat{X}_{r} &=\Psi\left(\hat W_{r} \hat{h}_{r}+\hat{b}_{r}\right),
         \end{aligned}
 \end{equation}
 
-\hspace*{3.5mm} where $\left\{\hat W_{m}, \hat W_{e}, \hat W_{r}\right\}$ are decoder's weight matrices, $\left\{\hat b_{m}, \hat b_{e}, \hat b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, and $\Psi$ is the sigmoid activation function. However, fusing such multimodalities involves a variable number of densely connected sigmoid layers. Besides, Gaussian noise distributions is also taken into account w.r.t Bregman divergences as activity regularization. 
-%Bregman divergences corresponds to particular exponential families such as Gaussian, Poisson or gamma distributions. Each modality can have its own Bregman divergences as loss function, thereby assuming a specific noise of output distribution. 
+\hspace*{3.5mm} where $\left\{\hat W_{c}, \hat W_{e}, \hat W_{r}\right\}$ are decoder's weight matrices, $\left\{\hat b_{c}, \hat b_{e}, \hat b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities, and $\Psi$ is the sigmoid activation function. However, fusing such multimodalities involves a variable number of densely connected sigmoid layers. Besides, Gaussian noise distributions is also taken into account w.r.t Bregman divergences as activity regularization. 
 
 \subsubsection{Supervised training of MCAE}
-During the finetuning, final latent vector $h_{mae}$ is feed into fully connected softmax layer on top of for the subtype classification, by optimizing the following categorical cross-entropy~(CE) loss: 
-
-\iffalse
-\begin{equation} 
-    L_{ce}=-\sum_{k=1}^{D}\left[Y_{k} \log Y_{k}^{\prime}+\left(1-Y_{k}\right) \log \left(1-Y_{k}^{\prime}\right)\right]
-    \label{eq:cross_entropy_loss}
-\end{equation} 
-\fi 
-
-\begin{equation} 
-    L_{ce}=-\sum_{m=1}^{C} y_{k} \log \left(\hat{y}_{k}\right)
-\end{equation} 
-
-\hspace*{3.5mm} where $m \in \mathbb{R}^{C}$ is the number of classes for the breast cancer sub-type classification task, $y_{k}$ is the ground-truth label for modality $k$ and $\hat{y}_{k}$ is the predicted output. The softmax activation function is used in the output layer, which transforms the concatenated latent $\phi$-dimensional vector into a vector of real number in range $\left(0,1\right)$. This can be considered as probabilistic interpretation for the classification, i.e., probability distribution over the classes, before computing the CE loss. Eventually, parameters of the entire MAE architecture are optimized by combining reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ as the following objective function~\cite{mmdcae}: 
+Final latent vector $h_{mcae}$ is feed into fully connected softmax layer for the subtype classification, by optimizing CE loss similar as \cref{eq:ce_loss_function}. 
+%Softmax activation function is used in the output layer to transform the concatenated latent $\phi$-dimensional vector into a vector of real number in range $\left(0,1\right)$, i.e., probability distribution over the classes. 
+Reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ of the entire MCAE architecture are combined and optimized jointly as~\cite{mmdcae}: 
 
 \begin{align}
-    L_{mae}=\sum_{i=0}^{n} \alpha_{r} {L}_{k}+\alpha_{c} {L}_{ce}
+    L_{mcae}=\sum_{i=0}^{n} \alpha_{r} {L}_{k}+\alpha_{c} {L}_{ce}
     \label{eq:sum}
 \end{align}
 
-\hspace*{3.5mm} where the parameters $\alpha_{r}$ and $\alpha_{c}$ are the regularization weights assigned to modality specific~(i.e., ${L}_{k}$) and cross-entropy specific~(${L}_{ce}$) function, respectively~\cite{mmdcae}. MAE network parameters were initialized with Xavier initialization~\cite{xavier} and trained using first-order gradient-based optimization techniques AdaGrad. 
+\hspace*{3.5mm} where $\alpha_{r}$ and $\alpha_{c}$ are the regularization weights assigned to modality specific~(i.e., ${L}_{k}$) and cross-entropy specific~(${L}_{ce}$) loss functions, respectively. Network parameters were initialized with Xavier initialization~\cite{xavier} and trained using the AdaGrad optimization method~\cite{duchi2011adaptive}. 
 
 \subsubsection{Interpreting black-box MCAE model}
-%We discuss details of the construction and training of the MCAE architecture, followed by providing explanations of the interpretability in this sub-section. 
-%\Cref{fig:tsne_ge} shows the t-SNE visualization based on GE  profiles. 
-Majority of the approaches based on multimodal learning directly merge the learned or latent vectors. Consequently, the learned representations from CAE are not easily interpretable, which is a very critical drawback. However, disentangling them is essential to provide insight into what features did the representations capture and what attributes of the samples are the classification based on~\cite{karimTCBB2020}. As mentioned earlier, there is not huge difference between GE, miRNA, or CNV features values. Therefore, merging them blindly could ignore subtle differences between different input modalities w.r.t feature contributions and may increase dimensions of the representation. 
+Approaches based on multimodal learning directly merge all the latent representations into a single vector representation. As there is not huge difference between GE, miRNA, or CNV values. Therefore, merging them blindly could ignore subtle differences between different input modalities w.r.t feature contributions and may increase dimensions of the representation. However, a concatenated vector representation from MCAE is not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. On the other hand, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification based on~\cite{karimTCBB2020}. 
 
 \begin{sidewaysfigure*}
 	\centering
@@ -691,145 +656,21 @@ Majority of the approaches based on multimodal learning directly merge the learn
 
 \hspace*{3.5mm} Unlike the unimodal CNN models, where CNN-based feature selection is performed, it is more reasonable to let the MCAE model to perform feature selection. One of the widely used techniques is called attention mechanism. Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added to compute important features by fusing different features and their dimensions before the actual concatenation, as shown in \cref{fig:attention}. Then, from the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. From $K$  dimensional latent vector space, the representation is learned from the latent vectors of individual features. The resulting representation of feature $i$ can be defined as follows: 
 
-\vspace{-6mm}
 \begin{align}
     f_{i,j}=a_{i,j} \odot\left(h_{i} \odot h_{j}\right)
 \end{align}
-\vspace{-6mm}
 
 \hspace*{3.5mm} where $\odot$ is the element-wise product, $a_{i,j}$ = $\left(a_{i,j,1}, a_{i,j,2}, \cdots, a_{i,j,K}\right)$ is a $K$ dimensional attention vector to reflect the different importance by fusing latent vectors $h_{i}$ and $h_{j}$. Specifically, $f_{i,j}=$ $\left(f_{1}, f_{2}, \cdots, f_{K}\right)$ and $f_{k}=a_{i,j,k} \odot\left(h_{i,k} \odot h_{j,k}\right) \cdot a_{i,j,k}$ is the attention weight assigned to $k^{th}$ dimension. The attention vector $a_{i,j}$ is calculated as follows: 
  
- \vspace{-6mm}
  \begin{align}
     a_{i, j, k}=\frac{\exp \left(\hat{a}_{i, j, k}\right)}{\sum_{m=1}^{k} \exp \left(a_{i, j, m}\right)}
 \end{align}
 
 \hspace*{3.5mm} where $\hat{a}_{i,j}=V^{T} \operatorname{ReLU}\left(W\left(Y_{i} \odot Y_{i}\right)+b\right)$ and $\operatorname{ReLU}$ is ReLU activation function, $b$ and $W$ are the bias vector and the weight matrix, and $V^{T}$ is the weight vector. These parameters are optimized along with deep neural network in an end-to-end way. The final outcome of the attention module takes into account the different contributions of different features w.r.t their dimensions. Output from the attention layer, i.e., multimodal features is then feed into a fully-connected layer for making the prediction. 
 
-%\Cref{algo:hm_2} and \ref{algo:imp_area_2} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. We averaged all the normalized HM from the same class to generate a class-specific HM inspired by Selvaraju et al.~\cite{mostavi2019convolutional,karim2019onconetexplainer}.
-
-\iffalse
-\begin{figure*}[h]
-	\centering
-	\includegraphics[width=0.85\textwidth,height=85mm]{images/ge1.png}	
-    \caption{t-SNE visualization of the latent gene expression profiles.}	
-	\label{fig:tsne_ge}
-\end{figure*}
-\fi 
-
-%\subsubsection{Interpreting black-box MCAE model}
 \hspace*{3.5mm} Since Grad-CAM++ requires all the samples to run through the network once, we let the trained CNN models set and record the activation maps in the forward pass, and the gradient maps in the back-propagation phase to collect the HM for each sample from the trained model. A higher intensity pixel represents a higher significance to the final prediction, which indicates higher importance of corresponding genes and GE values. Top genes are then selected based on the intensity rankings and MAI threshold. Since SM use true gradients, the trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Subsequently, we generate LRP and CAM-based heatmaps for each sample in the test set based on the trained CNN models, where each heatmap indicates class-discriminating pixels/features and relevance for the particular classification decision. 
-%Further, SHAP is used to compute the feature importance and ranked then based on MAI. 
 
-\iffalse
-\begin{algorithm*}
-\small
-    \DontPrintSemicolon \SetKwInOut{Input}{Input}%
-      \SetKwInOut{Output}{Output}%
-      \Input{2D GE images ${D}=(d_1,d_2,\dots,d_n)$ having ground truth~(i.e., labels) ${L}=(l_1,l_2,\dots,l_j)$ on which a CNN model is trained for each fold ${M}=(m_1,m_2,\dots,m_i)$ to find $k$ for top-k genes that satisfy MAI threshold.}%
-      \Output{feature importance ${F}=(f_1,i_1)(f_2,i_2),\dots,(f_n, i_n)$ and top features ${T}$ across all images per fold per class.}%
-      \BlankLine%
-     \For{$\mathit{fold} \in \mathit{FOLDS}$}{
-       ${P} \leftarrow  \{\}$ \tcp*{Guided backprop for each image per fold per class}\; 
-      \vspace{-4mm} 
-       ${K} \leftarrow  \{\}$ \tcp*{GradCAM++(GCAM) for all images per fold per class}\; 
-      \vspace{-4mm} 
-       ${I} \leftarrow  \{\}$ \tcp*{GCAM of each image in a fold}\; 
-      \vspace{-4mm} 
-      ${G} \leftarrow  \{\}$ \tcp*{GCAM for all images per fold per class}\; 
-      \vspace{-4mm} 
-      ${F} \leftarrow  \{\}$ \tcp*{Feature importance of each gene per class per fold}\; 
-      \vspace{-4mm} 
-      ${T} \leftarrow  \{\}$ \tcp*{Top genes and importance per class per fold}\; 
-      	\vspace{-4mm} 
-      	\For {$d \in {D}$}{ 
-    		${K} \leftarrow \mathit{gradCAM++}(m_{d}, d, l_d)$ \tcp*{GCAM of images per fold per class}\;
-    		\vspace{-4mm} 
-    		${P} \leftarrow \mathit{guidedBackprop}(m_{d}, d)$ \tcp*{Guided backprop of each image}\;
-    		\vspace{-4mm} 
-    		${I} \leftarrow {K} * {P}$ \tcp*{GCAM of each image}\;
-    		\vspace{-4mm} 
-    		${G} \leftarrow {G}\cup {I}$ \tcp*{GCAM for all the images in fold}\;
-    		\vspace{-4mm} 
-    	    } 
-    	${F} \leftarrow \frac{1}{N}\sum_{i=1}^N {G}$ \tcp*{Mean absolute impact for genes for axis=0}\;
-    	\vspace{-4mm} 
-    	\If{$F_i < \sigma $}{ \tcp*{If the feature importance is less than MAI}\;
-    	\vspace{-4mm} 
-        	${F} \leftarrow  F - F_i$ \tcp*{Pop off insignificant genes}\;
-        	\vspace{-4mm} 
-        	${T} \leftarrow  \operatorname{sort}_k(F)$ \tcp*{Sort and choose top genes based on MAI}\;
-        	\vspace{-4mm} 
-    	}
-    	\textbf{Return} ${F}, {T}$
-     }
-    \caption{Computing feature importance and ranking genes}
-     \label{algo:hm_2}
-\end{algorithm*}
-
-\begin{algorithm*}
-\small
-    \DontPrintSemicolon \SetKwInOut{Input}{Input}%
-      \SetKwInOut{Output}{Output}%
-      \Input{importance of current class across folds ${F}=(f_1,\dots,f_i)$, height $h$ \& width $w$ of rectangle, \& MAI threshold $\sigma$.}%
-      \Output{important areas ${C} = (x_{1}, y_{1}),(x_{2}, y_{2}),\dots,(x_{n}, y_{n})$ in an image per fold.}%
-      \BlankLine%
-     \For{$\mathit{fold} \in \mathit{FOLDS}$}{
-      ${A} \leftarrow \mathit{dict}()$ \tcp*{Importance of areas}\; 
-      \vspace{-4mm} 
-      ${S} \leftarrow \mathit{list}()$ \tcp*{Sorted areas by MAI}\; 
-      \vspace{-4mm} 
-      ${C} \leftarrow \mathit{list}()$ \tcp*{Important areas}\; 
-      \vspace{-4mm} 
-      \For {$h$}{ 
-        	\For {$w$}{ 
-    		$area \leftarrow {F}[h:h + \mathit{shape}[0], w:w + \mathit{shape}[1]]$ \tcp*{Area of image}\;
-    		\vspace{-4mm} 
-    		$impA \leftarrow 0$\tcp*{Importance of current area in the image}\;
-    		\vspace{-4mm} 
-    		\For {$\mathit{row} \in \mathit{area}$}{
-    		%\vspace{-4mm} 
-    			\For {$\mathit{imp} \in \mathit{row}$}{
-    			%\vspace{-4mm} 
-    			\If{$\mathit{imp} > \sigma$}{ \tcp*{If feature importance is greater than MAI}\;
-    			\vspace{-4mm} 
-    			    $\mathit{impA} += \mathit{imp} - \sigma$ \tcp*{Importance of area = current importance - MAI}\;
-    			    \vspace{-4mm}
-    			    }
-    			  }
-    		}
-            ${A}[\mathit{area}] = \mathit{impA}$ \tcp*{We update the importance of the area}
-    	     } 
-    	    }
-    	${S} \leftarrow \operatorname{sort}({A}, \mathit{reverse}=\mathit{true})$ \;
-    	\For {$a, i \in {S}$}{
-    	\If{$a \cap i = \empty$}{ \tcp*{Non-intersecting area with important areas}\;
-    		\vspace{-4mm} 
-        	${C} \leftarrow {C}  \cup a$ \tcp*{It's a new important area added to the list}\;
-        		\vspace{-4mm} 
-    	}}
-    	\textbf{Return} ${C}$
-     }
-     \caption{Identification of important areas}
-     \label{algo:imp_area_2}
-\end{algorithm*}
-\fi 
- %The idea is also to find the most important biomarkers by ranking them based on MAI threshold. 
-
-%\todo[inline]{update}
 \hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
-%In contrast, 
-%Shapley values are used to calculate the importance of a feature by comparing what a model predicts with and without a feature from all possible combinations of all the features in the dataset.% as described in \cref{subsubsec:FI_shap}. 
-%Shapley values are used to calculate the importance of a feature by comparing what a model predicts with and without a feature from all possible combinations of $n$ features in the dataset $S$. Given a GE value of feature $i \in S$, SHAP calculates the prediction $p$ of the model with $i$, followed by Shapely value $\phi$ calculation as follows~\cite{NIPS2017_7062}. 
-
-\iffalse
-\begin{align}
-    \phi_{i}(p)=\sum_{S \subseteq N / i} \frac{|S| !(n-|S|-1) !}{n !}(p(S \cup i)-p(S))
-    \label{eq:shap}
-\end{align}
-\fi 
-
-%\hspace*{3.5mm} However, since the order in which a model sees features can affect the predictions, this computation is repeated in all possible orders to compare the features fairly. Feature that have no effect on the predicted value are expected to produce a Shapley value of 0. However, if two features contribute equally to the prediction, the Shapley values should be the same~\cite{NIPS2017_7062}. 
 
 \section{Experiments}\label{chapter_5:results} 
 In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. The objective of the breast cancer subtype classification tasks is to observe the following:
