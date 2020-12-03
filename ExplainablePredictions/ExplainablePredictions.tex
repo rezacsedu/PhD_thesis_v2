@@ -330,7 +330,7 @@ The distributions of miRNA of somatic mutations samples are shown in \cref{table
 %In this subsection, we discuss the data preparation, network construction, training, followed by interpreting the network towards biomarkers identification.   
 
 \subsection{Unimodal CNN models}
-In this subsection, we discuss construction and training of the unimodal vanilla CNN and VGG16 models. Then we cover the detail of interpreting these black-box models. To show the effectiveness, only GE profiles are used to train each CNN architecture. Workflow of the overall approach is shown in \cref{fig:workflow_2D_CNN}.
+Unimodal CNN and VGG16 models are first constructed and trained as black-box models. Different probing techniques are then employed to improve their interpretability, as shown in  \cref{fig:workflow_2D_CNN}. 
 
 \begin{sidewaysfigure*}
 	\centering
@@ -340,22 +340,21 @@ In this subsection, we discuss construction and training of the unimodal vanilla
 \end{sidewaysfigure*}
 
 \subsubsection{Preprocessing}
-Since we are interested in finding the relations between instances, e.g., GE of a particular cohort in relation to other types tumors, we use the the normalized version of the `GE RNA-seq' data. The expression values are generated at UCSC by first combining `GE RNA-seq' values higher than that of all TCGA cohorts and then mean normalizing all values per gene. 
-%The data is subsequently divided into the 30-40\% types to make the distribution balanced across cancer types and can serve as a proxy of background distribution of GE. 
-To perform 2D  convolutional~(conv) operations, first we embed GE samples into 2D images in which GE values for each sample are reshaped from a 20,501$\times$1 array into a 144$\times$144 image by zero padding around the edges and normalized to [0,255].%, without losing any information.
+In order to find the relation between instances, e.g., GE of a particular cohort in relation to other types tumors. First, mean normalization per gene is performed for each modality data. Second, samples are embedded as 2D images\footnote{To perform 2D convolutional operations with ease} in which respective expression values. Each sample is reshaped from a 20,501$\times$1 array into a 144$\times$144 image by adding zero padding around the edges and normalized to [0,255].%, without losing any information.
+
+%The pooling layer is calculated by down-sampling the convolutional layer by taking the maximum value in each non-overlapping sub-region. 
 
 \subsubsection{Network construction and training}
-%However, prior applying the convolutional~(conv) operations, similar to \cref{chapter:uni_modality}, we first embed the samples into 2D images in which respective features for each sample are transformed into gray-scale image by zero padding around the edges and normalized to [0,255]. All the images are then normalized to [0,255], without losing any information. 
-Both vanilla CNN and VGG16 architectures are trained from scratch alongside data augmentation in which the output of each convolutional layer is passed to dropout and Gaussian noise layer to avoid overfitting and thus regularize the learning~\cite{vardropout}. This involves the input feature space into a lower-dimensional representation, which is then further down-sampled by two different pooling layers and a max-pooling layer~(MPL) by setting the pool size. The output of an MPL is considered as an `extracted feature' from each 2D GE image. Since each MPL `flattens' the output space by taking the highest value in a FM, this produces a sequence vector from the last convolutional layer, which we expect to force the GE value of specific genes that are highly indicative of being responsible for a specific cancer type. Then this vector is passed through another dropout, and then softmax layers for the probability distribution over the classes.
+As shown in \cref{fig:clstm2}, both vanilla CNN and VGG16 architectures are constructed and trained from scratch, in a similar fashion. In either network training, output of a convolutional layer is first passed through a dropout layer to avoid possible overfitting~\cite{vardropout}. To down sample the output~(lower-level feature space) of a convolutional layer into lower dimensional representation, two max pooling layers~(MPL) are placed, by setting different filter size. Output of an MPL can be considered as `extracted features' from 2D image samples. Since an MPL flattens the output space by taking the highest value in each convolutional feature map, more abstract features are learned by the last MPL. This can be thought as the feature selection process for finding highly indicative driver genes responsible for specific cancer types.
 
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.55]{images/clstm.PNG}
     \caption[Schematic representation of CNN-based approach]{Schematic representation of CNN-based approach, which starts by taking a raw GE sample as input and passing it through convolutional and pooling layers to generate rectified convolutional feature maps. Feature maps are then passed through fully connected softmax layer for classification. Guided back-propagation and Grad-CAM++ are applied to identify important important genes w.r.t pixel values.}	
-	\label{fig:clstm}
+	\label{fig:clstm2}
 \end{figure*}
 
-\hspace*{3.5mm} Besides, VGG16 is also trained from scratch instead of initializing it's network weight from pretrained models. The reason is that, for example, ImageNet contains photos of general objects, which would activate the internal representation of network's hidden layers with geometrical forms, colorful patterns, or irrelevant shapes that are usually not present in genomics datasets~\cite{Karim2020DeepCOVIDExplainer}. Both CNN architectures are trained with gradient-based AdaGrad optimizer, which optimizes the following categorical cross-entropy~(CE) loss: 
+\hspace*{3.5mm} Finally, 2D feature maps from MPL are flattened and transform into feature vector, which is fed into a fully connected softmax layer~(FCL). A FCL consist of 3 dense, a dropout, and a softmax layers. It is to be noted that weights for none of these networks were not initialized from any pretrained models. The reason is that deep CNN architectures are usually trained from ImageNet, which contains photos of general objects. Subsequently, internal representation of network's hidden layers will be activated with geometrical forms, colorful patterns, or irrelevant shapes that are usually not present in genomics datasets. Both vanilla CNN and the VGG16 architectures are trained with gradient-based AdaGrad optimizer, which optimizes the following categorical cross-entropy~(CE) loss: 
 
 \begin{equation} 
     L_{ce}=-\sum_{m=1}^{C} y_{k} \log \left(\hat{y}_{k}\right)
@@ -365,56 +364,51 @@ Both vanilla CNN and VGG16 architectures are trained from scratch alongside data
 
 %Since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through random search and 5-fold cross-validation tests. 
 
-\begin{figure*}[h]
-	\centering
-	\includegraphics[scale=0.8]{images/3_mode.png}
-	\caption[Heat map examples for a single cancer type prediction]{Heat map examples for a single cancer type prediction, where the image-pixel of specific biomarkers are highlighted by probing the network with Grad-CAM, Grad-CAM++, and LRP.} 
-	\label{fig:3hms}
-\end{figure*}
-
 \subsubsection{Interpreting black-box CNN models}
-Since the data is very high dimensional, we chose not to go for manual feature selection. Rather, we let both CNN and VGG16 networks extract the most important features. \Cref{algo:hm} and \ref{algo:imp_area} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. We averaged all the normalized HM from the same class to generate a class-specific HM inspired by Selvaraju et al.~\cite{mostavi2019convolutional,karim2019onconetexplainer}. Since GradCAM++ requires all the samples to run through the network once, we let the trained CNN models set and record the activation maps in the forward pass, and the gradient maps in the back-propagation phase to collect the HM for each sample from the trained model. A higher intensity pixel represents a higher significance to the final prediction, which indicates higher importance of corresponding genes and GE values. Top genes are then selected based on the intensity rankings and MAI threshold. 
+Data for each modality is high dimensional, where majority of features~(genes) are not responsible for cancer, making them irrelevant for the cancer type classification. Therefore, it is more reasonable to probe both CNN and VGG16 networks to leverage the biomarker identification~(most important features). \Cref{algo:hm} and \ref{algo:imp_area} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. Inspired by the Grad-CAM based probing technique by Selvaraju et al.~\cite{mostavi2019convolutional}, all the normalized HMs from the same class are averaged to generate a class-specific HM. 
+
+Since Grad-CAM++ requires all the samples to run through the network once, activation maps are set and recorded in the forward pass. On the other hand, to collect the HM for each sample, gradient maps are generated in the backward pass~(during back-propagation). A higher intensity pixel in a HM signifies higher importance of corresponding gene and it's value to the final prediction. Top genes are then selected based on the intensity rankings and MAI threshold. 
 
 \begin{algorithm*}[h]
 \small
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
       \SetKwInOut{Output}{Output}%
-      \Input{2D GE images $\mathcal{D}=(d_1,d_2,\dots,d_n)$ having ground truth~(i.e., labels) $\mathcal{L}=(l_1,l_2,\dots,l_j)$ on which a CNN model is trained for each fold $\mathcal{M}=(m_1,m_2,\dots,m_i)$ to find $k$ for top-k genes that satisfy MAI threshold.}%
-      \Output{feature importance $\mathcal{F}=(f_1,i_1)(f_2,i_2),\dots,(f_n, i_n)$ and top features $\mathcal{T}$ across all images per fold per class.}%
+      \Input{2D images ${X_k}=(d_1,d_2,\dots,d_n)$ for $k$ input modality, labels ${L}=(l_1,l_2,\dots,l_n)$ on which a CNN model is trained for each fold ${M}=(m_1,m_2,\dots,m_i)$.}%
+      \Output{feature importance ${F}=(f_1,i_1),\dots,(f_n, i_n)$, top features ${T}$ for all images per fold per class.}%
       \BlankLine%
-     \For{$\mathit{fold} \in \mathit{FOLDS}$}{
-       $\mathcal{P} \leftarrow  \{\}$ \tcp*{Guided backprop for each image per fold per class}\; 
+     \For{$\mathit{m} \in \mathit{M}$}{
+       ${P} \leftarrow  \{\}$ \tcp*{Guided backprop for each image per fold per class}\; 
       \vspace{-4mm} 
-       $\mathcal{K} \leftarrow  \{\}$ \tcp*{GradCAM++(GCAM) for all images per fold per class}\; 
+       ${K} \leftarrow  \{\}$ \tcp*{Grad-CAM++(GCAM) for all images per fold per class}\; 
       \vspace{-4mm} 
-       $\mathcal{I} \leftarrow  \{\}$ \tcp*{GCAM of each image in a fold}\; 
+       ${I} \leftarrow  \{\}$ \tcp*{GCAM of each image in a fold}\; 
       \vspace{-4mm} 
-      $\mathcal{G} \leftarrow  \{\}$ \tcp*{GCAM for all images per fold per class}\; 
+      ${G} \leftarrow  \{\}$ \tcp*{GCAM for all images per fold per class}\; 
       \vspace{-4mm} 
-      $\mathcal{F} \leftarrow  \{\}$ \tcp*{Feature importance of each gene per class per fold}\; 
+      ${F} \leftarrow  \{\}$ \tcp*{Feature importance of each gene per class per fold}\; 
       \vspace{-4mm} 
-      $\mathcal{T} \leftarrow  \{\}$ \tcp*{Top genes and importance per class per fold}\; 
+      ${T} \leftarrow  \{\}$ \tcp*{Top genes and importance per class per fold}\; 
       	\vspace{-4mm} 
-      	\For {$d \in \mathcal{D}$}{ 
-    		$\mathcal{K} \leftarrow \mathit{gradCAM++}(m_{d}, d, l_d)$ \tcp*{GCAM of images per fold per class}\;
+      	\For {$d \in {X_k}$}{ 
+    		${K} \leftarrow \mathit{gradCAM++}(m, d, l)$ \tcp*{GCAM of an image per fold per class}\;
     		\vspace{-4mm} 
-    		$\mathcal{P} \leftarrow \mathit{guidedBackprop}(m_{d}, d)$ \tcp*{Guided backprop of each image}\;
+    		${P} \leftarrow \mathit{guidedBackprop}(m, d)$ \tcp*{Guided backprop of an image}\;
     		\vspace{-4mm} 
-    		$\mathcal{I} \leftarrow \mathcal{K} * \mathcal{P}$ \tcp*{GCAM of each image}\;
+    		${I} \leftarrow {K} * {P}$ \tcp*{GCAM for an image}\;
     		\vspace{-4mm} 
-    		$\mathcal{G} \leftarrow \mathcal{G}\cup \mathcal{I}$ \tcp*{GCAM for all the images in fold}\;
+    		${G} \leftarrow {G}\cup {I}$ \tcp*{GCAM for all the images in a fold}\;
     		\vspace{-4mm} 
     	    } 
-    	$\mathcal{F} \leftarrow \frac{1}{N}\sum_{i=1}^N \mathcal{G}$ \tcp*{Mean absolute impact for genes for axis=0}\;
+    	${F} \leftarrow \frac{1}{M}\sum_{i=1}^M {G_i}$ \tcp*{Mean absolute impact for genes for axis=0}\;
     	\vspace{-4mm} 
     	\If{$F_i < \sigma $}{ \tcp*{If the feature importance is less than MAI}\;
     	\vspace{-4mm} 
-        	$\mathcal{F} \leftarrow  F - F_i$ \tcp*{Pop off insignificant genes}\;
+        	${F} \leftarrow  F - F_i$ \tcp*{Pop off insignificant genes}\;
         	\vspace{-4mm} 
-        	$\mathcal{T} \leftarrow  \operatorname{sort}_k(F)$ \tcp*{Sort and choose top genes based on MAI}\;
+        	${T} \leftarrow  \operatorname{sort}_k(F)$ \tcp*{Sort and choose top genes based on MAI}\;
         	\vspace{-4mm} 
     	}
-    	\textbf{Return} $\mathcal{F}, \mathcal{T}$
+    	\textbf{Return} ${F}, {T}$
      }
     \caption{Computing feature importance and ranking genes}
      \label{algo:hm}
@@ -423,19 +417,19 @@ Since the data is very high dimensional, we chose not to go for manual feature s
 \small
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
       \SetKwInOut{Output}{Output}%
-      \Input{importance of current class across folds $\mathcal{F}=(f_1,\dots,f_i)$, height $h$ \& width $w$ of rectangle, \& MAI threshold $\sigma$.}%
-      \Output{important areas $\mathcal{C} = (x_{1}, y_{1}),(x_{2}, y_{2}),\dots,(x_{n}, y_{n})$ in an image per fold.}%
+      \Input{importance of current class across folds ${F}=(f_1,\dots,f_i)$, height $h$ and width $w$ of rectangle, and MAI threshold $\sigma$.}%
+      \Output{important areas ${C} = (x_{1}, y_{1}),(x_{2}, y_{2}),\dots,(x_{n}, y_{n})$ in an image per fold.}%
       \BlankLine%
-     \For{$\mathit{fold} \in \mathit{FOLDS}$}{
-      $\mathcal{A} \leftarrow \mathit{dict}()$ \tcp*{Importance of areas}\; 
+     \For{$\mathit{m} \in \mathit{M}$}{
+      ${A} \leftarrow \mathit{dict}()$ \tcp*{Importance of areas}\; 
       \vspace{-4mm} 
-      $\mathcal{S} \leftarrow \mathit{list}()$ \tcp*{Sorted areas by MAI}\; 
+      ${S} \leftarrow \mathit{list}()$ \tcp*{Sorted areas by MAI}\; 
       \vspace{-4mm} 
-      $\mathcal{C} \leftarrow \mathit{list}()$ \tcp*{Important areas}\; 
+      ${C} \leftarrow \mathit{list}()$ \tcp*{Important areas}\; 
       \vspace{-4mm} 
       \For {$h$}{ 
         	\For {$w$}{ 
-    		$area \leftarrow \mathcal{F}[h:h + \mathit{shape}[0], w:w + \mathit{shape}[1]]$ \tcp*{Area of image}\;
+    		$area \leftarrow {F}[h:h + \mathit{shape}[0], w:w + \mathit{shape}[1]]$ \tcp*{Area of image}\;
     		\vspace{-4mm} 
     		$impA \leftarrow 0$\tcp*{Importance of current area in the image}\;
     		\vspace{-4mm} 
@@ -450,37 +444,44 @@ Since the data is very high dimensional, we chose not to go for manual feature s
     			    }
     			  }
     		}
-            $\mathcal{A}[\mathit{area}] = \mathit{impA}$ \tcp*{We update the importance of the area}
+            ${A}[\mathit{area}] = \mathit{impA}$ \tcp*{We update the importance of the area}
     	     } 
     	    }
-    	$\mathcal{S} \leftarrow \operatorname{sort}(\mathcal{A}, \mathit{reverse}=\mathit{true})$ \;
-    	\For {$a, i \in \mathcal{S}$}{
+    	${S} \leftarrow \operatorname{sort}({A}, \mathit{reverse}=\mathit{true})$ \;
+    	\For {$a, i \in {S}$}{
     	\If{$a \cap i = \empty$}{ \tcp*{Non-intersecting area with important areas}\;
     		\vspace{-4mm} 
-        	$\mathcal{C} \leftarrow \mathcal{C}  \cup a$ \tcp*{It's a new important area added to the list}\;
+        	${C} \leftarrow {C}  \cup a$ \tcp*{It's a new important area added to the list}\;
         		\vspace{-4mm} 
     	}}
-    	\textbf{Return} $\mathcal{C}$
+    	\textbf{Return} ${C}$
      }
      \caption{Identification of important areas}
      \label{algo:imp_area}
 \end{algorithm*}
 
  %The idea is also to find the most important biomarkers by ranking them based on MAI threshold. 
-\hspace*{3.5mm} However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, for trained CNN models, LRP-based heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. Sometimes features that seem to have lower importance for a bad model could be very important for a better fitted model. In other words,  permutation importance does not necessarily reflect to the intrinsic predictive value of a feature by itself, albeit it signifies how important this feature is for a particular model. Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. 
+\hspace*{3.5mm} However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, for trained CNN models, LRP-based heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. Sometimes features that seem to have lower importance for a bad model could be very important for a better fitted model. In other words,  permutation importance does not necessarily reflect to the intrinsic predictive value of a feature by itself, albeit it signifies how important this feature is for a particular model. 
 
-\hspace*{3.5mm} In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $m$. For the dataset $D$, the reference `accuracy' score $s$ is computed. For each feature $x_j$ and for each repetition $k$ in $1, 2, \ldots, K$, column $j$ is randomly shuffled to generate a corrupted version of the data - say $\tilde{D}_{k,j}$. Then the score $s_{k,j}$ is computed, followed by computing the mean importance $i_{j}$ of $x_{j}$ is computed as follows~\cite{SHAP}:
+\begin{figure*}
+	\centering
+	\includegraphics[scale=0.8]{images/3_mode.png}
+	\caption[Heat map examples for a single cancer type prediction]{Heat map examples for a single cancer type prediction, where the image-pixel of specific biomarkers are highlighted by probing the network with Grad-CAM, Grad-CAM++, and LRP.} 
+	\label{fig:3hms}
+\end{figure*}
+
+\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $m$. For the dataset $X_k$, the reference `accuracy' score $s$ is computed. For each feature $x_i$ and for each repetition $p$ in $1, 2, \ldots, P$, column $i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X}_{p,i}$. Score $s_{p,i}$ is then computed, followed by the calculation of mean importance $I_{i}$ of $x_{i}$, as follows~\cite{SHAP}:
 
 \vspace{-2mm}
 \begin{align}
-    i_{j}=s-\frac{1}{K} \sum_{k=1}^{K} s_{k,j}
+    I_{i}=s-\frac{1}{P} \sum_{p=1}^{P} s_{p,i}
 \end{align}
 
-\hspace*{3.5mm} Besides, SHAP is used to compute the importance of a feature $x_i$ w.r.t Shapley values $\phi$, by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in the dataset $D$. For $x_i$, prediction $p$ and $\phi$ for $i$ are then as~\cite{NIPS2017_7062}. 
+\hspace*{3.5mm} Besides, SHAP is used to compute the importance of a feature $x_i$ w.r.t Shapley values $\phi$, by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in the dataset $X_k$. For $x_i$, prediction $\hat x_i$ and $\phi$ for $i$ are then calculated, as follows~\cite{NIPS2017_7062}. 
 
 \vspace{-2mm}
 \begin{align}
-    \phi_{i}(p)=\sum_{D \subseteq N / i} \frac{|D| !(n-|D|-1) !}{n !}(p(D \cup i)-p(D))
+    \phi_{i}(\hat x_i)=\sum_{X_k \subseteq N / i} \frac{|X_k| !(n-|X_k|-1) !}{n !}(\hat x_i(X_k \cup i)-\hat x_i(X_k))
     \label{eq:shap}
 \end{align}
 
@@ -725,42 +726,42 @@ Majority of the approaches based on multimodal learning directly merge the learn
 \small
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
       \SetKwInOut{Output}{Output}%
-      \Input{2D GE images $\mathcal{D}=(d_1,d_2,\dots,d_n)$ having ground truth~(i.e., labels) $\mathcal{L}=(l_1,l_2,\dots,l_j)$ on which a CNN model is trained for each fold $\mathcal{M}=(m_1,m_2,\dots,m_i)$ to find $k$ for top-k genes that satisfy MAI threshold.}%
-      \Output{feature importance $\mathcal{F}=(f_1,i_1)(f_2,i_2),\dots,(f_n, i_n)$ and top features $\mathcal{T}$ across all images per fold per class.}%
+      \Input{2D GE images ${D}=(d_1,d_2,\dots,d_n)$ having ground truth~(i.e., labels) ${L}=(l_1,l_2,\dots,l_j)$ on which a CNN model is trained for each fold ${M}=(m_1,m_2,\dots,m_i)$ to find $k$ for top-k genes that satisfy MAI threshold.}%
+      \Output{feature importance ${F}=(f_1,i_1)(f_2,i_2),\dots,(f_n, i_n)$ and top features ${T}$ across all images per fold per class.}%
       \BlankLine%
      \For{$\mathit{fold} \in \mathit{FOLDS}$}{
-       $\mathcal{P} \leftarrow  \{\}$ \tcp*{Guided backprop for each image per fold per class}\; 
+       ${P} \leftarrow  \{\}$ \tcp*{Guided backprop for each image per fold per class}\; 
       \vspace{-4mm} 
-       $\mathcal{K} \leftarrow  \{\}$ \tcp*{GradCAM++(GCAM) for all images per fold per class}\; 
+       ${K} \leftarrow  \{\}$ \tcp*{GradCAM++(GCAM) for all images per fold per class}\; 
       \vspace{-4mm} 
-       $\mathcal{I} \leftarrow  \{\}$ \tcp*{GCAM of each image in a fold}\; 
+       ${I} \leftarrow  \{\}$ \tcp*{GCAM of each image in a fold}\; 
       \vspace{-4mm} 
-      $\mathcal{G} \leftarrow  \{\}$ \tcp*{GCAM for all images per fold per class}\; 
+      ${G} \leftarrow  \{\}$ \tcp*{GCAM for all images per fold per class}\; 
       \vspace{-4mm} 
-      $\mathcal{F} \leftarrow  \{\}$ \tcp*{Feature importance of each gene per class per fold}\; 
+      ${F} \leftarrow  \{\}$ \tcp*{Feature importance of each gene per class per fold}\; 
       \vspace{-4mm} 
-      $\mathcal{T} \leftarrow  \{\}$ \tcp*{Top genes and importance per class per fold}\; 
+      ${T} \leftarrow  \{\}$ \tcp*{Top genes and importance per class per fold}\; 
       	\vspace{-4mm} 
-      	\For {$d \in \mathcal{D}$}{ 
-    		$\mathcal{K} \leftarrow \mathit{gradCAM++}(m_{d}, d, l_d)$ \tcp*{GCAM of images per fold per class}\;
+      	\For {$d \in {D}$}{ 
+    		${K} \leftarrow \mathit{gradCAM++}(m_{d}, d, l_d)$ \tcp*{GCAM of images per fold per class}\;
     		\vspace{-4mm} 
-    		$\mathcal{P} \leftarrow \mathit{guidedBackprop}(m_{d}, d)$ \tcp*{Guided backprop of each image}\;
+    		${P} \leftarrow \mathit{guidedBackprop}(m_{d}, d)$ \tcp*{Guided backprop of each image}\;
     		\vspace{-4mm} 
-    		$\mathcal{I} \leftarrow \mathcal{K} * \mathcal{P}$ \tcp*{GCAM of each image}\;
+    		${I} \leftarrow {K} * {P}$ \tcp*{GCAM of each image}\;
     		\vspace{-4mm} 
-    		$\mathcal{G} \leftarrow \mathcal{G}\cup \mathcal{I}$ \tcp*{GCAM for all the images in fold}\;
+    		${G} \leftarrow {G}\cup {I}$ \tcp*{GCAM for all the images in fold}\;
     		\vspace{-4mm} 
     	    } 
-    	$\mathcal{F} \leftarrow \frac{1}{N}\sum_{i=1}^N \mathcal{G}$ \tcp*{Mean absolute impact for genes for axis=0}\;
+    	${F} \leftarrow \frac{1}{N}\sum_{i=1}^N {G}$ \tcp*{Mean absolute impact for genes for axis=0}\;
     	\vspace{-4mm} 
     	\If{$F_i < \sigma $}{ \tcp*{If the feature importance is less than MAI}\;
     	\vspace{-4mm} 
-        	$\mathcal{F} \leftarrow  F - F_i$ \tcp*{Pop off insignificant genes}\;
+        	${F} \leftarrow  F - F_i$ \tcp*{Pop off insignificant genes}\;
         	\vspace{-4mm} 
-        	$\mathcal{T} \leftarrow  \operatorname{sort}_k(F)$ \tcp*{Sort and choose top genes based on MAI}\;
+        	${T} \leftarrow  \operatorname{sort}_k(F)$ \tcp*{Sort and choose top genes based on MAI}\;
         	\vspace{-4mm} 
     	}
-    	\textbf{Return} $\mathcal{F}, \mathcal{T}$
+    	\textbf{Return} ${F}, {T}$
      }
     \caption{Computing feature importance and ranking genes}
      \label{algo:hm_2}
@@ -770,19 +771,19 @@ Majority of the approaches based on multimodal learning directly merge the learn
 \small
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
       \SetKwInOut{Output}{Output}%
-      \Input{importance of current class across folds $\mathcal{F}=(f_1,\dots,f_i)$, height $h$ \& width $w$ of rectangle, \& MAI threshold $\sigma$.}%
-      \Output{important areas $\mathcal{C} = (x_{1}, y_{1}),(x_{2}, y_{2}),\dots,(x_{n}, y_{n})$ in an image per fold.}%
+      \Input{importance of current class across folds ${F}=(f_1,\dots,f_i)$, height $h$ \& width $w$ of rectangle, \& MAI threshold $\sigma$.}%
+      \Output{important areas ${C} = (x_{1}, y_{1}),(x_{2}, y_{2}),\dots,(x_{n}, y_{n})$ in an image per fold.}%
       \BlankLine%
      \For{$\mathit{fold} \in \mathit{FOLDS}$}{
-      $\mathcal{A} \leftarrow \mathit{dict}()$ \tcp*{Importance of areas}\; 
+      ${A} \leftarrow \mathit{dict}()$ \tcp*{Importance of areas}\; 
       \vspace{-4mm} 
-      $\mathcal{S} \leftarrow \mathit{list}()$ \tcp*{Sorted areas by MAI}\; 
+      ${S} \leftarrow \mathit{list}()$ \tcp*{Sorted areas by MAI}\; 
       \vspace{-4mm} 
-      $\mathcal{C} \leftarrow \mathit{list}()$ \tcp*{Important areas}\; 
+      ${C} \leftarrow \mathit{list}()$ \tcp*{Important areas}\; 
       \vspace{-4mm} 
       \For {$h$}{ 
         	\For {$w$}{ 
-    		$area \leftarrow \mathcal{F}[h:h + \mathit{shape}[0], w:w + \mathit{shape}[1]]$ \tcp*{Area of image}\;
+    		$area \leftarrow {F}[h:h + \mathit{shape}[0], w:w + \mathit{shape}[1]]$ \tcp*{Area of image}\;
     		\vspace{-4mm} 
     		$impA \leftarrow 0$\tcp*{Importance of current area in the image}\;
     		\vspace{-4mm} 
@@ -797,17 +798,17 @@ Majority of the approaches based on multimodal learning directly merge the learn
     			    }
     			  }
     		}
-            $\mathcal{A}[\mathit{area}] = \mathit{impA}$ \tcp*{We update the importance of the area}
+            ${A}[\mathit{area}] = \mathit{impA}$ \tcp*{We update the importance of the area}
     	     } 
     	    }
-    	$\mathcal{S} \leftarrow \operatorname{sort}(\mathcal{A}, \mathit{reverse}=\mathit{true})$ \;
-    	\For {$a, i \in \mathcal{S}$}{
+    	${S} \leftarrow \operatorname{sort}({A}, \mathit{reverse}=\mathit{true})$ \;
+    	\For {$a, i \in {S}$}{
     	\If{$a \cap i = \empty$}{ \tcp*{Non-intersecting area with important areas}\;
     		\vspace{-4mm} 
-        	$\mathcal{C} \leftarrow \mathcal{C}  \cup a$ \tcp*{It's a new important area added to the list}\;
+        	${C} \leftarrow {C}  \cup a$ \tcp*{It's a new important area added to the list}\;
         		\vspace{-4mm} 
     	}}
-    	\textbf{Return} $\mathcal{C}$
+    	\textbf{Return} ${C}$
      }
      \caption{Identification of important areas}
      \label{algo:imp_area_2}
