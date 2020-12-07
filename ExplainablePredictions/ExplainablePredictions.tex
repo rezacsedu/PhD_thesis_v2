@@ -470,12 +470,20 @@ Data for each modality is high dimensional, where majority of features~(genes) a
 	\label{fig:3hms}
 \end{figure*}
 
-\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance are computed on top of the trained model $f_k$. For the dataset $X_k$, the reference `accuracy' score $Acc$ is computed. For each feature $x_i$ and for each repetition $p$ in $1, 2, \ldots, P$, column $i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X}_{p,i}$. Score $Acc_{p,i}$ is then computed, followed by the calculation of mean importance $I_{i}$ of $x_{i}$, as follows~\cite{SHAP}:
+\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is then computed as follows: 
+
+\begin{align}
+    \sigma_{x_i}=s-\frac{1}{R} \sum_{r=1}^{R} s_{r,x_i}
+\end{align}
+
+\iffalse
+Using ELI5, permutation feature importance are computed on top of the trained model $f_k$. For the dataset $X_k$, the reference `accuracy' score $Acc$ is computed. For each feature $x_i$ and for each repetition $p$ in $1, 2, \ldots, P$, column $i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X}_{p,i}$. Score $Acc_{p,i}$ is then computed, followed by the calculation of mean importance $I_{i}$ of $x_{i}$, as follows~\cite{SHAP}:
 
 \vspace{-2mm}
 \begin{align}
     I_{i}=s-\frac{1}{P} \sum_{p=1}^{P} s_{p,i}
 \end{align}
+\fi 
 
 \hspace*{3.5mm} Although, permutation feature importance  provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself. In other words, there is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. Therefore, using SHAP, the computation is repeated in all possible orders to compare the features fairly. 
 
@@ -534,21 +542,26 @@ Although a single and simple AE discussed in \cref{preli:AEs} can reconstruct an
 \fi 
 
 \subsection{Construction and training of MCAE}
-Although a single and simple CAE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). In contrast, weights of the encoder learn from both clean, unsupervised data with no labels, and noisy supervised data with missing modalities, leveraging as much of the available data as possible. Nevertheless, difference w.r.t dimensionality among modalities are pretty large. For example, GE data come with about 60,000 features, but miRNA has only 1,800 features. This non-trivial challenge in modality specific representation learning is enough motivation towards multimodal representation learning and classification, given that an individual latent representation is require to have the same dimensionality~\cite{mmdcae}.
+Although a single and simple AE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). Weights of a encoder module is learned from both non-corrupted and unlabeled data. Subsequently, noisy supervised data with missing modalities is not suitable for learning latent features. Nevertheless, difference w.r.t dimensionality among input modalities are pretty large. For example, sometimes GE data come with about 20,000 features, but miRNA has only 5000 features. Non-trivial challenge in modality specific representation learning and limitations of MAE architecture are enough motivations to employ multimodal representation learning and classification based on multimodal CAE architecture~(MCAE). 
 
-%\subsubsection{Network construction}
-\hspace*{3.5mm} The MCAE architecture depicted in \cref{fig:slr_1} is used to generate the shared representation for all input modalities, instead of one latent representation for each input modality. From network topological point of view, MCAE creates hierarchical hidden units, which have strong connections between nodes not only for individual modality, but also across the modalities. Training MCAE involves pre-training to leverage the representation learning, followed by supervised fine-tuning on learned representation. 
+\hspace*{3.5mm} Although CNNs are known as effective feature extractors, instead of using manually engineered convolutional filters in CNN, convolutional and pooling layers can be stacked together to construct a stacked convolutional autoencoder~(CAE), to leverage better feature extraction capability~\cite{alirezaie2019semantic}. This makes CAE, compared to vanilla AE based multimodal learning, more effective for very high dimensional data. In particular, CAE learns more optimal filters by minimizing the reconstruction loss, which results in more abstract features from the encoder~(e.g., pixel-level features from images, when genomic samples are embedded into 2D pixel-space~\cite{mostavi2019convolutional}). This helps to stabilize the pretraining. Subsequently, the network converges faster by avoid corruption in feature space~\cite{guo2017deep}. 
+
+\hspace*{3.5mm} Since individual latent representation is require to have the same dimensionality~\cite{mmdcae}, MCAE architecture depicted in \cref{fig:slr_1} is used to generate a combined representation for all input modalities, instead of one latent representation for each input modality. From network topological point of view, MCAE creates hierarchical hidden units by stacking multiple CAEs, which have strong connections between nodes not only for individual modality, but also across the modalities. Training MCAE involves pre-training to leverage the representation learning, followed by supervised fine-tuning on learned representation. 
 
 \subsubsection{Unsupervised pertaining of MCAE} 
 Pre-training is similar to training a two-stage CAE network: first stage represents modality specific learning. The second stage corresponds to cross-modality. Pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual CAEs. 
 
-\paragraph{Stage-1: individual modality}\hspace{-3mm} of MCAE represents a specific modality for each type of data. Individual modality CAE is not only a one-layer CAE, but also a multilayer and gradually shrinking CAE with different number of layers per modality. An CAE consist of two sub-networks called encoder and decoder.  Encoder is a sigmoid function $g(.)$ parameterized by $\phi$, while decoder function $f(.)$ is parameterized by $\theta$. For input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ modalities, encoder encodes the input into a lower-dimensional code, such that $X_{k}$ is mapped and transformed into embedding space~($Z_k$). If $p$ and $n$ are number of hidden and input units, latent-space representation $Z_k=g_{\phi}(X_{k})$ is learned in the bottleneck layer~\cite{mmdcae}: 
+\paragraph{Stage-1: individual modality}\hspace{-3mm} of MCAE represents a specific modality for each type of data. Individual modality CAE is not only a one-layer CAE, but also a multilayer and gradually shrinking CAE with different number of layers per modality. An CAE consist of two sub-networks called encoder and decoder. Each layer of CAE consists of an encoder, that performs convolution and pooling, and a decoder that performs unpooling and deconvolution operations. More technically, encoder is a sigmoid function $g(.)$ parameterized by $\phi$, while decoder function $f(.)$ is parameterized by $\theta$. 
+
+\hspace*{3.5mm} Assuming input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ modalities is consisting of $n$ samples, a convolutional layer first calculates the convolutional feature map. Max-pooling operation is then performed, which downsamples the output of the convolutional layer by taking the maximum value in each non-overlapping sub-region. Thus, $X_{k}$ is mapped and transformed into a lower-dimensional embedding space, $Z_k$. Assuming, $p$ and $p$ are number of input and hidden units, respectively, latent-space representation $Z_k=g_{\phi}(X_{k})$ is learned in the bottleneck layer~\cite{mmdcae}: 
 
 \begin{equation}
-    Z_k = h_{k}=g_\phi \left({X}_{k}\right)=\sigma\left(W_{k} * X_{k}+b_{k}\right)
+    Z_k = h_{k}=g_\phi \left({X}_{k}\right)=\sigma\left(W_{k} \oslash X_{k}+b_{k}\right),
+    \label{eq:fcuk_1}
 \end{equation}
 
-\hspace*{3.5mm} where $\phi$ are trainable parameters, which includes the weight matrix $W_{k} \in \mathbb{R}^{n \times p}$ and the bias vector $b_{k} \in \mathbb{R}^{n}$ that are specific to respective modality $k$, and $\sigma$ is the exponential linear unit~(ELU)~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}, which is defined as~\cite{clevert2015fast}: 
+\hspace*{3.5mm}. Technically, the final feature maps $Z_k$ are latent variables, specific to modality $k$. In \cref{eq:fcuk_1}, where $\phi$ are trainable parameters~(which include a weight matrix $W_{k} \in \mathbb{R}^{p \times q}$ and a bias vector $b_{k} \in \mathbb{R}^{q}$ that are specific to respective modality $k$), $\oslash$ is the convolutional operation, and $\sigma$ is the exponential linear unit~(ELU)~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}, which is defined as~\cite{clevert2015fast}: 
+
 \begin{equation}
     ELU_{\alpha_r}(X_k)=\left\{\begin{array}{ll}
     \alpha_r(\exp (x)-1) & \text { if } x<0 \\
@@ -556,7 +569,7 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
     \end{array}\right.
 \end{equation}
 
-\hspace*{3.5mm} where $\alpha_r$ is the regularization weights. The decoder tries to reconstruct from $h_k$, original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
+\hspace*{3.5mm} where $\alpha_r$ is the regularization weights. Decoder module reconstructs from $h_k$, the original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
 
 \begin{equation}
     \hat{X_k}=f_{\theta}\left(Z_k\right)=f_{\theta}\left(g_{\phi}({X_k})\right) \label{eq:mcae_eq_1},
@@ -565,35 +578,35 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
 \hspace*{3.5mm} where parameters $(\theta,\phi)$ are jointly learned to output a reconstructed version of the original input. This is analogous to learn an identity function, such that $\hat{X_k} \approx f_{\theta}\left(g_{\phi}({X_k})\right)$, i.e., $f_{\theta}\left(g_{\phi}({X_k})\right)$ is equivalent to $\Psi \left(\hat W_k * h_k + \hat b_{k}\right)$. Therefore,  \cref{eq:mcae_eq_1} is changed to following form: 
 
 \begin{equation}
-    \hat{X_k}=\Psi \left(\hat W_k * h_k + \hat b_{k}\right),
+    \hat{X_k}=\Psi \left(\hat W_k \odot h_k + \hat b_{k}\right),
 \end{equation}
 
-\hspace*{3.5mm} where $\theta$ are trainable parameters, including weight matrix $\hat W_{k} \in \mathbb{R}^{n \times p}$ and bias vector $\hat b_{k}$, that are specific to modality $k$, and $\Psi$ is sigmoid activation function. Distance measure~($d_{k}$) that quantifies difference between input $X_{k}$ and network's output $f_\theta(X_{k})$, is a typical reconstruction loss~\cite{KarimIEEEAccess2019}: 
+\hspace*{3.5mm} where $\odot$ is the de-convolutional operation, $\theta$ are trainable parameters~i.e., weight matrix $\hat W_{k} \in \mathbb{R}^{n \times p}$ and bias vector $\hat b_{k}$) specific to modality $k$, and $\Psi$ is sigmoid activation function. The decoder module has a similar gradual increasing architecture as an encoder, where both unpooling and deconvolution operations are performed. The unpooling is performed with switch variables such that it remembers the position of the maximum value during the max-pooling operation. More technically, within each neighborhood of $Z_k$, both the value and location of the maximum element are recorded: pooled maps store the values, while switches record the locations. Distance measure~($d_{k}$) that quantifies difference between input $X_{k}$ and network's output $f_\theta(X_{k})$, is used as a typical reconstruction loss, assuming $X_k$ consists of $n$ samples~\cite{KarimIEEEAccess2019}: 
 
 \begin{equation}
-    L_{\mathrm{k}}(\theta, \phi)=\text{$d_{k}$}(X_{k}, f(X_{k}) = \sum_{i} \left\|X_{k}-f(X_{k})\right\|^{2}.
+    L_{\mathrm{k}}(\theta, \phi)=\text{$d_{k}$}(X_{k}, f(X_{k}) = \sum_{i=1}^{n} \left\|X_{k}-f(X_{k})\right\|^{2}.
     %\label{eq:Loss1}
 \end{equation}
 
 \hspace*{3.5mm} Above loss is iteratively optimized. Replacing $f(X_{k})$ with $\hat{X}_{k}$, above equation is changed to: 
 
 \begin{equation}
-    L_{\mathrm{k}}(\theta, \phi)=\text{$d_{k}$}(X_{k}, \hat{X}_{k}) = \sum_{i} ||X_{k}-\hat{X}_{k})||^{2}.
+    L_{\mathrm{k}}(\theta, \phi)=\text{$d_{k}$}(X_{k}, \hat{X}_{k}) = \sum_{i=1}^{n} ||X_{k}-\hat{X}_{k})||^{2}.
     \label{eq:ce_loss}
 \end{equation}
 
-\hspace*{3.5mm} Let's $X_s$, $X_e$, and $X_r$ are copy number variations~(CNVs), gene expression, and miRNA expression input modalities, respectively. As shown in~\cref{fig:mm_rL_example1}, our model first embeds data of each input modality into 2D images in which each sample is reshaped into a 144$\times$144 image by zero padding around the edges and normalized to [0,255]. Each input is transformed into following hidden representations~\cite{KarimIEEEAccess2019}.
+\hspace*{3.5mm} Let's $X_c$, $X_e$, and $X_r$ are copy number variations~(CNVs), gene expression, and miRNA expression input modalities, respectively. As shown in~\cref{fig:mm_rL_example1}, data of each input modality is embedded into 2D images. Each sample is reshaped into a 144$\times$144 image by adding zero padding around the edges and normalizing pixel value to [0,255]. Subsequently, each $X_k$ is transformed into the following hidden representations~\cite{KarimIEEEAccess2019}.
 
 \begin{equation}
     \begin{array}{l}
-        {h_{m}=\Psi\left(W_{c} * X_{m}+b_{c}\right)} \\
-        {h_{e}=\Psi\left(W_{e} * X_{e}+b_{e}\right)} \\
-        {h_{r}=\Psi\left(W_{r} * X_{r}+b_{r}\right),}
+        {h_{c}=\sigma \left(W_{c} \oslash X_{m}+b_{c}\right)} \\
+        {h_{e}=\sigma \left(W_{e} \oslash X_{e}+b_{e}\right)} \\
+        {h_{r}=\sigma \left(W_{r} \oslash X_{r}+b_{r}\right),}
     \end{array}
     \label{eq:m1}
 \end{equation}  
 
-\hspace*{3.5mm} where $\left\{W_{c}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{c}, b_{e}, b_{r}\right\}$ are bias vectors for DNA methylation, gene expression, and miRNA expression modalities. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation. Each of $X_c$, $X_e$, and $X_r$ input modalities are very high dimensional, with huge difference w.r.t. dimensionality. In such a case, simple distance measure is not suitable~\cite{thiam2020multimodal}. Subsequently, mean squared error is used as the reconstruction loss:  
+\hspace*{3.5mm} where $\left\{W_{c}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{c}, b_{e}, b_{r}\right\}$ are bias vectors for CNV, gene expression, and miRNA expression modalities, respectively. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation. Each of $X_c$, $X_e$, and $X_r$ input modalities are very high dimensional, with huge difference w.r.t. dimensionality. In such a case, simple distance measure is not suitable~\cite{thiam2020multimodal}. Therefore, following mean squared error is a better measure of reconstruction loss:  
 
 \begin{equation}
     L_{\mathrm{k}}(\theta, \phi)=\frac{1}{n} \sum_{i=1}^{n}\left({X_k}-f_{\theta}\left(g_{\phi}\left({X_k}\right)\right)\right)^{2} +\lambda\left\|W_{k}\right\|_{2}^{2}
@@ -607,26 +620,28 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
 
 \hspace*{3.5mm} where $\lambda$ is the activity regularizer and $W_{k}$ is network weights specific to input modality $k$. 
 
-\paragraph{Stage-2: cross-modality}\hspace{-3mm} is also a multilayer gradually shrinking CAE, but with different output layer size for each prediction. However, number of layers and units per layer in both encoder and decoder are symmetric.  Latent representations of all modalities are concatenated into a single representation~\cite{liu2016multimodal}, such that the dimensionality of individual modalities $\phi$ is the same:  
+\paragraph{Stage-2: cross-modality}\hspace{-3mm} 
+%is also a multilayer gradually shrinking CAE, but with different output layer size for each prediction. However, number of layers and units per layer in both encoder and decoder are symmetric. 
+a concatenation layer is placed to concatenate individual latent representations $h_{m}$ $h_{e}$ and $h_{r}$ into a single representation dimensionality $\phi$:  
 
 \begin{equation}
     h_{mcae}=\sigma\left(W_{mcae}\left[h_{m} \oplus h_{e} \oplus h_{r}\right]+b_{mcae}\right),
 \end{equation}
 
-\hspace*{3.5mm} where $\oplus$ is the concatenation operation. Whole MCAE is pre-trained to reconstruct individual modalities from the hidden representation $h_{mcae}$~\cite{liu2016multimodal}:
+\hspace*{3.5mm} where $\oplus$ is the concatenation operation. The whole MCAE is pre-trained such that the outputs of the final de-convolution operation on hidden representation $h_{mcae}$ generates the original representation~\cite{wang2018associativemulti}: 
 
 \begin{equation}
     \left[\hat{h}_{m}\oplus \hat{h}_{e} \oplus \hat{h}_{r}
-    \right]=\Psi\left(\hat W_{mcae} h_{mcae}+\hat {b}_{mcae}\right)
+    \right]=\Psi\left(\hat W_{mcae} \odot h_{mcae}+\hat {b}_{mcae}\right)
 \end{equation}
 
-\hspace*{3.5mm} The decoder module, which has a similar gradual increasing architecture as an encoder, reconstructs the original representation of individual modalities, $\hat{X}_{c}$, $\hat{X}_{e}$, and $\hat{X}_{r}$ as~\cite{wang2018associativemulti}: 
+\hspace*{3.5mm} The above equations is equivalent to decomposing into individual modality specific representations of individual modalities, $\hat{X}_{c}$, $\hat{X}_{e}$, and $\hat{X}_{r}$:  
 
 \begin{equation}
     \begin{aligned}
-        \hat{X}_{c} &=\Psi\left(\hat W_{c} \hat{h}_{m}+\hat{b}_{m}\right) \\
-        \hat{X}_{e} &=\Psi\left(\hat W_{e} \hat{h}_{e}+\hat{b}_{e}\right) \\
-        \hat{X}_{r} &=\Psi\left(\hat W_{r} \hat{h}_{r}+\hat{b}_{r}\right),
+        \hat{X}_{c} &=\Psi\left(\hat W_{c} \odot \hat{h}_{m}+\hat{b}_{m}\right) \\
+        \hat{X}_{e} &=\Psi\left(\hat W_{e} \odot \hat{h}_{e}+\hat{b}_{e}\right) \\
+        \hat{X}_{r} &=\Psi\left(\hat W_{r} \odot \hat{h}_{r}+\hat{b}_{r}\right),
         \end{aligned}
 \end{equation}
 
@@ -645,7 +660,9 @@ Reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ of t
 \hspace*{3.5mm} where $\alpha_{r}$ and $\alpha_{c}$ are the regularization weights assigned to modality specific~(i.e., ${L}_{k}$) and cross-entropy specific~(${L}_{ce}$) loss functions, respectively. Network parameters were initialized with Xavier initialization~\cite{xavier} and trained using the AdaGrad optimization method~\cite{duchi2011adaptive}. 
 
 \subsubsection{Interpreting black-box MCAE model}
-Approaches based on multimodal learning directly merge all the latent representations into a single vector representation. As there is not huge difference between GE, miRNA, or CNV values. Therefore, merging them blindly could ignore subtle differences between different input modalities w.r.t feature contributions and may increase dimensions of the representation. However, a concatenated vector representation from MCAE is not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. On the other hand, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification based on~\cite{karimTCBB2020}. 
+Approaches based on multimodal learning directly merge all the latent representations into vector representations. As there is not huge difference between GE, miRNA, or CNV values, merging them blindly could ignore subtle differences between modalities. 
+%w.r.t feature contributions and may increase dimensions of the representation. 
+Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. 
 
 \begin{sidewaysfigure*}
 	\centering
