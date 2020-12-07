@@ -364,10 +364,10 @@ As shown in \cref{fig:clstm2}, both vanilla CNN and VGG16 architectures are cons
 
 %Since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through random search and 5-fold cross-validation tests. 
 
-\subsubsection{Interpreting black-box CNN models}
+\subsubsection{Probing black-box CNN models}
 Data for each modality is high dimensional, where majority of features~(genes) are not responsible for cancer, making them irrelevant for the cancer type classification. Therefore, it is more reasonable to probe both CNN and VGG16 networks to leverage the biomarker identification~(most important features). \Cref{algo:hm} and \ref{algo:imp_area} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. Inspired by the Grad-CAM based probing technique by Selvaraju et al.~\cite{mostavi2019convolutional}, all the normalized HMs from the same class are averaged to generate a class-specific HM. However, since Grad-CAM++ requires all the samples to run through the network once, activation maps are set and recorded in the forward pass. 
 
-\hspace*{3.5mm} On the other hand, to collect the HM for each sample, gradient maps are generated in the backward pass, i.e., during the back-propagation. A higher intensity pixel in a HM signifies higher importance of corresponding gene and it's value to the final prediction. Top genes are then selected based on the intensity rankings and MAI threshold. However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, for trained CNN models, LRP-based heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. 
+\hspace*{3.5mm} On the other hand, to collect the HM for each sample, gradient maps are generated in the backward pass, i.e., during the back-propagation. A higher intensity pixel in a HM signifies higher importance of corresponding gene and it's value to the final prediction. Top genes are then selected based on the intensity rankings and MAI threshold. However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, LRP was applied on both CNN and VGG16 trained CNN models. Subsequently, heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. 
 
 \begin{algorithm*}[h]
 \small
@@ -470,7 +470,9 @@ Data for each modality is high dimensional, where majority of features~(genes) a
 	\label{fig:3hms}
 \end{figure*}
 
-\hspace*{3.5mm} Therefore, the predictive power of our models are evaluated on a held-out set prior computing feature importance. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is then computed as follows: 
+To observe if the feature identified by CNNs are statistically significant and comparable to established feature ranking approaches such as random forest-based estimates, we compute permutation feature importance and 
+
+\hspace*{3.5mm} In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is then computed as follows: 
 
 \begin{align}
     \sigma_{x_i}=s-\frac{1}{R} \sum_{r=1}^{R} s_{r,x_i}
@@ -485,9 +487,30 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
 \end{align}
 \fi 
 
-\hspace*{3.5mm} Although, permutation feature importance  provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself. In other words, there is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. Therefore, using SHAP, the computation is repeated in all possible orders to compare the features fairly. 
+\hspace*{3.5mm} Although, permutation feature importance provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself. There is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. 
 
-\hspace*{3.5mm} If $x_i$ is a feature in modality specific input $X_k$, it's importance w.r.t Shapley value $\phi$ is computed by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in $X_k$. For $x_i$, prediction $\hat x_i$ and Shapley value $\phi$ are then calculated, as follows~\cite{NIPS2017_7062}. 
+\hspace*{3.5mm} On the other hand, SHapley Additive exPlanations~(aka. SHAP)~\cite{SHAP} is another interpretable method. The goal is to explain the prediction of sample $x_i$ by computing the contribution of each feature in the prediction w.r.t Shapley values that are based on coalitional game theory. Feature values of $x_i$ act as players in a coalition such that the Shapley values tell us how to fairly distribute the payout~\cite{molnar2019interpretable}. This can be correlated with distributing the prediction contributions among the features. 
+
+SHAP specifies the explanation as~\cite{molnar2019interpretable}:
+
+\begin{equation}
+    g\left(z^{\prime}\right)=\phi_{0}+\sum_{j=1}^{M} \phi_{j} z_{j}^{\prime}
+\end{equation}
+
+where $f$ is the explanation model, $z^{\prime} \in\{0,1\}^{M}$ is the coalition vector, $\mathrm{M}$ is the maximum coalition size and $\phi_{j} \in \mathbb{R}$ is the feature attribution for a feature $\mathrm{j}$, the Shapley values. What I call "coalition vector" is called "simplified features" in the SHAP paper. I think this name was chosen, because for e.g. image. 
+
+The idea behind SHAP feature importance is simple: Features with large absolute Shapley values are
+important. Since we want the global importance, we average the absolute Shapley values per feature
+across the data:
+$$
+I_{j}=\sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|
+$$
+Next, we sort the features by decreasing importance and plot them. The following figure shows the SHAP
+feature importance for the random forest trained before for predicting cervical cancer. SHAP feature importance is an alternative to permutation feature importance. There is a big difference between both importance measures: Permutation feature importance is based on the decrease in model performance. SHAP is based on magnitude of feature attributions.
+
+The feature importance plot is useful, but contains no information beyond the importances. For a more informative plot, we will next look at the summary plot. The summary plot combines feature importance with feature effects. Each point on the summary plot is a Shapley value for a feature and an instance. The position on the y-axis is determined by the feature and on the x-axis by the Shapley value. The color represents the value of the feature from low to high. Overlapping points are jittered in y-axis direction, so we get a sense of the distribution of the Shapley values per feature. The features are ordered according to their importance.
+
+Further, using SHAP, the computation is repeated in all possible orders to compare the features fairly. If $x_i$ is a feature in modality specific input $X_k$, it's importance w.r.t Shapley value $\phi$ is computed by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in $X_k$. For $x_i$, prediction $\hat x_i$ and Shapley value $\phi$ are then calculated, as follows~\cite{NIPS2017_7062}. 
 
 \vspace{-2mm}
 \begin{align}
@@ -495,7 +518,7 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
     \label{eq:shap}
 \end{align}
 
-\hspace*{3.5mm} If $x_i$ has no or almost zero effect on the predicted value is expected to produce a Shapley value of 0. If two features $x_i$ $x_{i+1}$ contribute equally to the prediction, Shapley values should be the same~\cite{NIPS2017_7062}. 
+\hspace*{3.5mm} If $x_i$ has no or almost zero effect on the predicted value is expected to produce a Shapley value of 0. If two features $x_i$ $x_{i+1}$ contribute equally to the prediction, Shapley values should be the same~\cite{NIPS2017_7062}. It is to be noted that both CNN and VGG16 trained models are evaluated on a held-out set prior computing the feature importance. 
 
 \subsection{Constructions and training of multimodal classifiers}
 The multimodality nature of the data motivated us to develop MAE deep architecture. MAE was based on vanilla AE, where the concept of shared latent representation~(SLR)~(see \cref{fig:slr_11}) is used to generate the shared feature representation of the multimodal input. MAE moderately performed for breast cancer subtype classification tasks, which is largely due to high pretraining and reconstruction losses.
@@ -635,7 +658,7 @@ a concatenation layer is placed to concatenate individual latent representations
     \right]=\Psi\left(\hat W_{mcae} \odot h_{mcae}+\hat {b}_{mcae}\right)
 \end{equation}
 
-\hspace*{3.5mm} The above equations is equivalent to decomposing into individual modality specific representations of individual modalities, $\hat{X}_{c}$, $\hat{X}_{e}$, and $\hat{X}_{r}$:  
+\hspace*{3.5mm} The above equation can be decomposed into following individual modality specific representations:  
 
 \begin{equation}
     \begin{aligned}
@@ -666,12 +689,16 @@ Nevertheless, latent feature vectors are not easily interpretable. This critical
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[scale=0.6]{images/attention.png}	\caption{The schematic representation of the attention mechanism}.	
+	\includegraphics[scale=0.55]{images/attention.png}	
+	\caption{The schematic representation of the attention mechanism}.	
     \vspace{-2mm}
 	\label{fig:attention}
 \end{sidewaysfigure*}
 
-\hspace*{3.5mm} Unlike the unimodal CNN models, where CNN-based feature selection is performed, it is more reasonable to let the MCAE model to perform feature selection. One of the widely used techniques is called attention mechanism. Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added to compute important features by fusing different features and their dimensions before the actual concatenation, as shown in \cref{fig:attention}. Then, from the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. From $K$  dimensional latent vector space, the representation is learned from the latent vectors of individual features. The resulting representation of feature $i$ can be defined as follows: 
+\hspace*{3.5mm} Unlike the unimodal CNN models, where CNN-based feature selection is performed, it is more reasonable to let the MCAE model to perform feature selection. One of the widely used techniques is called attention mechanism. Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added to compute important features by fusing different features and their dimensions before the actual concatenation, as shown in \cref{fig:attention}. 
+
+\iffalse
+\hspace*{3.5mm} Then, from the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. From $K$  dimensional latent vector space, the representation is learned from the latent vectors of individual features. The resulting representation of feature $i$ can be defined as follows: 
 
 \begin{align}
     f_{i,j}=a_{i,j} \odot\left(h_{i} \odot h_{j}\right)
@@ -688,6 +715,7 @@ Nevertheless, latent feature vectors are not easily interpretable. This critical
 \hspace*{3.5mm} Since Grad-CAM++ requires all the samples to run through the network once, we let the trained CNN models set and record the activation maps in the forward pass, and the gradient maps in the back-propagation phase to collect the HM for each sample from the trained model. A higher intensity pixel represents a higher significance to the final prediction, which indicates higher importance of corresponding genes and GE values. Top genes are then selected based on the intensity rankings and MAI threshold. Since SM use true gradients, the trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Subsequently, we generate LRP and CAM-based heatmaps for each sample in the test set based on the trained CNN models, where each heatmap indicates class-discriminating pixels/features and relevance for the particular classification decision. 
 
 \hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
+\fi 
 
 \section{Experiments}\label{chapter_5:results} 
 In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. The objective of the breast cancer subtype classification tasks is to observe the following:
