@@ -413,6 +413,7 @@ Data for each modality is high dimensional, where majority of features~(genes) a
     \caption{Computing feature importance and ranking genes}
      \label{algo:hm}
 \end{algorithm*}
+
 \begin{algorithm*}
 \small
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
@@ -606,7 +607,7 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
 
 \begin{equation}
     L_{\mathrm{k}}(\theta, \phi)=\text{$d_{k}$}(X_{k}, \hat{X}_{k}) = \sum_{i=1}^{n} ||X_{k}-\hat{X}_{k})||^{2}.
-    \label{eq:ce_loss}
+    %\label{eq:ce_loss}
 \end{equation}
 
 \hspace*{3.5mm} Let's $X_c$, $X_e$, and $X_r$ are copy number variations~(CNVs), gene expression, and miRNA expression input modalities, respectively. As shown in~\cref{fig:mm_rL_example1}, data of each input modality is embedded into 2D images. Each sample is reshaped into a 144$\times$144 image by adding zero padding around the edges and normalizing pixel value to [0,255]. Subsequently, each $X_k$ is transformed into the following hidden representations~\cite{KarimIEEEAccess2019}.
@@ -617,7 +618,7 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
         {h_{e}=\sigma \left(W_{e} \oslash X_{e}+b_{e}\right)} \\
         {h_{r}=\sigma \left(W_{r} \oslash X_{r}+b_{r}\right),}
     \end{array}
-    \label{eq:m1}
+    %\label{eq:m1}
 \end{equation}  
 
 \hspace*{3.5mm} where $\left\{W_{c}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{c}, b_{e}, b_{r}\right\}$ are bias vectors for CNV, gene expression, and miRNA expression modalities, respectively. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation. Each of $X_c$, $X_e$, and $X_r$ input modalities are very high dimensional, with huge difference w.r.t. dimensionality. In such a case, simple distance measure is not suitable~\cite{thiam2020multimodal}. Therefore, following mean squared error is a better measure of reconstruction loss:  
@@ -668,45 +669,72 @@ Reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ of t
 
 \begin{align}
     L_{mcae}=\sum_{i=0}^{n} \alpha_{r} {L}_{k}+\alpha_{c} {L}_{ce}
-    \label{eq:sum}
+    %\label{eq:sum}
 \end{align}
 
 \hspace*{3.5mm} where $\alpha_{r}$ and $\alpha_{c}$ are the regularization weights assigned to modality specific~(i.e., ${L}_{k}$) and cross-entropy specific~(${L}_{ce}$) loss functions, respectively. Network parameters were initialized with Xavier initialization~\cite{xavier} and trained using the AdaGrad optimization method~\cite{duchi2011adaptive}. 
 
-\subsubsection{Interpreting black-box MCAE model}
+\subsection{Probing into black-box MCAE models}
 Approaches based on multimodal learning directly merge all the latent representations into vector representations. As there is not huge difference between GE, miRNA, or CNV values, merging them blindly could ignore subtle differences between modalities. 
 %w.r.t feature contributions and may increase dimensions of the representation. 
-Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. 
+Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. Unlike the unimodal CNN models, where fully convolutional layers act as feature extractor, it is more reasonable to let the MCAE model to perform feature selection. One of the widely used techniques is called attention mechanism, which is used for computing feature importance. 
+
+\subsubsection{Feature importance using self-attention network}
+The concept of propositional self-attention networks~(PSAN) is one of the first methods based on attention mechanism~\cite{vaswani2017attention}. In PSAN, attention heads is used, where the number of heads represent distinct relations between input features. Attention layers are placed as a hidden layers that map real values to parts of the human-understandable input space~\cite{vskrlj2020feature}. For example, in natural language processing attention mechanism is used to identify important tokens for next word prediction. Subsequently, similar concept is extended for other areas such as computer vision and speech recognition, etc.%. 
+%Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added 
+%to compute important features~(e.g., pixels) 
+However, the use of attention mechanism for tabular and high-dimensional data is quite restrictive, except for a recent approach called self-attention networks~(SANs) proposed by Matej P. et al.~\cite{vskrlj2020feature}. Nevertheless, it is yet not clear how attention concept can be used for computing feature importance in multimodal input setting.
+
+\begin{figure*}
+	\centering
+	\includegraphics[scale=0.6]{images/san.png}	
+	\caption{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
+	\label{fig:san}
+\end{figure*}
+
+\hspace*{3.5mm} As computing individual feature contributions from merged or concatenated feature vector is challenging, this thesis hypotheses that applying attention on the last convolutional layer before fusing different features and their dimensions before the actual concatenation could help decompose the modality specific feature attributions~\cite{vskrlj2020feature}. %, as shown in \cref{fig:attention}. 
+\Cref{fig:san} shows the schematic representation of self-attention networks, where $l_{\text {att}}$ represents the attention layer. In the attention layer, element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of an input sample against true label ${y}$. Two consecutive dense layers $l_{1}$ and $l_{2}$ contribute to prediction $\hat{y}$. The $\frac{1}{k} \oplus$ box represents element-wise means across the attention heads $(k)$. Subsequently, the attention vectors from $l_{\text {att}}$ can be used to compute the feature importance estimates. 
+
+\hspace*{3.5mm} The feature importance computations in SANs is based on three different strategies~(i.e., instance-level aggregations, attention positive based on correctly predicted samples, and global attention). Using either strategy,  the final vector is a resultant of a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$. 
+%With respect to the convolutional autoencoder architecture, the attention vector represents individual feature weights contributed to the latent space $Z_k$. % different than that of the 
+%Let us show how the considered architecture can be used to obtain
+%real values which we argue represent feature importance. We explore the procedures for obtaining the final vector, as a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$.
+For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ samples, instance-level aggregations is about computing the attention map $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$, for $i$ -th instance as~\cite{vskrlj2020feature}: 
+
+%Let $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$ represent the attention output of the $i$ -th instance, defined as
+\begin{equation}
+    \operatorname{SAN}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
+\end{equation}
+
+\hspace*{3.5mm} Then the outputs are averaged on-instance basis, to get the global feature importance~\cite{vskrlj2020feature}: 
+
+\begin{equation}
+    R_{I}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{SAN}\left(\boldsymbol{x}_{i}\right)
+\end{equation}
+
+\hspace*{3.5mm} In attention positive only correctly predicted samples are taken into account. For the final prediction $\hat{y}_{i}$ of a black-box model, feature importance $R_{I}^{c}$ is computed as follows~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{SAN}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
+\end{equation}
+
+\hspace*{3.5mm} where $p$ signifies the feature importance true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of the global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}
+\end{equation}
+
+%\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
+
+\subsubsection{Multimodal attention: computing feature importance}
+The global attention-based feature computation is extended for multimodal convolutional autoencoder architecture, such that the attention vector~(that represents individual feature weights) for each input modality contribute to the latent space $Z_k$.  
 
 \begin{sidewaysfigure*}
 	\centering
 	\includegraphics[scale=0.55]{images/attention.png}	
 	\caption{The schematic representation of the attention mechanism}.	
-    \vspace{-2mm}
 	\label{fig:attention}
 \end{sidewaysfigure*}
-
-\hspace*{3.5mm} Unlike the unimodal CNN models, where CNN-based feature selection is performed, it is more reasonable to let the MCAE model to perform feature selection. One of the widely used techniques is called attention mechanism. Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added to compute important features by fusing different features and their dimensions before the actual concatenation, as shown in \cref{fig:attention}. 
-
-\iffalse
-\hspace*{3.5mm} Then, from the final concatenated vector $h_{i,j}$ in \cref{eq:mcae_latent_final} that already combined diverse information learned from three different modalities. From $K$  dimensional latent vector space, the representation is learned from the latent vectors of individual features. The resulting representation of feature $i$ can be defined as follows: 
-
-\begin{align}
-    f_{i,j}=a_{i,j} \odot\left(h_{i} \odot h_{j}\right)
-\end{align}
-
-\hspace*{3.5mm} where $\odot$ is the element-wise product, $a_{i,j}$ = $\left(a_{i,j,1}, a_{i,j,2}, \cdots, a_{i,j,K}\right)$ is a $K$ dimensional attention vector to reflect the different importance by fusing latent vectors $h_{i}$ and $h_{j}$. Specifically, $f_{i,j}=$ $\left(f_{1}, f_{2}, \cdots, f_{K}\right)$ and $f_{k}=a_{i,j,k} \odot\left(h_{i,k} \odot h_{j,k}\right) \cdot a_{i,j,k}$ is the attention weight assigned to $k^{th}$ dimension. The attention vector $a_{i,j}$ is calculated as follows: 
- 
- \begin{align}
-    a_{i, j, k}=\frac{\exp \left(\hat{a}_{i, j, k}\right)}{\sum_{m=1}^{k} \exp \left(a_{i, j, m}\right)}
-\end{align}
-
-\hspace*{3.5mm} where $\hat{a}_{i,j}=V^{T} \operatorname{ReLU}\left(W\left(Y_{i} \odot Y_{i}\right)+b\right)$ and $\operatorname{ReLU}$ is ReLU activation function, $b$ and $W$ are the bias vector and the weight matrix, and $V^{T}$ is the weight vector. These parameters are optimized along with deep neural network in an end-to-end way. The final outcome of the attention module takes into account the different contributions of different features w.r.t their dimensions. Output from the attention layer, i.e., multimodal features is then feed into a fully-connected layer for making the prediction. 
-
-\hspace*{3.5mm} Since Grad-CAM++ requires all the samples to run through the network once, we let the trained CNN models set and record the activation maps in the forward pass, and the gradient maps in the back-propagation phase to collect the HM for each sample from the trained model. A higher intensity pixel represents a higher significance to the final prediction, which indicates higher importance of corresponding genes and GE values. Top genes are then selected based on the intensity rankings and MAI threshold. Since SM use true gradients, the trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Subsequently, we generate LRP and CAM-based heatmaps for each sample in the test set based on the trained CNN models, where each heatmap indicates class-discriminating pixels/features and relevance for the particular classification decision. 
-
-\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
-\fi 
 
 \section{Experiments}\label{chapter_5:results} 
 In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. The objective of the breast cancer subtype classification tasks is to observe the following:
