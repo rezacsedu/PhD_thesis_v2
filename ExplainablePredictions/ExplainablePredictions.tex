@@ -496,7 +496,7 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
     f\left(z^{\prime}\right)=\phi_{0}+\sum_{j=1}^{M} \phi_{j} z_{j}^{\prime}
 \end{equation}
 
-\hspace*{3.5mm} where $f$ is an explanation model, $z^{\prime} \in\{0,1\}^{M}$ is the coalition vector\footnote{Less technically, nothing but simplified features for tabular data}, $\mathrm{M}$ is the maximum coalition size, and $\phi_{j} \in \mathbb{R}$ is the feature attribution for a feature $\mathrm{j}$ or Shapley values. The computation is repeated in all possible orders to compare the features fairly. If $x_i$ is a feature in modality specific input $X_k$, it's importance w.r.t Shapley value $\phi$ is computed by comparing what the model predicts with and without the $x_i$ from all possible combinations of $n$ features in $X_k$. For $x_i$, prediction $\hat x_i$ and Shapley value $\phi$ are then calculated, as follows~\cite{NIPS2017_7062}. 
+\hspace*{3.5mm} where $f$ is an explanation model, $z^{\prime} \in\{0,1\}^{M}$ is the coalition vector\footnote{Less technically, nothing but simplified features for tabular data}, $\mathrm{M}$ is the maximum coalition size, and $\phi_{j} \in \mathbb{R}$ is the feature attribution for a feature $\mathrm{j}$ or Shapley values. The computation is repeated in all possible orders to compare the features fairly. If $x_i$ is a feature in modality specific input $X_k$, it's importance w.r.t Shapley value $\phi$ is computed by comparing what the model predicts with and without $x_i$ for all possible combinations of $n$ features in $X_k$. For $x_i$, prediction $\hat x_i$ and $\phi$ are then calculated as~\cite{NIPS2017_7062}. 
 
 \vspace{-2mm}
 \begin{align}
@@ -526,13 +526,13 @@ In a recent approach proposed by Patrick T. et al.~\cite{mmdcae}, another multim
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/lrc_cls.png}
+		\includegraphics[scale=0.7]{images/lrc_rl_mcae.png}
 		\caption{Representation learning based on LRC and classification}
         \label{fig:lrc_11}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/joint_rl_cls.png}
+		\includegraphics[scale=0.7]{images/clr_rl_mcae.png}
 		\caption{Representation learning based on SLR and classification}
         \label{fig:slr_11}
 	\end{subfigure}
@@ -677,7 +677,7 @@ Reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ of t
 \subsection{Probing into black-box MCAE models}
 Approaches based on multimodal learning directly merge all the latent representations into vector representations. As there is not huge difference between GE, miRNA, or CNV values, merging them blindly could ignore subtle differences between modalities. 
 %w.r.t feature contributions and may increase dimensions of the representation. 
-Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. Unlike the unimodal CNN models, where fully convolutional layers act as feature extractor, it is more reasonable to let the MCAE model to perform feature selection. One of the widely used techniques is called attention mechanism, which is used for computing feature importance. 
+Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. Unlike the unimodal CNN models, where fully convolutional layers act as feature extractor, it is more reasonable to empower the MCAE model to perform feature selection itself. One of the widely used techniques is called attention mechanism. It is originally used to represent distinct relations between input features. Subsequently, it is extended for computing individual feature contribution. This thesis hypotheses\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions} that attention mechanism can be applied on the bottleneck layer to generate attention weight vector. Then the attention weight vector itself can be decomposed to compute modality specific feature attributions. In other words, the idea is not only generating latent space, but also modality specific attention weight vectors before the actual concatenation. % and fusing different features  would help  %
 
 \subsubsection{Feature importance using self-attention network}
 The concept of propositional self-attention networks~(PSAN) is one of the first methods based on attention mechanism~\cite{vaswani2017attention}. In PSAN, attention heads is used, where the number of heads represent distinct relations between input features. Attention layers are placed as a hidden layers that map real values to parts of the human-understandable input space~\cite{vskrlj2020feature}. For example, in natural language processing attention mechanism is used to identify important tokens for next word prediction. Subsequently, similar concept is extended for other areas such as computer vision and speech recognition, etc.%. 
@@ -692,47 +692,60 @@ However, the use of attention mechanism for tabular and high-dimensional data is
 	\label{fig:san}
 \end{figure*}
 
-\hspace*{3.5mm} As computing individual feature contributions from merged or concatenated feature vector is challenging, this thesis hypotheses that applying attention on the last convolutional layer before fusing different features and their dimensions before the actual concatenation could help decompose the modality specific feature attributions~\cite{vskrlj2020feature}. %, as shown in \cref{fig:attention}. 
-\Cref{fig:san} shows the schematic representation of self-attention networks, where $l_{\text {att}}$ represents the attention layer. In the attention layer, element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of an input sample against true label ${y}$. Two consecutive dense layers $l_{1}$ and $l_{2}$ contribute to prediction $\hat{y}$. The $\frac{1}{k} \oplus$ box represents element-wise means across the attention heads $(k)$. Subsequently, the attention vectors from $l_{\text {att}}$ can be used to compute the feature importance estimates. 
-
-\hspace*{3.5mm} The feature importance computations in SANs is based on three different strategies~(i.e., instance-level aggregations, attention positive based on correctly predicted samples, and global attention). Using either strategy,  the final vector is a resultant of a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$. 
+\hspace*{3.5mm} \Cref{fig:san} shows a schematic representation of a SAN, where $l_{\text {att}}$ represents the attention layer. In the attention layer, element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of an input sample against true label ${y}$. Two consecutive dense layers $l_{1}$ and $l_{2}$ contribute to prediction $\hat{y}$. The $\frac{1}{k} \oplus$ box represents element-wise means across the attention heads $(k)$. Subsequently, the attention vectors from $l_{\text {att}}$ can be used to compute the feature importance estimates. 
+The feature importance computations in SANs is based on three different strategies~(i.e., instance-level aggregations, attention positive based on correctly predicted samples, and global attention). Using either strategy,  the final vector is a resultant of a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$. 
 %With respect to the convolutional autoencoder architecture, the attention vector represents individual feature weights contributed to the latent space $Z_k$. % different than that of the 
 %Let us show how the considered architecture can be used to obtain
 %real values which we argue represent feature importance. We explore the procedures for obtaining the final vector, as a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$.
-For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ samples, instance-level aggregations is about computing the attention map $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$, for $i$ -th instance as~\cite{vskrlj2020feature}: 
+For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ samples, instance-level aggregations is about computing the attention map $\operatorname{AV}\left(\boldsymbol{x}_{i}\right)$, for $i$ -th instance as~\cite{vskrlj2020feature}: 
 
 %Let $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$ represent the attention output of the $i$ -th instance, defined as
 \begin{equation}
-    \operatorname{SAN}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
+    \operatorname{AV}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
 \end{equation}
 
 \hspace*{3.5mm} Then the outputs are averaged on-instance basis, to get the global feature importance~\cite{vskrlj2020feature}: 
 
 \begin{equation}
-    R_{I}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{SAN}\left(\boldsymbol{x}_{i}\right)
+    R_{I}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)
 \end{equation}
 
 \hspace*{3.5mm} In attention positive only correctly predicted samples are taken into account. For the final prediction $\hat{y}_{i}$ of a black-box model, feature importance $R_{I}^{c}$ is computed as follows~\cite{vskrlj2020feature}:
 
 \begin{equation}
-    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{SAN}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
+    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
 \end{equation}
 
-\hspace*{3.5mm} where $p$ signifies the feature importance true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of the global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
+\hspace*{3.5mm} where $p$ signifies the feature importance for the true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
 
 \begin{equation}
-    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}
+    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}.
+    \label{eq:gal_k}
 \end{equation}
+
+\hspace*{3.5mm} where the softmax is applied for each feature w.r.t. the remainder of the features. The feature importance is extracted as the main diagonal of the weight matrix, $\operatorname{diag}$. 
 
 %\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
 
 \subsubsection{Multimodal attention: computing feature importance}
-The global attention-based feature computation is extended for multimodal convolutional autoencoder architecture, such that the attention vector~(that represents individual feature weights) for each input modality contribute to the latent space $Z_k$.  
+As computing individual feature contributions from concatenated feature vector is challenging, the global attention-based feature computation is extended for the MCAE architecture. The attention mechanism, which is applied on modality specific encoder's bottleneck layer form an attention layer, as shown in \cref{fig:k_attention}. The output of the attention layer is an attention weight vector, which is decomposed to compute modality specific feature attributions. %, as shown in \cref{fig:attention}. 
+
+\begin{figure*}
+	\centering
+	\includegraphics[scale=0.55]{images/k_attention.png}
+	\caption{Modality specific attention mechanism on encoder's bottleneck layer for modality `k'}	
+	\label{fig:k_attention}
+\end{figure*}
+
+This setting, however, can be used to compute modality-specific global feature importance only, similar to \cref{eq:gal_k}. Therefore, similar to SAN's global attention mechanism, another global attention layer created, which takes all the concatenated~(either based on LRC or SLR), as shown in \cref{fig:all_attention}. 
+
+%after the last convolutional layer of each CAE encoder for individual modalities. 
+%such that the attention vector~(that represents individual feature weights) for each input modality contribute to the latent space $Z_k$.  
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[scale=0.55]{images/attention.png}	
-	\caption{The schematic representation of the attention mechanism}.	
+	\includegraphics[scale=0.55]{images/attention.png}
+	\caption{The schematic representation of the attention mechanism}	
 	\label{fig:attention}
 \end{sidewaysfigure*}
 
