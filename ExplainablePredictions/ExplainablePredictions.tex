@@ -3,30 +3,37 @@
 \textit{"Predicting the future isn't magic, it's artificial intelligence."} -- Dave Waters 
 
 \section{Chapter Overview}
-In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were considered to develop decision support system~(DSS) to leverage cancer types and subtypes prediction tasks. In both cases, the predictive models developed are mostly black-box methods. However, not only accurate diagnosis ~(i.e., predicting cancer types), but also revealing and interpreting biological significance about driver genes are vital for subsequent treatment. 
+In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were considered to develop decision support system~(DSS) to leverage cancer types and subtypes prediction tasks. In both cases, the predictive models developed are mostly black-box methods. However, it is not only important to predict the cancer types accurately, but also revealing and interpreting biological significance about driver genes are vital for subsequent treatments. 
+Besides, since data subjects are entitled to obtain meaningful information about logic, significance, and envisaged impacts of automated decision making, it is important to improve algorithmic transparency of the models based on which a DSS will be built upon. 
 
-Besides, since data subjects are entitled to obtain meaningful information about logic, significance, and envisaged impacts of automated decision making, it is important to improve algorithmic transparency of the model based on which a DSS will be built upon. To improve the algorithmic transparency and explainability of the black-box models, different probing and interpretable methods are applied. Further, we validated our findings through functional analysis to make sure biomarkers are biologically trustworthy
+\hspace*{3.5mm} Therefore, several neural network architectures are first trained to learn joint latent representation from the multimodal genomics data before the classification. Then to improve the algorithmic transparency and explainability of the black-box models, different probing and interpretable methods are applied in this chapter, where both ante-hoc and post-hoc interpretability techniques were considered. Further, to validate if the identified biomarkers are biologically relevant, functional analysis is carried out. 
 
 \section{Introduction}\label{chapter_5:intro}
-As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer, which fostered the accomplishment of the Pan Cancer Atlas~(PCAt) project, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNV~\cite{lyu2018deep}. 
+As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer as the part of Pan Cancer Atlas~(PCAt) project, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNVs related data~\cite{lyu2018deep}. 
 
-\hspace*{3.5mm} In this chapter, multimodal genomics data is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. In particular, data from PCAt project~\cite{weinstein2013cancer} is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. In particular, a vanilla convolutional neural network~(CNN) and deep CNN architecture called VGG-16 are trained end-to-end for the classification. On the other hand, multimodal autoencoder~(MAE) and multimodal convolutional autoencoder~(MCAE) networks are to trained to learn joint latent representation from the multimodal genomics data before the classification.  
-Diagnoses provided by the DSS consist of three steps: i) classifying cohort(s)~(group and individual) into specific cancer types based on their respective profiles, and ii) interpreting the prediction by highlighting biologically relevant biomarkers, and iii) explaining necessary logic involved in the diagnosis. These steps are based on two different strategies: based on single modality~(i.e., using single genomics data) and based on multimodality. %~(i.e., using different genomics data). 
+\hspace*{3.5mm} In this chapter, multimodal genomics data is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. Data from PCAt project~\cite{weinstein2013cancer} is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. A vanilla convolutional neural network~(CNN) and a deep CNN architecture called VGG-16 are trained end-to-end for the classification. On the other hand, a multimodal convolutional autoencoder~(MCAE) network is trained to learn joint latent representation from the multimodal genomics data before the classification. These models are treated as `black-box' methods. Subsequently, to improve algorithmic transparency, different probing techniques are employed to mitigate the opaqueness of these `black-box' models. 
 
-\hspace*{3.5mm} To improve algorithmic transparency, different probing techniques are employed to open the `black-box' models. Since genomics data are high dimensional, we hypothesize\footnote{\textbf{H4}: \textit{Since genomics data is high dimensional, embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers.}} that embedding them into 2D raw images can help locate significant~(i.e, most and least) biomarkers
-\footnote{Supporting publication: \textbf{Md. Rezaul Karim}, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", Proc. of \emph{IEEE International Conference on Bioinformatics and Bioengineering~(BIBE'2019)}, Athens, Greece, October 28-30, 2019}. % for the corresponding tumor types. 
-To identify relevant biomarkers\footnote{RQ2: \textit{How to identify relevant features or factors for a certain decision?}}, GradCAM++, attention mechanism, and LRP are used to generate class-specific heat maps~(HM) for all classes. 
-Marker genes w.r.t prominent pixels position on 2D feature space are then marked, followed by computing their  importance in terms of mean absolute impact~(MAI). Top-k genes across cancer types are also ranked w.r.t MAI, followed by their functional analyses.  
+\hspace*{3.5mm} Since genomics data are high dimensional, this thesis hypothesis that\footnote{\textbf{H4}: \textit{Since genomics data is high dimensional, embedding them into 2D raw images can help locate significant biomarkers.}} embedding them into 2D raw images can help locate significant biomarkers\footnote{Supporting publication: Md. Rezaul Karim, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", Proc. of \emph{IEEE International Conference on Bioinformatics and Bioengineering~(BIBE'2019)}, Athens, Greece, October 28-30, 2019}. % for the corresponding tumor types. 
+To identify relevant biomarkers\footnote{RQ2: \textit{How to identify relevant features or factors for a certain decision?}}, Grad-CAM++ and LRP are used to generate class-specific heat maps~(HM) for all classes. 
+Marker genes w.r.t prominent pixels position on 2D feature space are then marked, followed by computing their importance in terms of mean absolute impact~(MAI). Top-k genes across cancer types are also ranked w.r.t MAI, followed by their functional analyses.  
+Attention mechanism is employed in a multimodal representation learning setting to provide global interpretability\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions}, in which both modality specific and globally important top-k genes across cancer types are identified. To the end, diagnoses provided by the DSS consist of the following three steps: 
 
+\begin{enumerate}[noitemsep]
+    \item Classifying patents~(group and individual) into specific cancer types based on their respective profiles.
+    \item Interpreting the prediction by highlighting biologically relevant biomarkers.
+    \item Explaining necessary logic involved in the diagnosis. 
+\end{enumerate}
+
+\hspace*{3.5mm} These steps are based on two strategies: single modality~(i.e., one type of genomic data) and multimodality~(i.e., different types genomics data). 
 %\footnote{Algorithmic transparency, w.r.t, post-model explainability.}. 
 %Further, we validated our findings through functional analysis to make sure biomarkers are biologically trustworthy
-
-\hspace*{3.5mm} The rest of the chapter is structured as follows: \cref{chapter_5:rw} covers related works concerning interpretable ML approaches and summarize their potential limitations. \Cref{chapter_5:mm} describes the overall approach, including the detail of the data collection and feature engineering before the network construction and training. \Cref{chapter_5:results} demonstrates the experiment results and discusses key findings of the study. \Cref{chapter_5:conclusion} provides explanations of the importance and relevance of the study reported, highlights the limitations and discuss future works before concluding the chapter.
+The rest of the chapter is structured as follows: \cref{chapter_5:rw} covers related works concerning interpretable ML approaches and summarize their potential limitations. \Cref{chapter_5:mm} describes the overall approach, including the detail of the data collection and feature engineering before the network construction and training. \Cref{chapter_5:results} demonstrates the experiment results. \Cref{chapter_5:conclusion} provides discusses key findings and highlights the limitations. % and discuss future works before concluding the chapter.
 
 \section{Related Work}\label{chapter_5:rw}
+Genomics, bioimaging, and clinical outcomes are used to identify rare and common transcripts, isoforms, and non-coding RNAs in cancer. 
 Lyu et al.~\cite{lyu2018deep} and Mostavi et al.~\cite{mostavi2019convolutional} embedded the RNA-Seq data from the PCA project into 2D images and trained a CNN to classify 33 tumor types, which outperforms the approach in~\cite{li2017comprehensive}. Besides, they provide a functional analysis of genes with high intensities in the HM based on Grad-CAM and validated that these top genes are related to tumor-specific pathways. Other general methods on explainability, fairness and robustness. 
 %There is no prior art that handles a diverse set of desirable properties needed to develop a responsible AI system. 
-Several other works introduced counterfactual explanations. However, their optimization formulation cannot handle categorical data~\cite{ying2019gnnexplainer}, i.e, optimization does not solve for such data and the values are found in a brute-force fashion.
+A few other works focused on counterfactual explanations. However, their optimization formulation cannot handle categorical data~\cite{ying2019gnnexplainer}, i.e, optimization does not solve for such data and the values are found in a brute-force fashion.
 
 \hspace*{3.5mm} \Cref{tab:multimodal_xai_approaches} and \cref{tab:global_vs_lical_xai} show the summarized views of the methods focusing interpretability, explainability, and transparency. Some other explainable methods works only for the linear models. Other approaches use a genetic algorithm to generate neighbors around the input and then use decision trees to locally approximate the model. However, local approximations might be at the cost of model accuracy, and they define counterfactual based on the minimum number of splits in the trained decision tree, which might not always be the smallest change to the input~\cite{li2017comprehensive}. They work on a white-box and simpler convolution models, and the distance metrics might not be apt to measure image similarity. 
 
@@ -40,29 +47,29 @@ Several other works introduced counterfactual explanations. However, their optim
         \hline
         \textbf{Reference}                & \textbf{Multimodality support} & \textbf{Black-box} & \textbf{Agnostic} & \textbf{Explainability} & \textbf{Fairness} & \textbf{Robustness}  \\ 
         \hline
-        Shubham S. et al. 2019   & Yes                   & Yes       & Yes            & Yes            & Yes      & Yes         \\ 
+        Shubham S. et al.~[12]   & Yes                   & Yes       & Yes            & Yes            & Yes      & Yes         \\ 
         \hline
-        Wacherer et al. 2019     & Yes                   & Yes       & No             & Yes            & Yes      & No          \\ 
+        Wacherer et al.~[59]     & Yes                   & Yes       & No             & Yes            & Yes      & No          \\ 
         \hline
-        Ustun et al. 2019        & No                    & Yes       & Yes            & Yes            & Yes      & No          \\ 
+        Ustun et al.~[45]        & No                    & Yes       & Yes            & Yes            & Yes      & No          \\ 
         \hline
-        Russel et al. 2019       & Yes                   & Yes       & No             & Yes            & Yes      & No          \\ 
+        Russel et al~[57]       & Yes                   & Yes       & No             & Yes            & Yes      & No          \\ 
         \hline
-        Ribeiro et al. 2016      & Yes                   & Yes       & Yes            & Yes            & No       & No          \\ 
+        Ribeiro et al.~[27]      & Yes                   & Yes       & Yes            & Yes            & No       & No          \\ 
         \hline
-        Guidtit et al. 2016      & Yes                   & Yes       & Yes            & Yes            & No       & No          \\ 
+        Guidtit et al.~[4]      & Yes                   & Yes       & Yes            & Yes            & No       & No          \\ 
         \hline
-        Carlini \& Wagner, 2017 & No                    & No        & Yes            & No             & No       & Yes         \\ 
+        Carlini W. et al~[5] & No                    & No        & Yes            & No             & No       & Yes         \\ 
         \hline
-        Weng et a. 2018          & No                    & No        & Yes            & No             & No       & Yes         \\ 
+        Weng et al.~[7]          & No                    & No        & Yes            & No             & No       & Yes         \\ 
         \hline
-        Karim et al. 2019        & No                    & Yes       & Yes            & Yes            & Yes      & No          \\
+        Karim et al.~[9]        & No                    & Yes       & Yes            & Yes            & Yes      & No          \\
         \hline
     \end{tabular}
     \vspace{-4mm}
 \end{table}
 
-\hspace*{3.5mm} A few other approaches define a robustness score that need to have access to the model gradients. GNNExplainer is a recent approach for explaining the predictions by a graph neural network~(GNN)~\cite{ying2019gnnexplainer}. Given a trained GNN model and an input instance, GNNExplainer can generate the explanations via a dense subgraph. Secondly, GNNExplainer can be applied across tasks, e.g., node classification, graph classification, and link prediction, in a task-agnostic way. Thirdly, GNNExplainer can be employed on different GNN models such as GCN, GraphSAGE, GAT, and SGC to generate corresponding explanations. 
+\hspace*{3.5mm} A few other approaches define a robustness score that need to have access to the model gradients. GNNExplainer is a recent approach for explaining the predictions by a graph neural network~(GNN)~\cite{ying2019gnnexplainer}. For a trained GNN model and an input instance, GNNExplainer generates the explanations via a dense subgraph. Secondly, GNNExplainer can be applied across tasks, e.g., node classification, graph classification, and link prediction, in a task-agnostic way. Subsequently, GNNExplainer is applied to different GNN models such as GCN, GraphSAGE, GAT, and SGC to generate corresponding explanations. 
 
 \begin{table}[h]
     \centering
@@ -74,19 +81,19 @@ Several other works introduced counterfactual explanations. However, their optim
         \hline
         \textbf{Agnosticism}  & \textbf{Global interpretability}  & \textbf{Local interpretability} \\ 
         \hline
-        \multirow{4}{*}{Model specific} & Regression (logistic/linear) models & Individual (e.g., patient) specific set of decision rules \\ 
+        \multirow{4}{*}{Model specific} & Regression (logistic/linear) models & Individual~(e.g., patient) specific set of decision rules \\ 
         \cline{2-3}
         & Decision trees & Tree decomposition of decision rules \\ 
         \cline{2-3}
-        & Naïve Bayes & K-nearest neighbour (KNN)\\ 
+        & Naïve Bayes & K-nearest neighbour~(KNN)\\ 
         \cline{2-3}
         & GNN Explainer~\cite{GNNEXPLAINER} & GNN Explainer~\cite{GNNEXPLAINER} \\ 
         \hline
-        \multirow{5}{*}{Model agnostic} & Global surrogate models  & Local interpretable model-agnostic explanation (LIME)~\cite{LIME}\\ 
+        \multirow{5}{*}{Model agnostic} & Global surrogate models  & Local interpretable model-agnostic explanation~(LIME)~\cite{LIME}\\ 
         \cline{2-3}
-        &  MUSE  & Shapely additive explanations (SHAP)~\cite{SHAP}\\ 
+        &  MUSE  & Shapely additive explanations~(SHAP)~\cite{SHAP}\\ 
         \cline{2-3}
-        & Partial dependence plots (PDP) & Anchors~\cite{ribeiro2018anchors} \\ 
+        & Partial dependence plots~(PDP) & Anchors~\cite{ribeiro2018anchors} \\ 
         \cline{2-3}
         & Summary plot showing global feature importance & MUSE \\ 
         \cline{2-3}
@@ -98,8 +105,86 @@ Several other works introduced counterfactual explanations. However, their optim
 
 \hspace*{3.5mm} Due to the stochastic nature of DNN, the prediction and feature importance generated would be slightly different across runs, i.e., not deterministic. This also applied to DSS we developed in the previous chapters. We might even encounter similar issue for tree-based ensemble models such as random forest. For example, GBT provides 3 options for measuring feature importance: i) \emph{weight}, which is the number of times a feature is used to split the data across all trees, ii) \emph{cover}, the number of times a feature is used to split the data across all trees weighted by the number of training data points go through those splits, and iii) \emph{gain}, which is the average training loss reduction gained when using a feature for splitting. Based on these measure, feature importance orderings~(i.e., the order in which features were added) are different since subsequent features will get a disproportionately high weight.
 
+\hspace*{3.5mm} In the previous chapter, a multimodal autoencoder~(MAE) architecture was constructed and trained on multimodal genomics data. Then based on the concatenated latent feature vectors, breast cancer subtype classification tasks were performed. However, since the latent vectors are not easily interpretable, MAE acted as a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. 
+Apart from some restrictive initiatives, no substantial works are done on multimodal representation learning to improve the opaqueness.
+
+\hspace*{3.5mm} Attention mechanism is probably one of the most widely known techniques used to represent distinct relations between input features. For example, in natural language processing attention mechanism is used to identify important tokens for next word prediction. Subsequently, similar concept is extended for other areas such as computer vision and speech recognition, etc.%. In particular, %\subsubsection{Feature importance using self-attention network}
+the concept of propositional self-attention networks~(PSAN) is one of the first methods based on attention mechanism~\cite{vaswani2017attention}. In PSAN, attention heads is used, where the number of heads represent distinct relations between input features. Attention layers are placed as a hidden layers that map real values to parts of the human-understandable input space~\cite{vskrlj2020feature}. 
+%Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added 
+%to compute important features~(e.g., pixels) 
+\Cref{fig:san} shows a schematic representation of a SAN, where $l_{\text {att}}$ represents the attention layer, which can be expressed mathematically as~\cite{vskrlj2020feature}:  
+
+\begin{equation}
+    l_{2}=g\left(W_{2} \cdot\left(\sigma \left(W_{|F|} \cdot \Omega(X)+\boldsymbol{b}_{l_{1}}\right)\right)+\boldsymbol{b}_{l_{2}}\right)
+\end{equation}
+
+\hspace*{3.5mm} where $X$ is the input vectors, $\alpha_r$ is the regularization weights, and $g$ represents the first neural network layer, which maintains the connection with the input features $F$ as follows~\cite{vskrlj2020feature}: 
+
+\begin{equation}
+    g(X)=\frac{1}{k} \bigoplus_{k}\left[X \otimes \operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} X+\boldsymbol{b}_{l_{\mathrm{att}}}^{k}\right)\right],
+\end{equation}
+
+\hspace*{3.5mm} where $X$ is used as input to a softmax-activated layer by setting number of neurons equal to the number of features $|F|$~(i.e., dimensionality of input), $k$ represents number of attention heads representing relations between the input features, $\otimes$ is Hadamard product, $\oplus$ is the Hadamard summation across individual heads, and $\sigma$ is the exponential linear unit~(ELU)~\cite{clevert2015fast} activation function defined as~\cite{clevert2015fast}: 
+
+\begin{equation}
+    ELU_{\alpha_r}(X_k)=\left\{\begin{array}{ll}
+    \alpha_r(\exp (x)-1) & \text { if } x<0 \\
+    x & \text { if } x \geq 0,
+    \end{array}\right.
+    \label{eq:elu_activation}
+\end{equation}
+
+\hspace*{3.5mm} The softmax function is applied to $j_{i}$-th element of a weight vector $v$ is defined as~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    \operatorname{softmax}\left(\boldsymbol{v}_{j_{i}}\right)=\frac{\exp \left(\boldsymbol{v}_{j_{i}}\right)}{\sum_{j=1}^{|F|} \exp \left(\boldsymbol{v}_{j}\right),}
+\end{equation}
+
+\hspace*{3.5mm} where $v \in \mathbb{R}^{|F|}$. As $\sigma$ maintains a bijection between $F$ and weights in individual heads $W_{latt}^{k}$, weights in the $|F| \times|F|$ weight matrix represents the relations between features. Then the element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of individual samples against true label ${y}$. Two consecutive dense layers $l_{1}$ and $l_{2}$ contribute to prediction $\hat{y}$. The $\frac{1}{k} \oplus$ box represents element-wise means across the attention heads $(k)$. 
+
+\begin{figure*}
+	\centering
+	\includegraphics[scale=0.55]{images/san.png}	
+	\caption{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
+	\label{fig:san}
+\end{figure*}
+
+\hspace*{3.5mm} The attention vectors from $l_{\text {att}}$ is then used to compute feature importance estimates. The feature importance computations are based on three different strategies~(i.e., instance-level aggregations, attention positive based on correctly predicted samples, and global attention). Using either strategy,  the final vector is a resultant of a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$. 
+%With respect to the convolutional autoencoder architecture, the attention vector represents individual feature weights contributed to the latent space $Z_k$. % different than that of the 
+%Let us show how the considered architecture can be used to obtain
+%real values which we argue represent feature importance. We explore the procedures for obtaining the final vector, as a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$.
+For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ samples, instance-level aggregations is about computing the attention map $\operatorname{AV}\left(\boldsymbol{x}_{i}\right)$, for $i$ -th instance as~\cite{vskrlj2020feature}: 
+
+%Let $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$ represent the attention output of the $i$ -th instance, defined as
+\begin{equation}
+    \operatorname{AV}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
+\end{equation}
+
+\hspace*{3.5mm} Then the outputs are averaged on-instance basis, to get the global feature importance~\cite{vskrlj2020feature}: 
+
+\begin{equation}
+    R_{I}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)
+\end{equation}
+
+\hspace*{3.5mm} In attention positive only correctly predicted samples are taken into account. For the final prediction $\hat{y}_{i}$ of a black-box model, feature importance $R_{I}^{c}$ is computed as follows~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
+\end{equation}
+
+\hspace*{3.5mm} where $p$ signifies the feature importance for the true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}.
+    \label{eq:gal_k}
+\end{equation}
+
+\hspace*{3.5mm} where the softmax is applied for each feature w.r.t. the remainder of the features. The feature importance is extracted as the main diagonal of the weight matrix, $\operatorname{diag}$. 
+
+%\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
+
 \section{Methods}\label{chapter_5:mm}
-In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Based on this insights, we rely on several probing and interpretability methods discussed in \cref{chapter:preli}
+In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Based on this insights, we rely on several probing and interpretability methods discussed in \cref{chapter:preli}. 
 
 \subsection{Problem statement}
 From given genomics profiles of PCAt cohorts consisting of GE, DNA methylation, and miRNA expressions, the problem is to classify the patients into specific cancer types. Given $n$ samples, $X$ = ${{\{x_1,x_2, ..., x_n}}\}$ in dataset $D$, where $X \in {R}^{D}$. We consider classifying an individual $x$ into a specific cancer type based on its respective profiles, but in two different ways: i) based on single modality, ii) based on multimodality, where a  classifier is a function $f: {X}^{(m)} \rightarrow {Y}$, which maps a data instance $x$ from a feature space ${X}^{(m)}$ with $m$ input features to a labels $y$ in a target space ${Y}$, where $f(x)=y$ denotes the decision $y$ predicted by $f$, and input instance $x$ consists of a set of $m$ attribute-value pairs $\left(a_{i}, v_{i}\right)$ in which $a_i$ is a feature and $v_i$ is a value from the domain of $a_i$. 
@@ -342,7 +427,7 @@ Unimodal CNN and VGG16 models are first constructed and trained as black-box mod
 \subsubsection{Preprocessing}
 In order to find the relation between instances, e.g., GE of a particular cohort in relation to other types tumors. First, mean normalization per gene is performed for each modality data. Second, samples are embedded as 2D images\footnote{To perform 2D convolutional operations with ease} in which respective expression values. Each sample is reshaped from a 20,501$\times$1 array into a 144$\times$144 image by adding zero padding around the edges and normalized to [0,255].%, without losing any information.
 
-%The pooling layer is calculated by down-sampling the convolutional layer by taking the maximum value in each non-overlapping sub-region. 
+%The pooling layer is calculated by down-sampling the convolutional layer by taking the maximum value in each non-overlapping sub-region.
 
 \subsubsection{Network construction and training}
 As shown in \cref{fig:clstm2}, both vanilla CNN and VGG16 architectures are constructed and trained from scratch, in a similar fashion. In either network training, output of a convolutional layer is first passed through a dropout layer to avoid possible overfitting~\cite{vardropout}. To down sample the output~(lower-level feature space) of a convolutional layer into lower dimensional representation, two max pooling layers~(MPL) are placed, by setting different filter size. Output of an MPL can be considered as `extracted features' from 2D image samples. Since an MPL flattens the output space by taking the highest value in each convolutional feature map, more abstract features are learned by the last MPL. This can be thought as the feature selection process for finding highly indicative driver genes responsible for specific cancer types.
@@ -367,7 +452,7 @@ As shown in \cref{fig:clstm2}, both vanilla CNN and VGG16 architectures are cons
 \subsubsection{Probing black-box CNN models}
 Data for each modality is high dimensional, where majority of features~(genes) are not responsible for cancer, making them irrelevant for the cancer type classification. Therefore, it is more reasonable to probe both CNN and VGG16 networks to leverage the biomarker identification~(most important features). \Cref{algo:hm} and \ref{algo:imp_area} depict the pseudo-codes for computing feature importance with ranking genes and identification of important areas on the HM, respectively. Inspired by the Grad-CAM based probing technique by Selvaraju et al.~\cite{mostavi2019convolutional}, all the normalized HMs from the same class are averaged to generate a class-specific HM. However, since Grad-CAM++ requires all the samples to run through the network once, activation maps are set and recorded in the forward pass. 
 
-\hspace*{3.5mm} On the other hand, to collect the HM for each sample, gradient maps are generated in the backward pass, i.e., during the back-propagation. A higher intensity pixel in a HM signifies higher importance of corresponding gene and it's value to the final prediction. Top genes are then selected based on the intensity rankings and MAI threshold. However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, LRP was applied on both CNN and VGG16 trained CNN models. Subsequently, heatmaps are generated for each sample in the test set. Heatmaps indicate class-discriminating features~(on 2D pixel space) and relevance for each diagnosis decision. 
+\hspace*{3.5mm} On the other hand, to collect the HM for each sample, gradient maps are generated in the backward pass, i.e., during the back-propagation. A higher intensity pixel in a HM signifies higher importance of corresponding gene and it's value to the final prediction. Top genes are then selected based on the intensity rankings and MAI threshold. However, since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Therefore, LRP was applied on both CNN and VGG16 trained CNN models to generate heatmaps for each sample in the test set.A heatmap highlights class-discriminating features~(on 2D pixel space) showing relevance for diagnosis decisions. 
 
 \begin{algorithm*}[h]
 \small
@@ -471,9 +556,7 @@ Data for each modality is high dimensional, where majority of features~(genes) a
 	\label{fig:3hms}
 \end{figure*}
 
-To observe if the feature identified by CNNs are statistically significant and comparable to established feature ranking approaches such as random forest-based estimates, we compute feature importance for the driver genes.  
-
-\hspace*{3.5mm} In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is then computed as follows: 
+\hspace*{3.5mm} To observe if the feature identified by CNNs are statistically significant and comparable to established feature ranking approaches such as random forest-based estimates, we compute feature importance for the driver genes. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is then computed as follows: 
 
 \begin{align}
     \sigma_{x_i}=s-\frac{1}{R} \sum_{r=1}^{R} s_{r,x_i}
@@ -510,7 +593,7 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
     I_{j}=\sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|
 \end{equation}
 
-\hspace*{3.5mm} Although feature importance is used to provide global explanations by highlighting important features, plot only the value per feature is often not very insightful. Therefore, using the Shapely values, summary plot is more widely used, where feature importance is combined with feature effects. More detail will be discussed in a later chapter. It is to be noted that both CNN and VGG16 trained models are evaluated on a held-out set prior computing the feature importance using permutation feature importance and SHAP. 
+\hspace*{3.5mm} Although feature importance is used to provide global explanations by highlighting important features, plot only the value per feature is often not very insightful. Therefore, using the Shapely values, summary plot is more widely used, where feature importance is combined with feature effects. More detail will be discussed in a later chapter. It is to be noted that both CNN and VGG16 trained models are evaluated on a held-out set prior computing the feature importance using permutation feature importance and SHAP.
 
 \subsection{Constructions and training of multimodal classifiers}
 The multimodality nature of the data motivated us to develop MAE deep architecture. MAE was based on vanilla AE, where the concept of shared latent representation~(SLR)~(see \cref{fig:slr_11}) is used to generate the shared feature representation of the multimodal input. MAE moderately performed for breast cancer subtype classification tasks, which is largely due to high pretraining and reconstruction losses.
@@ -522,6 +605,7 @@ In a recent approach proposed by Patrick T. et al.~\cite{mmdcae}, another multim
 \end{itemize}
 
 \hspace*{3.5mm} Inspired by the success of LRC and considering the limitations of MAE and SLR, multimodal convolutional autoencoder classifier~(MCAE) is constructed to improve the classification accuracy. As shown in \cref{fig:lrc_11}, MCAE is based on convolutional autoencoder~(CAE) and LRC-based representation learning. Besides, to show the effectiveness of MCAE and LRC, another variant of MCAE classifier is trained on SLR-based latent representation, as shown in \cref{fig:slr_11}. 
+
 \begin{sidewaysfigure*}[htp!]
 	\centering
 	\begin{subfigure}{.48\linewidth}
@@ -556,8 +640,8 @@ Although a single and simple AE discussed in \cref{preli:AEs} can reconstruct an
 \hspace*{3.5mm} We illustrate the construction of an MCAE as a quad-modal AE, where CNV, GE, miRNA expression, and clinical outcomes form 4 different modalities from the same patient cohorts. The individual modality CAE is not only a one-layer AE, but a multilayer and gradually shrinking CAE with the possibilities of a different number of layers for each modality, which is due to difference in dimension between modalities are pretty large. By default, MCAE fuses multiple modalities consists of a variable number of ReLU layers, which are densely connected. The cross-modality CAE is also a multilayer gradually shrinking CAE with different output layer for each prediction. However, number of layers and units per layer of the encoder and decoder networks are symmetric. The $3^{rd}$ stage is the supervised MCAE in which the decoder part is removed, and only the encoder part is utilized by adding a fully connected layer for the classification. % and regression operations. 
 \fi 
 
-\subsection{Construction and training of MCAE}
-Although a single and simple AE can be used to reconstruct an output similar to the original input, it cannot handle multimodality~(i.e., different types of information). Weights of a encoder module is learned from both non-corrupted and unlabeled data. Subsequently, noisy supervised data with missing modalities is not suitable for learning latent features. Nevertheless, difference w.r.t dimensionality among input modalities are pretty large. For example, sometimes GE data come with about 20,000 features, but miRNA has only 5000 features. Non-trivial challenge in modality specific representation learning and limitations of MAE architecture are enough motivations to employ multimodal representation learning and classification based on multimodal CAE architecture~(MCAE). 
+\subsection{Training of MCAE}
+A single and simple AE can be used to reconstruct an output similar to the original input. However, it cannot handle multimodality~(i.e., different types of information). Weights of a encoder module is learned from both non-corrupted and unlabeled data. Subsequently, noisy supervised data with missing modalities is not suitable for learning latent features. Nevertheless, difference w.r.t dimensionality among input modalities are pretty large. For example, sometimes GE data come with about 20,000 features, but miRNA has only 5000 features. Non-trivial challenge in modality specific representation learning and limitations of MAE architecture are enough motivations to employ multimodal representation learning and classification based on multimodal CAE architecture~(MCAE). 
 
 \hspace*{3.5mm} Although CNNs are known as effective feature extractors, instead of using manually engineered convolutional filters in CNN, convolutional and pooling layers can be stacked together to construct a stacked convolutional autoencoder~(CAE), to leverage better feature extraction capability~\cite{alirezaie2019semantic}. This makes CAE, compared to vanilla AE based multimodal learning, more effective for very high dimensional data. In particular, CAE learns more optimal filters by minimizing the reconstruction loss, which results in more abstract features from the encoder~(e.g., pixel-level features from images, when genomic samples are embedded into 2D pixel-space~\cite{mostavi2019convolutional}). This helps to stabilize the pretraining. Subsequently, the network converges faster by avoid corruption in feature space~\cite{guo2017deep}. 
 
@@ -575,16 +659,7 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
     \label{eq:fcuk_1}
 \end{equation}
 
-\hspace*{3.5mm}. Technically, the final feature maps $Z_k$ are latent variables, specific to modality $k$. In \cref{eq:fcuk_1}, where $\phi$ are trainable parameters~(which include a weight matrix $W_{k} \in \mathbb{R}^{p \times q}$ and a bias vector $b_{k} \in \mathbb{R}^{q}$ that are specific to respective modality $k$), $\oslash$ is the convolutional operation, and $\sigma$ is the exponential linear unit~(ELU)~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}, which is defined as~\cite{clevert2015fast}: 
-
-\begin{equation}
-    ELU_{\alpha_r}(X_k)=\left\{\begin{array}{ll}
-    \alpha_r(\exp (x)-1) & \text { if } x<0 \\
-    x & \text { if } x \geq 0,
-    \end{array}\right.
-\end{equation}
-
-\hspace*{3.5mm} where $\alpha_r$ is the regularization weights. Decoder module reconstructs from $h_k$, the original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
+\hspace*{3.5mm}. Technically, the final feature maps $Z_k$ are latent variables, specific to modality $k$. In \cref{eq:fcuk_1}, where $\phi$ are trainable parameters~(which include a weight matrix $W_{k} \in \mathbb{R}^{p \times q}$ and a bias vector $b_{k} \in \mathbb{R}^{q}$ that are specific to respective modality $k$), $\oslash$ is the convolutional operation, and $\sigma$ is ELU~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}. Then the decoder module reconstructs from $h_k$, the original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
 
 \begin{equation}
     \hat{X_k}=f_{\theta}\left(Z_k\right)=f_{\theta}\left(g_{\phi}({X_k})\right) \label{eq:mcae_eq_1},
@@ -677,57 +752,13 @@ Reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ of t
 \subsection{Probing into black-box MCAE models}
 Approaches based on multimodal learning directly merge all the latent representations into vector representations. As there is not huge difference between GE, miRNA, or CNV values, merging them blindly could ignore subtle differences between modalities. 
 %w.r.t feature contributions and may increase dimensions of the representation. 
-Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. Unlike the unimodal CNN models, where fully convolutional layers act as feature extractor, it is more reasonable to empower the MCAE model to perform feature selection itself. One of the widely used techniques is called attention mechanism. It is originally used to represent distinct relations between input features. Subsequently, it is extended for computing individual feature contribution. This thesis hypotheses\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions} that attention mechanism can be applied on the bottleneck layer to generate attention weight vector. Then the attention weight vector itself can be decomposed to compute modality specific feature attributions. In other words, the idea is not only generating latent space, but also modality specific attention weight vectors before the actual concatenation. % and fusing different features  would help  %
+Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. 
 
-\subsubsection{Feature importance using self-attention network}
-The concept of propositional self-attention networks~(PSAN) is one of the first methods based on attention mechanism~\cite{vaswani2017attention}. In PSAN, attention heads is used, where the number of heads represent distinct relations between input features. Attention layers are placed as a hidden layers that map real values to parts of the human-understandable input space~\cite{vskrlj2020feature}. For example, in natural language processing attention mechanism is used to identify important tokens for next word prediction. Subsequently, similar concept is extended for other areas such as computer vision and speech recognition, etc.%. 
-%Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added 
-%to compute important features~(e.g., pixels) 
-However, the use of attention mechanism for tabular and high-dimensional data is quite restrictive, except for a recent approach called self-attention networks~(SANs) proposed by Matej P. et al.~\cite{vskrlj2020feature}. Nevertheless, it is yet not clear how attention concept can be used for computing feature importance in multimodal input setting.
 
-\begin{figure*}
-	\centering
-	\includegraphics[scale=0.55]{images/san.png}	
-	\caption{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
-	\label{fig:san}
-\end{figure*}
-
-\hspace*{3.5mm} \Cref{fig:san} shows a schematic representation of a SAN, where $l_{\text {att}}$ represents the attention layer. In the attention layer, element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of an input sample against true label ${y}$. Two consecutive dense layers $l_{1}$ and $l_{2}$ contribute to prediction $\hat{y}$. The $\frac{1}{k} \oplus$ box represents element-wise means across the attention heads $(k)$. Subsequently, the attention vectors from $l_{\text {att}}$ can be used to compute the feature importance estimates. 
-The feature importance computations in SANs is based on three different strategies~(i.e., instance-level aggregations, attention positive based on correctly predicted samples, and global attention). Using either strategy,  the final vector is a resultant of a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$. 
-%With respect to the convolutional autoencoder architecture, the attention vector represents individual feature weights contributed to the latent space $Z_k$. % different than that of the 
-%Let us show how the considered architecture can be used to obtain
-%real values which we argue represent feature importance. We explore the procedures for obtaining the final vector, as a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$.
-For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ samples, instance-level aggregations is about computing the attention map $\operatorname{AV}\left(\boldsymbol{x}_{i}\right)$, for $i$ -th instance as~\cite{vskrlj2020feature}: 
-
-%Let $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$ represent the attention output of the $i$ -th instance, defined as
-\begin{equation}
-    \operatorname{AV}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
-\end{equation}
-
-\hspace*{3.5mm} Then the outputs are averaged on-instance basis, to get the global feature importance~\cite{vskrlj2020feature}: 
-
-\begin{equation}
-    R_{I}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)
-\end{equation}
-
-\hspace*{3.5mm} In attention positive only correctly predicted samples are taken into account. For the final prediction $\hat{y}_{i}$ of a black-box model, feature importance $R_{I}^{c}$ is computed as follows~\cite{vskrlj2020feature}:
-
-\begin{equation}
-    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
-\end{equation}
-
-\hspace*{3.5mm} where $p$ signifies the feature importance for the true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
-
-\begin{equation}
-    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}.
-    \label{eq:gal_k}
-\end{equation}
-
-\hspace*{3.5mm} where the softmax is applied for each feature w.r.t. the remainder of the features. The feature importance is extracted as the main diagonal of the weight matrix, $\operatorname{diag}$. 
-
-%\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
+\hspace*{3.5mm} Unlike the unimodal CNN models, where fully convolutional layers act as feature extractor, it is more reasonable to empower the MCAE model to perform feature selection itself. This thesis hypotheses\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions} that attention mechanism can be applied on the bottleneck layer to generate attention weight vector. Then the attention weight vector itself can be decomposed to compute modality specific feature attributions. In other words, the idea is not only generating latent space, but also modality specific attention weight vectors before the actual concatenation. % and fusing different features  would help  %
 
 \subsubsection{Multimodal attention: computing feature importance}
+However, the use of attention mechanism for tabular and high-dimensional data is quite restrictive, except for a recent approach called self-attention networks~(SANs) proposed by Matej P. et al.~\cite{vskrlj2020feature}. Nevertheless, it is yet not clear how attention concept can be used for computing feature importance in multimodal input setting.
 As computing individual feature contributions from concatenated feature vector is challenging, the global attention-based feature computation is extended for the MCAE architecture. The attention mechanism, which is applied on modality specific encoder's bottleneck layer form an attention layer, as shown in \cref{fig:k_attention}. The output of the attention layer is an attention weight vector, which is decomposed to compute modality specific feature attributions. %, as shown in \cref{fig:attention}. 
 
 \begin{figure*}
@@ -744,8 +775,8 @@ This setting, however, can be used to compute modality-specific global feature i
 
 \begin{sidewaysfigure*}
 	\centering
-	\includegraphics[scale=0.55]{images/attention.png}
-	\caption{The schematic representation of the attention mechanism}	
+	\includegraphics[scale=0.8]{images/full_attention.png}
+	\caption{The schematic representation of the overall approach, showing global attention mechanism on multimodal input}
 	\label{fig:attention}
 \end{sidewaysfigure*}
 
