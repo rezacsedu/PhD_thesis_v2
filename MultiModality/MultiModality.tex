@@ -171,7 +171,7 @@ Pre-training is similar to training a two-stage AE network: first stage represen
 %Once the unimodal and cross-modal stages are constructed, training both stages is similar to unsupervised pre-training of the whole MAE architecture.
 Pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual AEs. 
 
-\paragraph{Stage-1: individual modality}\noindent of the MAE represents a particular modality for each type of data. Individual modality AE is not only a one-layer AE, but also a multilayer and gradually shrinking AE with different number of layers per modality. An AE consist of two sub-networks called encoder and decoder. Encoder is a sigmoid function $g(.)$ parameterized by $\phi$, while decoder function $f(.)$ is   parameterized by $\theta$ is an identify function. For input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ modalities, the encoder encodes the original high-dimension input into a lower-dimensional code, where the input size is larger than the output size. Latent-space representation $Z_k=g_{\phi}(X_{k})$ is then learned in the bottleneck layer such that $X_{k}$ is mapped and transformed into embedding space~($Z_k$), where $p$ and $n$ is number of hidden and input units~\cite{mmdcae}: 
+\paragraph{Stage-1: individual modality}\hspace{-3mm} of the MAE represents a particular modality for each type of data. Individual modality AE is not only a one-layer AE, but also a multilayer and gradually shrinking AE with different number of layers per modality. An AE consist of two sub-networks called encoder and decoder. Encoder is a sigmoid function $g(.)$ parameterized by $\phi$, while decoder function $f(.)$ is   parameterized by $\theta$ is an identify function. For input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ modalities, the encoder encodes the original high-dimension input into a lower-dimensional code, where the input size is larger than the output size. Latent-space representation $Z_k=g_{\phi}(X_{k})$ is then learned in the bottleneck layer such that $X_{k}$ is mapped and transformed into embedding space~($Z_k$), where $p$ and $n$ is number of hidden and input units~\cite{mmdcae}: 
 
 \begin{equation}
     Z_k = h_{k}=g_\phi \left({X}_{k}\right)=\sigma\left(W_{k} X_{k}+b_{k}\right)
@@ -242,7 +242,7 @@ There are various metrics to quantify the difference between two vectors, such a
 
 \hspace*{3.5mm} where $\lambda$ is the activity regularizer and $W_{k}$ is network weights specific to input modality $k$. 
 
-\paragraph{Stage-2: cross-modality~(MAE)}\noindent is also a multilayer gradually shrinking AE, but with different output layer size for each prediction. Number of layers and units per layer in both encoder and decoder are symmetric. Latent representations of all modalities are concatenated into a single representation~\cite{liu2016multimodal}, having the same $\phi$ dimensionality of individual modalities. 
+\paragraph{Stage-2: cross-modality~(MAE)}\hspace{-3mm} is also a multilayer gradually shrinking AE, but with different output layer size for each prediction. Number of layers and units per layer in both encoder and decoder are symmetric. Latent representations of all modalities are concatenated into a single representation~\cite{liu2016multimodal}, having the same $\phi$ dimensionality of individual modalities. 
 
 \begin{equation}
     h_{mae}=\sigma\left(W_{mae}\left[h_{m} \oplus h_{e} \oplus h_{r}\right]+b_{mae}\right),
@@ -294,12 +294,12 @@ During the finetuning, final latent vector $h_{mae}$ is feed into fully connecte
 \section{Experiments}\label{chapter_4:results}
 The objective of the breast cancer subtype classification tasks is to observe the following:
 
-\begin{enumerate}[noitemsep]
+\begin{itemize}[noitemsep]
     \item What types of neural network architectures are for more for handing multimodal inputs. 
     \item What individual genomic modalities are more suitable for more accurate diagnosis. 
     \item What multimodal input combinations are more suitable for more accurate diagnosis.
     \item What types of data can express biological characteristics of the patients? 
-\end{enumerate}
+\end{itemize}
 
 \hspace*{3.5mm} Results each observation is analysed, both quantitative and qualitatively. 
 

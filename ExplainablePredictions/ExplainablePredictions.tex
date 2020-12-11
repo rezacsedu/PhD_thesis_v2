@@ -18,11 +18,13 @@ To identify relevant biomarkers\footnote{RQ2: \textit{How to identify relevant f
 Marker genes w.r.t prominent pixels position on 2D feature space are then marked, followed by computing their importance in terms of mean absolute impact~(MAI). Top-k genes across cancer types are also ranked w.r.t MAI, followed by their functional analyses.  
 Attention mechanism is employed in a multimodal representation learning setting to provide global interpretability\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions}, in which both modality specific and globally important top-k genes across cancer types are identified. To the end, diagnoses provided by the DSS consist of the following three steps: 
 
-\begin{enumerate}[noitemsep]
+\begin{itemize}[noitemsep]
+\vspace{-2mm}
     \item Classifying patents~(group and individual) into specific cancer types based on their respective profiles.
     \item Interpreting the prediction by highlighting biologically relevant biomarkers.
     \item Explaining necessary logic involved in the diagnosis. 
-\end{enumerate}
+    \vspace{-2mm}
+\end{itemize}
 
 \hspace*{3.5mm} These steps are based on two strategies: single modality~(i.e., one type of genomic data) and multimodality~(i.e., different types genomics data). 
 %\footnote{Algorithmic transparency, w.r.t, post-model explainability.}. 
