@@ -51,7 +51,8 @@ Compared to other interpretable options, rules fare well;users prefer, trust and
 In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. 
 
 \subsection{Problem statement}
-To know the local and global-behaviour of a model, the task is to generate as set of rules that that ``anchors"~(or, covers) the prediction sufficiently, giving entire model's behaviour~\cite{ribeiro2018anchors}. Since we argued that the interpretability provided by the predictor ${F}$ in \cref{chapter:xai} is not sufficiently human-interpretable and globally too complex, we assume it as a `white-box' model\footnote{However, we still assume it a `black-box' model to some extent.}. Let's it is a partially `white-box' model. From a given such model ${F}: X \rightarrow Y$ and an instance $x \in X$, the goal of local model-agnostic interpretability is to explain the behavior of ${F}(x)$ using decision rules, where $X$ is the full dataset and ${F}(x)$ is the individual prediction for $x$. 
+%To explain a model's local and global behaviours, 
+The problem is to generate a set of rules capable of ``anchoring"~(or, covers) the prediction sufficiently, by approximating entire model's behaviour~\cite{ribeiro2018anchors}. Since it is already argued that the interpretability provided by the predictor ${f}$ in \cref{chapter:xai} is not sufficiently human-interpretable and globally too complex, it would not be fair to claim ${f}$ a fully `white-box' model. For the simplicity, it would be reasonable to assume ${f}$ a `black-box' model, albeit it is `white-box' to major extent. Thus, for a given model ${f}: X \rightarrow Y$, where $X$ are the training samples and $Y$ are provided ground truths, the goal of local model-agnostic interpretability is to explain individual predictions ${f}(x)$ for an instance~(i.e., $x \in X$) using decision rules. %, where $X$ is the full dataset and ${F}(x)$ is the individual prediction for $x$. 
 
 \begin{table}[h!]
     \caption{Example of gene expression samples based on oncogenes}
@@ -81,19 +82,16 @@ To know the local and global-behaviour of a model, the task is to generate as se
 	    \label{fig:rules_wf}
 \end{sidewaysfigure*}
 
-\hspace*{3.5mm} Let $R$ be a rule~(in the form of set of predicates) to provide interpretable representation, such that $R(x)$ returns 1 if all its feature predicates are true for instance $x$, 0 otherwise. For example, in \cref{ge:ancor_example} when x=\{1, 0.3195, -0.2154, -0.154, 0.4767, 0.652\} or x=\{1, 0.230, -0.552, 0.715, 0.924, 0.652\}, $F(x)=Y$, $A(x)=1$ where $A=\{TP53, TBX3, MPO, AMBN\}$. On the other hand, when x=\{0, -0.240, 0.252, 0.350, -0.642, -0.985\} or x=\{0, -0.450, 0.012, 0.650, -0.325, -0.357\}, $ F(x)=N$, $R(x)=0$ where $R=\{TP53, TBX3, MTOR, MPO\}$. Representing a decision this intuitive way is not very user friendly given the continuous nature of the data and huge number of feature space. Therefore, we need a better rule list to approximate the behaviour of the original  models trained on dataset $X$. 
+\hspace*{3.5mm} Let $R$ be a rule~(in the form of set of predicates) to provide interpretable representation, such that $R(x)$ returns 1 if all its feature predicates are true for instance $x$, 0 otherwise. For example, in \cref{ge:ancor_example} when x=\{1, 0.3195, -0.2154, -0.154, 0.4767, 0.652\} or x=\{1, 0.230, -0.552, 0.715, 0.924, 0.652\}, $f(x)=Y$, $A(x)=1$ where $A=\{TP53, TBX3, MPO, AMBN\}$. On the other hand, when x=\{0, -0.240, 0.252, 0.350, -0.642, -0.985\} or x=\{0, -0.450, 0.012, 0.650, -0.325, -0.357\}, $f(x)=N$, $R(x)=0$ where $R=\{TP53, TBX3, MTOR, MPO\}$. Representing a decision this intuitive way is not very user friendly given the continuous nature of the data and huge number of feature space. Therefore, we need a better rule list to approximate the behaviour of the original models trained on dataset $X$. 
 
 \subsection{Generating decision rules}
-Our approach is based on RuleMatrix~\cite{ming2018rulematrix}, which is Bayesian rule approach to generate and explain model's decision. The overall workflow is shown in \cref{fig:rules_wf}: first the multimodal genomics data is used to create for learning representation on which a model is trained. Then a surrogate model produces a rule list by approximating original model's behaviour. Since not every rule has better coverage, support, and confidence, filtering can be performed by a user~(a doctor) based on support and confidence before explaining the final decision to another user~(e.g., a patient).\\ 
+A Bayesian rule-based library called RuleMatrix~\cite{ming2018rulematrix} is extended to generate and explain model's decision. The overall workflow of the rule generation is shown in \cref{fig:rules_wf}. First, the multimodal genomics data are used for learning representation on which a model is trained. Then, a surrogate model produces a rule list by approximating the behaviour of the MCAE models. Since not all the rule may not qualify w.r.t. coverage, support, and confidence, it is reasonable to add filtering option for the users. In particular, support and confidence are the two thresholds that can be set to get the filtered rules, before explaining the final decision to the patients. However, there are several known challenges in rule based explanation. Molnar et al.~\cite{molnar2019interpretable} has identified following challenges:  
 
-\vspace{-2mm}
-\begin{tcolorbox}[colback=white!3!white,colframe=gray!120!black,title=\faBook~Overlapping rules vs. interpretability:]
-    \scriptsize{
-        \textbf{Overlapping rules}: rules can overlap. For example, imagine when we want to predict the cancer type of a sample but two or more rules, giving contradictory predictions. Even there is a possibility that even a not a single rule applies. Interpretability suffers potentially when several rules apply~\cite{molnar2019interpretable}. For the former, we can solve using a decision list. \\
-        \textbf{Decision list}: it is an order to the decision rules~\cite{molnar2019interpretable}. If the condition of the first rule is true, we rely on the prediction of a DSS based on the first rule. Otherwise, we keep checking the next rule and so on. This way, decision lists can solve the problem of overlapping rules by returning the prediction of the first rule only. \\
-        \textbf{Decision set}: it resembles a representativeness of the rules, except that some rules might have a higher voting power. According to set theory, rules are either mutually exclusive, or there is a strategy to resolve the conflicting rules, s.t. weighted majority voting of individual rule accuracies~\cite{molnar2019interpretable}. 
-        }
-\end{tcolorbox}
+\begin{itemize}[noitemsep]
+    \item \textbf{Overlapping rules} - rules can overlap. For example, imagine when we want to predict the cancer type of a sample but two or more rules, giving contradictory predictions. Besides, there is a possibility that even not a single rule applies. However, interpretability suffers potentially when several rules apply~\cite{molnar2019interpretable}. To overcome this, a decision list can be created by combining most influential rules. 
+    \item \textbf{Decision list} - it signifies the order to the decision rules~\cite{molnar2019interpretable}. If the condition of the first rule is true, the diagnosis prediction of a DSS can be generated on the first rule. Otherwise, it is reasonable to continue checking next and subsequent rules, and so on. This way, decision lists can solve the problem of overlapping rules by returning the prediction of the first rule only~\cite{molnar2019interpretable}. 
+    \item \textbf{Decision set} - it resembles a representativeness of the rules, except that some rules might have a higher voting power~\cite{molnar2019interpretable}. According to set theory, rules are either mutually exclusive, or there is a strategy to resolve the conflicting rules. One of the techniques is ranking rules based on weighted majority voting of individual rule accuracies~\cite{molnar2019interpretable}. 
+\end{itemize}
 
 \hspace*{3.5mm} Since, we already covered the representation learning and predictive modelling in \cref{chapter:xai}, we will cover only the model surrogate, rule generation, filtering of rules, and rule-based explanation steps. 
 
@@ -165,19 +163,19 @@ This is also align with our case given that the training set has a large number 
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
-    \item \textbf{Below}: if expression level is less than the cutoff~(0.5 FPKM\footnote{FPKM: Fragments Per Kilobase Million- is a normalised estimation of gene expression based on RNA-seq data.}).
-    \item \textbf{Low}: if expression level is between 0.5 to 10 FPKM.
-    \item \textbf{Medium}: if expression level is between 11 to 1000 FPKM. 
-    \item \textbf{High}: if expression level is higher than 1000 FPKM. 
+    \item \textbf{Below} - if expression level is less than the cutoff~(0.5 FPKM\footnote{FPKM: Fragments Per Kilobase Million- is a normalised estimation of gene expression based on RNA-seq data.}).
+    \item \textbf{Low} - if expression level is between 0.5 to 10 FPKM.
+    \item \textbf{Medium} - if expression level is between 11 to 1000 FPKM. 
+    \item \textbf{High} - if expression level is higher than 1000 FPKM. 
 \end{itemize}
 
 \hspace*{3.5mm} In many cases, CNVs can encompass genes leading to imbalances, e.g., genes that were thought to always occur in 2 copies per genome have now been found in 1, 3, or more than 3  copies\footnote{\url{https://www.gene-quantification.de/cnv.html}}. This findings also reflected in our data. Based on this assumption, we use the segmentation mean as the basis for computing the change in numeric values and discritized CNV features into 3 different levels:  
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
-    \item \textbf{Normal}: if CNV with exactly 2 copies.
-    \item\textbf{Low}: if CNV with low number of copy because of deletion that range between -4 and 1, i.e., less than normal copies.
-    \item\textbf{High}: if CNV with high number of copy because of copy number gain that range between 3 and 4~(in rare case between 3 and greater than 4) than normal copy~(i.e., 2).
+    \item \textbf{Normal} - if CNV with exactly 2 copies.
+    \item\textbf{Low} - if CNV with low number of copy because of deletion that range between -4 and 1, i.e., less than normal copies.
+    \item\textbf{High} - if CNV with high number of copy because of copy number gain that range between 3 and 4~(in rare case between 3 and greater than 4) than normal copy~(i.e., 2).
 \end{itemize}
 \vspace{-2mm}
 

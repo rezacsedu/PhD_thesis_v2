@@ -216,7 +216,8 @@ However, due to randomness, model's performance changes from a shuffling a colum
 
 %\subsection{Increasing the fairness by reducing biases}
 \subsection{Mitigating model selection bias}
-In the previous chapters, we have created several snapshot models before generating the final and best performing model. However, worse snapshot models can contaminate the overall predictive powers of the ensemble model. Therefore, it is important to take into consideration against model selection bias given the fact that we tried to evaluate the best performing model and subsequently the CDSS was backed by it. Nevertheless, full convergence to best hyperparameters is often not necessary because a best-fitting model will perform better on unseen data. To mitigate model selection bias, we employ WeightWatcher~\cite{martin2019traditional} in following two levels: 
+In the previous chapters, we have created several snapshot models before generating the best model. However, worse snapshot can contaminate the overall predictive powers of the ensemble model itself. Therefore, it is important to take into consideration the model selection bias given. % the fact that we tried to evaluate the best performing model and subsequently the CDSS was backed by it.
+Nevertheless, full convergence to best hyperparameters is often not necessary, as a best-fitted model will perform better on unseen data. To mitigate model selection bias,  WeightWatcher~\cite{martin2019traditional} library is used in following two levels: 
 
 \begin{itemize}[noitemsep]
     \item \textbf{Level 1 } - top-5 snapshots models were selected to generate the full model

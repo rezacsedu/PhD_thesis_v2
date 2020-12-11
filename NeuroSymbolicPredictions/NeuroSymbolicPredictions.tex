@@ -120,7 +120,7 @@ In this section, we discuss the approach for symbolic decision reasoning in deta
 
 \begin{sidewaysfigure}
 	\centering
-	\includegraphics[scale=0.8]{images/reasoning_wf.png}
+	\includegraphics[scale=0.9]{images/reasoning_wf.png}
 	\caption{Workflow of the overall reasoning method} 
 	\label{fig:reasoning_wf}
 	\vspace{-2mm}
@@ -141,9 +141,9 @@ Depending on the hierarchy of abstraction, relations between concepts can be mor
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
-    \item \textbf{Vocabulary}: containing knowledge about concepts and relations w.r.t cancer genomics. 
-    \item \textbf{Rules}: representing rules~(we treat it the rule-base) that encode generic knowledge. 
-    \item \textbf{Facts}: containing factual knowledge about cancer genomics subjects.
+    \item \textbf{Vocabulary} - containing knowledge about concepts and relations w.r.t cancer genomics. 
+    \item \textbf{Rules} - representing rules~(we treat it the rule-base) that encode generic knowledge. 
+    \item \textbf{Facts} - containing factual knowledge about cancer genomics subjects.
     \vspace{-4mm}
 \end{itemize}
 
@@ -324,9 +324,9 @@ In many cases, a set of facts $\mathcal{F}$ may contain contradictory knowledge,
 
 \begin{itemize}[noitemsep]
 \vspace{-4mm}
-    \item \textbf{Class description}: class intersection $(A \sqcap B)$, existential quantification $(\exists r . A),$ limited enumeration using a single instance $\left(\left\{x_{i}\right\}\right)$. 
-    \item \textbf{Class axioms}: $E_{1}$:$E_{2}$ indicates entity $E_{1}$ is an instance of class $E_{2}$, subclass $(A \sqsubseteq B)$\footnote{Means concept $A$ is subsumed by concept $B$}, equivalent class $(A \equiv B)$, disjointness $(A \sqcap B \sqsubseteq \perp)$. 
-    \item \textbf{Object property axioms}: sub-property $(r \sqsubseteq s)$, property chains $(r \circ s \sqsubseteq q)$, equivalent property $(r \equiv s)$, transitive properties $(r \circ r \sqsubseteq r)$, reflexive properties. 
+    \item \textbf{Class description} - class intersection $(A \sqcap B)$, existential quantification $(\exists r . A),$ limited enumeration using a single instance $\left(\left\{x_{i}\right\}\right)$. 
+    \item \textbf{Class axioms} - $E_{1}$:$E_{2}$ indicates entity $E_{1}$ is an instance of class $E_{2}$, subclass $(A \sqsubseteq B)$\footnote{Means concept $A$ is subsumed by concept $B$}, equivalent class $(A \equiv B)$, disjointness $(A \sqcap B \sqsubseteq \perp)$. 
+    \item \textbf{Object property axioms} - sub-property $(r \sqsubseteq s)$, property chains $(r \circ s \sqsubseteq q)$, equivalent property $(r \equiv s)$, transitive properties $(r \circ r \sqsubseteq r)$, reflexive properties. 
     \vspace{-4mm}
 \end{itemize}
 
