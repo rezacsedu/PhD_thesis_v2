@@ -212,6 +212,22 @@ For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ sampl
 
 %\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
 
+\subsection{Perturbing neural networks}
+Training an ML model involves identifying the set of parameters best able to predict the label of an instance (e.g. gene Y is up-regulated). After training, these parameters can be probed (or
+inspected) to better understand what the model learned. Probing strategies provide global interpretations with some exceptions (e.g. DeepLIFT, see below). Because type of parameters and structure of how they connect to each other varies by algorithm, probing strategies are
+model-specific. While probing strategies are straightforward for some ML algorithms (e.g. Support Vector Machine; SVM; and decision tree-based algorithms), this is not the case for more complex ML algorithms (e.g. deep learning).
+
+While the classical ML algorithms described above are readily interpretable, deep
+learning $(\mathbf{B} \mathbf{o x} \mathbf{2})$ algorithms are being applied more and more in the ML community because
+they frequently outperform classical ML algorithms at modeling complex systems $[25-27]$ and
+they can learn from raw data (e.g. whole DNA sequence) rather than user defined features (e.g.
+known regulatory sequences). However, there is often a tradeoff between predictability and
+interpretability [28], and this is certainly the case for deep learning [29]. Fortunately, there has
+been a substantial effort to develop new methods to interpret these complex models. First we
+describe three general approaches to calculate feature importance scores by probing deep
+learning models: connection weights-based, gradient-based, and activation level-based
+approaches (Figure 2 C) [15] .
+
 \section{Methods}\label{chapter_5:mm}
 In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Based on this insights, we rely on several probing and interpretability methods discussed in \cref{chapter:preli}. 
 
