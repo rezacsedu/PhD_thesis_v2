@@ -10,12 +10,32 @@ Besides, since data subjects are entitled to obtain meaningful information about
 
 \section{Introduction}\label{chapter_5:intro}
 As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer as the part of Pan Cancer Atlas~(PCAt) project, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNVs related data~\cite{lyu2018deep}. 
+%Through these information, biologists are able to discover unknowns and reaffirm previously knowledge. 
+
+Since, our aim is to provide accurate diagnosis of cancer, information about gene interaction is of biological relevance. One of the goals of genomics data analysis is to disseminate biologically meaningful information about the biomarkers such as genes and proteins. This will provide clearer understanding of the roles a certain set of genes play in cancer development and related issues. This will assists in the  early treatment of disease~\cite{lu2003cancer}. %It is a common consensus that biological relevance for a cancer classifier is as important as the classification
+%accuracy.
+
+\hspace*{3.5mm} Identification of biomarkers is the ranking of biologically significant and meaningful features, which is based on individual feature correlation w.r.t class separation, i.e., selecting genes with high individual correlation with the classes such that no correlation among the genes. Finding marker genes that are genes whose expression values are biologically useful for determining the class of the samples~\cite{lu2003cancer}. Marker genes are genes that characterize the tumor classes. Subsequently, accurate identification of marker genes are important due to the following reasons~\cite{lu2003cancer}:
+
+\begin{itemize}[noitemsep]
+    \item Enable better classification performance
+    \item Allow biologists further study the interaction of relevant genes 
+    \item Study the functional and sequential behavior of known marker genes in order to facilitate the functionality discovery of other genes.
+    \item Allow further study of relation of expression values of different genes with respect to the tumor class, is similar expression pattern always results in cancer or the combination of suppression of certain genes and expression of certain genes are a better indication of tumor, etc.
+\end{itemize}
+
+%It has also been observed that for the same gene selection mechanism, the accuracies of different classifiers do not differ much, whereas different gene selection methods have greater effect on the classification accuracy. This again proved how an important role gene selection plays in cancer classification. In conclusion, we feel that a good gene selection method for cancer classification should observe the
+%following properties:
+%corporation of the gene interaction information,
+%- selection criteria based on group performance instead of individual correlation,
+%. Inclusion of complementary genes, Picking of cancer related genes instead of cell composition related genes, and
+%. Reasonably efficient.
 
 \hspace*{3.5mm} In this chapter, multimodal genomics data is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. Data from PCAt project~\cite{weinstein2013cancer} is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. A vanilla convolutional neural network~(CNN) and a deep CNN architecture called VGG-16 are trained end-to-end for the classification. On the other hand, a multimodal convolutional autoencoder~(MCAE) network is trained to learn joint latent representation from the multimodal genomics data before the classification. These models are treated as `black-box' methods. Subsequently, to improve algorithmic transparency, different probing techniques are employed to mitigate the opaqueness of these `black-box' models. 
 
 \hspace*{3.5mm} Since genomics data are high dimensional, this thesis hypothesis that\footnote{\textbf{H4}: \textit{Since genomics data is high dimensional, embedding them into 2D raw images can help locate significant biomarkers.}} embedding them into 2D raw images can help locate significant biomarkers\footnote{Supporting publication: Md. Rezaul Karim, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", Proc. of \emph{IEEE International Conference on Bioinformatics and Bioengineering~(BIBE'2019)}, Athens, Greece, October 28-30, 2019}. % for the corresponding tumor types. 
 To identify relevant biomarkers\footnote{RQ2: \textit{How to identify relevant features or factors for a certain decision?}}, Grad-CAM++ and LRP are used to generate class-specific heat maps~(HM) for all classes. 
-Marker genes w.r.t prominent pixels position on 2D feature space are then marked, followed by computing their importance in terms of mean absolute impact~(MAI). Top-k genes across cancer types are also ranked w.r.t MAI, followed by their functional analyses.  
+Marker genes w.r.t prominent pixels position on 2D feature space are then marked, followed by computing their importance. Top-k genes across cancer types are also ranked w.r.t MAI, followed by their functional analyses.  
 Attention mechanism is employed in a multimodal representation learning setting to provide global interpretability\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions}, in which both modality specific and globally important top-k genes across cancer types are identified. To the end, diagnoses provided by the DSS consist of the following three steps: 
 
 \begin{itemize}[noitemsep]
@@ -113,27 +133,7 @@ Apart from some restrictive initiatives, no substantial works are done on multim
 \section{Preliminaries}
 Some concepts on interpretability and metastases of cancer have been discussed in \cref{chapter:preli}. In this section, some modality specific interpretability concepts are discussed.  
 
-\subsection{Feature selection}
-One of the goals of genomics data~(in particular, expression data) analysis is to disseminate biologically meaningful information about the biomarkers such as genes and proteins. 
-%Through these information, biologists are able to discover unknowns and reaffirm previously knowledge. 
-Since, our aims is providing accurate diagnosis of cancer, information about gene interaction is of biological relevance. This will provide clearer understanding of the roles a certain set of genes play in cancer development and related issues, which will also assists in the  early treatment of disease~\cite{lu2003cancer}. %It is a common consensus that biological relevance for a cancer classifier is as important as the classification
-%accuracy.
-
-\hspace*{3.5mm} Identification of biomarkers is the ranking of biologically significant and meaningful features, which is based on individual feature correlation w.r.t class separation, i.e., selecting genes with high individual correlation with the classes such that no correlation among the genes Finding marker genes that are genes whose expression values are biologically useful for determining the class of the samples~\cite{lu2003cancer}. In other words, marker genes are genes that characterize the tumor classes. Subsequently, accurate identification of marker genes are important due to the following reasons~\cite{lu2003cancer}:
-
-\begin{itemize}[noitemsep]
-    \item Enable better classification performance
-    \item Allow biologists further study the interaction of relevant genes 
-    \item Study the functional and sequential behavior of known marker genes in order to facilitate the functionality discovery of other genes.
-    \item Allow further study of relation of expression values of different genes with respect to the tumor class, is similar expression pattern always results in cancer or the combination of suppression of certain genes and expression of certain genes are a better indication of tumor, etc.
-\end{itemize}
-
-%It has also been observed that for the same gene selection mechanism, the accuracies of different classifiers do not differ much, whereas different gene selection methods have greater effect on the classification accuracy. This again proved how an important role gene selection plays in cancer classification. In conclusion, we feel that a good gene selection method for cancer classification should observe the
-%following properties:
-%corporation of the gene interaction information,
-%- selection criteria based on group performance instead of individual correlation,
-%. Inclusion of complementary genes, Picking of cancer related genes instead of cell composition related genes, and
-%. Reasonably efficient.
+%\subsection{Feature selection}
 
 \subsection{Probing neural networks}
 %\subsection{Attention mechanism}
