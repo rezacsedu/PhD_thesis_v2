@@ -3,10 +3,9 @@
 \textit{"Predicting the future isn't magic, it's artificial intelligence."} -- Dave Waters 
 
 \section{Chapter Overview}
-In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were considered to develop decision support system~(DSS) to leverage cancer types and subtypes prediction tasks. In both cases, the predictive models developed are mostly black-box methods. However, it is not only important to predict the cancer types accurately, but also revealing and interpreting biological significance about driver genes are vital for subsequent treatments. 
-Besides, since data subjects are entitled to obtain meaningful information about logic, significance, and envisaged impacts of automated decision making, it is important to improve algorithmic transparency of the models based on which a DSS will be built upon. 
+In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were considered to develop decision support system~(DSS) to leverage cancer types and subtypes prediction tasks. In both cases, predictive models that were developed are mostly black-box methods. However, it is not only important to predict the cancer types accurately, but also revealing and interpreting biological significance about driver genes are vital for subsequent treatments. Besides, since data subjects are entitled to obtain meaningful information about logic, significance, and envisaged impacts of automated decision making, it is important to improve algorithmic transparency of the models based on which a DSS will be built upon. 
 
-\hspace*{3.5mm} Several neural network architectures are first trained to learn joint latent representation from the multimodal genomics data before the classification. Then to improve the algorithmic transparency and explainability of the black-box models, different probing and interpretable methods are applied in this chapter, where both ante-hoc and post-hoc interpretability techniques were considered. Further, to validate if the identified biomarkers are biologically relevant, functional analysis is carried out. 
+\hspace*{3.5mm} In this chapter, several neural network architectures will be trained to learn joint latent representation from the multimodal genomics data, before classifying the samples into specific cancer types. Then attempts will be taken to improve the interpretability and algorithmic transparency of the black-box models. Through several experiments, hypotheses will be built upon for which multimodality combinations and which interpretability techniques are suited most to generate insights. In particular, to improve the algorithmic transparency and explainability of the black-box models, different probing, perturbing, and interpretable methods will applied, in both ante-hoc and post-hoc interpretability settings. Further, to validate if the identified biomarkers are biologically relevant, functional analysis will be carried out. The interpretations will be used to generate new hypotheses that can be tested experimentally in \cref{chapter:xai_rules} in terms of model surrogation.
 
 \section{Introduction}\label{chapter_5:intro}
 As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer as the part of Pan Cancer Atlas~(PCAt) project, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNVs related data~\cite{lyu2018deep}. 
@@ -677,25 +676,28 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
 %such that the attention vector~(that represents individual feature weights) for each input modality contribute to the latent space $Z_k$.  
 
 \section{Experiments}\label{chapter_5:results} 
-In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. The objective of the breast cancer subtype classification tasks is to observe the following:
+Objectives of the experiments are to observe the following:
 
 \begin{enumerate}[noitemsep]
-    \item What types of neural network architectures are for more for handing multimodal inputs. 
-    \item What individual genomic modalities are more suitable for more accurate diagnosis. 
-    \item What multimodal input combinations are more suitable for more accurate diagnosis.
-    \item What types of data can express biological characteristics of the patients? 
+    %\item What types of neural network architectures are for more for handing multimodal inputs. 
+    \item What individual genomic modalities are more suitable for global and individual diagnosis? 
+    \item What multimodal input combinations are more suitable for global and individual diagnosis?
+    \item Which interpretability technique is more helpful for explaining global and individual diagnosis?
 \end{enumerate}
 
-\hspace*{3.5mm} Results each observation is analysed, both quantitative and qualitatively. 
+\hspace*{3.5mm} Results of each observation is analysed, both quantitative and qualitatively. 
 
 \subsection{Experiment setup}
 Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
 
 \hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. 
 %Hence, we did not report F1-scores. 
-When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. 
+When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed to explain the diagnosis. Through, 
 
-\subsection{Performance analysis: single modality}
+\subsection{Model performance}
+In this sub-section, we analyse the performance of each model, considering both single and multimodality. Then, both marker genes and common genes will be selected to be reused in the model surrogate strategy in \cref{chapter:xai_rules}
+
+\subsubsection{Model performance: single modality}
 The average accuracy obtained was 89.75\% and 96.25\% using CNN and VGG16 models, respectively. However, since the classes are imbalanced, only the accuracy will give a very distorted estimation of the cancer types. Thus, we report the class-specific classification reports along with the corresponding MCC scores in \cref{table:class_specific}. As can be seen, precision and recall for the majority cancer types were high and for these the VGG16 model performs mostly better. Notably, the VGG16 model classifies BRCA, UCEC, LUAD, HNSC, LUSC, THCA, PRAD, BLCA, STAD, KIRC, LIHC, COAD, CESC, KIRP, SARC, OV, PCPG, TGCT, GBM, READ, LAML, MESO, and DLBC cancer cases more confidently, whereas the CNN model classifies PAAD, CHOL, and UCS cancer cases more accurately. 
 
 \begin{table*}[h]
@@ -844,7 +846,7 @@ show that the AUC scores are consistent across the folds showing stable predicti
 \end{sidewaysfigure*}
 
 %This part still needs to be calculated and updated 
-\subsection{Performance analysis: multimodality}
+\subsubsection{Model performance: multimodality}
 The average accuracy and F1-scores by the multimodal $MCAE_{lrc}$, and $MCAE_{slr}$ models are slightly lower than the single networks. Still, $MCAE_{lrc}$ gave competitive results compared to vanilla CNN and VGG16 with a single type of input as well as $MCAE_{slr}$ for most of the cancer types. 
 %as well as other best ML baselines, e.g., GBT and RF. 
 In particular, GE + miRNA expression giving the best results for the classification.
@@ -891,17 +893,18 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 
 \hspace*{3.5mm} In particular, the GE+miRNA input combination gave lowest reconstruction errors, whereas GE + CNV + miRNA generates the highest errors so do corresponding f1-scores. Eventually, we found that the ROC curves of the $MCAE_{lrc}$ model show that the AUC scores are consistent across the folds showing stable predictions, giving 4\% boost in AUC scores. This signifies that the predictions by the $MCAE_{lrc}$ model are clearly better than random guessing as well as $MCAE_{slr}$. It also suggests that the predictions made by the $MCAE_{lrc}$ model are strongly correlated with the ground truth, yielding a Pearson product-moment correlation coefficient higher than 0.70 for all the classes. 
 
-\subsection{Identification of marker genes}
-We identified top genes for which the change in expression has significant impact on patients. \Cref{fig:hm_all} shows examples of HM generated for each class~(each column for one cancer type) across 5 different folds. As seen, there are similarities across folds and displaying distinct and similar patterns when comparing different cancer types. Red circles highlight similar patterns, e.g., between KIRC and BRCA, and PRAD and LUAD across folds, whereas COAD shows very different patterns. Although there are differences among folds, some patterns are clearly visible. Since intensities did not follow any regular pattern, we chose top 660 genes across 33 tumor types~(top-20 genes per class) as more significant based MAI. 
+\subsubsection{Identification of marker genes}
+As it is evident that $MCAE_{lrc}$ classifier outperforms $MCAE_{slr}$, giving better classification accuracy. Therefore, $MCAE_{lrc}$ model is used to score top-k biomarkers. In particular, top genes are identified for which the change in expression values have significant impact on model performance. \Cref{fig:hm_all} shows examples of HM generated for each class~(each column for one cancer type) across 5 different folds. As seen, there are similarities across folds and displaying distinct and similar patterns when comparing different cancer types. Red circles highlight similar patterns, e.g., between KIRC and BRCA, and PRAD and LUAD across folds, whereas COAD shows very different patterns. Although there are differences among folds, some patterns are clearly visible. Since intensities did not follow any regular pattern, we chose top 660 genes across 33 tumor types~(top-20 genes per class) as more significant based MAI. 
 
 \begin{figure*}[h]
     \centering
 	\includegraphics[scale=0.8]{images/driver_genes.png}
-	\caption{Marker genes identified by $MCAE_{lrc}$ model per class with a gene effect score of $\geq$ 0.25}
+	\caption{Number of identified marker genes~(with $MCAE_{lrc}$ classifier), per class with a gene effect score of $\geq$ 0.25}
     \label{fig:dg_cnn}
 \end{figure*}
 
-\hspace*{3.5mm} Since we have more than 20K protein-coding genes, our choice of 660 is still a reasonable choice, as the number of important biomarkers should be small whose GE changes are sensitive to cancer growth~\cite{zuo2019identification}. All genes in the top-20 list can thus be viewed as tumor-specific biomarkers, which contribute most toward making the predictions. As for the other 29 tumor types, only 3 genes were in the list. Further hyperparameter tuning and training of both CNN models might improve this outcome. Then we further narrowed down the list to the top-5 genes in which only 5 tumor types~(i.e., BRCA, KIRC, COAD, LUAD, and PRAD) have at least five genes with feature importance of at least 0.5 w.r.t. MAI; they are shown in \cref{table:proteinimportance} from the 20,500 protein-coding genes. 
+\hspace*{3.5mm} Since we have more than 20K protein-coding genes, our choice of 660 is still a reasonable choice, as the number of important biomarkers should be small for which even minor changes are sensitive to cancer growth~\cite{zuo2019identification}. All genes in the top-20 list can thus be viewed as tumor-specific biomarkers, which contribute most toward making the predictions. As for other 29 tumor types, only 3 genes qualified in the list. %Further hyperparameter tuning and training of both CNN models might improve this outcome. 
+Then for better interpretability, the top-20 list is further narrowed down to top-5 in which only 5 tumor types~(i.e., BRCA, KIRC, COAD, LUAD, and PRAD) have at least five genes with feature importance of at least 0.25 w.r.t. gene effect score; they are shown in \cref{table:proteinimportance} from the 20,500 protein-coding genes. 
 
 \begin{table}
     \caption{Top-5 genes and their importance}
@@ -911,7 +914,7 @@ We identified top genes for which the change in expression has significant impac
     \vspace{-6mm}
     \begin{tabular}{l|l|l|l}
         \toprule
-        \textbf{Type} & \textbf{Gene} & \textbf{Gene type} & \textbf{MAI} \\ \midrule
+        \textbf{Type} & \textbf{Gene} & \textbf{Gene type} & \textbf{Feature importance} \\ \midrule
         \multirow{5}{*}{BRCA} & PIK3CA & Oncogene & 0.78125 \\ %\cline{2-4}
         & TP53 & Protein-coding & 0.760784 \\ %\cline{2-4}
         & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
@@ -947,7 +950,7 @@ We identified top genes for which the change in expression has significant impac
 \end{table}
 
 %\subsection{Validation of top biomarkers}
-\hspace*{3.5mm} To validate the findings, saturation analyses of oncogenes across 32 tumor types~(except COAD) are obtained from TumorPortal\footnote{ \url{http://www.tumorportal.org/}}~\cite{lawrence2014discovery}. Our approach makes some false identifications, as 21 out of 25 genes are validated to be correct, making only 4 false identifications. Validation for the COAD cancer follows a signature-based approach~\cite{zuo2019identification}, which was used for predicting the progression of colorectal cancer. 
+\hspace*{3.5mm} To validate the findings, saturation analyses of oncogenes across 32 tumor types~(except COAD) are obtained from TumorPortal\footnote{ \url{http://www.tumorportal.org/}}~\cite{lawrence2014discovery}. The proposed approach also makes some false predictions. In particular, 21 out of 25 genes are validated to be correct, making only 4 false identifications. Validation for the COAD cancer follows a signature-based approach~\cite{zuo2019identification}, which was used for predicting the progression of colorectal cancer. 
 
 \begin{sidewaysfigure*}
 \centering
@@ -956,8 +959,12 @@ We identified top genes for which the change in expression has significant impac
     \label{fig:pfi}
 \end{sidewaysfigure*}
 
-\subsection{Finding common biomarkers}
-Identifying all significant common genes will help understand various aspects for a specific cancer type~(e.g., BRCA carcinogenesis). Thus, these top genes have close relations to the corresponding tumor types, which could be viewed as potential biomarkers. \Cref{fig:comgenes} shows the top-10 common driver genes across 33 cancer types based on gene expression with Grad-CAM++ and LRP. 
+\subsection{Global explainability}
+In order to explain global explainability of the trained models, we first analyse both global feature importance and interactions. 
+
+\subsubsection{Global feature importance}
+Identification all significant common genes help understand various aspects for a specific cancer type~(e.g., BRCA carcinogenesis). These top genes have close relations to the corresponding tumor types, which could be viewed as potential biomarkers. \Cref{fig:comgenes} shows top-10 common driver genes across 33 cancer types based on gene expression with Grad-CAM++ and LRP. As shown TP53, GATA3, EGFR, ATM, MLL3, MTOR, MPO, FOXD1, MED12, and GATA3 genes are identified as common driver genes across cancer types with Grad-CAM++, where TP53 protein-coding gene has the highest feature importance of 0.75. On the other hand, TP53, EGFR, AMBN, SETD2, MPO, MTOR, FOXD1, GATA3, and MED12 genes are identified as common driver genes across cancer types with LRP, with the TP53 protein-coding gene having the highest feature importance of 0.78. 
+%with $MCAE_{lrc}$ model
 
 \begin{figure*}[h]
 	\centering
@@ -977,13 +984,62 @@ Identifying all significant common genes will help understand various aspects fo
 	\label{fig:comgenes}
 \end{figure*}
 
-\hspace*{3.5mm} As shown TP53, GATA3, EGFR, ATM, MLL3, MTOR, MPO, FOXD1, MED12, and GATA3 genes are identified as common driver genes across cancer types with Grad-CAM++, where TP53 protein-coding gene has the highest feature importance of 0.75. On the other hand, TP53, EGFR, AMBN, SETD2, MPO, MTOR, FOXD1, GATA3, and MED12 genes are identified as common driver genes across cancer types with Grad-CAM++, with the TP53 protein-coding gene having the highest feature importance of 0.78. 
+\subsubsection{Global feature importance}
+Feature importance assign a score to input features based on how useful they are at predicting a target variable. This graph helps you identify which features in your dataset have the greatest effect on the outcomes of your machine learning model. 
+
+\begin{figure*}[h]
+    \centering
+	\includegraphics[scale=0.8]{images/global_fi_1.png}
+	\caption{Global feature importance identifies, assign a score to input features based on how useful they are at predicting a target variable for the $MCAE_{lrc}$  model}
+    \label{fig:global_feature_importance}
+\end{figure*}
+
+\hspace*{3.5mm} In this graph, you can see: BNC1 GBP4 TFAP2A are the top three most important variables according to your machine learning model. Remember, each variable might affect the outcome differently. Let’s scroll down and explore how each variable impacts the outcome. On average, the variable BNC1 will change the model outcome by 0.0. 
+
+\subsubsection{Global feature impacts}
+Feature impact identifies which features (also known as columns or inputs) in a dataset have the greatest positive or negative effect on the outcomes of a machine learning model. This tells you which features have positive impact and which features have negative impact on the output of the decision. 
+
+\begin{figure*}[h]
+    \centering
+	\includegraphics[scale=0.8]{images/global_fi_2.png}
+	\caption{Global feature impact identifies, which features in a dataset have the greatest positive or negative effect on the outcomes of the $MCAE_{lrc}$  model}
+    \label{fig:global_feature_impacts}
+\end{figure*}
+
+\hspace*{3.5mm} On average, the variable FOXP4, VPS9D1-AS1,and CYBRD1 will increase the average model outcome(9.758071) by -0.08, 0.05, and 0.05 respectively. On average, the variable FOXP4, EMP2,and SAMHD1 will change the average model outcome(9.758071) by -0.08, -0.03, and-0.03 respectively.. 
+
+\subsection{Local explainability}
+In order to explain individual diagnoses, we provide sensitivity analysis in terms of what-if and leave-one-feature out analyse. 
+
+\subsubsection{Local feature importance}
+Local Feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row. According to the model, the features are most important in explaining the target variable. Most importance is on the top. The average outcome predicted by the model is 9.758071. On average, the variable TFAP2A, VPS9D1-AS1,and MTND2P28 will increase the average model outcome(9.758071) by -0.36, 0.8, and 0.47 respectively. On average, the variable TFAP2A, ADCY3,and FOXP4 will change the average model outcome(9.758071) by -0.36, -0.31, and-0.28 respectively.
+
+\begin{figure*}[h]
+    \centering
+	\includegraphics[scale=0.8]{images/local_fi_1.png}
+	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
+    \label{fig:local_feature_impacts}
+\end{figure*}
+
+\subsubsection{What-if analysis}
+Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight". 
+
 
 \section{Chapter Summary}\label{chapter_5:conclusion}
 In this chapter, we developed two deep multimodal architectures called $MCAE_{lrc}$ and $MCAE_{slr}$ cancer types based on different combination of multimodal genomics data types. Our approach is based on GradCAM++, LRP, and attention mechanism with a vanilla CNN, an VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$ networks. Experiment results show that omics data are useful useful for predicting cancer types with high confidence giving high f1 scores~(of up to 96.25\% for single modality based on GE and of up to 92.45\% for GE+miRNA input modalities). Based on this comparison, we can conclude that there is a possibility both $MCAE_{lrc}$ and $MCAE_{slr}$ might surpass MAE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
-Our approach can predict cancer types 96.25\% of the cases correctly, which slightly outperforms the approach by Boyu et al.~\cite{lyu2018deep} but 6.5\% better than the approach by Yuanyuan et al.~\cite{li2017comprehensive}. 
 
-\hspace*{3.5mm}Further, our approach reduces the false prediction rate for the READ, UCS, ESCA, and CHOL tumor samples. In particular, against 35\%, 81\%, 77\%, and 56\% of the correctly predicted cases by~\cite{lyu2018deep}, our approach predicts 88.74\%, 87.26\%, 89.56\%, and 84.55\%~(in cyan) cases correctly. Although slightly underperforms than~\cite{lyu2018deep} at classifying BRCA, THCA, and PRAD~(in red), our approach is more consistent for the majority cancer types and likely to perform more stably on new GE data. We also attempted to provide a more human-interpretable explanation by showing statistically significant biomarkers, which confirms that the identified genes are biologically relevant. 
+\hspace*{3.5mm} Our approach can predict cancer types 96.25\% of the cases correctly, which slightly outperforms the approach by Boyu et al.~\cite{lyu2018deep} but 6.5\% better than the approach by Yuanyuan et al.~\cite{li2017comprehensive}. Further, our approach reduces the false prediction rate for the READ, UCS, ESCA, and CHOL tumor samples. In particular, against 35\%, 81\%, 77\%, and 56\% of the correctly predicted cases by~\cite{lyu2018deep}, our approach predicts 88.74\%, 87.26\%, 89.56\%, and 84.55\%~(in cyan) cases correctly. Although slightly underperforms than~\cite{lyu2018deep} at classifying BRCA, THCA, and PRAD~(in red), our approach is more consistent for the majority cancer types and likely to perform more stably on new GE data. 
 
-\hspace*{3.5mm} However, several other factors have hindered this research, e.g., lack of enough training samples and single modality, i.e., only GE data used for making the predictions and generating the explanations. The latter reason caused the network to produce high training and validation errors during the training phase, giving lower accuracy during the inferencing phase. Although we attempted to open the CNN, VGG16, and MCAE `black-box' models through biomarker validation and feature ranking, our approach is mostly post-hoc as the explainability is based on test cases and results similar to LRP. 
-Several further factors have hindered this research, such as lack of enough training samples, and lack of biological pathways analysis. On the other hand, In order to ensure an explainable model is robust to adversaries and behaves as intended in real-life treatment diagnosis, we need to use adversarial training to improve performance\cite{bhatt2020explainable}. In the next chapter, we will focus on improving the robustness of the multimodal interpretable model, particularly with a focus on adversarial robustness. 
+\hspace*{3.5mm} Nevertheless, we attempted to provide a more human-interpretable explanation by showing statistically significant biomarkers, which confirms that the identified genes are biologically relevant. Several other factors have hindered this research, e.g., lack of enough training samples and single modality, i.e., only GE data used for making the predictions and generating the explanations. The latter reason caused the network to produce high training and validation errors during the training phase, giving lower accuracy during the inferencing phase. Although we attempted to open the CNN, VGG16, and MCAE `black-box' models through biomarker validation and feature ranking, our approach is mostly post-hoc as the explainability is based on test cases and results similar to LRP. 
+%Several further factors have hindered this research, such as lack of enough training samples, and lack of biological pathways analysis. 
+
+To summarize, this chapter disseminate the following findings, through several experiments:  
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{What types of machine learning model and neural network architectures are for suitable for handing multimodal inputs?} - traditional baselines ML models cannot handle multi-input types, hence not suitable for multimodality. 
+    \item \textbf{What individual genomic modalities are more suitable for more accurate diagnosis?} experiments results show that GE and miRNA and their multimodality more reliable results for cancer subtype prediction. This also suggests that this input combination is suitable for multimodality integration for subsequent experiments. 
+    \item \textbf{What multimodal input combinations are more suitable for more accurate diagnosis?} - experiments results show that GE + miRNA multimodality combination is more suitable for cancer subtype prediction. This also suggests that DNA methylation data is not suitable for cancer diagnosis, hence not suitable for multimodality integration for subsequent experiments.
+    \item \textbf{What types of data can express biological characteristics of the patients?} - the qualitative analysis of the learned representation of GE + miRNA data can express biological characteristics of cohorts. Subsequently, the MAE learns latent molecular properties in coded form from patient expression profiles. This suggests that the hypothesis built upon is valid. 
+\end{enumerate}
+
+\hspace*{3.5mm} In order to ensure an explainable model is robust to adversaries and behaves as intended in real-life treatment diagnosis, we need to use adversarial training to improve performance\cite{bhatt2020explainable}. In the next chapter, we introduce different adversarial attacks on our model, including content moderation, numeric data moderation, and out-of-distribution~(OOD), before assessing the robustness against each scenario. 

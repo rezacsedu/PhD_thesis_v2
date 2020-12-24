@@ -4,8 +4,9 @@
 \textit{"Learning is lifelong; we forget rules when they no longer apply or revise them when the environment changes."} - Ethem Alpaydin 
 
 \section{Chapter Overview}
-In the previous chapter, we used only CNVs, i.e., single modality to develop a decision support system~(DSS). It was based on snapshot neural ensemble method of two independent deep architectures called \texttt{Conv-LSTM} and \texttt{CAE} networks. Eventhough, it was technically a black-box model, the DSS performed moderately well at predicting cancer types. As discussed earlier that to develop a more reliable and accurate DSS for cancer diagnosis, multiple factors have to be considered. In this chapter, the single modality-based DSS is extended to multimodality. A multimodal autoencoder~(MAE) classifier is trained on genomics data to classify breast cancer patients based on the presence of PGR, ER, and HER/2 neu statuses\footnote{\textbf{RQ1}: How to use multimodal genomic data to accurately predict cancer
-types?}. Effects of different modalities are observed and assess the performance of our CDSS across breast cancer subtype classification. The idea is based on the hypothesis\footnote{\textbf{H3}: Multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision.} that multimodal genomics data and clinical outcome can be used to train the MAE architecture to provide more accurate clinical diagnostic decision\footnote{\textbf{Supporting publication}: \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Multimodal Autoencoders for Prognostically Relevant Subtypes and Survival Prediction for Breast Cancer", \emph{IEEE Access}, DOI: 10.1109/ACCESS.2019.2941796, September 2019.}. 
+In the previous chapter, we used only CNVs, i.e., single modality to develop a decision support system~(DSS). It was based on snapshot neural ensemble method of two independent deep architectures called \texttt{Conv-LSTM} and \texttt{CAE} networks. Eventhough, it was technically a black-box model, the DSS performed moderately well at predicting cancer types. As discussed earlier that to develop a more reliable and accurate DSS for cancer diagnosis, multiple factors have to be considered. In this chapter, the single modality-based DSS is extended to multimodality. Through several experiments, a hypothesis will be built upon based on two main experiments: i) if a multimodal neural network architecture is useful to generate sufficient signals for cancer subtype classification, ii) which geneomics data and their multimodality combinations are best suited for the cancer diagnosis.
+
+\hspace*{3.5mm} To establish this, a multimodal autoencoder~(MAE) classifier will be trained on genomics data to classify breast cancer patients based on the presence of PGR, ER, and HER/2 neu statuses\footnote{\textbf{RQ1}: How to use multimodal genomic data to accurately predict cancer types?}. Effects of different modalities are observed and assess the performance of our CDSS across breast cancer subtype classification. The idea is based on the hypothesis\footnote{\textbf{H3}: Multimodal genomics data and clinical outcome can be used to train a multimodal neural network architecture to provide more accurate clinical diagnostic decision.} that multimodal genomics data and clinical outcome can be used to train the MAE architecture to provide more accurate clinical diagnostic decision\footnote{\textbf{Supporting publication}: \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Multimodal Autoencoders for Prognostically Relevant Subtypes and Survival Prediction for Breast Cancer", \emph{IEEE Access}, DOI: 10.1109/ACCESS.2019.2941796, September 2019.}. 
 
 \section{Introduction}
 \label{secIntroduction_Motivation}
@@ -295,7 +296,7 @@ During the finetuning, final latent vector $h_{mae}$ is feed into fully connecte
 The objective of the breast cancer subtype classification tasks is to observe the following:
 
 \begin{itemize}[noitemsep]
-    \item What types of neural network architectures are for more for handing multimodal inputs. 
+    \item What types of machine learning model and neural network architectures are for suitable for handing multimodal inputs. 
     \item What individual genomic modalities are more suitable for more accurate diagnosis. 
     \item What multimodal input combinations are more suitable for more accurate diagnosis.
     \item What types of data can express biological characteristics of the patients? 
@@ -308,7 +309,6 @@ The training process is performed through a total of 100 epochs with the batch s
 
 \subsection{Performance metrics}
 Results based on best hyperparameters produced through random search and 5-fold cross-validation tests empirically are reported in which macro-averaged precision, recall, F1, and Matthias correlation coefficient~(MCC) scores, along with confusion matrices are interpreted. Since this is one of the very first works on multimodality learning, comparing our approach with baseline models was not a viable option. 
-
 \iffalse
 \begin{sidewaysfigure*}[htp!]
 	\centering
@@ -570,14 +570,9 @@ It mostly occurs with the GE + miRNA expression giving the best results for subt
 %and decent results for survival rate prediction. 
 Based on this comparison, we can evidently conclude that MAE outperforms both AE and ML baselines models, with the right combination of inputs.
 
-\hspace*{3.5mm} Although, the best result for every status classification was recorded by MAE based on GE + miRNA expression input modality, MAE model also made non-trivial mistakes, specially for the HER2/neu-based subtype classification tasks. Such high mistakes made the classifier not yet suitable for real clinical setting. To diagnose and mitigate the high misclassification error, several regularization techniques such as l2-regularization and Gaussian dropout were employed. However, still poor was observed, which might be due to overfitting of the network. One of the possible causes for such overfitting is the smaller number of samples~(i.e. 860 samples) compared to ER and PGR statuses~(i.e. 1,024 samples). 
-
-\section{Chapter Summary}\label{chapter_4:conclusion}
-In this chapter, a DSS is developed for predicting different subtypes of breast cancer patients, which is technically based on an multimodal autoencoder architecture. An F1-score of 0.93 and 0.856 were observed for ER and PGR-based diagnosis, respectively with GE and miRNA expression input modality. On the other hand, with an F1 score of 0.627, HER2 status classification got the worst results by far compared to ER and PGR status ones. Although some results looks promising, overall decision accuracy of the DSS is hindered due to several factors. The key findings of this chapter can summarised as follows: 
+\hspace*{3.5mm} Although, the best result for every status classification was recorded by MAE based on GE + miRNA expression input modality, MAE model also made non-trivial mistakes, specially for the HER2/neu-based subtype classification tasks. Such high mistakes made the classifier not yet suitable for real clinical setting. To diagnose and mitigate the high misclassification error, several regularization techniques such as l2-regularization and Gaussian dropout were employed. However, still poor was observed, which might be due to overfitting of the network. One of the possible causes for such overfitting is the smaller number of samples~(i.e. 860 samples) compared to ER and PGR statuses~(i.e. 1,024 samples). The key findings of this chapter can summarised as follows: 
 
 \begin{enumerate}[noitemsep]
-    \item Limited availability of genomics data, which is probably due to individual patients privacy. Besides, sources like ICGC and COSMIC are not comprehensive even requiring restricted access. Limited amount of labeled data was one of the main reasons caused the MAE classifiers overfitted. 
-    
     \item Adding more training samples helped increase model's generalization capability. This suggest that the prediction can be made more confidently on more labelled training data. 
     
     \item No manual feature engineering and selection were performed. Rather, the multimodal representation learning strategy let the network to choose the best features from the very high dimensional inputs. Consequently, pretraining loss for some input combinations were getting out of bound. 
@@ -585,6 +580,16 @@ In this chapter, a DSS is developed for predicting different subtypes of breast 
     \item The best result observed with GE + miRNA expression  multimodality suggest that DNA methylation is not very suitable for none of the subtypes classification tasks. The worst results for HER2 status classification suggest that none of the input modalities are suitable for the clinical diagnosis. 
     
     \item The DSS based on multimodal data is black-box, hence lack of interpretability. Besides, high classification mistakes suggest that even the best model yet not suitable for real clinical setting.
+\end{enumerate}
+
+\section{Chapter Summary}\label{chapter_4:conclusion}
+In this chapter, a DSS is developed for predicting different subtypes of breast cancer patients, which is technically based on an multimodal autoencoder architecture. An F1-score of 0.93 and 0.856 were observed for ER and PGR-based diagnosis, respectively with GE and miRNA expression input modality. On the other hand, with an F1 score of 0.627, HER2 status classification got the worst results by far compared to ER and PGR status ones. Although some results looks promising, overall decision accuracy of the DSS is hindered due to several factors. Limited availability of genomics data, which is probably due to individual patients privacy. Besides, sources like ICGC and COSMIC are not comprehensive even requiring restricted access. Limited amount of labeled data was one of the main reasons caused the MAE classifiers overfitted. To summarize, this chapter disseminate the following findings, through several experiments:  
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{What types of machine learning model and neural network architectures are for suitable for handing multimodal inputs?} - traditional baselines ML models cannot handle multi-input types, hence not suitable for multimodality. 
+    \item \textbf{What individual genomic modalities are more suitable for more accurate diagnosis?} experiments results show that GE and miRNA and their multimodality more reliable results for cancer subtype prediction. This also suggests that this input combination is suitable for multimodality integration for subsequent experiments. 
+    \item \textbf{What multimodal input combinations are more suitable for more accurate diagnosis?} - experiments results show that GE + miRNA multimodality combination is more suitable for cancer subtype prediction. This also suggests that DNA methylation data is not suitable for cancer diagnosis, hence not suitable for multimodality integration for subsequent experiments.
+    \item \textbf{What types of data can express biological characteristics of the patients?} - the qualitative analysis of the learned representation of GE + miRNA data can express biological characteristics of cohorts. Subsequently, the MAE learns latent molecular properties in coded form from patient expression profiles. This suggests that the hypothesis built upon is valid. 
 \end{enumerate}
 
 \hspace*{3.5mm} In the next chapter, we extend both single and multimodality-based cancer typing methods to overcome above mentioned limitations. We will increase the training data, by combining samples from the Pan Cancer Atlas project. We will focus on improving the explanations of the predictions using different probing techniques.
