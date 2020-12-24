@@ -1011,12 +1011,12 @@ Feature impact identifies which features (also known as columns or inputs) in a 
 \subsection{Local explainability}
 In order to explain individual diagnoses, we provide sensitivity analysis in terms of what-if and leave-one-feature out analyse. 
 
-\subsubsection{Local feature importance}
-Local Feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row. According to the model, the features are most important in explaining the target variable. Most importance is on the top. The average outcome predicted by the model is 9.758071. On average, the variable TFAP2A, VPS9D1-AS1,and MTND2P28 will increase the average model outcome(9.758071) by -0.36, 0.8, and 0.47 respectively. On average, the variable TFAP2A, ADCY3,and FOXP4 will change the average model outcome(9.758071) by -0.36, -0.31, and-0.28 respectively.
+\subsubsection{Local feature impact}
+Local Feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row. The features are most important in explaining the target variable. Most importance is on the top. The average outcome predicted by the model is 9.758071. On average, the variable TFAP2A, VPS9D1-AS1,and MTND2P28 will increase the average model outcome(9.758071) by -0.36, 0.8, and 0.47 respectively. On average, the variable TFAP2A, ADCY3,and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28 respectively.
 
 \begin{figure*}[h]
     \centering
-	\includegraphics[scale=0.8]{images/local_fi_1.png}
+	\includegraphics[scale=0.6]{images/local_fi_1.png}
 	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
     \label{fig:local_feature_impacts}
 \end{figure*}
@@ -1024,6 +1024,55 @@ Local Feature impact identifies which features have the greatest positive or neg
 \subsubsection{What-if analysis}
 Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight". 
 
+\begin{figure*}[h]
+    \centering
+	\includegraphics[scale=0.8]{images/local_fi_1.png}
+	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
+    \label{fig:local_feature_impacts2}
+\end{figure*}
+
+\subsubsection{Leave-one-feature-out analysis}
+Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight". Further, in order to quantitatively validate the word-level relevances for local explianability, we perform the leave-one-out experiment. The idea is to improve the greedy backward elimination algorithm by preserving more interactions among terms. First, we randomly select a sample hate statement in test set. For the sample, we generate prediction probabilities for all the classes, followed by explaining word-level relevance for two highest probable classes. 
+
+Let's consider the example in 
+\cref{fig:explain_term_wise_religious_hate}. Words on the right 
+side are positive, while words on the left are negative. Words like %\bn{`জাতি'}, \bn{`দখলে'} , and \bn{`হিন্দু'}  
+are positive for religious class, albeit the most significant word %\bn{`জাতি'}  
+is negative for personal hate category~(where words
+%\bn{`বাচ্চারা'}  and \bn{`হারামজা'}  
+are more important). The word %\bn{`জাতি'}
+has the highest positive score of 0.27 for class religious. Our model predicts this as a religious hate statement too, with the probability of 59\%. 
+
+\begin{figure}[h]
+    \vspace{-2mm}
+	\centering
+	\includegraphics[scale=0.7]{images/reli_explain.png}
+	\caption{Word-level relevance test}% using leave-one-out test}
+    \label{fig:explain_term_wise_religious_hate}
+	\vspace{-4mm}
+\end{figure}
+
+However, if we remove word %\bn{`জাতি'} 
+from the text, we would expect the model to predict the label religious with a probability of 32\%~(i.e., 59\% $-$ 27\%). On the other hand, word %\bn{`জাতি'} 
+is negative for class personal hate, albeit words %\bn{`বাচ্চারা'}
+and 'have positive scores of 0.23 and 0.17 for the class personal. These words identified by our approach not only can reveal the relevance of important terms for classifier’s decision, but also signify that removing most relevant terms will impact the prediction decision, accordingly to their relevance value. 
+
+\begin{figure*}[h]
+    \centering
+	\includegraphics[scale=0.8]{images/local_fi_1.png}
+	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
+    \label{fig:local_feature_impacts3}
+\end{figure*}
+
+\subsubsection{Similar profiles}
+Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight".
+
+\begin{figure*}[h]
+    \centering
+	\includegraphics[scale=0.8]{images/similar_profiles.png}
+	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
+    \label{fig:local_feature_impacts4}
+\end{figure*}
 
 \section{Chapter Summary}\label{chapter_5:conclusion}
 In this chapter, we developed two deep multimodal architectures called $MCAE_{lrc}$ and $MCAE_{slr}$ cancer types based on different combination of multimodal genomics data types. Our approach is based on GradCAM++, LRP, and attention mechanism with a vanilla CNN, an VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$ networks. Experiment results show that omics data are useful useful for predicting cancer types with high confidence giving high f1 scores~(of up to 96.25\% for single modality based on GE and of up to 92.45\% for GE+miRNA input modalities). Based on this comparison, we can conclude that there is a possibility both $MCAE_{lrc}$ and $MCAE_{slr}$ might surpass MAE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
