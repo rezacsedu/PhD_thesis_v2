@@ -240,55 +240,57 @@ From given genomics profiles of PCAt cohorts consisting of GE, DNA methylation, 
 \subsection{Datasets}
 The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt covering 33 prevalent tumor type for 9,074 samples are considered in our approach. This dataset has been used widely as prior knowledge to generate tumor-specific biomarkers~\cite{way2018machine,hoadley2018cell,malta2018machine}. These data are hybridized by the Affymetrix Genome-Wide Human SNP Array 6.0\footnote{\url{http://www.affymetrix.com/support/technical/byproduct.affx}}, which allows us to examine the largest number of cases along with the highest probe density~\cite{31Park}. Besides, we use the cancer transcriptomes from the PCAt project to interrogate GE states induced by deleterious mutations and copy number alterations. The sample distribution across data types are shown in \cref{table:alldatadetails2}~\cite{weinstein2013cancer}. 
 
+%\text { Table } 3 \text { : Tumor types and number of RNA-Seq samples }
+
 \begin{table} [h]
 \centering
     \scriptsize
     \caption{Sample distribution across tumor types: rows: tumour type, column: data types~\cite{weinstein2013cancer}}
     \label{table:alldatadetails2}
     \vspace{-2mm}
-    \begin{tabular}{l|l|l|l|l|l|l}
+    \begin{tabular}{l|l|l|l|l}
         \hline
         \rowcolor{Gray}
-         \textbf{Cohort} & \textbf{DNA meth.} & \textbf{Copy numbers} & \textbf{Mutations} & \textbf{miRNA} & \textbf{Gene expr.} & \textbf{Carcinoma type} \\\hline
-            LUSC & 358 & 345 & 178 & 332 & 227 & Lung squamous cell carcinoma \\\hline
-            READ & 162 & 164 & 69 & 143 & 71 & Rectum adeno-carcinoma \\\hline%
-            GBM  & 405 & 578 & 290 & 501 & 495 & Glioblastoma multiforme \\\hline
-            LAML & 194 & 198 & 197 & 187 & 179 & Acute myeloid leukemia	\\\hline%
-            HNSC & 310 & 310 & 277 & 309 & 303 & Head \& neck squamous cell carcinoma \\\hline 
-            BLCA & 126 & 126 & 99 & 121 & 96 & Bladder urothelial carcinoma \\\hline 
-            KIRC & 457 & 457 & 417 & 442 & 431 & Kidney renal clear cell carcinoma  \\\hline
-            UCEC & 512 & 511 & 248 & 497 & 333 & Uterine corpus endometrial carcinoma \\\hline
-            LUAD & 431 & 357 & 229 & 365 & 355 & Lung adenocarcinoma \\\hline
-            OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
-            BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
-            COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
-            LAML & 194 & 198 & 197 & 187 & 179 & Acute myeloid leukemia	\\\hline%
-            HNSC & 310 & 310 & 277 & 309 & 303 & Head \& neck squamous cell carcinoma \\\hline 
-            BLCA & 126 & 126 & 99 & 121 & 96 & Bladder urothelial carcinoma \\\hline 
-            KIRC & 457 & 457 & 417 & 442 & 431 & Kidney renal clear cell carcinoma  \\\hline
-            UCEC & 512 & 511 & 248 & 497 & 333 & Uterine corpus endometrial carcinoma \\\hline
-            LUAD & 431 & 357 & 229 & 365 & 355 & Lung adenocarcinoma \\\hline
-            OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
-            BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
-            COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
-            OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
-            BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
-            COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
-            LAML & 194 & 198 & 197 & 187 & 179 & Acute myeloid leukemia	\\\hline%
-            HNSC & 310 & 310 & 277 & 309 & 303 & Head \& neck squamous cell carcinoma \\\hline 
-            BLCA & 126 & 126 & 99 & 121 & 96 & Bladder urothelial carcinoma \\\hline 
-            KIRC & 457 & 457 & 417 & 442 & 431 & Kidney renal clear cell carcinoma  \\\hline
-            UCEC & 512 & 511 & 248 & 497 & 333 & Uterine corpus endometrial carcinoma \\\hline
-            LUAD & 431 & 357 & 229 & 365 & 355 & Lung adenocarcinoma \\\hline
-            OV   & 592 & 577 & 316 & 454 & 581 & Ovarian serous cystadenocarcinoma \\\hline
-            BRCA & 888 & 887 & 772 & 870 & 817 & Breast invasive carcinoma  \\\hline
-            COAD & 420 & 422 & 155 & 407 & 192 & Colon cdenocarcinoma \\\hline
+         \textbf{Cohort} & \textbf{Copy number alterations} & \textbf{miRNA expression} & \textbf{Gene expression} & \textbf{Carcinoma type} \\\hline
+            ACC & 345 & 332 & 227 & Adrenocortical carcinoma \\\hline
+            BLCA & 164 & 143 & 71 & Bladder urothelial carcinoma \\\hline%
+            BRCA  & 578 & 501 & 495 & Breast invasive carcinoma \\\hline
+            CESC & 198 & 187 & 179 & Cervical and endocervical cancers	\\\hline%
+            CHOL & 310 & 309 & 303 & Cholangio carcinoma \\\hline 
+            COAD & 126 & 121 & 96 & Colon adenocarcinoma \\\hline 
+            DLBC & 457 & 442 & 431 & Lymphoid Neoplasm Diffuse Large B-cell Lymphom  \\\hline
+            ESCA & 511 & 497 & 333 & Esophageal carcinom \\\hline
+            GBM & 357 & 365 & 355 & Glioblastoma multiforme \\\hline
+            HNSC   & 577 & 454 & 581 & Head and Neck squamous cell carcinoma \\\hline
+            KICH & 887 & 870 & 817 & Kidney Chromophobe  \\\hline
+            KIRC & 422 & 407 & 192 & Kidney renal clear cell carcinoma \\\hline
+            KIRP & 198 & 187 & 179 & Kidney renal papillary cell carcinoma	\\\hline%
+            LAML & 310 & 309 & 303 & Acute Myeloid Leukemia \\\hline 
+            LGG & 126 & 121 & 96 & Brain Lower Grade Glioma \\\hline 
+            LIHC & 457 & 442 & 431 & Liver hepatocellular carcinoma  \\\hline
+            LUAD & 511 & 497 & 333 & Lung adenocarcinoma \\\hline
+            LUSC & 357 & 365 & 355 & Lung squamous cell carcinoma \\\hline
+            MESO & 577 & 454 & 581 & Mesothelioma \\\hline
+            OV   & 887 & 870 & 817 & Ovarian serous cystadenocarcinoma  \\\hline
+            PAAD & 422 & 407 & 192 & Pancreatic adenocarcinoma \\\hline
+            PCPG   & 577 & 454 & 581 & Pheochromocytoma and Paraganglioma \\\hline
+            PRAD & 887 & 870 & 817 & Prostate adenocarcinoma  \\\hline
+            READ & 422 & 407 & 192 & Rectum adenocarcinoma \\\hline
+            SARC & 198 & 187 & 179 & Sarcoma	\\\hline%
+            SKCM & 310 & 309 & 303 & Skin Cutaneous Melanoma \\\hline 
+            STAD & 126 & 121 & 96 & Stomach adenocarcinoma \\\hline 
+            TGCT & 457 & 442 & 431 & Testicular Germ Cell Tumors  \\\hline
+            THCA & 511 & 497 & 333 & Thyroid carcinoma \\\hline
+            THYM & 357 & 365 & 355 & Thymoma \\\hline
+            UCEC   & 577 & 454 & 581 & Uterine Corpus Endometrial Carcinoma \\\hline
+            UCS & 887 & 870 & 817 & Uterine Carcinosarcoma  \\\hline
+            UVM & 422 & 407 & 192 & Uveal Melanoma \\\hline
     \end{tabular}
     \vspace{-2mm}
 \end{table}
 
 \subsection{Unimodal CNN models}
-Unimodal CNN and VGG16 models are first constructed and trained as black-box models. Different probing techniques are then employed to improve their interpretability, as shown in  \cref{fig:workflow_2D_CNN}. 
+Unimodal CNN and VGG16 models are first constructed and trained on gene expression, miRNA expression, and copy number alteration profiles. A similar workflow shown in \cref{fig:workflow_2D_CNN} for gene expression, is also employed for copy numbers and miRNA expression. As models are trained in a black-box setting, interpretable probing techniques such as Grad-CAM++ and LRP are then employed in a post-hoc manner. 
 
 \begin{sidewaysfigure*}
 	\centering
@@ -443,9 +445,7 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
 \end{align}
 \fi 
 
-\hspace*{3.5mm} Although, permutation feature importance provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself~\cite{molnar2019interpretable}. There is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. 
-
-\hspace*{3.5mm} On the other hand, SHapley Additive exPlanations~(aka. SHAP)~\cite{SHAP} is another interpretable method. SHAP feature importance is an alternative to permutation feature importance discussed above. The only difference is how the importance is measured. While, permutation feature importance is based on the decrease in model performance, whereas SHAP is based on magnitude of feature attributions~\cite{molnar2019interpretable}. The goal is to explain the prediction of sample $x_i$ by computing the contribution of each feature in the prediction. Shapley values that are based on coalitional game theory is used as the measure of feature attributions. Feature values of $x_i$ act as players in a coalition such that the Shapley values tell us how to fairly distribute the payout~\cite{molnar2019interpretable}. This can be correlated with distributing the prediction contributions among the features in a sample. SHAP specifies the explanation as follows~\cite{molnar2019interpretable}:
+\hspace*{3.5mm} Although, permutation feature importance provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself~\cite{molnar2019interpretable}. There is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. SHapley Additive exPlanations~(aka. SHAP)~\cite{SHAP} is another interpretable method. SHAP feature importance is an alternative to permutation feature importance discussed above. The only difference is how the importance is measured. While, permutation feature importance is based on the decrease in model performance, whereas SHAP is based on magnitude of feature attributions~\cite{molnar2019interpretable}. The goal is to explain the prediction of sample $x_i$ by computing the contribution of each feature in the prediction. Shapley values that are based on coalitional game theory is used as the measure of feature attributions. Feature values of $x_i$ act as players in a coalition such that the Shapley values tell us how to fairly distribute the  payout~\cite{molnar2019interpretable}. This can be correlated with distributing the prediction contributions among the features in a sample. SHAP specifies the explanation as follows~\cite{molnar2019interpretable}:
 
 \begin{equation}
     f\left(z^{\prime}\right)=\phi_{0}+\sum_{j=1}^{M} \phi_{j} z_{j}^{\prime}
@@ -531,7 +531,7 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
     \label{eq:fcuk_1}
 \end{equation}
 
-\hspace*{3.5mm}. Technically, the final feature maps $Z_k$ are latent variables, specific to modality $k$. In \cref{eq:fcuk_1}, where $\phi$ are trainable parameters~(which include a weight matrix $W_{k} \in \mathbb{R}^{p \times q}$ and a bias vector $b_{k} \in \mathbb{R}^{q}$ that are specific to respective modality $k$), $\oslash$ is the convolutional operation, and $\sigma$ is ELU~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}. Then the decoder module reconstructs from $h_k$, the original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
+\hspace*{3.5mm} The final feature maps $Z_k$ are latent variables, specific to modality $k$. In \cref{eq:fcuk_1}, where $\phi$ are trainable parameters~(which include a weight matrix $W_{k} \in \mathbb{R}^{p \times q}$ and a bias vector $b_{k} \in \mathbb{R}^{q}$ that are specific to respective modality $k$), $\oslash$ is the convolutional operation, and $\sigma$ is ELU~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}. Then the decoder module reconstructs from $h_k$, the original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
 
 \begin{equation}
     \hat{X_k}=f_{\theta}\left(Z_k\right)=f_{\theta}\left(g_{\phi}({X_k})\right) \label{eq:mcae_eq_1},
@@ -692,10 +692,18 @@ Each network is trained for 500 epochs, in a similar setting of cosine annealing
 
 \hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. 
 %Hence, we did not report F1-scores. 
-When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed to explain the diagnosis. Through, 
+When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed, based on $MCAE_{lrc}$ classifier. The idea is to explain the diagnosis, via 5 different areas, namely: i) Global explanations, ii) Local explanations, iii), Feature interactions, iv) Data distributions, and v) Model performance, as shown in \cref{fig:ui_explain}. 
+
+\begin{sidewaysfigure*}
+\centering
+	\includegraphics[scale=0.55]{images/ui.png}
+	\caption{High-level user interface to explain the predictions}
+    \label{fig:ui_explain}
+    \vspace{-4mm}
+\end{sidewaysfigure*}
 
 \subsection{Model performance}
-In this sub-section, we analyse the performance of each model, considering both single and multimodality. Then, both marker genes and common genes will be selected to be reused in the model surrogate strategy in \cref{chapter:xai_rules}
+In this sub-section, we analyse performance of each model, considering both single and multimodality. Then, both marker genes and common genes will be selected for the model surrogate strategy in \cref{chapter:xai_rules}.
 
 \subsubsection{Model performance: single modality}
 The average accuracy obtained was 89.75\% and 96.25\% using CNN and VGG16 models, respectively. However, since the classes are imbalanced, only the accuracy will give a very distorted estimation of the cancer types. Thus, we report the class-specific classification reports along with the corresponding MCC scores in \cref{table:class_specific}. As can be seen, precision and recall for the majority cancer types were high and for these the VGG16 model performs mostly better. Notably, the VGG16 model classifies BRCA, UCEC, LUAD, HNSC, LUSC, THCA, PRAD, BLCA, STAD, KIRC, LIHC, COAD, CESC, KIRP, SARC, OV, PCPG, TGCT, GBM, READ, LAML, MESO, and DLBC cancer cases more confidently, whereas the CNN model classifies PAAD, CHOL, and UCS cancer cases more accurately. 
@@ -894,16 +902,17 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 \hspace*{3.5mm} In particular, the GE+miRNA input combination gave lowest reconstruction errors, whereas GE + CNV + miRNA generates the highest errors so do corresponding f1-scores. Eventually, we found that the ROC curves of the $MCAE_{lrc}$ model show that the AUC scores are consistent across the folds showing stable predictions, giving 4\% boost in AUC scores. This signifies that the predictions by the $MCAE_{lrc}$ model are clearly better than random guessing as well as $MCAE_{slr}$. It also suggests that the predictions made by the $MCAE_{lrc}$ model are strongly correlated with the ground truth, yielding a Pearson product-moment correlation coefficient higher than 0.70 for all the classes. 
 
 \subsubsection{Identification of marker genes}
-As it is evident that $MCAE_{lrc}$ classifier outperforms $MCAE_{slr}$, giving better classification accuracy. Therefore, $MCAE_{lrc}$ model is used to score top-k biomarkers. In particular, top genes are identified for which the change in expression values have significant impact on model performance. \Cref{fig:hm_all} shows examples of HM generated for each class~(each column for one cancer type) across 5 different folds. As seen, there are similarities across folds and displaying distinct and similar patterns when comparing different cancer types. Red circles highlight similar patterns, e.g., between KIRC and BRCA, and PRAD and LUAD across folds, whereas COAD shows very different patterns. Although there are differences among folds, some patterns are clearly visible. Since intensities did not follow any regular pattern, we chose top 660 genes across 33 tumor types~(top-20 genes per class) as more significant based MAI. 
+As it is evident that $MCAE_{lrc}$ classifier outperforms $MCAE_{slr}$, giving better classification accuracy. Therefore, $MCAE_{lrc}$ model is used to score top-k biomarkers. In particular, top genes are identified for which the change in expression values have significant impact on model performance. \Cref{fig:hm_all} shows examples of HM generated for each class across 5 different folds, where each column for one cancer type. As seen, there are similarities across folds and displaying distinct and similar patterns when comparing different cancer types. Red circles highlight similar patterns, e.g., between KIRC and BRCA, and PRAD and LUAD across folds, whereas COAD shows very different patterns. Although there are differences among folds, some patterns are clearly visible. However, intensities did not follow any regular pattern, which signifies that probably Grad-CAM++ or LRP is not suitable for multimodality specific gene ranking. 
 
 \begin{figure*}[h]
     \centering
 	\includegraphics[scale=0.8]{images/driver_genes.png}
-	\caption{Number of identified marker genes~(with $MCAE_{lrc}$ classifier), per class with a gene effect score of $\geq$ 0.25}
+	\caption{Identified marker genes, per class with a gene effect score of $\geq$ 0.25}
     \label{fig:dg_cnn}
 \end{figure*}
 
-\hspace*{3.5mm} Since we have more than 20K protein-coding genes, our choice of 660 is still a reasonable choice, as the number of important biomarkers should be small for which even minor changes are sensitive to cancer growth~\cite{zuo2019identification}. All genes in the top-20 list can thus be viewed as tumor-specific biomarkers, which contribute most toward making the predictions. As for other 29 tumor types, only 3 genes qualified in the list. %Further hyperparameter tuning and training of both CNN models might improve this outcome. 
+\hspace*{3.5mm} Therefore, global attention mechanism is employed on $MCAE_{lrc}$ model to choose top 660 genes across 33 tumor types as more significant, i.e., top-20 genes per class.
+\Cref{fig:dg_cnn} shows the distribution of number of identified marker genes, per class with a gene effect score of $\geq$ 0.25. Since we have more than 20K protein-coding genes, our choice of 660 is still a reasonable choice, as the number of important biomarkers should be small for which even minor changes are sensitive to cancer growth~\cite{zuo2019identification}. All genes in the top-20 list can thus be viewed as tumor-specific biomarkers, which contribute most toward making the predictions. As for other 29 tumor types, only 3 genes qualified in the list. %Further hyperparameter tuning and training of both CNN models might improve this outcome. 
 Then for better interpretability, the top-20 list is further narrowed down to top-5 in which only 5 tumor types~(i.e., BRCA, KIRC, COAD, LUAD, and PRAD) have at least five genes with feature importance of at least 0.25 w.r.t. gene effect score; they are shown in \cref{table:proteinimportance} from the 20,500 protein-coding genes. 
 
 \begin{table}
@@ -949,8 +958,8 @@ Then for better interpretability, the top-20 list is further narrowed down to to
     \end{center}
 \end{table}
 
-%\subsection{Validation of top biomarkers}
-\hspace*{3.5mm} To validate the findings, saturation analyses of oncogenes across 32 tumor types~(except COAD) are obtained from TumorPortal\footnote{ \url{http://www.tumorportal.org/}}~\cite{lawrence2014discovery}. The proposed approach also makes some false predictions. In particular, 21 out of 25 genes are validated to be correct, making only 4 false identifications. Validation for the COAD cancer follows a signature-based approach~\cite{zuo2019identification}, which was used for predicting the progression of colorectal cancer. 
+\subsection{Validation of top biomarkers}
+To validate the findings, saturation analyses of oncogenes across 32 tumor types~(except COAD) are obtained from TumorPortal\footnote{ \url{http://www.tumorportal.org/}}~\cite{lawrence2014discovery}. The proposed approach makes some false predictions. In particular, 21 out of 25 genes are validated to be correct, making only 4 false identifications. Validation for the COAD cancer follows a signature-based approach\footnote{It was originally used for predicting the progression of colorectal cancer}~\cite{zuo2019identification}. 
 
 \begin{sidewaysfigure*}
 \centering
