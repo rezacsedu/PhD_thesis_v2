@@ -79,7 +79,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
 \hspace*{3.5mm} It is extended for multi-class classifier by finding the closest hyperplanes by finding a more general $\ell_{p}$ norm, $p \in[0, \infty)$. Eventually, DeepFool provides less perturbation compared to FGSM~\cite{yuan2019adversarial}.
 
 \subsection{Attacks with OOD examples}
-Subsequently, numerous approaches have been proposed to accurately identify OOD, in which many researchers have treated it as anomaly detection problem. Since discriminatively trained neural network classifiers produce reliable predictions only for ID samples, detecting OOD samples is essential. Assuming OOD to be outside the closed boundary of ID, typical neural classifiers do not contain the knowledge of this boundary for OOD detection during inference.  However, since OOD to be outside the closed boundary of ID, a predictive model is incapable of detecting OOD detection during the inferencing time. Subsequently, there have been several recent approaches to embed the logic into the learning algorithm and explicitly training the classifier with OOD samples close to the ID boundary. Oftentimes, the generated samples based on state-of-the-art approaches fail to cover the entire ID boundary effectively, thereby resulting in a sub-optimal OOD detector. 
+Subsequently, numerous approaches have been proposed to accurately identify OOD, in which many researchers have treated it as anomaly detection problem. Since discriminatively trained neural network classifiers produce reliable predictions only for ID samples, detecting OOD samples is essential. Assuming OOD to be outside the closed boundary of ID, typical neural classifiers do not contain the knowledge of this boundary for OOD detection during inference. Since OOD to be outside the closed boundary of ID, a predictive model is incapable of detecting OOD detection during the inferencing time, several recent approaches have been proposed to embed the logic into the learning algorithm and explicitly training the classifier with OOD samples close to the ID boundary. However, state-of-the-art approaches often fail to cover the entire ID boundary effectively, thereby resulting in a sub-optimal OOD detector. 
 
 \hspace*{3.5mm} Lee et al.~\cite{OOD13}, explains that test samples drawn sufficiently far away from the training distribution statistically or adversarially is a fundamental requirement for deploying a good classifier in many real-world machine learning applications. However, deep neural networks with the softmax classifier are known to produce highly overconfident posterior distributions even for such abnormal samples.  %Ensemble of Leave-Out Classifiers (ELOC
 Jie et al.~\cite{OOD1}, proposed likelihood ratio method for deep generative models for OOD detection. Since the OOD is heavily affected by population level background statistics, they demonstrated that likelihood ratio method can effectively correct for these confounding back-ground statistics. Vernekar, Sachin et al.~\cite{OOD2} proposed of an efficient approach to generate OOD samples based on manifold learning network. OOD samples are used to train a classifier with an extra class~(i.e., $n+1$ classes, where ${(n+1)}^{th}$ class represents the OOD samples) for the detection of OOD during the inferencing time. They show that only a few OOD samples are sufficient to guide the decision boundary of the classifier to be bounded around the ID regions evidenced by their OOD detection results.
@@ -273,9 +273,8 @@ To increase the robustness of DNNs, deep contractive autoencoder is proposed by 
 \subsubsection{Reactive measure: out-of-distributions detection}
 \noindent The prediction probability of OOD samples tends to be lower than the prediction probability of ID samples~\cite{OOD18}. Therefore, OOD samples are closer to the class boundaries and more likely to be misclassified~(or classified with low confidence) by a classifier trained on ID samples. In our approach, to mitigate OOD issue, the likelihood ratio is calculated for the OOD samples before inferencing to avoid such instance.  
 %Inspired by literature~\cite{OOD1}, we trained a variational autoencoder~(VAE) on gene expression dataset for OOD detection by employing a method called likelihood ratio to observe the effects of likelihood score by population level background statistics. %We demonstrate the generality of the proposed method by showing that it significantly improves OOD detection when applied to deep generative models of images. 
-
 %\paragraph{Problem formulation}
-We assume that an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{in}\right\}$ drawn from a set of labeled ID samples $\left\{X_{in}, Y_{in}\right\}$ and $\mathbf{x}_{\mathbf{ul}}$ is drawn from unlabeled samples, and $\mathrm{x}_\text{in} \in \left\{\mathrm{x}_{\text {ge}}, \mathrm{x}_{\text {mr}}, \mathrm{x}_{\text {cnv}}\right\}$, when all the individual modalities are considered. The ID sample $\left\{\mathbf{x}_{\text {in}}, y_{in}\right\}$ can be classified into $K$ classes, i.e., $y_{in} \in K$, and $\mathbf{x}_{\mathbf{ul}}$ can be either an ID or an OOD samples, where $\exists\left\{\mathbf{x}_{\text {ul}}, y_{ul}\right\}, y_{ul} \notin K$. Since the goal is to distinguish whether a sample $\mathbf{x}_{\mathbf{ul}}$ is from ID or OOD, we train the network to predict different softmax class probabilities for ID samples and OOD samples by utilizing $\mathbf{x}_{\mathbf{u}1}$ during the unsupervised training as literature~\cite{OOD19}. 
+We assume that an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{in}\right\}$ drawn from a set of labeled ID samples $\left\{X_{in}, Y_{in}\right\}$ and $\mathbf{x}_{\mathbf{ul}}$ is drawn from unlabeled samples, and $\mathrm{x}_\text{in} \in \left\{\mathrm{x}_{\text {ge}}, \mathrm{x}_{\text {mr}}, \mathrm{x}_{\text {cnv}}\right\}$, when all the individual modalities are considered. The ID sample $\left\{\mathbf{x}_{\text {in}}, y_{in}\right\}$ can be classified into $K$ classes, i.e., $y_{in} \in K$, and $\mathbf{x}_{\mathbf{ul}}$ can be either an ID or an OOD samples, where $\exists\left\{\mathbf{x}_{\text {ul}}, y_{ul}\right\}, y_{ul} \notin K$. 
 
 \begin{figure}
     \centering
@@ -285,7 +284,7 @@ We assume that an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{i
     \vspace{-4mm}
 \end{figure}
 
-\hspace*{3.5mm} From a given ID dataset ${D}$ of $(\boldsymbol{x}, y)$ pairs sampled from the distribution $p^{*}(\boldsymbol{x}, y)$ where $x$ is the extracted feature vector or raw input and $y \in {Y}:=\{1, \ldots, k, \ldots, K\}$ is the label assigning membership to one of $K$ ID classes. In the corresponding profiles~(i.e., GE, miRNA, or CNV), inputs are numeric or discrete, i.e. $x_{d} \in \mathbb{R}$. In general, OOD inputs are sampled $(\boldsymbol{x}, y)$ generated from an underlying distribution other than $p^{*}(\boldsymbol{x}, y)$. Similar to literature~\cite{OOD1}, we then consider an input $(x, y)$ to be OOD if $y \notin {Y}$, i.e., the class $y$ does not belong to any of $K$ ID classes. This turns out the OOD detection is a task to accurately detect if an input $x$ is OOD or not~\cite{OOD1,OOD2,OOD3}.
+\hspace*{3.5mm} Since the goal is to distinguish whether a sample $\mathbf{x}_{\mathbf{ul}}$ is from ID or OOD, we train the network to predict different softmax class probabilities for ID samples and OOD samples by utilizing $\mathbf{x}_{\mathbf{u}1}$ during the unsupervised training as literature~\cite{OOD19}. From a given ID dataset ${D}$ of $(\boldsymbol{x}, y)$ pairs sampled from the distribution $p^{*}(\boldsymbol{x}, y)$ where $x$ is the extracted feature vector or raw input and $y \in {Y}:=\{1, \ldots, k, \ldots, K\}$ is the label assigning membership to one of $K$ ID classes. In the corresponding profiles~(i.e., GE, miRNA, or CNV), inputs are numeric or discrete, i.e. $x_{d} \in \mathbb{R}$. In general, OOD inputs are sampled $(\boldsymbol{x}, y)$ generated from an underlying distribution other than $p^{*}(\boldsymbol{x}, y)$. Similar to literature~\cite{OOD1}, we then consider an input $(x, y)$ to be OOD if $y \notin {Y}$, i.e., the class $y$ does not belong to any of $K$ ID classes. This turns out the OOD detection is a task to accurately detect if an input $x$ is OOD or not~\cite{OOD1,OOD2,OOD3}.
 
 %\paragraph{Network constructions}
 \hspace*{3.5mm} Similar to literature~\cite{yu2019unsupervised}, we construct a two-head neural network architectures consisting of a feature extractor, $E,$ which takes inputs $\mathrm{x}_{\text {in }}$ or $\mathrm{x}_{\mathrm{ul}}$, and two classifier $F_{1}$ and $F_{2}$, where each classifier takes features from $E$ and predict into one of $K$ classes. Classifiers $F_{1}$ and $F_{2}$ output a $K$ dimensional vector of logits. The class probabilities is then calculated using softmax activation, where $p_{1}(\mathbf{y} | \mathbf{x})$ and $p_{2}(\mathbf{y} | \mathbf{x})$ are $K$ dimensional softmax class probabilities for input $x$ produced with classifier $F_{1}$ and $F_{2}$, respectively. In our case, we assume each sample consisting of 3 different modalities, i.e., gene expression, copy numbers, and miRNA expression, s.t., we create latent representation of each input modality as shown in \cref{fig:ood_network}. 
@@ -537,10 +536,10 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 \end{figure}
 \fi 
 
-\begin{table*}[htp!]
+\begin{sidewaystable*}[htp!]
 	\centering
-	\caption{Results of distinguishing ID and OOD (full) test sets of two different classifiers covering detection error, FPR, AUROC, AUPR In~(AUPRI), and AUPR Out~(AUPRO)} 
-	\scriptsize{
+	\caption{Results of distinguishing ID and OOD (full) test sets of two different classifiers\\ covering detection error, FPR, AUROC, AUPR In~(AUPRI), and AUPR Out~(AUPRO)} 
+	%\scriptsize{
 	\vspace{-4mm}
 	\begin{tabular}{llllllllllll}
 		&\multicolumn{5}{c}{\bfseries{$F_1$}} && \multicolumn{5}{c}{\bfseries{$F_2$}} \\	
@@ -562,10 +561,10 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 		\hline
 		\multirow{1}{*}{{GE+miRNA+CNV}} & 100 & 0.87 & 0.87 & 0.87 & 0.66 && 0.70 & 0.70 & 0.70 & 0.60 & 0.59\\
 		\hline
-	\end{tabular}}
+	\end{tabular} %}
 	\vspace{-2mm}
 	\label{Table:OOD_result_2}
-\end{table*}
+\end{sidewaystable*}
 
 \hspace*{3.5mm} Besides, we observe moderately high disagreement, w.r.t between two classifiers' outputs based on unlabeled ID and OOD samples after training the network on labeled ID samples in a supervised way. The histogram of the classifier's maximum softmax scores in \cref{fig:max_soft_scores_and_de_scores} shows that the distribution of the score moderately different w.r.t whether a sample is ID or OOD after the fine-tuning: $p_{1k}$ and $p_{2k}$ denote the probability distribution for class $k$. The discrepancy loss makes OOD sample's maximum $p_{1k}$ close to $1/K$ and maximum $p_{2k}$ close to 1. On the other hand, ID samples' $p_{1k}$ mostly similar to $p_{2k}$, which is based on the support outlined in \cref{eq:ood_join_loss}.
 

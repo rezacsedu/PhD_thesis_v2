@@ -211,20 +211,8 @@ For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ sampl
 %\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
 
 \subsection{Perturbing neural networks}
-Training an ML model involves identifying the set of parameters best able to predict the label of an instance (e.g. gene Y is up-regulated). After training, these parameters can be probed (or
-inspected) to better understand what the model learned. Probing strategies provide global interpretations with some exceptions (e.g. DeepLIFT, see below). Because type of parameters and structure of how they connect to each other varies by algorithm, probing strategies are
-model-specific. While probing strategies are straightforward for some ML algorithms (e.g. Support Vector Machine; SVM; and decision tree-based algorithms), this is not the case for more complex ML algorithms (e.g. deep learning).
-
-While the classical ML algorithms described above are readily interpretable, deep
-learning $(\mathbf{B} \mathbf{o x} \mathbf{2})$ algorithms are being applied more and more in the ML community because
-they frequently outperform classical ML algorithms at modeling complex systems $[25-27]$ and
-they can learn from raw data (e.g. whole DNA sequence) rather than user defined features (e.g.
-known regulatory sequences). However, there is often a tradeoff between predictability and
-interpretability [28], and this is certainly the case for deep learning [29]. Fortunately, there has
-been a substantial effort to develop new methods to interpret these complex models. First we
-describe three general approaches to calculate feature importance scores by probing deep
-learning models: connection weights-based, gradient-based, and activation level-based
-approaches (Figure 2 C) [15] .
+Although, probing strategies are straightforward for ML algorithms like support vector machine~(SVM), decision tree-based, etc., this is not the case for very complex DNN architectures. However, there have been a substantial efforts to develop new methods to interpret these complex models, such as connection weights-based, gradient-based, and activation level-based approaches. Because type of parameters and structure of how they connect to each other varies by algorithm, probing strategies are
+model-specific. %However, there is often a trade-off between predictability and interpretability, and this is certainly the case for deep learning. . % (Figure 2 C) [15] .
 
 \section{Methods}\label{chapter_5:mm}
 In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Based on this insights, we rely on several probing and interpretability methods discussed in \cref{chapter:preli}. 
@@ -238,7 +226,7 @@ From given genomics profiles of PCAt cohorts consisting of GE, DNA methylation, 
 %The local explanation methods we discuss come in one of the following forms: which feature $x_i$ of $x$ was most important for prediction with $f$? Which training data point $Z \in \mathbb{R}^{K}$ was most important to $f(x)$? What is the minimal change to the input $x$ required to change the output $f(x)$? 
 
 \subsection{Datasets}
-The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt covering 33 prevalent tumor type for 9,074 samples are considered in our approach. This dataset has been used widely as prior knowledge to generate tumor-specific biomarkers~\cite{way2018machine,hoadley2018cell,malta2018machine}. These data are hybridized by the Affymetrix Genome-Wide Human SNP Array 6.0\footnote{\url{http://www.affymetrix.com/support/technical/byproduct.affx}}, which allows us to examine the largest number of cases along with the highest probe density~\cite{31Park}. Besides, we use the cancer transcriptomes from the PCAt project to interrogate GE states induced by deleterious mutations and copy number alterations. The sample distribution across data types are shown in \cref{table:alldatadetails2}~\cite{weinstein2013cancer}. 
+The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt covering 33 prevalent tumor type for 9,074 samples are considered in our approach. This dataset has been used widely as prior knowledge to generate tumor-specific biomarkers~\cite{way2018machine,hoadley2018cell,malta2018machine}. These data are hybridized by the Affymetrix Genome-Wide Human SNP Array 6.0\footnote{\url{http://www.affymetrix.com/support/technical/byproduct.affx}}, which allows us to examine the largest number of cases along with the highest probe density~\cite{31Park}. Besides, cancer transcriptomes from the PCAt project is used to interrogate GE states induced by deleterious mutations and copy number alterations. The sample distribution across data types are shown in \cref{table:alldatadetails2}. %~\cite{weinstein2013cancer}. 
 
 %\text { Table } 3 \text { : Tumor types and number of RNA-Seq samples }
 
@@ -251,7 +239,7 @@ The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt c
     \begin{tabular}{l|l|l|l|l}
         \hline
         \rowcolor{Gray}
-         \textbf{Cohort} & \textbf{Copy number alterations} & \textbf{miRNA expression} & \textbf{Gene expression} & \textbf{Carcinoma type} \\\hline
+         \textbf{Cohort} & \textbf{Copy number alterations} & \textbf{miRNA} & \textbf{Gene expression} & \textbf{Carcinoma type} \\\hline
             ACC & 345 & 332 & 227 & Adrenocortical carcinoma \\\hline
             BLCA & 164 & 143 & 71 & Bladder urothelial carcinoma \\\hline%
             BRCA  & 578 & 501 & 495 & Breast invasive carcinoma \\\hline
@@ -919,7 +907,7 @@ Then for better interpretability, the top-20 list is further narrowed down to to
     \caption{Top-5 genes and their importance}
     \label{table:proteinimportance_1} %RF Confusion Matrix Oncogene Subtype
     \begin{center}
-    \scriptsize
+    \scriptsize{
     \vspace{-6mm}
     \begin{tabular}{l|l|l|l}
         \toprule
@@ -1022,7 +1010,7 @@ Then for better interpretability, the top-20 list is further narrowed down to to
         & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
         \midrule
         \bottomrule
-        \end{tabular}
+        \end{tabular}}
         \vspace{-4mm}
     \end{center}
 \end{table}
@@ -1031,8 +1019,8 @@ Then for better interpretability, the top-20 list is further narrowed down to to
     \caption{Top-5 genes and their importance}
     \label{table:proteinimportance_2} %RF Confusion Matrix Oncogene Subtype
     \begin{center}
-    \scriptsize
-    \vspace{-8mm}
+    \scriptsize{
+    \vspace{-6mm}
     \begin{tabular}{l|l|l|l}
         \toprule
         \textbf{Cohort} & \textbf{Biomarker name} & \textbf{Biomarker type} & \textbf{Importance} \\ 
@@ -1139,7 +1127,7 @@ Then for better interpretability, the top-20 list is further narrowed down to to
         & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
         & APC  & Protein-coding & 0.538039 \\ 
         %\bottomrule
-        \end{tabular}
+        \end{tabular}}
         \vspace{-4mm}
     \end{center}
 \end{table}
@@ -1244,28 +1232,28 @@ Feature interactions among globally important features with attention mechanism 
 In order to explain individual diagnoses, only the important features w.r.t local feature impact is not enough. In fact, sensitivity analysis in terms of what-if and leave-one-feature out analyses are found to be useful across different scenarios. 
 
 \subsubsection{Local feature impacts}
-Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row, i.e., individual sample. The features are most important in explaining the target variable, are shown on the top. As shown in \cref{fig:local_feature_impacts}, the average outcome predicted by the the $MCAE_{lrc}$ model is 9.758071. On average, variables TFAP2A, VPS9D1-AS1, and MTND2P28 will increase the average model outcome~(9.758071) by -0.36, 0.8, and 0.47, respectively. On the other hand, variables TFAP2A, ADCY3, and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28, respectively.
+Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row, i.e., individual sample. The features are most important in explaining the target variable, are shown on the top. As shown in \cref{fig:local_feature_impacts}, the average outcome predicted by the the $MCAE_{lrc}$ model is 9.758071. On average, variables TFAP2A, VPS9D1-AS1, and MTND2P28 will increase the average model outcome~(9.758071) by -0.36, 0.8, and 0.47, respectively. On the other hand, variables TFAP2A, ADCY3, and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28, respectively. Now in order to find which patients to extent to which they are similar to the patient being diagnoses are identified in \cref{fig:similar_patients}, as indicated by the last row in the table below labelled as "Weight". 
 
-\begin{figure*}
+\begin{figure*}[h]
     \centering
-	\includegraphics[scale=1.3]{images/local_fi_1.png}
+	\includegraphics[scale=1.2]{images/local_fi_1.png}
 	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row}
     \label{fig:local_feature_impacts}
 \end{figure*}
 
-\begin{figure*}
+\begin{figure*}[h]
     \centering
-	\includegraphics[scale=0.7]{images/similar_profiles.png}
+	\includegraphics[scale=0.65]{images/similar_profiles.png}
 	\caption{Similar patient cohorts identified by the $MCAE_{lrc}$ model}
     \label{fig:similar_patients}
 \end{figure*}
 
-\hspace*{3.5mm} Now in order to find which patients to extent to which they are similar to the patient being diagnoses are identified in \cref{fig:similar_patients}, as indicated by the last row in the table below labelled as "Weight". 
+%\hspace*{3.5mm} 
 
 \subsubsection{Sensitivity analyses: what-if and leave-one-feature-out}
 In order to quantitatively validate the feature-level relevances for local explianability, first, what-if analysis is carried out. As shown in \cref{fig:what_if}, genes TFAP2A, VPS9D1-AS1, MTND2P28, ADCY3, FOXP4, GPRIN1, EFNB1, FABP4, MGP, AC020916-1, CDC7, CHADL, RPL10P6, OASL, and PRSS16 are most sensitive to making changes. 
 
-\begin{figure*}
+\begin{figure*}[h]
     \centering
 	\includegraphics[scale=0.7]{images/what_if.png}
 	\caption{What-if analysis, showing most important features for which making changes will impact the prediction most on the $MCAE_{lrc}$ model}
@@ -1284,7 +1272,7 @@ is negative for personal hate category~(where words
 are more important). The word %\bn{`জাতি'}
 has the highest positive score of 0.27 for class religious. Our model predicts this as a religious hate statement too, with the probability of 59\%. 
 
-\begin{figure}
+\begin{figure}[h]
     \vspace{-2mm}
 	\centering
 	\includegraphics[scale=0.6]{images/reli_explain.png}
@@ -1302,11 +1290,11 @@ and 'have positive scores of 0.23 and 0.17 for the class personal. These words i
 %Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight".
 
 \section{Chapter Summary}\label{chapter_5:conclusion}
-In this chapter, we developed two deep multimodal architectures called $MCAE_{lrc}$ and $MCAE_{slr}$ cancer types based on different combination of multimodal genomics data types. Our approach is based on GradCAM++, LRP, and attention mechanism with a vanilla CNN, an VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$ networks. Experiment results show that omics data are useful useful for predicting cancer types with high confidence giving high f1 scores~(of up to 96.25\% for single modality based on GE and of up to 92.45\% for GE+miRNA input modalities). Based on this comparison, we can conclude that there is a possibility both $MCAE_{lrc}$ and $MCAE_{slr}$ might surpass MAE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
+In this chapter, two deep multimodal architectures called $MCAE_{lrc}$ and $MCAE_{slr}$ have been developed for cancer types prediction based on different combination of multimodal genomics data types. Besides, probing techniques such as GradCAM++, LRP, and attention mechanism employed on a vanilla CNN, an VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$ networks. Experiment results show that omics data are useful useful for predicting cancer types with high confidence giving high f1 scores~(of up to 96.25\% for single modality based on GE and of up to 92.45\% for GE+miRNA input modalities). Based on this comparison, it would not be unreasonable to conclude that there is a possibility both $MCAE_{lrc}$ and $MCAE_{slr}$ might surpass MAE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
 
-\hspace*{3.5mm} Our approach can predict cancer types 96.25\% of the cases correctly, which slightly outperforms the approach by Boyu et al.~\cite{lyu2018deep} but 6.5\% better than the approach by Yuanyuan et al.~\cite{li2017comprehensive}. Further, our approach reduces the false prediction rate for the READ, UCS, ESCA, and CHOL tumor samples. In particular, against 35\%, 81\%, 77\%, and 56\% of the correctly predicted cases by~\cite{lyu2018deep}, our approach predicts 88.74\%, 87.26\%, 89.56\%, and 84.55\%~(in cyan) cases correctly. Although slightly underperforms than~\cite{lyu2018deep} at classifying BRCA, THCA, and PRAD~(in red), our approach is more consistent for the majority cancer types and likely to perform more stably on new GE data. 
+\hspace*{3.5mm} The $MCAE_{lrc}$ model can predict cancer types 96.25\% of the cases correctly, which slightly outperforms the approach by Boyu et al.~\cite{lyu2018deep}, but 6.5\% better than the approach by Yuanyuan et al.~\cite{li2017comprehensive}. Further, $MCAE_{lrc}$ model reduces the false prediction rate for the READ, UCS, ESCA, and CHOL tumor samples. In particular, against 35\%, 81\%, 77\%, and 56\% of the correctly predicted cases by~\cite{lyu2018deep}, $MCAE_{lrc}$ can predict 88.74\%, 87.26\%, 89.56\%, and 84.55\% of the cases correctly. Although slightly underperforms than~\cite{lyu2018deep} at classifying BRCA, THCA, and PRAD~(in red), our $MCAE_{lrc}$ model is more consistent for the majority cancer types and likely to perform more stably on new GE data. Further, by we statistical analysis is provided to confirm if the identified genes are statistically relevant. Nevertheless, more human-interpretable explanations are shown, covering both global and local explanations of the diagnosis made, through a user-friendly interface. 
 
-\hspace*{3.5mm} Nevertheless, we attempted to provide a more human-interpretable explanation by showing statistically significant biomarkers, which confirms that the identified genes are biologically relevant. Several other factors have hindered this research, e.g., lack of enough training samples and single modality, i.e., only GE data used for making the predictions and generating the explanations. The latter reason caused the network to produce high training and validation errors during the training phase, giving lower accuracy during the inferencing phase. Although we attempted to open the CNN, VGG16, and MCAE `black-box' models through biomarker validation and feature ranking, our approach is mostly post-hoc as the explainability is based on test cases and results similar to LRP. 
+\hspace*{3.5mm} The downside is that several other factors have hindered this research too. For example, lack of enough training samples and single modality, i.e., only GE data used for making the predictions and generating the explanations. The latter reason caused the network to produce high training and validation errors during the training phase, giving lower accuracy during the inferencing phase. Although we attempted to open the CNN, VGG16, and MCAE `black-box' models through biomarker validation and feature ranking, our approach is mostly post-hoc as the explainability is based on test cases and results similar to LRP. 
 %Several further factors have hindered this research, such as lack of enough training samples, and lack of biological pathways analysis. 
 To summarize, this chapter disseminate the following findings, through several experiments:  
 
@@ -1317,4 +1305,4 @@ To summarize, this chapter disseminate the following findings, through several e
     \item \textbf{What types of data can express biological characteristics of the patients?} - the qualitative analysis of the learned representation of GE + miRNA data can express biological characteristics of cohorts. Subsequently, the MAE learns latent molecular properties in coded form from patient expression profiles. This suggests that the hypothesis built upon is valid. 
 \end{enumerate}
 
-\hspace*{3.5mm} In order to ensure an explainable model is robust to adversaries and behaves as intended in real-life treatment diagnosis, we need to use adversarial training to improve performance\cite{bhatt2020explainable}. In the next chapter, we introduce different adversarial attacks on our model, including content moderation, numeric data moderation, and out-of-distribution~(OOD), before assessing the robustness against each scenario. 
+\hspace*{3.5mm} In order to ensure an explainable model is robust to adversaries and behaves as intended in real-life treatment diagnosis, adversarial robustness of the model needs to be improved~\cite{bhatt2020explainable}. In the next chapter, different adversarial attacks will be introduced on our model, including content moderation, numeric data moderation, and out-of-distribution~(OOD), before assessing the robustness against each scenario. 

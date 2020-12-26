@@ -196,17 +196,17 @@ However, due to randomness, model's performance changes from a shuffling a colum
 
 \begin{figure}[h]
 \centering
-	\includegraphics[width=0.8\linewidth]{images/shap.png}
+	\includegraphics[scale=0.8]{images/shap.png}
 	\caption{Clinical feature contribution for a prediction: red pushes predictions higher, blue ones lower} 
 	\label{fig:shap}
 	\vspace{-2mm}
 \end{figure}
 
-\hspace*{3.5mm} On the other hand, SHAP gives very different feature importance as showin in \cref{fig:shap}, where a base value that indicates the direction of the first prediction made by the RF model and shows how much each feature is pushing the model's output from the base value\footnote{The average model output over the training dataset passed} 0.55 to the predicted output. Features pushing the prediction higher are shown in red; those pushing the prediction lower are in blue.
+\hspace*{3.5mm} On the other hand, SHAP gives very different feature importance, as show in in \cref{fig:shap}, where a base value that indicates the direction of the first prediction made by the RF model and shows how much each feature is pushing the model's output from the base value\footnote{The average model output over the training dataset passed} 0.55 to the predicted output. Features pushing the prediction higher are shown in red; those pushing the prediction lower are in blue.
 
 \begin{figure*}[h]
 \centering
-	\includegraphics[width=0.4\textwidth]{images/fi.png}
+	\includegraphics[scale=0.8]{images/fi.png}
 	\caption{Clinical features ordered by ascending importance on the y-axis~(dots represent SHAP values)} 
 	\label{fig:shap_FI}
 	\vspace{-2mm}
