@@ -48,13 +48,12 @@ Haettenschwiler et al.~\cite{haettenschwiler1999neues} differentiates three type
 
 %This chapter provides a general introduction to this dissertation, provides the motivation for this research, list down the hypotheses and research questions, and outlines the structure of this thesis. 
 
-\hspace*{3.5mm} The expert systems based on collections of `if-then' rules were the dominant technology for AI in the 1980s~\cite{davenport2019potential}. They were widely employed for `clinical decision support system~(CDSS) purposes over the last couple of decades. Such a DSS require human experts and domain knowledge to generate a set of rules used to provide decision in numerous tasks~\cite{davenport2019potential}. 
+\hspace*{3.5mm} The expert systems based on collections of `if-then' rules were the dominant technology for AI in the 1980s~\cite{davenport2019potential}. They were widely employed for `clinical decision support system'~(CDSS) purposes over the last couple of decades. Such a DSS require human experts and domain knowledge to generate a set of rules used to provide decision in numerous tasks~\cite{davenport2019potential}. 
 As long as there are a few rules in the rule set, they work well and easy to understand. However, when the number of rules is large, including conflicting rules, they tend to break down. Moreover, if the underlying domain knowledge changes, updating the rules can be difficult and time consuming~\cite{davenport2019potential}. Moreover, rule-based clinical DSS are difficult to maintain as medical knowledge changes and are often not able to handle the explosion of data and knowledge based on genomic, proteomic, metabolic and other ‘omic-based’ approaches to care~\cite{das2020opportunities}.
 Subsequently, they gradually being replaced with ML-based systems with AI capabilities. 
 
-\hspace*{3.5mm} DSSs that can perform selected cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}.  In an intelligent DSS, a set of learning algorithms are embedded to perform cognitive decision-making in which ML often act as one of the most common forms of AI~\cite{das2020opportunities}. An intelligent DSS is often ML or DL-based DSS, where a ML or DL algorithm is employed to improve the learning outcome so that the decision-making process becomes automatic by reducing the level of human interaction as much as possible~\cite{davenport2019potential}. 
-
-\hspace*{3.5mm} This thesis aims at developing an DSS by leveraging both data-, knowledge-, and model-driven characteristic, such that an ML model trained on the data forms the foundation of the DSS. Then the decision making process and the domain-knowledge will be used to aid the users to validate the outcome. Since the `black-box' nature and opaqueness in predictive model raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of the DSS. In the subsequent sections, fundamental concepts of ML, multimodal learning, and interpretability are discussed along with different types of data that required. % to develop the DSS such as  required. 
+\hspace*{3.5mm} DSSs that can perform cognitive decision-making functions based on artificial intelligence~(AI) or intelligent agents technologies called intelligent DSS. Due to recent advancement and performance across domains like computer vision, natural language processing, multimedia analytics, and business analytics, an AI-guided DSS could eventually be applied to various automated decision-making processes~\cite{davenport2019potential}.  In an intelligent DSS, a set of learning algorithms are embedded to perform cognitive decision-making in which ML often act as one of the most common forms of AI~\cite{das2020opportunities}. An intelligent DSS is often ML or DL-based DSS, where an ML or DL algorithm is employed to improve the learning outcome so that the decision-making process becomes automatic by reducing the level of human interaction as much as possible~\cite{davenport2019potential}. 
+This thesis aims at developing an DSS by leveraging both data-, knowledge-, and model-driven characteristic, such that an ML model trained on the data forms the foundation of the DSS. Then the decision making process and the domain-knowledge will be used to aid the users to validate the outcome. Since the `black-box' nature and opaqueness in predictive model raises numerous legal, ethical, and practical concerns, we aim to improve the transparency and explainability of the DSS. In the subsequent sections, fundamental concepts of ML, multimodal learning, and interpretability are discussed along with different types of data. % that required to develop the DSS. 
 
 \section{Machine Learning}
 ML is using a set of statistical and mathematical algorithms to solve tasks such as concept learning, predictive modeling, clustering, and mining useful patterns. Learners or algorithm are a program used to learn a ML model from data. An ML model is a learned program that maps inputs to predictions. Tom Mitchell~\cite{mitchell1997machine} defined machine learning as \textit{``a computer program is said to learn from experience $E$ with respect to some class of tasks $T$ and performance measure $P$, if its performance at tasks in $T$, as measured by $P$, improves with experience $E$"}. This definition can be interpreted as follows: based on a set of observation or data~(i.e., experience $E$), a learning algorithm can be used to solve a problem~(i.e., task $T$) iteratively until the performance~(i.e., $P$) is not satisfactory. 
@@ -612,7 +611,7 @@ Three most important concerns identified by Das et al.~\cite{das2020opportunitie
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.7]{images/lvg_cancer.png}	
-    \caption[Scopes and types of ML models in healthcare]{Scopes and types of ML models in healthcare based on their interpretability characteristics~(inspired by scopes and types by Stiglic et al.~\cite{stiglic2020interpretability}), showing an example of cancer types prediction}	
+    \caption[Scopes and types of ML models in healthcare]{Scopes and types of ML models in healthcare based on their interpretability characteristics~(inspired by scopes and types by Stiglic et al.~\cite{stiglic2020interpretability}), showing an example prediction}	
 	\label{fig:local_vs_global_ex}
 \end{figure*}
 
@@ -638,9 +637,15 @@ Three most important concerns identified by Das et al.~\cite{das2020opportunitie
 \subsection{Techniques for interpretability}
 Local interpretability of an ML model can be achieved by designing justified model architectures that explains why a specific decision was made or by providing similar examples of instances to the target instance~\cite{stiglic2020interpretability}. For example, for our cancer diagnosis use case, by emphasizing specific characteristics of a patient that represents the characteristics of a smaller group of cancer patients such as breast cancer, yet different in other patients~(rather than all the patients). In contrast, global interpretability signifies the overall transparency of the model inside a model on an abstract level. An interpretable ML can be developed that can have cohort-specific interpretability, where they focus on population subgroups~\cite{stiglic2020interpretability}. 
 
+%\section{Preliminaries}
+%Some concepts on interpretability and metastases of cancer have been discussed in \cref{chapter:preli}. In this section, some modality specific interpretability concepts are discussed.  
+
+%\subsection{Perturbing neural networks}
+\hspace*{3.5mm} Algorithmic transparency is also often discussed with probing techniques. Although, probing strategies are straightforward for ML algorithms like support vector machine~(SVM), decision tree-based, etc., this is not the case for very complex DNN architectures. However, there have been a substantial efforts to develop new methods to interpret these complex models, such as connection weights-based, gradient-based, and activation level-based approaches. Because type of parameters and structure of how they connect to each other varies by algorithm, probing strategies are
+model-specific.
+
 \hspace*{3.5mm} Based on outputs returned by the black-box model, \textit{surrogate} or a simple proxy model is often developed to learn a locally faithful approximation of a complex model~\cite{stiglic2020interpretability}. Model surrogation is a model interpretation strategy, which involve training an inherently interpretable model using the same data as a `black-box' model to approximate the predictions of the `black-box' model. Besides, probing and perturbing are also used as ML interpretation strategies, as shown in \cref{fig:pro_per_surroga}. Interpreting a model's outcome can be classified according to the results of the prediction model, as outlined by Molnar et al.~\cite{molnar2019interpretable}:
 
-\vspace{-2mm}
 \begin{itemize}[noitemsep]
     \item \textbf{Feature summary statistics} - summary of each feature and their impact on the model predictions. 
     \item \textbf{Feature summary visualization} - summary of the methods used to visualize and in order to make the visual communication easier, where outcomes are  presented with bars, plots, or table. 
@@ -648,8 +653,7 @@ Local interpretability of an ML model can be achieved by designing justified mod
     \item \textbf{The data point interpretability} - methods that require data points themselves to allow interpretability to  return data points to make model interpretable. 
 \end{itemize}
 
-\hspace*{3.5mm} To explain and interpret the model predictions these ways, several approaches and methods have been proposed. 
-\Cref{fig:xai_timeline} shows a timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on~\cite{das2020opportunities}). In this subsection, we'll briefly cover most widely used ones. 
+\hspace*{3.5mm} To explain and interpret the model predictions these ways, several approaches and methods such as probing, perturbing, and sensitivity analysis have been proposed. \Cref{fig:xai_timeline} shows a timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on~\cite{das2020opportunities}). In this subsection, we'll briefly cover most widely used ones. 
 
 \subsubsection{Feature-based attribution methods}
 \label{subsubsec:FI_shap}
@@ -717,7 +721,6 @@ Guided backpropagation~(GB)~\cite{springenberg2014striving} is another method, w
  \vspace{-4mm}
  
 \hspace*{3.5mm} where $L_{i j}^{c}=\sum_{k} w_{k}^{c} A_{i j k}$~\cite{kim2020extending}. Subsequently, heat maps~(HM) are then plotted to visualize the weighted combination of the feature maps. However, if linear layers replace the classifier architecture, re-training of the network is required and non-linearity of classifier vanishes. Subsequently, literature~\cite{114} came up with an efficient generalization of CAM called Grad-CAM, where instead of pooling, globally averages gradients of feature maps as weights, w.r.t, aiming at class $c$. The guided backpropagation in Grad-CAM helps to generate more human-interpretable but fewer class-sensitive visualizations than the saliency maps~(SM)~\cite{nie2018theoretical}. Since SM use true gradients, trained weights are likely to impose a stronger bias towards specific subsets of the input pixels. Accordingly, class-relevant pixels are highlighted rather than producing random noise~\cite{nie2018theoretical}. Therefore, Grad-CAM is used to draw the HM to provide attention to discriminating regions, where the class-specific weights of each FM are collected from the final convolutional layer through globally averaged gradients~(GAG) of FMs instead of pooling~\cite{chattopadhay2018grad}: 
-
 \vspace{-4mm}
 \begin{equation}
     \alpha_k^c=\frac{1}{Z}\sum_{i}\sum_{j}\frac{\partial y^c}{\partial A_{ij}^k}.
@@ -745,8 +748,7 @@ Guided backpropagation~(GB)~\cite{springenberg2014striving} is another method, w
     \end{aligned}
 \end{align}
 
-\hspace*{3.5mm} Although, CAM variants managed to steer clear of back-propagating gradients all the way up to inputs, gradients are essentially propagated only till the final convolutional layer. Besides, Grad-CAM and Grad-CAM++ are limited to specific architectures that uses average-pooling layer to connect convolutional layers to FCLs. 
-Gradient for a DNN architecture can not only be noisy but also tends to vanish due to saturation in Sigmoid or the flat zero-gradient region in ReLU. One of the consequences is that gradient of the output w.r.t input or internal layer activation may be noisy visually which causes problems in the plain SM~\cite{wang2020score}. 
+\hspace*{3.5mm} Although, CAM variants managed to steer clear of back-propagating gradients all the way up to inputs, gradients are essentially propagated only till the final convolutional layer. Besides, Grad-CAM and Grad-CAM++ are limited to specific architectures that uses average-pooling layer to connect convolutional layers to FCLs. Gradient for a DNN architecture can not only be noisy but also tends to vanish due to saturation in Sigmoid or the flat zero-gradient region in ReLU. One of the consequences is that gradient of the output w.r.t input or internal layer activation may be noisy visually which causes problems in the plain SM~\cite{wang2020score}. 
 \hspace*{3.5mm} These apply to both Grad-CAM and Grad-CAM++. A recent approach called Score-CAM is proposed by Haofan Wang et al.~\cite{wang2020score}. While Grad-CAM and Grad-CAM++ use the gradient information flowing into the last convolutional layer to represent the importance of each activation map, Score-CAM utilizes the importance called Channel-wise Increase of Confidence~(CIC): Score-CAM considers a convolutional layer $l$ in a model $f$, given a class of interest $c$, \cref{3.11} can be rewritten $L_{\text {Score-CAM}}^{c}$ as follows: 
 
 \vspace{-4mm}
@@ -785,7 +787,6 @@ The output layer relevance is calculated before the back-propagation as follows~
     \label{eq:rn}
 \end{align}
 
-
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.65]{images/lrp.png}	
@@ -804,6 +805,80 @@ By equally penalizing non-target classes, the relevance produced in CLRP is, how
     \end{array}\right.
 \end{align}
 
+\subsubsection{Attention mechanism}
+Attention mechanism is probably one of the most widely known techniques used to represent distinct relations between input features. For example, in natural language processing attention mechanism is used to identify important tokens for next word prediction. Subsequently, similar concept is extended for other areas such as computer vision and speech recognition, etc.%. In particular, %\subsubsection{Feature importance using self-attention network}
+the concept of propositional self-attention networks~(PSAN) is one of the first methods based on attention mechanism~\cite{vaswani2017attention}. In PSAN, attention heads is used, where the number of heads represent distinct relations between input features. Attention layers are placed as a hidden layers that map real values to parts of the human-understandable input space~\cite{vskrlj2020feature}. 
+%Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added 
+%to compute important features~(e.g., pixels) 
+\Cref{fig:san} shows a schematic representation of a SAN, where $l_{\text {att}}$ represents the attention layer, which can be expressed mathematically as~\cite{vskrlj2020feature}:  
+
+\begin{equation}
+    l_{2}=g\left(W_{2} \cdot\left(\sigma \left(W_{|F|} \cdot \Omega(X)+\boldsymbol{b}_{l_{1}}\right)\right)+\boldsymbol{b}_{l_{2}}\right)
+\end{equation}
+
+\hspace*{3.5mm} where $X$ is the input vectors, $\alpha_r$ is the regularization weights, and $g$ represents the first neural network layer, which maintains the connection with the input features $F$ as follows~\cite{vskrlj2020feature}: 
+
+\begin{equation}
+    g(X)=\frac{1}{k} \bigoplus_{k}\left[X \otimes \operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} X+\boldsymbol{b}_{l_{\mathrm{att}}}^{k}\right)\right],
+\end{equation}
+
+\hspace*{3.5mm} where $X$ is used as input to a softmax-activated layer by setting number of neurons equal to the number of features $|F|$~(i.e., dimensionality of input), $k$ represents number of attention heads representing relations between the input features, $\otimes$ is Hadamard product, $\oplus$ is the Hadamard summation across individual heads, and $\sigma$ is the exponential linear unit~(ELU)~\cite{clevert2015fast} activation function defined as~\cite{clevert2015fast}: 
+
+\begin{equation}
+    ELU_{\alpha_r}(X_k)=\left\{\begin{array}{ll}
+    \alpha_r(\exp (x)-1) & \text { if } x<0 \\
+    x & \text { if } x \geq 0,
+    \end{array}\right.
+    \label{eq:elu_activation}
+\end{equation}
+
+\hspace*{3.5mm} The softmax function is applied to $j_{i}$-th element of a weight vector $v$ is defined as~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    \operatorname{softmax}\left(\boldsymbol{v}_{j_{i}}\right)=\frac{\exp \left(\boldsymbol{v}_{j_{i}}\right)}{\sum_{j=1}^{|F|} \exp \left(\boldsymbol{v}_{j}\right),}
+\end{equation}
+
+\hspace*{3.5mm} where $v \in \mathbb{R}^{|F|}$. As $\sigma$ maintains a bijection between $F$ and weights in individual heads $W_{latt}^{k}$, weights in the $|F| \times|F|$ weight matrix represents the relations between features. Then the element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of individual samples against true label ${y}$. Two consecutive dense layers $l_{1}$ and $l_{2}$ contribute to prediction $\hat{y}$. The $\frac{1}{k} \oplus$ box represents element-wise means across the attention heads $(k)$. 
+
+\begin{figure*}
+	\centering
+	\includegraphics[scale=0.55]{images/san.png}	
+	\caption{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
+	\label{fig:san}
+\end{figure*}
+
+\hspace*{3.5mm} The attention vectors from $l_{\text {att}}$ is then used to compute feature importance estimates. The feature importance computations are based on three different strategies~(i.e., instance-level aggregations, attention positive based on correctly predicted samples, and global attention). Using either strategy,  the final vector is a resultant of a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$. 
+%With respect to the convolutional autoencoder architecture, the attention vector represents individual feature weights contributed to the latent space $Z_k$. % different than that of the 
+%Let us show how the considered architecture can be used to obtain
+%real values which we argue represent feature importance. We explore the procedures for obtaining the final vector, as a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$.
+For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ samples, instance-level aggregations is about computing the attention map $\operatorname{AV}\left(\boldsymbol{x}_{i}\right)$, for $i$ -th instance as~\cite{vskrlj2020feature}: 
+
+%Let $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$ represent the attention output of the $i$ -th instance, defined as
+\begin{equation}
+    \operatorname{AV}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
+\end{equation}
+
+\hspace*{3.5mm} Then the outputs are averaged on-instance basis, to get the global feature importance~\cite{vskrlj2020feature}: 
+
+\begin{equation}
+    R_{I}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)
+\end{equation}
+
+\hspace*{3.5mm} In attention positive only correctly predicted samples are taken into account. For the final prediction $\hat{y}_{i}$ of a black-box model, feature importance $R_{I}^{c}$ is computed as follows~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
+\end{equation}
+
+\hspace*{3.5mm} where $p$ signifies the feature importance for the true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
+
+\begin{equation}
+    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}.
+    \label{eq:gal_k}
+\end{equation}
+
+\hspace*{3.5mm} where the softmax is applied for each feature w.r.t. the remainder of the features. The feature importance is extracted as the main diagonal of the weight matrix, $\operatorname{diag}$. 
+
 \subsubsection{Decision rules-based explanations}
 Due to the nested non-linear and complex structure, DNN architectures are mostly opaque and perceived as `black box' methods. They not only suffer from lack of transparency but also cannot reason about their underlying decisions. A DNN produces a prediction, which is an outcome of a bunch of mathematical expressions chained together that represent the way inner layers of an algorithm. However, using a set of rules, it possible to explain a decision intuitively to human with the ability to look up the reason for a decision. A \textit{decision rule} is a simple \textit{IF-THEN} statement consisting of a condition called antecedent and a conclusion~\cite{molnar2019interpretable}. The IF-THEN structure semantically resembles natural language and the way how human think~\cite{molnar2019interpretable}. Following are the characteristics of a decision rule: 
 
@@ -816,9 +891,94 @@ Due to the nested non-linear and complex structure, DNN architectures are mostly
 \hspace*{3.5mm} If derived from intelligible features and the length of the condition is short, decision rules are probably the most interpretable prediction models. Suppose we have a simple model for predicting the body mass index~(BMI). Interpreting a predicted BMI with a decision rule is very easy and can be explained in layman term. For example, IF BMI $\geq$ 30~(condition), THEN you're obese~(prediction). Further explanations can be provided saying that ``an increased BMI is associated with risk for developing \textit{type-2 diabetes}, hypertension, and cardiovascular disease". 
 On the contrary, even this simple concept may not be well understood by patients~\cite{post2015patient} themselves. Once we have a transparent and easily explainable AI model, decision rules can be generated using a series of IF-THEN statements. In this thesis, one of the goals is to generate human-interpretable decision rules automatically based on self-explanatory logic for all decisions. 
 
+%\section{Preliminaries}\label{chapter_8:preliminaries}
+
+\section{Semantic Web and XAI}
+Life sciences in an early adopters of SW technologies~\cite{karim2018improving}. Many databases now make their data available as LD in which both biological entities and connections between them are identified through a unique identifier and the connections between them are expressed through standardized relations~\cite{alshahrani2017neuro}. LD enables interoperability between databases simply by reusing identifiers, where SPARQL can perform federated queries over multiple databases. Besides, ontologies are primary component of SW. 
+
+\subsection{Roles of ontology and knowledge graphs}
+An ontology is a specification of a conceptualization of a domain~\cite{alshahrani2017neuro} and formally and explicitly specify classes of entities that can be found within a domain and their interconnections. Further, ontologies are also used in biological datasets for the annotation and provision of metadata. They are commonly represented in formal languages with model theoretic semantics which makes them amenable to automated reasoning~\cite{alshahrani2017neuro}. Eventually, the aim of building a biological KG based on such ontology is to represent biological relations between entities, their annotations with biological ontologies and the back-ground knowledge in ontologies within a single formal structure~\cite{alshahrani2017neuro}. 
+
+\hspace*{3.5mm} OWL provides three profiles that facilitate polynomial time inferences, and multiple RDF stores implement different subsets of OWL to facilitate inferences and improve querying. The OWL2 EL profile\footnote{\url{https://www.w3.org/TR/owl2-direct-semantics/}} is widely used to develop  large ontologies and found useful and sufficient for a large number of tasks~\cite{alshahrani2017neuro}. OWL2 EL supports basic inferences over ontological class hierarchies~(i.e., intersection, existential quantification, and disjointness between named classes), supports inferences over object properties~(i.e., transitivity, reflexivity and object property composition) and can infer the classification of instances. OWL2 EL supports the class descriptions, class, and object property axioms~\cite{alshahrani2017neuro}. Although, metrics such as DL expressivity and OWL profiles are important in the SW reasoner, each of the profiles are based on different DLx used for different purposes. 
+
+\subsection{Symbolic reasoning}
+%To develop such an XAI system, high-quality data, a domain-specific KG, a model with interpretation capability, and an explainable interface are the most important required components in which reasoning based on a domain-specific ontology help increase interpretability of the ML model. %In this paper, authors utilized knowledge representation using symbolic logic and automated reasoning to generate embeddings of nodes using neural networks, which encodes related information in knowledge graphs(KGs). 
+%\subsubsection{Neuro-symbolic reasoning}
+Humans usually communicate with signs and symbols, what we desire from machines too~\cite{SAI}. Combinations of symbols that express their interrelations is refereed as reasoning. When humans combine a bunch of signs together to express something meaningful, we call it symbolic manipulation~\cite{alirezaie2019semantic}. 
+%However, in many scientific process, `proof' simply doesn't exist; there can only be facts and evidence that can lead us to certain conclusions. In such a case, either deductive or inductive reasoning is used to reach a specific logical and true conclusion or to express complex thought based on symbolic relations, e.g., the old Roman chestnut: \texttt{`All men are mortal; Caius is a man; therefore Caius is mortal'}~\cite{tolstoy2005death}. 
+Neuro-symbolic or symbolic AI was the dominant paradigm between the second world war era until the late 1980s~\cite{GoFI}. An implementation of SR are called rules engine or expert systems that can interact on top of KGs or KBs. It has been a success and could learn flexibly and produce accurate decisions about their inputs. However, although a symbolic reasoner can express the interrelations of symbols, a computer does not know what each symbol means, unless we interface it to any other representations of the world in a non-symbolic way. However, while using a ML or DNN, we can link the symbols to vectorized representations of the input data~\cite{SAI,sarker2017explaining}. Therefore, one of the main challenges in symbolic AI and ML approaches is how to relate the symbols to other forms of knowledge so that a computer can map the updated or dynamic real-word entities to symbols and reason about them. 
+
+\hspace*{3.5mm} To realize true XAI systems, ML components should be capable of learning the probabilistic correlations from the KGs and KBs, as well as abstract and higher-order concepts from the data~\cite{SAI}. However, in many scientific process, `proof' simply doesn't exist; there can only be facts and evidence that can lead us to certain conclusions~\cite{SAI,tolstoy2005death}. In such a case, either deductive or inductive reasoning is used to reach a specific logical and true conclusion or to express complex thought based on symbolic relations, e.g., the old Roman chestnut: \texttt{`All men are mortal; Caius is a man; therefore Caius is mortal'}. Contemporary explainability techniques mostly adjust the weights and measures model inputs to determine their effects on outputs. Many AI practitioners, thus, merely consider them as the first step toward XAI. Once those factors are identified, showing reasons on why a model produced results in a certain way, enumerating them with rules makes even the deepest DNN models much more transparent. 
+
+\hspace*{3.5mm} What makes the KB side of AI so influential in recent years, given that rules are repeatable, consistently producing the same output, whereas conventional ML model's outputs are oftentimes not deterministic~\cite{alshahrani2017neuro}. The reason lies on the fact that due to the stochastic nature of DNN, the prediction and feature importance generated would be slightly different across runs. However, incorporating knowledge-based AI systems involving SR can codify intricate explanations of results of ML models into sustainable rules that are more transparent and reliable in healthcare. Unlike ML, semantic inferencing of the KB side of AI understands the meaning of its processing results, which is valuable for deriving rules that are very useful in clinical decision making and aligns EU GDPR algorithmic transparency~\cite{kaminski2019right}. 
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Inference} - is the derivation of new knowledge from existing knowledge and axioms. Based on a set of axioms~(typically expressed in OWL-2 ontologies) and explicit facts, a reasoner is able to derive implicit, but previously unknown facts. 
+    \item \textbf{Reasoning} - refers to the ability to decide whether a propositional formula is satisfiable or not, which is, however, carried out via a search process involving multiple inferences.
+\end{itemize}
+
+\hspace*{3.5mm} Ontological reasoning can be can be applied in the form of symbolic reasoning to inferred more complex rules. Suppose you're very hungry and you like pizza very much. Assume you're a vegetarian and you go to a nearby shop and asked the waiter if they have an option for the vegetarian. However, he replied saying that ``I'm not sure but probably Margherita pizza could be suitable for the vegetarian''. How will you be sure that the waiter is right? Well, the simplest answer to this question would be reading the food ingredients, which is fine. However, for a machine or for someone who is trying to order pizza for the first time, how s/he may derive a logical conclusion as shown in \cref{fig:sparqlEx1}.  
+
+%\vspace{-4mm}
+%{\scriptsize \texttt{\\`Vegetarian pizza is one kind of pizza.\\ Margherita pizza is one type of pizza.\\ Tomato topping is one type of vegetable topping. \\Mozzarella topping is one type of cheese topping. \\Vegetarian pizza made of both vegetable and cheese topping.\\ Margherita pizza has either mozzarella~(or tomato) topping or both.\\ Therefore, Margherita is a vegetarian pizza'.}}
+
+\begin{figure}[h]
+    \centering
+    \scriptsize
+    \begin{Verbatim}[frame=single,numbers=left]
+        Vegetarian pizza is one kind of pizza 
+        Margherita pizza is one type of pizza
+        Tomato topping is one type of vegetable topping
+        Mozzarella topping is one type of cheese topping
+        Vegetarian pizza made of both vegetable and cheese topping
+        Margherita pizza has either mozzarella~(or tomato) topping or both
+        Therefore, Margherita is a vegetarian pizza.
+    \end{Verbatim}
+    \vspace{-3mm}
+    \caption{Deriving a new logical conclusion based on given facts and knowledge}
+    \label{fig:sparqlEx1}
+\end{figure}
+
+\hspace*{3.5mm} Therefore, if we have a domain-specific ontology, an ontology reasoner can be the savior by generating a set of prior facts and evidence as shown in \cref{fig:pizza1}, and come up with a logical conclusion~(written in human language) as shown above. In order to reach to a logical conclusion, deductive reasoning and inductive reasoning are two widely used technique, which we will see in the next subsection. 
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=0.8]{images/reasoning.png}
+	\caption{Example of inferencing logical conclusion} 
+	\label{fig:pizza1}
+	\vspace{-2mm}
+\end{figure*}
+
+\subsubsection{Deductive reasoning} 
+It is a basic form of valid reasoning in which the deduction starts with a general statement. Then all the possibilities are checked to reach a specific and logical conclusion. Scientific methods often use deduction to test hypotheses and theories. In deductive inference, we hold a theory, followed by predicting the observations if the theory was correct. Conclusions are also often drawn similar to what we do based on mathematics from a logical syllogism. 
+
+\iffalse
+\vspace{-4mm}
+{\scriptsize \noindent Example 1: \texttt{`All oncogenes are responsible for cancer; TP53 is a oncogene; therefore, TP53 is responsible for cancer'}. \\
+    Example 1: \texttt{`All oncogenes are responsible for cancer; TP53 is a oncogene; therefore, TP53 is responsible for cancer'}. \\
+    %Example 1: \texttt{`All oncogenes are responsible for cancer; TP53 is a oncogene; therefore, %TP53 is responsible for cancer'}
+    }.\\
+\vspace{-4mm}    
+\begin{figure}[!ht]
+		\centering
+		\includegraphics[width=\linewidth]{Inductive-vs-Deductive-Reasoning.jpg}
+        \label{fig:pizza}
+	\caption{Inductive vs deductive reasoning} 
+\end{figure}
+\fi 
+Deductive reasoning usually involves: a premise, followed by one or more premise, and finally an inference, e.g., \texttt{`All oncogenes are responsible for cancer; TP53 is a oncogene; therefore, TP53 is responsible for cancer'}. When the deductive reasoning is used, the conclusion will be correct if all the statements are correct. 
+
+\subsubsection{Inductive reasoning} 
+Often symbols express lessons we derive inductively from domain knowledge or real-world experience. Inductive reasoning is the opposite of deductive reasoning in which a broad generalizations is made from specific observations or data. In real-life, we make many observations, discern a pattern, make a generalization, and infer an explanation or a theory. Someone who uses inductive reasoning makes specific observations and draws a general conclusion, e.g., `Oncogenes are responsible for cancer, don't apply gene silencing blindly'. 
+\iffalse
+\vspace{-4mm}
+{\scriptsize \noindent Example 1: \texttt{`Oncogenes are responsible for cancer, don't apply gene silencing blindly'}. \\ Example 2: \texttt{`Oncogenes are responsible for cancer, don't apply gene silencing blindly'}}.\\
+\vspace{-4mm}
+\fi 
+The downside of inductive reasoning is that it can follow a false conclusion, even if all of the premises are true in a statement. For example, \texttt{`TCF3 is an oncogene; TCF3 has tumor-suppressor functionality; all oncogenes have tumor-suppressor functionality"}. The conclusion, however, does not follow logically from the statements, because biologically only the proto-oncogenes have such tumor-suppressor functionality.
+
 \subsubsection{Neuro-symbolic reasoning and challenges of current XAI methods}
-Alejandro B. A, et al.~\cite{arrieta2020explainable} outline the trade-off between interpretability and accuracy, i.e., between the simplicity of the information given by the system on its internal functioning, and the exhaustiveness of this description
-cognitive sciences to create objectively convincing explanations.
+Alejandro B. A, et al.~\cite{arrieta2020explainable} outline the trade-off between interpretability and accuracy, i.e., between the simplicity of the information given by the system on its internal functioning, and the exhaustiveness of this description cognitive sciences to create objectively convincing explanations.
 Explanations are better when constrictive, i.e., a good explanation is not only indicates why the model made a decision $\mathrm{X}$, but also why it made decision $\mathrm{X}$ rather than decision $\mathrm{Y}$. 
 
 \hspace*{3.5mm}It is also explained that probabilities are not as important as causal links in order to provide a satisfying explanation. Considering that `black-box' models tend to process data in a quantitative manner, it would be necessary to translate the probabilistic results into qualitative notions containing causal links. Besides, counterfactual explanations can help the user to understand the decision of a model. In such a scenario, combining connectionist and symbolic paradigms is a promising way to address this challenge. On one hand, connectionist methods are more precise but opaque. On the other hand, symbolic methods are popularly considered less efficient, albeit they offer following features:

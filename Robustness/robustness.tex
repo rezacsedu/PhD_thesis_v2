@@ -66,7 +66,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
     x^{\prime} &=x_{t m p}+(\epsilon-\alpha) \cdot \operatorname{sign}\left(\nabla_{x_{t m p}} J\left(x_{t m p}, l\right)\right)
 \end{align}
     
-\hspace*{3.5mm} where $\alpha, \epsilon$ are the parameters, $\alpha<\epsilon$. On the other hand, DeepFool~\cite{moosavi2016deepfool} is another method to find the closest distance from the original input to the decision boundary of AEx. To overcome the non-linearity in high dimensional feature space, an iterative attack is performed with a linear approximation. Starting from an affine classifier~(AC), they found that the minimal perturbation of an AC is the distance to the separating affine hyperplane ${F}=\{x:$ $\left.w^{T} x+b=0\right\}$, where the perturbation of an AC, $F$ can be $\eta^{*}(x)=-\frac{F(x)}{\|w\|_{\text {is }}^{2}} w$~\cite{yuan2019adversarial}. In case of a binary differentiable classifier, $F$ an iterative method is employed to approximate the perturbation by considering $F$ is linearized around $x_{i}$ at each iteration, where the minimal perturbation is computed as follows:
+\hspace*{3.5mm} where $\alpha, \epsilon$ are the parameters, $\alpha<\epsilon$. On the other hand, DeepFool~\cite{moosavi2016deepfool} is another method to find the closest distance from the original input to the decision boundary of AEx. To overcome the non-linearity in high dimensional feature space, an iterative attack is performed with a linear approximation. Starting from an affine classifier~(AC), they found that the minimal perturbation of an AC is the distance to the separating affine hyperplane ${F}=\{x:$ $\left.w^{T} x+b=0\right\}$, where the perturbation of an AC, $f$ can be $\eta^{*}(x)=-\frac{F(x)}{\|w\|_{\text {is }}^{2}} w$~\cite{yuan2019adversarial}. In case of a binary differentiable classifier, $f$ an iterative method is employed to approximate the perturbation by considering $f$ is linearized around $x_{i}$ at each iteration, where the minimal perturbation is computed as follows:
  
 \vspace{-6mm}
 \begin{align}
@@ -168,9 +168,9 @@ For each target model, we generate AEx from test samples as outlined in \Cref{fi
 %\subsubsection{Adding Gaussian noises}
 %\subsubsection{Adversarial samples generation}
 %The linear view of adversarial examples suggests a fast way of generatingthem.%Since neural networks are too linear to resist linear adversarial perturbations. More nonlinear models such as Sigmoid networks are carefully tuned to spend most of their time in the non-saturating, more linear regime for the same reason. This linear behavior suggests that cheap, analytical perturbations of a linear model should also damage neural networks. 
-We introduce two types of attack scenarios in which samples AEx are generated: i) with content moderation across samples, ii) crafting AEx with DeepFool.
+Two types of attack scenarios introduced in which AEx are generated with content moderation across samples an by crafting AEx with DeepFool.
 %, iii) with GAN-based approach. 
-For the first one, we employed the FGSM to generate AEx with content moderation, where the gradient is computed using backpropagation. For a given trained model $F$ and an original input data sample $x$, generating an adversarial example $x^{\prime}$ can be formulated as a box-constrained optimization problem~\cite{yuan2019adversarial}:
+As for the first one, FGSM is employed, where the gradient is computed using backpropagation. For a given trained model $f$ and an original input data sample $x$, generating an adversarial example $x^{\prime}$ can be formulated as a box-constrained optimization problem~\cite{yuan2019adversarial}:
 
 \vspace{-6mm}
 \begin{align}
@@ -183,9 +183,7 @@ For the first one, we employed the FGSM to generate AEx with content moderation,
     \end{array}
 \end{align}
 
-where $y$ and $y^{\prime}$ is the predicted label of $x$ and $x^{\prime},\|\cdot\|$ is the distance between two samples. 
-
-\hspace*{3.5mm}Let $\eta=x^{\prime}-x$ be the perturbation added on $x$ and minimizes the perturbation while misclassifying the prediction with a constraint of input data, ${\theta}$ is the model parameter, ${x}$ is the input, $y$ targets associated with ${x}$ and $J( \theta, x,y)$ is the cost used to train a DNN architecture. The cost function around the current value of ${\theta}$ can be linearize by obtaining an optimal max-norm constrained perturbation as outlined in \cref{eq:fgsm_eta}. To craft AEx, we employ an iterative optimization-based approach called DeepFool, which has higher success rates under the same norm objective in a white-box setting~\cite{yuan2019adversarial}. Since DeepFool provides less perturbation compared to FGSM~\cite{yuan2019adversarial}, we consider  AEx generated with FGSM as OOD attack. 
+\hspace*{3.5mm} where $y$ and $y^{\prime}$ is the predicted label of $x$ and $x^{\prime},\|\cdot\|$ is the distance between two samples. Let $\eta=x^{\prime}-x$ be the perturbation added on $x$ and minimizes the perturbation while misclassifying the prediction with a constraint of input data, ${\theta}$ is the model parameter, ${x}$ is the input, $y$ targets associated with ${x}$ and $J( \theta, x,y)$ is the cost used to train a DNN architecture. The cost function around the current value of ${\theta}$ can be linearize by obtaining an optimal max-norm constrained perturbation as outlined in \cref{eq:fgsm_eta}. To craft AEx, we employ an iterative optimization-based approach called DeepFool, which has higher success rates under the same norm objective in a white-box setting~\cite{yuan2019adversarial}. Since DeepFool provides less perturbation compared to FGSM~\cite{yuan2019adversarial}, we consider AEx generated with FGSM as OOD attack. 
 
 %\subsubsection{Attack with crafted adversarial samples}
 %\subsection{OOD attacks}
@@ -235,14 +233,14 @@ Literature~\cite{OOD19} has outlined two types of countermeasures against advers
 \end{figure}
 
 \subsubsection{Proactive measure: adversarial retraining}
-We evaluate the models on adversarial test examples, before employing any defense. Given two different gradient-based cancer type~i.e., trained) classifiers $F_1$ and $F_2$~(e.g., $MCAE_{slr}$ and $MCAE_{lrc}$ models trained on the multimodal genomics data based on shared latent representation and latent representation concatenation, respectively), the robustness of each content moderation model is measured by the minimum perturbations required for an input sample to evade detection. For model $F: \mathbb{R}^{D} \rightarrow$ $\{1, \ldots, K\}$~(either $F_1$ or $F_2$), assuming $F(x)=\operatorname{argmax}_{i}\left(Z(x)_{i}\right)$, where $Z(x) \in\mathbb{R}^{K}$ is the final layer output, and $Z(x)_{i}$ is the prediction score for the $i^{th}$ class. Similar to literature~\cite{bhatt2020explainable}, we then formulate the objective w.r.t. to find the minimum perturbation~\cite{bhatt2020explainable} as an optimization problem formulated as follows:
+We evaluate the models on adversarial test examples, before employing any defense. Given two different gradient-based cancer type~i.e., trained) classifiers $f_1$ and $f_2$~(e.g., $MCAE_{slr}$ and $MCAE_{lrc}$ models trained on the multimodal genomics data based on shared latent representation and latent representation concatenation, respectively), the robustness of each content moderation model is measured by the minimum perturbations required for an input sample to evade detection. For model $f: \mathbb{R}^{D} \rightarrow$ $\{1, \ldots, K\}$~(either $f_1$ or $f_2$), assuming $f(x)=\operatorname{argmax}_{i}\left(Z(x)_{i}\right)$, where $Z(x) \in\mathbb{R}^{K}$ is the final layer output, and $Z(x)_{i}$ is the prediction score for the $i^{th}$ class. Similar to literature~\cite{bhatt2020explainable}, we then formulate the objective w.r.t. to find the minimum perturbation~\cite{bhatt2020explainable} as an optimization problem formulated as follows:
 
 \vspace{-6mm}
 \begin{align}
     \underset{\boldsymbol{x}}{\operatorname{argmin}}\left\{d\left(\boldsymbol{x}, \boldsymbol{x}_{0}\right)+c {L}(\boldsymbol{f}(\boldsymbol{x}), y)\right\},
 \end{align}
 
-where $d(\cdot, \cdot)$ is a distance measure $\ell_{2}$~(i.e., Euclidean distance), ${L}(\cdot)$ is the `cross-entropy loss~(CEL)' function and $c$ is a balancing factor. However, searching for possible AEx is an expensive and non-trivial problem. The projected gradient descent~(PGD) is a commonly used method, which search for the minimum perturbation from the test set of allowable perturbations ${S} \subseteq \mathbb{R}^{D}$ as follows~\cite{bhatt2020explainable}: 
+\hspace*{3.5mm} where $d(\cdot, \cdot)$ is a distance measure $\ell_{2}$~(i.e., Euclidean distance), ${L}(\cdot)$ is the `cross-entropy loss~(CEL)' function and $c$ is a balancing factor. However, searching for possible AEx is an expensive and non-trivial problem. The projected gradient descent~(PGD) is a commonly used method, which search for the minimum perturbation from the test set of allowable perturbations ${S} \subseteq \mathbb{R}^{D}$ as follows~\cite{bhatt2020explainable}: 
 
 \vspace{-6mm}
 \begin{align}
@@ -268,7 +266,7 @@ To increase the robustness of DNNs, deep contractive autoencoder is proposed by 
     \end{array}
 \end{align}
 
-\hspace*{3.5mm} where ${P}_{t}$ denotes the training distribution, $\epsilon_{\text {defend}}$ controls the new changes to AEx. For a supplied input~(i.e., perturbed sample) $x^{\prime}$, first we reconstruct a cleaner version $x^c$ using PixelCNN, which we use to classify into a specific cancer type using model $F: {X}^{(m)} \rightarrow {Y}$~(e.g., either $F_1$ or $F_2$ for multimodal inputs and CNN for unimodal input), where predictor $F$ maps instance $x$ from a feature space ${X}^{(m)}$ with $m$ input features to a labels $y$ in a target space ${Y}$, where $F(x)=y$ denotes the decision $y$, predicted by $F$. %Further, we employ PixelDefend for the detection of possible AEx, i.e, if an adversarial example . 
+\hspace*{3.5mm} where ${P}_{t}$ denotes the training distribution, $\epsilon_{\text {defend}}$ controls the new changes to AEx. For a supplied input~(i.e., perturbed sample) $x^{\prime}$, first we reconstruct a cleaner version $x^c$ using PixelCNN, which we use to classify into a specific cancer type using model $f: {X}^{(m)} \rightarrow {Y}$~(e.g., either $f_1$ or $f_2$ for multimodal inputs and CNN for unimodal input), where predictor $f$ maps instance $x$ from a feature space ${X}^{(m)}$ with $m$ input features to a labels $y$ in a target space ${Y}$, where $f(x)=y$ denotes the decision $y$, predicted by $f$. %Further, we employ PixelDefend for the detection of possible AEx, i.e, if an adversarial example . 
 
 \subsubsection{Reactive measure: out-of-distributions detection}
 \noindent The prediction probability of OOD samples tends to be lower than the prediction probability of ID samples~\cite{OOD18}. Therefore, OOD samples are closer to the class boundaries and more likely to be misclassified~(or classified with low confidence) by a classifier trained on ID samples. In our approach, to mitigate OOD issue, the likelihood ratio is calculated for the OOD samples before inferencing to avoid such instance.  
@@ -279,7 +277,7 @@ We assume that an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{i
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth,height=60mm]{images/ood_ex_1.png}
-    \caption{Detection of OOD samples by the discrepancy between two classifiers based on~\cite{OOD19}, where $MCAE_{slr}$ and $MCAE_{lrc}$ represent model $F_1$ and $F_2$, respectively}
+    \caption{Detection of OOD samples by the discrepancy between two classifiers based on~\cite{OOD19}, where $MCAE_{slr}$ and $MCAE_{lrc}$ represent model $f_1$ and $f_2$, respectively}
     \label{fig:ood_detection_example}
     \vspace{-4mm}
 \end{figure}
@@ -287,19 +285,19 @@ We assume that an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{i
 \hspace*{3.5mm} Since the goal is to distinguish whether a sample $\mathbf{x}_{\mathbf{ul}}$ is from ID or OOD, we train the network to predict different softmax class probabilities for ID samples and OOD samples by utilizing $\mathbf{x}_{\mathbf{u}1}$ during the unsupervised training as literature~\cite{OOD19}. From a given ID dataset ${D}$ of $(\boldsymbol{x}, y)$ pairs sampled from the distribution $p^{*}(\boldsymbol{x}, y)$ where $x$ is the extracted feature vector or raw input and $y \in {Y}:=\{1, \ldots, k, \ldots, K\}$ is the label assigning membership to one of $K$ ID classes. In the corresponding profiles~(i.e., GE, miRNA, or CNV), inputs are numeric or discrete, i.e. $x_{d} \in \mathbb{R}$. In general, OOD inputs are sampled $(\boldsymbol{x}, y)$ generated from an underlying distribution other than $p^{*}(\boldsymbol{x}, y)$. Similar to literature~\cite{OOD1}, we then consider an input $(x, y)$ to be OOD if $y \notin {Y}$, i.e., the class $y$ does not belong to any of $K$ ID classes. This turns out the OOD detection is a task to accurately detect if an input $x$ is OOD or not~\cite{OOD1,OOD2,OOD3}.
 
 %\paragraph{Network constructions}
-\hspace*{3.5mm} Similar to literature~\cite{yu2019unsupervised}, we construct a two-head neural network architectures consisting of a feature extractor, $E,$ which takes inputs $\mathrm{x}_{\text {in }}$ or $\mathrm{x}_{\mathrm{ul}}$, and two classifier $F_{1}$ and $F_{2}$, where each classifier takes features from $E$ and predict into one of $K$ classes. Classifiers $F_{1}$ and $F_{2}$ output a $K$ dimensional vector of logits. The class probabilities is then calculated using softmax activation, where $p_{1}(\mathbf{y} | \mathbf{x})$ and $p_{2}(\mathbf{y} | \mathbf{x})$ are $K$ dimensional softmax class probabilities for input $x$ produced with classifier $F_{1}$ and $F_{2}$, respectively. In our case, we assume each sample consisting of 3 different modalities, i.e., gene expression, copy numbers, and miRNA expression, s.t., we create latent representation of each input modality as shown in \cref{fig:ood_network}. 
+\hspace*{3.5mm} Similar to literature~\cite{yu2019unsupervised}, we construct a two-head neural network architectures consisting of a feature extractor, $E,$ which takes inputs $\mathrm{x}_{\text {in }}$ or $\mathrm{x}_{\mathrm{ul}}$, and two classifier $f_{1}$ and $f_{2}$, where each classifier takes features from $E$ and predict into one of $K$ classes. Classifiers $f_{1}$ and $f_{2}$ output a $K$ dimensional vector of logits. The class probabilities is then calculated using softmax activation, where $p_{1}(\mathbf{y} | \mathbf{x})$ and $p_{2}(\mathbf{y} | \mathbf{x})$ are $K$ dimensional softmax class probabilities for input $x$ produced with classifier $f_{1}$ and $f_{2}$, respectively. In our case, we assume each sample consisting of 3 different modalities, i.e., gene expression, copy numbers, and miRNA expression, s.t., we create latent representation of each input modality as shown in \cref{fig:ood_network}. 
 
 \begin{figure}[htp!]
     \centering
     \includegraphics[width=0.8\textwidth,height=100mm]{images/OOD_1.png}
-    \caption[Supervised pre-training and unsupervised fine-tuning steps for OOD detection.]{Supervised pre-training and unsupervised fine-tuning steps for OOD detection method which we extended for multimodal scenario is based on~\cite{yu2019unsupervised}. The network consists of an extractor $E$ and two classifiers $F_{1}$ and $F_{2}$. \textbf{Step A}: supervised training to classify ID samples correctly. \textbf{Step B}: $F_{1}$ and $F_{2}$ learn to maximize the discrepancy in an unsupervised manner to detect OOD samples}
+    \caption[Supervised pre-training and unsupervised fine-tuning steps for OOD detection.]{Supervised pre-training and unsupervised fine-tuning steps for OOD detection method which we extended for multimodal scenario is based on~\cite{yu2019unsupervised}. The network consists of an extractor $E$ and two classifiers $f_{1}$ and $f_{2}$. \textbf{Step A}: supervised training to classify ID samples correctly. \textbf{Step B}: $f_{1}$ and $f_{2}$ learn to maximize the discrepancy in an unsupervised manner to detect OOD samples}
     \label{fig:ood_network}
     \vspace{-2mm}
 \end{figure}
 
-\hspace*{3.5mm} If two different classifiers~(i.e. $F_{1}$ and $F_{2}$ in our case) are initialized with random initial parameters and subsequently trained on ID samples supervised way, they are tend to show slightly different characteristics. Nevertheless, most OOD samples have larger discrepancy than ID samples, two different classifiers classify OOD samples differently~\cite{OOD19}. 
+\hspace*{3.5mm} If two different classifiers~(i.e. $f_{1}$ and $f_{2}$ in our case) are initialized with random initial parameters and subsequently trained on ID samples supervised way, they are tend to show slightly different characteristics. Nevertheless, most OOD samples have larger discrepancy than ID samples, two different classifiers classify OOD samples differently~\cite{OOD19}. 
 %Based on the characteristic of OOD samples,  
-We measure the disagreement between the classifiers and train the network to maximize it. Similar to literature~\cite{OOD19} we hope that the network will push OOD samples outside the manifold of ID samples. Consequently, OOD samples and ID samples can be separated according to the discrepancy between the two classifiers’ outputs as shown in \cref{fig:ood_detection_example}, where discrepancy loss is computed as follows to measure the divergence between the two softmax class probabilities for an input~\cite{OOD19}: 
+We measure the disagreement between the classifiers and train the network to maximize it. Similar to literature~\cite{OOD19}, it is expected that the network will push OOD samples outside the manifold of ID samples. Consequently, OOD samples and ID samples can be separated according to the discrepancy between the two classifiers’ outputs as shown in \cref{fig:ood_detection_example}, where discrepancy loss is computed as follows to measure the divergence between the two softmax class probabilities for an input~\cite{OOD19}: 
 
 \vspace{-6mm}
 \begin{align}
@@ -307,7 +305,7 @@ We measure the disagreement between the classifiers and train the network to max
     \label{eq:dis_loss_1}
 \end{align}
 
-\noindent where $H(\cdot)$ is the entropy over the softmax distribution. Again similar to literature~\cite{yu2019unsupervised}, the whole training consists of supervised pre-training and unsupervised fine-tuning. During the pre-training, we train the network to learn discriminative features before classifying the ID samples correctly in a supervised way. Since this is a supervised way to predict the labels, we optimize the following CEL~\cite{yu2019unsupervised}:
+\hspace*{3.5mm} where $H(\cdot)$ is the entropy over the softmax distribution. Again similar to literature~\cite{yu2019unsupervised}, the whole training consists of supervised pre-training and unsupervised fine-tuning. During the pre-training, we train the network to learn discriminative features before classifying the ID samples correctly in a supervised way. Since this is a supervised way to predict the labels, we optimize the following CEL~\cite{yu2019unsupervised}:
 
 \vspace{-6mm}
 \begin{align}
@@ -326,14 +324,14 @@ We measure the disagreement between the classifiers and train the network to max
     \label{eq:ood_join_loss}
 \end{align}
 
-\hspace*{3.5mm} where, $m$ is the margin used to prevent overfitting, i.e., if the average discrepancy of unlabeled samples is greater than the margin m, the unsupervised loss will equal its minimum value zero~\cite{yu2019unsupervised}. Since the network is already trained to maximize the discrepancy loss, which means the the entropy of $F_1$’s output is tend to be maximized and the entropy of $F_2$’s output to get minimized. Consequently, $F_2$ is expected to predict high probability of one class. In that case, OOD samples will be outside the support of the ID samples making the discrepancy between the outputs of $F_{1}$ and $F_{2}$ for OOD samples to be larger. During the inference time, in order to distinguish between ID and OOD samples, similar to literature~\cite{yu2019unsupervised}, the discrepancy is computed w.r.t, the $L_1$ distance between $F_{1}$ and $F_{2}$ classifier's outputs. When the distance is above a detection threshold $\delta$, we consider the sample as an OOD sample denoted as follows~\cite{yu2019unsupervised}: 
+\hspace*{3.5mm} where, $m$ is the margin used to prevent overfitting, i.e., if the average discrepancy of unlabeled samples is greater than the margin m, the unsupervised loss will equal its minimum value zero~\cite{yu2019unsupervised}. Since the network is already trained to maximize the discrepancy loss, which means the the entropy of $f_1$’s output is tend to be maximized and the entropy of $f_2$’s output to get minimized. Consequently, $f_2$ is expected to predict high probability of one class. In that case, OOD samples will be outside the support of the ID samples making the discrepancy between the outputs of $f_{1}$ and $f_{2}$ for OOD samples to be larger. During the inference time, in order to distinguish between ID and OOD samples, similar to literature~\cite{yu2019unsupervised}, the discrepancy is computed w.r.t, the $L_1$ distance between $f_{1}$ and $f_{2}$ classifier's outputs. When the distance is above a detection threshold $\delta$, we consider the sample as an OOD sample denoted as follows~\cite{yu2019unsupervised}: 
 
 \vspace{-6mm}
 \begin{align}
     \sum_{i=1}^{K}\left|p_{1}\left(y_{i} | \mathbf{x}\right)-p_{2}\left(y_{i} | \mathbf{x}\right)\right|>\delta, 
 \end{align}
 
-where $x$ could be a unimodal or multimodal sample. Subsequently, we stop making the inferencing for an OOD samples, given that making a wrong prediction is far better than a garbage prediction. 
+\hspace*{3.5mm} where $x$ could be a unimodal or multimodal sample. Subsequently, we stop making the inferencing for an OOD samples, given that making a wrong prediction is far better than a garbage prediction. 
 \section{Experiments}\label{chapter_6:results} 
 In this section, we discuss the evaluation results of content moderation attack and OOD detection, both quantitatively and qualitatively. %Besides, a comparative analysis with state-of-the-art approaches is provided. 
 
@@ -372,7 +370,7 @@ The CLEVER score is attack-agnostic and computationally feasible for large neura
 	\caption{Results of ablation study of two different classifiers covering detection error, ID/OOD discrepancy losses across different sample size} 
 	\scriptsize{
 	\begin{tabular}{lllllllll}
-		& & \multicolumn{3}{c}{\bfseries{$F_1$}} && \multicolumn{3}{c}{\bfseries{$F_2$}} \\	
+		& & \multicolumn{3}{c}{\bfseries{$f_1$}} && \multicolumn{3}{c}{\bfseries{$f_2$}} \\	
 		\cmidrule{3-5}\cmidrule{7-9}   
 		\textbf{Modality~(ID+OOD)}&\textbf{\#Samples}& \textbf{Detection error} & \textbf{ID discrepancy loss}& \textbf{OOD discrepancy loss} 
 		&& \textbf{Detection error} & \textbf{ID discrepancy loss}& \textbf{OOD discrepancy loss}\\
@@ -441,7 +439,7 @@ The CLEVER score is attack-agnostic and computationally feasible for large neura
 \hspace*{3.5mm} For computing the CLEVER and ERM metrics, we use the Adversarial Robustness Toolbox~(aka. ART)\footnote{\url{https://github.com/Trusted-AI/adversarial-robustness-toolbox}}. On the other hand, we use scikit-learn standard libraray for computing FPR, TPR, FNR, AUPR~(both IN and Out), and AUROC. 
 
 \subsection{Robust classifier's performance on the adversarial samples}
-With the above experimental setting, first, we generate some adversarial samples to attack both of our $F_1$ and $F_2$ models. Subsequently, we retrain both models with adversarial samples generated with DeepFool to make them robust. In both cases, the retrained models are much more robust than the originally trained model as shown in \cref{fig:normal_vs_robust_models}, where $\epsilon \in\{0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9\}$ to achieve the smallest $\ell_{\infty}$ distortion for individual sample. However, the retrained model based on latent representation concatenation shows more robustness then the shared latent representation. 
+With the above experimental setting, first, we generate some adversarial samples to attack both of our $f_1$ and $f_2$ models. Subsequently, we retrain both models with adversarial samples generated with DeepFool to make them robust. In both cases, the retrained models are much more robust than the originally trained model as shown in \cref{fig:normal_vs_robust_models}, where $\epsilon \in\{0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9\}$ to achieve the smallest $\ell_{\infty}$ distortion for individual sample. However, the retrained model based on latent representation concatenation shows more robustness then the shared latent representation. 
 
 \begin{figure*}[h]
 	\centering
@@ -465,14 +463,14 @@ With the above experimental setting, first, we generate some adversarial samples
     \centering
     \caption{Values of $\hat{\rho}_{\text {adv }}^{\infty}$ for two different networks based on DeepFool and FGSM}
     \begin{tabular}{l|c|c}
-        \hline \textbf{Classifier} & \textbf{DeepFool} & \textbf{Fast gradient sign method} \\ \hline $F_1$ & 0.29 & 0.09 \\ \hline 
-        $F_2$ & 0.21 & 0.05 \\
+        \hline \textbf{Classifier} & \textbf{DeepFool} & \textbf{Fast gradient sign method} \\ \hline $f_1$ & 0.29 & 0.09 \\ \hline 
+        $f_2$ & 0.21 & 0.05 \\
         \hline
     \end{tabular}
     \label{tab:robustness_result}
 \end{table}
 
-\hspace*{3.5mm} $F_1$ behaves more robustly even when $\epsilon$ is increased upto 0.4, giving upto 85\% accuracy. IN contrast, $F_2$ shows very fragile performance, giving drastic reduction of the accuracy by 25\%. \Cref{tab:robustness_result} reports the $\ell_{\infty}$ robustness to adversarial perturbations for four different networks based on DeepFool and FGSM with $90 \%$ of misclassification. \Cref{tab:robustness_result} shows ERM scores for both classifiers. Since a higher ERM value indicates a more robust classifier, $F_1$ behaves more robustly against both DeepFool and FGSM attacks. 
+\hspace*{3.5mm} $f_1$ behaves more robustly even when $\epsilon$ is increased upto 0.4, giving upto 85\% accuracy. IN contrast, $f_2$ shows very fragile performance, giving drastic reduction of the accuracy by 25\%. \Cref{tab:robustness_result} reports the $\ell_{\infty}$ robustness to adversarial perturbations for four different networks based on DeepFool and FGSM with $90 \%$ of misclassification. \Cref{tab:robustness_result} shows ERM scores for both classifiers. Since a higher ERM value indicates a more robust classifier, $f_1$ behaves more robustly against both DeepFool and FGSM attacks. 
 
 \begin{table}
     \centering
@@ -480,8 +478,8 @@ With the above experimental setting, first, we generate some adversarial samples
     \begin{tabular}{l|l|l|l|l|}
     \cline {2-5} \multicolumn{1}{c|} {} & \multicolumn{2}{c|} {\text {DeepFool}} & \multicolumn{2}{c|} {\text {FGSM}} \\
     \hline Classifier & $\ell_{2}$ & $\ell_{\infty}$ & $\ell_{2}$ & $\ell_{\infty}$ \\
-    \hline $F_1$ & 89.25 & 87.54 & 89.25 & 87.54 \\
-    \hline $F_2$ & 83.21 & 82.32 & 86.16 & 85.37 \\
+    \hline $f_1$ & 89.25 & 87.54 & 89.25 & 87.54 \\
+    \hline $f_2$ & 83.21 & 82.32 & 86.16 & 85.37 \\
     \hline
     \end{tabular}
     \label{tab:my_label}
@@ -542,7 +540,7 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 	%\scriptsize{
 	\vspace{-4mm}
 	\begin{tabular}{llllllllllll}
-		&\multicolumn{5}{c}{\bfseries{$F_1$}} && \multicolumn{5}{c}{\bfseries{$F_2$}} \\	
+		&\multicolumn{5}{c}{\bfseries{$f_1$}} && \multicolumn{5}{c}{\bfseries{$f_2$}} \\	
 		\cmidrule{2-6}\cmidrule{8-12}   
 		\textbf{Modality}&\textbf{FPR$\downarrow$} & \textbf{DE$\downarrow$} & \textbf{AUROC$\uparrow$} & \textbf{AUPRI$\uparrow$} & \textbf{AUPRO$\uparrow$}
 		&& \textbf{FPR$\downarrow$} & \textbf{DE$\downarrow$} & \textbf{AUROC$\uparrow$} & \textbf{AUPRI$\uparrow$} & \textbf{AUPRO$\uparrow$}\\

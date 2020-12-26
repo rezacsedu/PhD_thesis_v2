@@ -146,7 +146,7 @@ Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{
 \begin{figure*}
 	\centering
 	\includegraphics[scale=0.6]{images/input_combination.png}
-	\caption[Different uni- and multi-modality input combination]{Unimodal and multimodal input combination with DNA methylation, GE, or miRNA expression}
+	\caption[Different uni- and multi-modality input combination]{Unimodal and multimodal input combination: DNA methylation, GE, or miRNA expression}
 	\label{fig:input_comb}
 \end{figure*}
 
@@ -362,7 +362,7 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
         \cline{2-6}
             & Gene expression  & 0.7745 & 0.8944    & 0.9004 & 0.8964  \\ 
         \cline{2-6}
-        ER status       & miRA expression & 0.7235 & 0.8846    & 0.8876 & 0.8857  \\ 
+        ER status       & miRNA expression & 0.7235 & 0.8846    & 0.8876 & 0.8857  \\ 
         \cline{2-6}
                       & Gene + miRNA expression  & 0.7928 & 0.9325    & 0.9336 & 0.932   \\ 
         \cline{2-6}
@@ -382,7 +382,7 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
         \cline{2-6}
                      & Gene expression   & 0.5967 & 0.6355    & 0.607  & 0.6173  \\ 
         \cline{2-6}
-        HER2/neu status & miRA expression  & 0.6124 & 0.5627    & 0.5885 & 0.5732  \\ 
+        HER2/neu status & miRNA expression  & 0.6124 & 0.5627    & 0.5885 & 0.5732  \\ 
         \cline{2-6}
                    & Gene + miRNA expression   & 0.6276 & 0.6207    & 0.6444 & 0.627   \\ 
         \cline{2-6}
@@ -400,23 +400,23 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
     \item Out of 76 indeterminate cases, 61 were correctly classified, making 15 mistakes in which 10 were classified as positive and 5 as negative.  
 \end{itemize}
 
-\begin{figure*}
+\begin{figure*}[h]
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/conf_er.png}
+		\includegraphics[scale=0.8]{images/conf_er.png}
 		\caption{ER status classification}
         \label{fig:er_confusion}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/conf_pgr.png}
+		\includegraphics[scale=0.8]{images/conf_pgr.png}
 		\caption{PGR status classification}
         \label{fig:pgr_confusion}
 	\end{subfigure}
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/conf_her2.png}
+		\includegraphics[scale=0.8]{images/conf_her2.png}
 		\caption{HER2 status classification }
         \label{fig:her2_confusion}
 	\end{subfigure}
@@ -445,20 +445,20 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
 %The best result based on gene + miRNA expression modality is highlighted in green in~\cref{tab:all_results}. As shown in confusion matrix in~\cref{fig:her2_confusion}, the predictor is evaluated on 225 samples in which 40 are `HER2/neu Positive', 121 of `HER2/neu Negative', 21 of `HER2/neu Indeterminate', and 32 of are `HER2/neu Equivocal'. The classifier predicted 182 `HER2' cases correctly. Such high mistakes suggests the classifier is probably not yet suitable for clinical setting. %, as it gives 81\% accuracy). 
 %Furthermore, the ROC curve of this experiment is shown in~\cref{fig:her2_roc}. As observed, with 2 out of 4 classes achieve lower than 0.5 AUC score: the AUC score for class 0 (`HER2/neu Positive') is 0.83, for class 1 (`HER2/neu Negative') is 0.73, for class 2~(`HER2/neu Indeterminate') is 0.36, and for class 3~(`HER2/neu Indeterminate') is 0.48.
 
-\subsection{Qualitative analysis of learned representation}
-Inspired by literature~\cite{rhee2017hybrid} and to qualitatively study whether the learned representation can express biological characteristics of cohorts, t-SNE plots for the latent feature map and the raw GE are depicted in \cref{fig:tnse}. As observed, moderately high distinctive patterns exists between three subtype patients. Since, all the input modality has high dimension, association between each feature is considered. Further, order of subtypes in the t-SNE plot is identical to prognosis of breast cancer subtypes. 
+\subsection{Qualitative analysis of the learned representation}
+To qualitatively study whether the learned representation can express biological characteristics of cohorts, t-SNE plots for the latent feature map and the raw GE are plotted in \cref{fig:tnse}. As observed, moderately high distinctive patterns exists between three subtype patients. Since, all the input modality has high dimension, association between each feature is considered. Further, order of subtypes in the t-SNE plot is identical to prognosis of breast cancer subtypes. Caruana et al.~\cite{91Caruana} has identified that 80\% of all breast cancers are ER positive in which cancer cells grow in response to the hormone estrogen. 
 
 \begin{figure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[scale=0.6]{images/raw_tsne.png}
+		\includegraphics[scale=0.7]{images/raw_tsne.png}
 		\caption{t-SNE plot of raw gene expression}
         \label{fig:tsne_raw}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[scale=0.6]{images/ae_tsne.png}
+		\includegraphics[scale=0.7]{images/ae_tsne.png}
 		\caption{t-SNE plot of encoder's latent feature}
         \label{fig:tsne_ae}
 	\end{subfigure}
@@ -468,7 +468,7 @@ Inspired by literature~\cite{rhee2017hybrid} and to qualitatively study whether 
 	%\vspace{-2mm}
 \end{figure*}
 
-\hspace*{3.5mm} Caruana et al.~\cite{91Caruana} has identified that 80\% of all breast cancers are ER positive in which cancer cells grow in response to the hormone estrogen. On the other hand, about 65\% of these are also PR positive in which the cancer cells grow in response to another hormone, progesterone. ER/PR-positive tumors are much more likely to respond to hormone therapy than tumors that are ER/PR-negative. In about 20\% of breast cancers, cells make too much HER2 protein and tend to be aggressive and fast-growing\footnote{\url{https://www.webmd.com/breast-cancer/}}. In breast cancer, certain subtypes have the worst prognosis e.g. basal, followed by HER2, Luminal B, and Luminal A. The reason is that basal subtype has distinctive molecular characteristics from other subtypes~\cite{bertucci2012basal}. However, all of these patterns are not clearly visible in the raw GE-based t-SNE plots, which signifies that the MAE learned latent molecular properties better from patient expression profiles.
+\hspace*{3.5mm} On the other hand, about 65\% of these are also PR positive in which the cancer cells grow in response to another hormone, progesterone. ER/PR-positive tumors are much more likely to respond to hormone therapy than tumors that are ER/PR-negative. In about 20\% of breast cancers, cells make too much HER2 protein and tend to be aggressive and fast-growing\footnote{\url{https://www.webmd.com/breast-cancer/}}. In breast cancer, certain subtypes have the worst prognosis e.g. basal, followed by HER2, Luminal B, and Luminal A. The reason is that basal subtype has distinctive molecular characteristics from other subtypes~\cite{bertucci2012basal}. However, all of these patterns are not clearly visible in the raw GE-based t-SNE plots, which signifies that the MAE learned latent molecular properties better from patient expression profiles.
 
 \iffalse
 \subsection{Consistency of subtype prognosis}
@@ -543,19 +543,19 @@ The MAE implementation based on GE and miRNA expression modalities gave the best
 	\centering
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/1.png}
+		\includegraphics[scale=0.8]{images/1.png}
 		\caption{ER status classification}
         \label{fig:top_er}
 	\end{subfigure}
 	\begin{subfigure}{.49\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/2.png}
+		\includegraphics[scale=0.8]{images/2.png}
 		\caption{PGR status classification}
         \label{fig:top_pgr}
 	\end{subfigure}
 	\begin{subfigure}{0.49\linewidth}
 		\centering
-		\includegraphics[scale=0.7]{images/3.png}
+		\includegraphics[scale=0.8]{images/3.png}
 		\caption{HER2 status classification }
         \label{fig:top_her2}
 	\end{subfigure}

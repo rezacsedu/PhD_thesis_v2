@@ -5,7 +5,7 @@
 \section{Chapter Overview}
 In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different modalities were considered to develop decision support system~(DSS) to leverage cancer types and subtypes prediction tasks. In both cases, predictive models that were developed are mostly black-box methods. However, it is not only important to predict the cancer types accurately, but also revealing and interpreting biological significance about driver genes are vital for subsequent treatments. Besides, since data subjects are entitled to obtain meaningful information about logic, significance, and envisaged impacts of automated decision making, it is important to improve algorithmic transparency of the models based on which a DSS will be built upon. 
 
-\hspace*{3.5mm} In this chapter, several neural network architectures will be trained to learn joint latent representation from the multimodal genomics data, before classifying the samples into specific cancer types. Then attempts will be taken to improve the interpretability and algorithmic transparency of the black-box models. Through several experiments, hypotheses will be built upon for which multimodality combinations and which interpretability techniques are suited most to generate insights. In particular, to improve the algorithmic transparency and explainability of the black-box models, different probing, perturbing, and interpretable methods will applied, in both ante-hoc and post-hoc interpretability settings. Further, to validate if the identified biomarkers are biologically relevant, functional analysis will be carried out. The interpretations will be used to generate new hypotheses that can be tested experimentally in \cref{chapter:xai_rules} in terms of model surrogation.
+\hspace*{3.5mm} In this chapter, several neural network architectures will be trained to learn joint latent representation from the multimodal genomics data, before classifying the samples into specific cancer types. Then attempts will be taken to improve the interpretability and algorithmic transparency of the black-box models. Through several experiments, hypotheses will be built upon for which multimodality combinations and which interpretability techniques are suited most to generate insights. In particular, to improve the algorithmic transparency and explainability of the black-box models, different probing, perturbing, and interpretable methods will applied, in both ante-hoc and post-hoc interpretability settings. Further, to validate if the identified biomarkers are biologically relevant, functional analysis will be carried out. The interpretations will be used to generate new hypotheses to be tested experimentally in \cref{chapter:xai_rules}. % in terms of model surrogation.
 
 \section{Introduction}\label{chapter_5:intro}
 As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer as the part of Pan Cancer Atlas~(PCAt) project, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNVs related data~\cite{lyu2018deep}. 
@@ -127,92 +127,6 @@ A few other works focused on counterfactual explanations. However, their optimiz
 
 \hspace*{3.5mm} In the previous chapter, a multimodal autoencoder~(MAE) architecture was constructed and trained on multimodal genomics data. Then based on the concatenated latent feature vectors, breast cancer subtype classification tasks were performed. However, since the latent vectors are not easily interpretable, MAE acted as a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. 
 Apart from some restrictive initiatives, no substantial works are done on multimodal representation learning to improve the opaqueness.
-
-\section{Preliminaries}
-Some concepts on interpretability and metastases of cancer have been discussed in \cref{chapter:preli}. In this section, some modality specific interpretability concepts are discussed.  
-
-%\subsection{Feature selection}
-
-\subsection{Probing neural networks}
-%\subsection{Attention mechanism}
-Attention mechanism is probably one of the most widely known techniques used to represent distinct relations between input features. For example, in natural language processing attention mechanism is used to identify important tokens for next word prediction. Subsequently, similar concept is extended for other areas such as computer vision and speech recognition, etc.%. In particular, %\subsubsection{Feature importance using self-attention network}
-the concept of propositional self-attention networks~(PSAN) is one of the first methods based on attention mechanism~\cite{vaswani2017attention}. In PSAN, attention heads is used, where the number of heads represent distinct relations between input features. Attention layers are placed as a hidden layers that map real values to parts of the human-understandable input space~\cite{vskrlj2020feature}. 
-%Motivated by the facts that attention networks have already been applied in numerous research domains, an attention layer is added 
-%to compute important features~(e.g., pixels) 
-\Cref{fig:san} shows a schematic representation of a SAN, where $l_{\text {att}}$ represents the attention layer, which can be expressed mathematically as~\cite{vskrlj2020feature}:  
-
-\begin{equation}
-    l_{2}=g\left(W_{2} \cdot\left(\sigma \left(W_{|F|} \cdot \Omega(X)+\boldsymbol{b}_{l_{1}}\right)\right)+\boldsymbol{b}_{l_{2}}\right)
-\end{equation}
-
-\hspace*{3.5mm} where $X$ is the input vectors, $\alpha_r$ is the regularization weights, and $g$ represents the first neural network layer, which maintains the connection with the input features $F$ as follows~\cite{vskrlj2020feature}: 
-
-\begin{equation}
-    g(X)=\frac{1}{k} \bigoplus_{k}\left[X \otimes \operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} X+\boldsymbol{b}_{l_{\mathrm{att}}}^{k}\right)\right],
-\end{equation}
-
-\hspace*{3.5mm} where $X$ is used as input to a softmax-activated layer by setting number of neurons equal to the number of features $|F|$~(i.e., dimensionality of input), $k$ represents number of attention heads representing relations between the input features, $\otimes$ is Hadamard product, $\oplus$ is the Hadamard summation across individual heads, and $\sigma$ is the exponential linear unit~(ELU)~\cite{clevert2015fast} activation function defined as~\cite{clevert2015fast}: 
-
-\begin{equation}
-    ELU_{\alpha_r}(X_k)=\left\{\begin{array}{ll}
-    \alpha_r(\exp (x)-1) & \text { if } x<0 \\
-    x & \text { if } x \geq 0,
-    \end{array}\right.
-    \label{eq:elu_activation}
-\end{equation}
-
-\hspace*{3.5mm} The softmax function is applied to $j_{i}$-th element of a weight vector $v$ is defined as~\cite{vskrlj2020feature}:
-
-\begin{equation}
-    \operatorname{softmax}\left(\boldsymbol{v}_{j_{i}}\right)=\frac{\exp \left(\boldsymbol{v}_{j_{i}}\right)}{\sum_{j=1}^{|F|} \exp \left(\boldsymbol{v}_{j}\right),}
-\end{equation}
-
-\hspace*{3.5mm} where $v \in \mathbb{R}^{|F|}$. As $\sigma$ maintains a bijection between $F$ and weights in individual heads $W_{latt}^{k}$, weights in the $|F| \times|F|$ weight matrix represents the relations between features. Then the element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of individual samples against true label ${y}$. Two consecutive dense layers $l_{1}$ and $l_{2}$ contribute to prediction $\hat{y}$. The $\frac{1}{k} \oplus$ box represents element-wise means across the attention heads $(k)$. 
-
-\begin{figure*}
-	\centering
-	\includegraphics[scale=0.55]{images/san.png}	
-	\caption{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
-	\label{fig:san}
-\end{figure*}
-
-\hspace*{3.5mm} The attention vectors from $l_{\text {att}}$ is then used to compute feature importance estimates. The feature importance computations are based on three different strategies~(i.e., instance-level aggregations, attention positive based on correctly predicted samples, and global attention). Using either strategy,  the final vector is a resultant of a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$. 
-%With respect to the convolutional autoencoder architecture, the attention vector represents individual feature weights contributed to the latent space $Z_k$. % different than that of the 
-%Let us show how the considered architecture can be used to obtain
-%real values which we argue represent feature importance. We explore the procedures for obtaining the final vector, as a mapping from the feature space to the space of non-negative real values, i.e. function $f: F \rightarrow \mathbb{R}_{0}^{+}$.
-For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ samples, instance-level aggregations is about computing the attention map $\operatorname{AV}\left(\boldsymbol{x}_{i}\right)$, for $i$ -th instance as~\cite{vskrlj2020feature}: 
-
-%Let $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$ represent the attention output of the $i$ -th instance, defined as
-\begin{equation}
-    \operatorname{AV}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
-\end{equation}
-
-\hspace*{3.5mm} Then the outputs are averaged on-instance basis, to get the global feature importance~\cite{vskrlj2020feature}: 
-
-\begin{equation}
-    R_{I}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)
-\end{equation}
-
-\hspace*{3.5mm} In attention positive only correctly predicted samples are taken into account. For the final prediction $\hat{y}_{i}$ of a black-box model, feature importance $R_{I}^{c}$ is computed as follows~\cite{vskrlj2020feature}:
-
-\begin{equation}
-    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
-\end{equation}
-
-\hspace*{3.5mm} where $p$ signifies the feature importance for the true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
-
-\begin{equation}
-    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}.
-    \label{eq:gal_k}
-\end{equation}
-
-\hspace*{3.5mm} where the softmax is applied for each feature w.r.t. the remainder of the features. The feature importance is extracted as the main diagonal of the weight matrix, $\operatorname{diag}$. 
-
-%\hspace*{3.5mm} In a previous approach~\cite{karim2019onconetexplainer}, we calculate the output gradient classes w.r.t a small change in GE, where we consider the positive values of these changes are important in the inputs. While generating SM, we fed each sample into the model to construct an interpretation map. Subsequently, we summarized each cancer type by averaging across all samples of the class and constructed a gene-effect matrix for 33 cancer types that contains gene-effect scores ranging [0,1] with 1s have maximum effect and 0 to no effect. Similar to literature~\cite{mostavi2019convolutional}, a gene with a gene-effect score greater than 0.6 was defined as a marker gene.
-
-\subsection{Perturbing neural networks}
-Although, probing strategies are straightforward for ML algorithms like support vector machine~(SVM), decision tree-based, etc., this is not the case for very complex DNN architectures. However, there have been a substantial efforts to develop new methods to interpret these complex models, such as connection weights-based, gradient-based, and activation level-based approaches. Because type of parameters and structure of how they connect to each other varies by algorithm, probing strategies are
-model-specific. %However, there is often a trade-off between predictability and interpretability, and this is certainly the case for deep learning. . % (Figure 2 C) [15] .
 
 \section{Methods}\label{chapter_5:mm}
 In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Based on this insights, we rely on several probing and interpretability methods discussed in \cref{chapter:preli}. 
@@ -411,14 +325,14 @@ Data for each modality is high dimensional, where majority of features~(genes) a
  %The idea is also to find the most important biomarkers by ranking them based on MAI threshold. 
 %\hspace*{3.5mm} 
 
-\begin{figure*}
+\begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.7]{images/3_mode.png}
 	\caption[Heat map examples for a single cancer type prediction]{Heat map examples for a single cancer type prediction, where the image-pixel of specific biomarkers are highlighted by probing the network with Grad-CAM, Grad-CAM++, and LRP.} 
 	\label{fig:3hms}
 \end{figure*}
 
-\hspace*{3.5mm} To observe if the feature identified by CNNs are statistically significant and comparable to established feature ranking approaches such as random forest-based estimates, we compute feature importance for the driver genes. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is then computed as follows: 
+\hspace*{3.5mm} To observe if the feature identified by CNNs are statistically significant and comparable to established feature ranking approaches such as random forest-based estimates, we compute feature importance for the driver genes. In particular, ELI5\footnote{ELI5: \url{https://eli5.readthedocs.io/en/latest/index.html}} and SHAP\footnote{SHAP: \url{https://github.com/slundberg/shap}} libraries are used to compute the permutation feature importance. Using ELI5, permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is computed as follows: 
 
 \begin{align}
     \sigma_{x_i}=s-\frac{1}{R} \sum_{r=1}^{R} s_{r,x_i}
@@ -433,7 +347,9 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
 \end{align}
 \fi 
 
-\hspace*{3.5mm} Although, permutation feature importance provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself~\cite{molnar2019interpretable}. There is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. SHapley Additive exPlanations~(aka. SHAP)~\cite{SHAP} is another interpretable method. SHAP feature importance is an alternative to permutation feature importance discussed above. The only difference is how the importance is measured. While, permutation feature importance is based on the decrease in model performance, whereas SHAP is based on magnitude of feature attributions~\cite{molnar2019interpretable}. The goal is to explain the prediction of sample $x_i$ by computing the contribution of each feature in the prediction. Shapley values that are based on coalitional game theory is used as the measure of feature attributions. Feature values of $x_i$ act as players in a coalition such that the Shapley values tell us how to fairly distribute the  payout~\cite{molnar2019interpretable}. This can be correlated with distributing the prediction contributions among the features in a sample. SHAP specifies the explanation as follows~\cite{molnar2019interpretable}:
+\hspace*{3.5mm} Although, permutation feature importance provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect to the intrinsic predictive value of a feature by itself~\cite{molnar2019interpretable}. There is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions.
+
+\hspace*{3.5mm} SHapley Additive exPlanations~(aka. SHAP)~\cite{SHAP} is another interpretable method. SHAP feature importance is an alternative to permutation feature importance discussed above. The only difference is how the importance is measured. While, permutation feature importance is based on the decrease in model performance, whereas SHAP is based on magnitude of feature attributions~\cite{molnar2019interpretable}. The goal is to explain the prediction of sample $x_i$ by computing the contribution of each feature in the prediction. Shapley values that are based on coalitional game theory is used as the measure of feature attributions. Feature values of $x_i$ act as players in a coalition such that the Shapley values tell us how to fairly distribute the  payout~\cite{molnar2019interpretable}. This can be correlated with distributing the prediction contributions among the features in a sample. SHAP specifies the explanation as follows~\cite{molnar2019interpretable}:
 
 \begin{equation}
     f\left(z^{\prime}\right)=\phi_{0}+\sum_{j=1}^{M} \phi_{j} z_{j}^{\prime}
@@ -836,7 +752,7 @@ show that the AUC scores are consistent across the folds showing stable predicti
 		\caption{LRP}
         \label{fig:lrp}
 	\end{subfigure}
-	\caption[Heatmap example to mark driver biomarker for different cancer types]{Heat map examples based on Grad-CAM++ and LRP that highlight driver biomarkers for BRCA, KIRC, COAD, LUAD, and PRAD cancer types. Gene positions on 2D pixel space are marked with red circle~(genes may overlap in the marked region). Rows represent folds,  columns cancer types.} 
+	\caption[Heatmap example to mark driver biomarker for different cancer types]{Heat map examples based on Grad-CAM++ and LRP that highlight driver biomarkers for BRCA, KIRC, COAD,\\ LUAD, and PRAD cancer types. Gene positions on 2D pixel space are marked with red circle~(genes may overlap in\\ the marked region). Here, rows represent folds,  columns cancer types.} 
 	\label{fig:hm_all}
 	\vspace{-2mm}
 \end{sidewaysfigure*}
@@ -892,7 +808,7 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 \subsubsection{Identification of marker genes}
 As it is evident that $MCAE_{lrc}$ classifier outperforms $MCAE_{slr}$, giving better classification accuracy. Therefore, $MCAE_{lrc}$ model is used to score top-k biomarkers. In particular, top genes are identified for which the change in expression values have significant impact on model performance. \Cref{fig:hm_all} shows examples of HM generated for each class across 5 different folds, where each column for one cancer type. As seen, there are similarities across folds and displaying distinct and similar patterns when comparing different cancer types. Red circles highlight similar patterns, e.g., between KIRC and BRCA, and PRAD and LUAD across folds, whereas COAD shows very different patterns. Although there are differences among folds, some patterns are clearly visible. However, intensities did not follow any regular pattern, which signifies that probably Grad-CAM++ or LRP is not suitable for multimodality specific gene ranking. 
 
-\begin{figure*}
+\begin{figure*}[h]
     \centering
 	\includegraphics[scale=0.8]{images/driver_genes.png}
 	\caption{Identified marker genes, per class with a gene effect score of $\geq$ 0.25}
@@ -1232,7 +1148,7 @@ Feature interactions among globally important features with attention mechanism 
 In order to explain individual diagnoses, only the important features w.r.t local feature impact is not enough. In fact, sensitivity analysis in terms of what-if and leave-one-feature out analyses are found to be useful across different scenarios. 
 
 \subsubsection{Local feature impacts}
-Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row, i.e., individual sample. The features are most important in explaining the target variable, are shown on the top. As shown in \cref{fig:local_feature_impacts}, the average outcome predicted by the the $MCAE_{lrc}$ model is 9.758071. On average, variables TFAP2A, VPS9D1-AS1, and MTND2P28 will increase the average model outcome~(9.758071) by -0.36, 0.8, and 0.47, respectively. On the other hand, variables TFAP2A, ADCY3, and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28, respectively. Now in order to find which patients to extent to which they are similar to the patient being diagnoses are identified in \cref{fig:similar_patients}, as indicated by the last row in the table below labelled as "Weight". 
+Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row, i.e., individual sample. The features are most important in explaining the target variable, are shown on the top. As shown in \cref{fig:local_feature_impacts}, the average outcome predicted by the the $MCAE_{lrc}$ model is 9.758071. On average, variables TFAP2A, VPS9D1-AS1, and MTND2P28 will increase the average model outcome~(9.758071) by -0.36, 0.8, and 0.47, respectively. On the other hand, variables TFAP2A, ADCY3, and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28, respectively. To find which patients are similar to the patient being currently diagnosed are identified in \cref{fig:similar_patients}, as indicated by the last row in the table labelled as "Weight". 
 
 \begin{figure*}[h]
     \centering
