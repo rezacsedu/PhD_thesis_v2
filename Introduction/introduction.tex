@@ -234,7 +234,8 @@ The main contributions of this thesis can be summarized as follows:
     \item Adversarial training is performed to make the explainable model robust against different types of attacks, such as content moderation and out-of-distribution attacks. 
     \item A novel method for generating decision rules is proposed for cancer diagnosis, by combing model prediction, top biomarkers, and reasoning based on symbolic reasoning. 
     \item Both proactive and reactive measures were taken to make the diagnosis decision trustworthy by mitigating different types of bias. 
-    \item Comprehensive evaluations were carried out with detailed analyses of outcomes and comparisons with state-of-the-art. 
+    \item A user-friendly interface is developed\footnote{Can be accessed at: \url{http://xai.fit.fraunhofer.de:5000/cancer/}} to leverage more human-interpretable explanations, covering both global and local explanations of the diagnosis made. 
+    \item Comprehensive evaluations with detailed analyses of outcomes and comparisons with state-of-the-art. 
 \end{itemize}
 
 \hspace*{3.5mm} These contributions were disseminated into 3 directions: i) peer-reviewed scientific publications, ii) public talks and presentations, iii) open source contributions. %, e.g., implementations of some approaches presented. %A number of peer-reviewed publications were produced while conducting the work in this thesis. They are mentioned below, and a note is made to their relevant chapters. 
@@ -243,11 +244,11 @@ The main contributions of this thesis can be summarized as follows:
 Above scientific contributions were reflected in a number of peer-reviewed publications. We provide notes to their relevance, where some of these publications help build the foundation of this thesis: 
 
 \begin{enumerate}
-	\item {Alokkumar Jha, Yasar Khan, Muntazir Mehdi, \textbf{Md. Rezaul Karim}, Qaiser Mehmood, Achille Zappa, Dietrich Rebholz-Schuhmann, and Ratnesh Sahay, ``Discovering Biomarker and Pathway for Gynecological Cancers", \emph{Journal of Biomedical Semantics}, 8(1), September 2017, DOI: 10.1186/s13326-017-0146-9.} 
+	\item {Alokkumar Jha, Yasar Khan, Muntazir Mehdi, \textbf{Md. Rezaul Karim}, Qaiser Mehmood, Achille Zappa, Dietrich Rebholz-Schuhmann, and Ratnesh Sahay, ``Discovering Biomarker and Pathway for Gynecological Cancers", \emph{Journal of Biomedical Semantics}, 8(1), September 2017} 
 	
 	\textbf{Abstract}: In this paper, we present an approach to link and query different sequencing datasets such as TCGA, COSMIC, REACTOME, KEGG, and GO to indicate risks of different cancer types. We analyse the tissue expression of genes, CNV, somatic mutation, and promoter methylation to identify associated pathways and find novel biomarkers. 
 	
-	\textbf{Relevance}: this publication helps provide basic understanding of carcinogenics and different types of genomics data needed to be analyse towards biomarker discovery in \cref{chapter:introduction} and \cref{chapter:preli}. In fact, while working on the paper, I get acquainted with cancer genomic data for the first time. Subsequently, I contributed in the generation of 5* linked data that were lately integrated to form a large-scale knowledge graphs. 
+	\textbf{Relevance}: this publication helps provide basic understanding of carcinogenics and different types of genomics data needed to be analyse towards biomarker discovery in \cref{chapter:introduction} and \cref{chapter:preli}. While working on the paper, I get acquainted with cancer genomic data for the first time. I contributed in the generation of 5* linked data that were lately integrated to form a large-scale knowledge graphs. 
 	
 	\textbf{Link}:~\url{https://jbiomedsem.biomedcentral.com/articles/10.1186/s13326-017-0146-9}
 	
@@ -263,7 +264,7 @@ Above scientific contributions were reflected in a number of peer-reviewed publi
 	
 	\item \textbf{Md. Rezaul Karim}, Oya Beyan, Achille Zappa, Ivan G. Costa, Dietrich Rebholz-Schuhmann, Michael Cochez, and Stefan Decker, ``Deep Learning-based Clustering Approaches for Bioinformatics", \emph{Briefings in Bioinformatics}, 02 February, 2020.
 	
-	\textbf{Abstract}: In this paper, we review state-of-the-art DL-based approaches for cluster analysis that are based on representation learning. We also discussed why and how the representation learning based on different autoencoder architectures are more effective at clustering high dimensional datasets than classic clustering algorithms~(e.g., K-means), covering bioimaging, GE, and biomedical texts. 
+	\textbf{Abstract}: In this paper, we review state-of-the-art DL-based approaches for cluster analysis that are based on representation learning. We also discussed why and how the representation learning based on different autoencoder architectures are more effective at clustering high dimensional datasets than classic clustering algorithms, covering bioimaging, GE, and biomedical texts. 
 	
 	\textbf{Relevance}: this publication forms the foundations of representation learning based on variational, LSTM, and convolutional autoencoders used in chapter \ref{chapter:multiodality}, \ref{chapter:xai}, and \ref{chapter:robustness}.
 
@@ -287,7 +288,7 @@ Above scientific contributions were reflected in a number of peer-reviewed publi
 
 	\textbf{GitHub}:~\url{https://github.com/rezacsedu/DDI-prediction-KG-embeddings-Conv-LSTM}
 	
-	\item \textbf{Md. Rezaul Karim}, Ashiqur Rahman, Stefan Decker, and Oya Beyan, ``A snapshot neural ensemble method for cancer type prediction based on copy number variations", \emph{Neural Computing and Applications}, 30 November 2019. 
+	\item \textbf{Md. Rezaul Karim}, Ashiqur Rahman, Stefan Decker, and Oya Beyan, ``A Snapshot Neural Ensemble Method for Cancer Type Prediction based on Copy Number Variations", \emph{Neural Computing and Applications}, 30 November 2019. 
 	
 	\textbf{Abstract}: in this paper, we used CNVs data covering different cancer types from The Cancer Genome Atlas~(TCGA).We construct two sparse representations of CNVs based on oncogenes and protein-coding genes. Then we train Conv-LSTM and convolutional autoencoder~(CAE) networks using both representations and create snapshots models. While the Conv-LSTM can capture locally and globally important features, CAE can utilize unsupervised pre-training to initialize the weights in the subsequent convolutional layers against the sparsity. Model averaging ensemble~(MAE) is then applied to combine the snapshot models in order to make a single prediction. 
 	
@@ -299,17 +300,17 @@ Above scientific contributions were reflected in a number of peer-reviewed publi
 	
 	\item \textbf{Md. Rezaul Karim}, Stefan Decker, Oya Beyan, ``Prognostically Relevant Subtypes and Survival Prediction for Breast Cancer Based on Multimodal Genomics Data", \emph{IEEE Access}, September 2019.
 	
-	\textbf{Abstract}: In this paper, we propose a new approach to analyze genomics data from TCGA to classify breast cancer patients based on their subtypes and survival rates. We used DNA methylation, GE, and miRNA expression data by creating a multiplatform network called multimodal autoencoders~(MAE) classifier to support each data type.
+	\textbf{Abstract}: In this paper, a new approach was proposed to analyze multimodal genomics data from TCGA. DNA methylation, GE, and miRNA expression data were used by creating a multiplatform network called multimodal autoencoders~(MAE) classifier to classify breast cancer patients based on their subtypes and survival rates.
 	
-	\textbf{Relevance}: this publication further forms the foundation of applying MAE technique in \cref{chapter:xai}.
+	\textbf{Relevance}: this publication inspired me to apply MAE technique in \cref{chapter:xai}.
 	
 	\textbf{Link}:~\url{https://ieeexplore.ieee.org/document/8839793}
 	
 	\textbf{GitHub}:~\url{https://github.com/rezacsedu/MultimodalAE-BreastCancer}
 	
-	\item \textbf{Md. Rezaul Karim}, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", \emph{In proc. of IEEE International Concerence on Bioinformatics and Bioengineering~(BIBE 2019)}.
+	\item \textbf{Md. Rezaul Karim}, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", \emph{In proc. of IEEE International Conference on Bioinformatics and Bioengineering~(BIBE 2019)}.
 	
-	\textbf{Abstract}: In this paper, we propose a new approach called \emph{OncoNetExplainer} to make explainable predictions of cancer types based on GE data on which we trained CNN and VGG16 networks using GradCAM++. We generate class-specific heat maps to identify significant biomarkers and computed feature importance to rank top genes across all the cancer types. Further, we identified top genes, and cancer-specific driver genes using gradient boosted trees and SHapley Additive exPlanations~(SHAP). Findings were validated with the annotations provided by the TumorPortal. 
+	\textbf{Abstract}: In this paper, we propose a new approach called \emph{OncoNetExplainer} to make explainable predictions of cancer types based on GE data on which we trained CNN and VGG16 networks using Grad-CAM++. We generate class-specific heat maps to identify significant biomarkers and computed feature importance to rank top genes across all the cancer types. Further, we identified top genes, and cancer-specific driver genes using gradient boosted trees and SHapley Additive exPlanations~(SHAP). Findings were validated with the annotations provided by the TumorPortal. 
 	
 	\textbf{Relevance}: this publication further forms the foundation of applying MAE technique in \cref{chapter:xai}.
 	
@@ -319,6 +320,15 @@ Above scientific contributions were reflected in a number of peer-reviewed publi
 \end{enumerate}
 
 %The articles in this dissertation are all related to knowledge evolution. The Venn diagram in fig. 7 depicts the relation between the research topics introduced in the previous chapter and the papers. Note that it does not necessarily depict the relations between the research topics in a broader sense1.  Each of the following sections describes the contributions to a topic from that figure. 
+
+\subsection{Research achievements}
+For the scientific and voluntary contributions, the candidate is won the following prestigious awards: 
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{ICT Young Researcher Award} - I won prestigious RWTH Aachen University ICT Young Researcher Award 2020 for my significant contributions to ICT-related research that have increased the international visibility of both RWTH Aachen University and Fraunhofer FIT. I was awarded with a research grant of 1,500€ to be used for research related purposes and a certificate. My contributions include scientific publications (e.g., AI/ML-related workshops, conferences, and journals), contributions to teaching and theses supervision, open-source and voluntary contributions (e.g., acting PC members and reviewers for international workshops, journals, and conferences).
+    
+	\item \textbf{Best paper award} - my paper ``Classification Benchmarks for Under-resourced Bengali Language based on Multichannel Convolutional-LSTM Network'' received the best application paper award and a research grant of 500\$ at IEEE International Conference on Data Science and Advanced Analytics~(DSAA'2020), Sydney, Australia, October 6-9, 2020.
+\end{enumerate}
 
 \subsection{Public conference talks}
 The candidate participated several conferences as the part of the journey of this thesis: 

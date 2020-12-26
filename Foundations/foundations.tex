@@ -653,7 +653,7 @@ model-specific.
     \item \textbf{The data point interpretability} - methods that require data points themselves to allow interpretability to  return data points to make model interpretable. 
 \end{itemize}
 
-\hspace*{3.5mm} To explain and interpret the model predictions these ways, several approaches and methods such as probing, perturbing, and sensitivity analysis have been proposed. \Cref{fig:xai_timeline} shows a timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on~\cite{das2020opportunities}). In this subsection, we'll briefly cover most widely used ones. 
+\hspace*{3.5mm} To explain and interpret the model predictions these ways, several approaches and methods such as probing, perturbing, and sensitivity analysis have been proposed. \Cref{fig:xai_timeline} shows a timeline of XAI algorithms, covering scopes, methodology, and usage level~(based on~\cite{das2020opportunities}). %In this subsection, we'll briefly cover most widely used ones. 
 
 \subsubsection{Feature-based attribution methods}
 \label{subsubsec:FI_shap}
@@ -842,7 +842,7 @@ the concept of propositional self-attention networks~(PSAN) is one of the first 
 
 \begin{figure*}
 	\centering
-	\includegraphics[scale=0.55]{images/san.png}	
+	\includegraphics[scale=0.6]{images/san.png}	
 	\caption{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
 	\label{fig:san}
 \end{figure*}
@@ -950,7 +950,7 @@ Neuro-symbolic or symbolic AI was the dominant paradigm between the second world
 \end{figure*}
 
 \subsubsection{Deductive reasoning} 
-It is a basic form of valid reasoning in which the deduction starts with a general statement. Then all the possibilities are checked to reach a specific and logical conclusion. Scientific methods often use deduction to test hypotheses and theories. In deductive inference, we hold a theory, followed by predicting the observations if the theory was correct. Conclusions are also often drawn similar to what we do based on mathematics from a logical syllogism. 
+It is a basic form of valid reasoning in which the deduction starts with a general statement. Then all the possibilities are checked to reach a specific and logical conclusion. Scientific methods often use deduction to test hypotheses and theories. In deductive inference, we hold a theory, followed by predicting the observations if the theory was correct. Conclusions are also often drawn similar to what we do based on mathematics from a logical syllogism. Deductive reasoning usually involves: a premise, followed by one or more premise, and finally an inference, e.g., \texttt{`All oncogenes are responsible for cancer; TP53 is a oncogene; therefore, TP53 is responsible for cancer'}. When the deductive reasoning is used, the conclusion will be correct if all the statements are correct. 
 
 \iffalse
 \vspace{-4mm}
@@ -966,7 +966,6 @@ It is a basic form of valid reasoning in which the deduction starts with a gener
 	\caption{Inductive vs deductive reasoning} 
 \end{figure}
 \fi 
-Deductive reasoning usually involves: a premise, followed by one or more premise, and finally an inference, e.g., \texttt{`All oncogenes are responsible for cancer; TP53 is a oncogene; therefore, TP53 is responsible for cancer'}. When the deductive reasoning is used, the conclusion will be correct if all the statements are correct. 
 
 \subsubsection{Inductive reasoning} 
 Often symbols express lessons we derive inductively from domain knowledge or real-world experience. Inductive reasoning is the opposite of deductive reasoning in which a broad generalizations is made from specific observations or data. In real-life, we make many observations, discern a pattern, make a generalization, and infer an explanation or a theory. Someone who uses inductive reasoning makes specific observations and draws a general conclusion, e.g., `Oncogenes are responsible for cancer, don't apply gene silencing blindly'. 
