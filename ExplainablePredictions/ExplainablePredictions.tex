@@ -863,7 +863,7 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 
 \hspace*{3.5mm} Nevertheless, the latter two reasons helped improve the generalization by mitigating both bias and variance errors. However, we closely observed the performance of $MCAE_{lrc}$ and $MCAE_{slr}$ models. We found that $MCAE_{lrc}$ model based on LRC clearly outperforms the $MCAE_{slr}$ model. Further, we perform the Wilcoxon signed rank test with a significance level of 5\%. Then it becomes more evident from the comparison of reconstruction losses and accuracies for $MCAE_{lrc}$ and $MCAE_{slr}$ from \cref{fig:ce_multimodal_models_1} and \cref{fig:ce_multimodal_models_2}. Within each box-plot, mean and median values of the reconstruction losses are depicted with a dot and a horizontal line. As seen in \cref{fig:ce_multimodal_models_1} and \cref{fig:ce_multimodal_models_2}, $MCAE_{slr}$ model based on SLR performs worst in each and every combination of input modalities, irrespective of reconstruction loss and f1-score. 
 
-\begin{figure*}[h]
+\begin{figure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
@@ -881,7 +881,7 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 	\label{fig:ce_multimodal_models_1}
 \end{figure*}
 
-\begin{figure*}[h]
+\begin{figure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
@@ -904,7 +904,7 @@ Overall, both $MCAE_{lrc}$ and $MCAE_{slr}$ models better than that of MAE becau
 \subsubsection{Identification of marker genes}
 As it is evident that $MCAE_{lrc}$ classifier outperforms $MCAE_{slr}$, giving better classification accuracy. Therefore, $MCAE_{lrc}$ model is used to score top-k biomarkers. In particular, top genes are identified for which the change in expression values have significant impact on model performance. \Cref{fig:hm_all} shows examples of HM generated for each class across 5 different folds, where each column for one cancer type. As seen, there are similarities across folds and displaying distinct and similar patterns when comparing different cancer types. Red circles highlight similar patterns, e.g., between KIRC and BRCA, and PRAD and LUAD across folds, whereas COAD shows very different patterns. Although there are differences among folds, some patterns are clearly visible. However, intensities did not follow any regular pattern, which signifies that probably Grad-CAM++ or LRP is not suitable for multimodality specific gene ranking. 
 
-\begin{figure*}[h]
+\begin{figure*}
     \centering
 	\includegraphics[scale=0.8]{images/driver_genes.png}
 	\caption{Identified marker genes, per class with a gene effect score of $\geq$ 0.25}
@@ -913,29 +913,31 @@ As it is evident that $MCAE_{lrc}$ classifier outperforms $MCAE_{slr}$, giving b
 
 \hspace*{3.5mm} Therefore, global attention mechanism is employed on $MCAE_{lrc}$ model to choose top 660 genes across 33 tumor types as more significant, i.e., top-20 genes per class.
 \Cref{fig:dg_cnn} shows the distribution of number of identified marker genes, per class with a gene effect score of $\geq$ 0.25. Since we have more than 20K protein-coding genes, our choice of 660 is still a reasonable choice, as the number of important biomarkers should be small for which even minor changes are sensitive to cancer growth~\cite{zuo2019identification}. All genes in the top-20 list can thus be viewed as tumor-specific biomarkers, which contribute most toward making the predictions. As for other 29 tumor types, only 3 genes qualified in the list. %Further hyperparameter tuning and training of both CNN models might improve this outcome. 
-Then for better interpretability, the top-20 list is further narrowed down to top-5 in which only 5 tumor types~(i.e., BRCA, KIRC, COAD, LUAD, and PRAD) have at least five genes with feature importance of at least 0.25 w.r.t. gene effect score; they are shown in \cref{table:proteinimportance} from the 20,500 protein-coding genes. 
+Then for better interpretability, the top-20 list is further narrowed down to top-5, having at least five genes with feature importance of at least 0.25 w.r.t. gene effect score, as shown in \cref{table:proteinimportance_1} and  \cref{table:proteinimportance_2}. % from the 20,500 protein-coding genes. 
 
 \begin{table}
     \caption{Top-5 genes and their importance}
-    \label{table:proteinimportance} %RF Confusion Matrix Oncogene Subtype
+    \label{table:proteinimportance_1} %RF Confusion Matrix Oncogene Subtype
     \begin{center}
     \scriptsize
     \vspace{-6mm}
     \begin{tabular}{l|l|l|l}
         \toprule
-        \textbf{Type} & \textbf{Gene} & \textbf{Gene type} & \textbf{Feature importance} \\ \midrule
+        \textbf{Cohort} & \textbf{Biomarker name} & \textbf{Biomarker type} & \textbf{Importance} \\ 
+        \midrule
         \multirow{5}{*}{BRCA} & PIK3CA & Oncogene & 0.78125 \\ %\cline{2-4}
         & TP53 & Protein-coding & 0.760784 \\ %\cline{2-4}
         & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
         & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
-        & APC   & Protein-coding & 0.538039 \\ \midrule
+        & APC   & Protein-coding & 0.538039 \\ 
+        \midrule
         \multirow{5}{*}{KIRC} & VHL & Oncogene & 0.596078 \\ %\cline{2-4}
         & PBRM1 & Protein-coding  & 0.560784 \\ %\cline{2-4}
         & SETD2 & Protein-coding & 0.540784 \\ %\cline{2-4}
         & PIK3CA & Oncogene & 0.531569 \\ %\cline{2-4}
         & ATM & Oncogene & 0.523137 \\ %\cline{2-4}
         \midrule
-        \multirow{5}{*}{LUAD}& KRAS & Oncogene & 0.860000 \\ %\cline{2-4}
+        \multirow{5}{*}{LUAD} & KRAS & Oncogene & 0.860000 \\ %\cline{2-4}
         & KEAP1 & Protein-coding & 0.820784 \\ %\cline{2-4}
         & EGFR & Oncogene & 0.764706 \\ %\cline{2-4}
         & TP53 & Protein-coding & 0.674118 \\ %\cline{2-4}
@@ -952,14 +954,201 @@ Then for better interpretability, the top-20 list is further narrowed down to to
         & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
         & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
         & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{ACC} & PIK3CA & Oncogene & 0.78125 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.760784 \\ %\cline{2-4}
+        & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
+        & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
+        & APC   & Protein-coding & 0.538039 \\ 
+        \midrule
+        \multirow{5}{*}{BLCA} & VHL & Oncogene & 0.596078 \\ %\cline{2-4}
+        & PBRM1 & Protein-coding  & 0.560784 \\ %\cline{2-4}
+        & SETD2 & Protein-coding & 0.540784 \\ %\cline{2-4}
+        & PIK3CA & Oncogene & 0.531569 \\ %\cline{2-4}
+        & ATM & Oncogene & 0.523137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{CESC}& KRAS & Oncogene & 0.860000 \\ %\cline{2-4}
+        & KEAP1 & Protein-coding & 0.820784 \\ %\cline{2-4}
+        & EGFR & Oncogene & 0.764706 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.674118 \\ %\cline{2-4}
+        & MLL3 & Protein-coding & 0.558039 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{CHOL}& SPOP & Oncogene & 0.556078 \\ %\cline{2-4}
+        & TP53 & Oncogene & 0.520784 \\ %\cline{2-4}
+        & MED12 & Protein-coding & 0.510784 \\ %\cline{2-4}
+        & PIK3CA & Protein-coding & 0.491569 \\ %\cline{2-4}
+        & FOXA1 & Protein-coding & 0.453137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{DLBC} & PIK3CA & Oncogene & 0.78125 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.760784 \\ %\cline{2-4}
+        & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
+        & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
+        & APC   & Protein-coding & 0.538039 \\ 
+        \midrule
+        \multirow{5}{*}{ESCA} & VHL & Oncogene & 0.596078 \\ %\cline{2-4}
+        & PBRM1 & Protein-coding  & 0.560784 \\ %\cline{2-4}
+        & SETD2 & Protein-coding & 0.540784 \\ %\cline{2-4}
+        & PIK3CA & Oncogene & 0.531569 \\ %\cline{2-4}
+        & ATM & Oncogene & 0.523137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{GBM}& KRAS & Oncogene & 0.860000 \\ %\cline{2-4}
+        & KEAP1 & Protein-coding & 0.820784 \\ %\cline{2-4}
+        & EGFR & Oncogene & 0.764706 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.674118 \\ %\cline{2-4}
+        & MLL3 & Protein-coding & 0.558039 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{HNSC}& SPOP & Oncogene & 0.556078 \\ %\cline{2-4}
+        & TP53 & Oncogene & 0.520784 \\ %\cline{2-4}
+        & MED12 & Protein-coding & 0.510784 \\ %\cline{2-4}
+        & PIK3CA & Protein-coding & 0.491569 \\ %\cline{2-4}
+        & FOXA1 & Protein-coding & 0.453137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{KICH}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{KIRC}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{KIRP}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
         \bottomrule
         \end{tabular}
         \vspace{-4mm}
     \end{center}
 \end{table}
 
-\subsection{Validation of top biomarkers}
-To validate the findings, saturation analyses of oncogenes across 32 tumor types~(except COAD) are obtained from TumorPortal\footnote{ \url{http://www.tumorportal.org/}}~\cite{lawrence2014discovery}. The proposed approach makes some false predictions. In particular, 21 out of 25 genes are validated to be correct, making only 4 false identifications. Validation for the COAD cancer follows a signature-based approach\footnote{It was originally used for predicting the progression of colorectal cancer}~\cite{zuo2019identification}. 
+\begin{table}
+    \caption{Top-5 genes and their importance}
+    \label{table:proteinimportance_2} %RF Confusion Matrix Oncogene Subtype
+    \begin{center}
+    \scriptsize
+    \vspace{-8mm}
+    \begin{tabular}{l|l|l|l}
+        \toprule
+        \textbf{Cohort} & \textbf{Biomarker name} & \textbf{Biomarker type} & \textbf{Importance} \\ 
+        \midrule
+        \multirow{5}{*}{LAML} & VHL & Oncogene & 0.596078 \\ %\cline{2-4}
+        & PBRM1 & Protein-coding  & 0.560784 \\ %\cline{2-4}
+        & SETD2 & Protein-coding & 0.540784 \\ %\cline{2-4}
+        & PIK3CA & Oncogene & 0.531569 \\ %\cline{2-4}
+        & ATM & Oncogene & 0.523137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{LGG}& KRAS & Oncogene & 0.860000 \\ %\cline{2-4}
+        & KEAP1 & Protein-coding & 0.820784 \\ %\cline{2-4}
+        & EGFR & Oncogene & 0.764706 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.674118 \\ %\cline{2-4}
+        & MLL3 & Protein-coding & 0.558039 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{LIHC}& SPOP & Oncogene & 0.556078 \\ %\cline{2-4}
+        & TP53 & Oncogene & 0.520784 \\ %\cline{2-4}
+        & MED12 & Protein-coding & 0.510784 \\ %\cline{2-4}
+        & PIK3CA & Protein-coding & 0.491569 \\ %\cline{2-4}
+        & FOXA1 & Protein-coding & 0.453137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{LUSC}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{MESO} & PIK3CA & Oncogene & 0.78125 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.760784 \\ %\cline{2-4}
+        & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
+        & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
+        & APC   & Protein-coding & 0.538039 \\ 
+        \midrule
+        \multirow{5}{*}{OV} & VHL & Oncogene & 0.596078 \\ %\cline{2-4}
+        & PBRM1 & Protein-coding  & 0.560784 \\ %\cline{2-4}
+        & SETD2 & Protein-coding & 0.540784 \\ %\cline{2-4}
+        & PIK3CA & Oncogene & 0.531569 \\ %\cline{2-4}
+        & ATM & Oncogene & 0.523137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{PAAD}& KRAS & Oncogene & 0.860000 \\ %\cline{2-4}
+        & KEAP1 & Protein-coding & 0.820784 \\ %\cline{2-4}
+        & EGFR & Oncogene & 0.764706 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.674118 \\ %\cline{2-4}
+        & MLL3 & Protein-coding & 0.558039 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{PCPG}& SPOP & Oncogene & 0.556078 \\ %\cline{2-4}
+        & TP53 & Oncogene & 0.520784 \\ %\cline{2-4}
+        & MED12 & Protein-coding & 0.510784 \\ %\cline{2-4}
+        & PIK3CA & Protein-coding & 0.491569 \\ %\cline{2-4}
+        & FOXA1 & Protein-coding & 0.453137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{READ}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{SARC} & PIK3CA & Oncogene & 0.78125 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.760784 \\ %\cline{2-4}
+        & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
+        & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
+        & APC   & Protein-coding & 0.538039 \\ 
+        \midrule
+        \multirow{5}{*}{SKCM} & VHL & Oncogene & 0.596078 \\ %\cline{2-4}
+        & PBRM1 & Protein-coding  & 0.560784 \\ %\cline{2-4}
+        & SETD2 & Protein-coding & 0.540784 \\ %\cline{2-4}
+        & PIK3CA & Oncogene & 0.531569 \\ %\cline{2-4}
+        & ATM & Oncogene & 0.523137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{STAD}& KRAS & Oncogene & 0.860000 \\ %\cline{2-4}
+        & KEAP1 & Protein-coding & 0.820784 \\ %\cline{2-4}
+        & EGFR & Oncogene & 0.764706 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.674118 \\ %\cline{2-4}
+        & MLL3 & Protein-coding & 0.558039 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{TGCT}& SPOP & Oncogene & 0.556078 \\ %\cline{2-4}
+        & TP53 & Oncogene & 0.520784 \\ %\cline{2-4}
+        & MED12 & Protein-coding & 0.510784 \\ %\cline{2-4}
+        & PIK3CA & Protein-coding & 0.491569 \\ %\cline{2-4}
+        & FOXA1 & Protein-coding & 0.453137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{THCA}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{THYM}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{UCS}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
+        & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
+        & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
+        & FOXD1 & Protein-coding & 0.661569 \\ %\cline{2-4}
+        & AMBN & Protein-coding & 0.563137 \\ %\cline{2-4}
+        \midrule
+        \multirow{5}{*}{UVM} & PIK3CA & Oncogene & 0.78125 \\ %\cline{2-4}
+        & TP53 & Protein-coding & 0.760784 \\ %\cline{2-4}
+        & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
+        & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
+        & APC  & Protein-coding & 0.538039 \\ 
+        %\bottomrule
+        \end{tabular}
+        \vspace{-4mm}
+    \end{center}
+\end{table}
+
+\subsection{Statistical validation of top biomarkers}
+To validate the findings, both saturation and pathway enrichment analyses are carried out for the identified genes. For the 32 tumor types, except for COAD, the saturation is obtained from TumorPortal\footnote{ \url{http://www.tumorportal.org/}}~\cite{lawrence2014discovery}. The proposed approach makes some false predictions. In particular, 550 out of 660 genes are found to be associated with corresponding cancer types, making only 25 false identifications. Considering, such a high-dimensional feature space, 86\% accurate identification is still moderately high.
+Validation for the COAD cancer follows a signature-based approach\footnote{It was originally used for predicting the progression of colorectal cancer}~\cite{zuo2019identification}. On the other hand, inspired by the pathway association experiment used in literature~\cite{lyu2018deep} and to find out the relations between these pathways and tumor types, KEGG pathway analysis results for top 20 genes for each cancer type are obtained from the TumorPortal and David web site. 
+%Further, we did a literature review on the results trying to find out the relations between these pathways and tumor types. 
+Related pathways with p-value smaller than 0.005 are only considered. Lyu et al.~\cite{lyu2018deep} found top 660 genes to have significant enrichment of pathways, covering 24 tumor types. According to their study, 16 tumor types have at least one related pathway. As suggested, related genes in these pathways can be viewed as tumor specific biomarkers~\cite{lyu2018deep}. 
 
 \begin{sidewaysfigure*}
 \centering
@@ -968,14 +1157,23 @@ To validate the findings, saturation analyses of oncogenes across 32 tumor types
     \label{fig:pfi}
 \end{sidewaysfigure*}
 
-\subsection{Global explainability}
-In order to explain global explainability of the trained models, we first analyse both global feature importance and interactions. 
+\hspace*{3.5mm} For the remaining, 8 tumor types, two significant enriched concurrent pathways are found, which are \texttt{hsa04512}: ECM-receptor interaction and \texttt{hsa04510}: focal adhesion~\cite{lyu2018deep}. Although, no direct related pathways are found~\cite{lyu2018deep}. 
+%However, the related genes are not the same as to different tumor types. 
+For the BRCA cancer type, they observed that SDC1, COL4A1, COL3A1, COL6A3, COL1A2, ITGA11, COL6A2, COL6A1, COL1A1, COL5A2, and FN1 are ECM-receptor interaction pathway related genes~\cite{lyu2018deep}. For the ESCA cancer type, VWF, ITGA6, LAMC3, ITGAV, TNC, ITGB6, ITGB4, ITGA3, COL1A1, COL5A2, and COL4A6 are found to be related genes~\cite{lyu2018deep}. Similarly,  CAV1, TNC, COL3A1, PIK3CD, ITGA3, ITGB3, COL5A3, CCND1, LAMB2, FYN, COMP, COL6A3, COL6A2, COL6A1, COL1A1, LAMB1, PARVB, SPP1, FN1, and SHC4 are the related top genes for SKCM cancer type w.r.t focal adhesion pathway~\cite{lyu2018deep}. For the THCA cancer type, COL4A4, COL4A3, CAV2, CAV1, PGF, BCAR1, MET, IGF1, ITGA3, LAMA5, COL1A2, LAMC2, COL1A1, and FN1 are related top genes. These sets are not quite the same in different tumor types, which shows that they can be potential biomarkers~\cite{lyu2018deep}. However, no significant enriched pathways were found for the CHOL, COAD, READ, GBM, KICH, LGG, LUSC, OV, and UVM tumor types~\cite{lyu2018deep}. 
+
+%However, the approach based on global attention mechanigm, 
+%The samples for CHOL and KICH are very limited, hence these were omitted for the pathway enrichment calculation. Further, since the classification accuracy for READ tumor type is very low, it is omitted as well. With respect to the 6 remaining tumor types, the query size is reduced from top-20 to top-5. For the COAD tumor type, the top-1 gene LGALS4 is a protein coding gene. %The expression of this gene is restricted to small intestine, colon, and rectum, and it is under-expressed in colorectal cancer. 
+
+%\hspace*{3.5mm} For the GBM cancer type, top-1 gene found to be a protein coding gene named GFAP\footnote{GFAP gene encodes one of the major intermediate filament proteins of mature astrocytes, which is used as a marker to distinguish astrocytes from other glial cells during development in the brain region}. LGG (Brain Lower Grade Glioma) is also a tumor in the brain, its top 1-4 genes are all pseudo-genes, while the top5 gene GFAP is the gene related to brain. As to LUSC (Lung squamous cell carcinoma), its top1 gene SFTPA2 has been implicated in many lung diseases~\cite{lyu2018deep}. As to OV~(Ovarian cancer)~\cite{lyu2018deep}, its top-1 gene MUC16~(CA125) was said to be the only reliable diagnostic marker for ovarian cancer. As to UVM~(Uveal Melanoma), its top1 gene CD44 were tested to be strongly expressed in several cell lines of human uveal melanoma~\cite{lyu2018deep}. All the above results have shown the top genes have very close relations to the corresponding tumor types, which could be viewed as potential biomarkers.
+
+\subsection{Global explanations}
+In order to explain global explainability of the trained models, we first analyse both global feature importance and interactions. While feature importance assign a score to input features based on how useful they are at predicting a target variable, feature impact identifies which features in a dataset have the greatest positive or negative effect on the outcomes of the model. Global feature importance helps identify which features in the dataset have the greatest effect on the outcomes of the model. %On the other hand, feature impact identifies which features in a dataset have the greatest positive or negative effect on the outcomes of the model. 
 
 \subsubsection{Global feature importance}
-Identification all significant common genes help understand various aspects for a specific cancer type~(e.g., BRCA carcinogenesis). These top genes have close relations to the corresponding tumor types, which could be viewed as potential biomarkers. \Cref{fig:comgenes} shows top-10 common driver genes across 33 cancer types based on gene expression with Grad-CAM++ and LRP. As shown TP53, GATA3, EGFR, ATM, MLL3, MTOR, MPO, FOXD1, MED12, and GATA3 genes are identified as common driver genes across cancer types with Grad-CAM++, where TP53 protein-coding gene has the highest feature importance of 0.75. On the other hand, TP53, EGFR, AMBN, SETD2, MPO, MTOR, FOXD1, GATA3, and MED12 genes are identified as common driver genes across cancer types with LRP, with the TP53 protein-coding gene having the highest feature importance of 0.78. 
+Identification all significant common genes help understand various aspects for a specific cancer type~(e.g., BRCA carcinogenesis). These top genes have close relations to the corresponding tumor types, which could be viewed as potential biomarkers. \Cref{fig:comgenes} shows top-10 common driver genes across 33 cancer types based on gene expression with Grad-CAM++ and LRP. As shown, TP53, GATA3, EGFR, ATM, MLL3, MTOR, MPO, FOXD1, MED12, and GATA3 genes are identified as common driver genes across cancer types with Grad-CAM++, where TP53 protein-coding gene has the highest feature importance of 0.75. On the other hand, TP53, EGFR, AMBN, SETD2, MPO, MTOR, FOXD1, GATA3, and MED12 genes are identified as common driver genes across cancer types with LRP, with the TP53 protein-coding gene having the highest feature importance of 0.78. 
 %with $MCAE_{lrc}$ model
 
-\begin{figure*}[h]
+\begin{figure*}
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
@@ -993,57 +1191,91 @@ Identification all significant common genes help understand various aspects for 
 	\label{fig:comgenes}
 \end{figure*}
 
-\subsubsection{Global feature importance}
-Feature importance assign a score to input features based on how useful they are at predicting a target variable. This graph helps you identify which features in your dataset have the greatest effect on the outcomes of your machine learning model. 
+%\subsubsection{Global feature importance}
+\hspace*{3.5mm} On the other hand, globally important features identified with attention mechanism are shown in \cref{fig:global_feature_importance}. Based on the identified features, a score is assigned to input features based on how useful they are at predicting a target variable for the $MCAE_{lrc}$ model. The graph in \cref{fig:global_feature_importance} shows that BNC1, GBP4, and TFAP2A are the top-3 most important variables according to the $MCAE_{lrc}$ model. Since each variable might affect the outcome differently, exploring other features can provide how each variable could impact the outcome. On average, gene BNC1 will change the model outcome by 0.1. 
 
-\begin{figure*}[h]
+\iffalse
+\begin{sidewaysfigure*}
+	\centering
+	\begin{subfigure}{.48\linewidth}
+		\centering
+		\includegraphics[scale=0.65]{images/global_fi_1.png}
+		\caption{Global feature importance}
+        \label{fig:global_feature_importance}
+	\end{subfigure}
+	\begin{subfigure}{0.48\linewidth}
+		\centering
+		\includegraphics[scale=0.65]{images/global_fi_2.png}
+		\caption{Global feature impacts}
+        \label{fig:global_feature_impacts}
+	\end{subfigure}
+	\caption{Global feature importance and impacts} 
+	\label{fig:global_feature_imp_impacts}
+\end{sidewaysfigure*}
+\fi 
+
+\begin{sidewaysfigure*}
     \centering
-	\includegraphics[scale=0.8]{images/global_fi_1.png}
-	\caption{Global feature importance identifies, assign a score to input features based on how useful they are at predicting a target variable for the $MCAE_{lrc}$  model}
+	\includegraphics[scale=0.9]{images/global_fi_1.png}
+	\caption{Global feature importance}
     \label{fig:global_feature_importance}
-\end{figure*}
+\end{sidewaysfigure*}
 
-\hspace*{3.5mm} In this graph, you can see: BNC1 GBP4 TFAP2A are the top three most important variables according to your machine learning model. Remember, each variable might affect the outcome differently. Let’s scroll down and explore how each variable impacts the outcome. On average, the variable BNC1 will change the model outcome by 0.0. 
+\begin{sidewaysfigure*}
+    \centering
+	\includegraphics[scale=0.9]{images/global_fi_2.png}
+	\caption{Global feature impacts}
+    \label{fig:global_feature_impacts}
+\end{sidewaysfigure*}
 
 \subsubsection{Global feature impacts}
-Feature impact identifies which features (also known as columns or inputs) in a dataset have the greatest positive or negative effect on the outcomes of a machine learning model. This tells you which features have positive impact and which features have negative impact on the output of the decision. 
+Feature interactions among globally important features with attention mechanism are demonstrated in \cref{fig:global_feature_impacts}. Global feature impacts signify which features have positive impact and which features have negative impact on the output of the diagnosis decision. As shown, on average, genes FOXP4, VPS9D1-AS1, and CYBRD1 will increase the average model outcome~(i.e., 9.758071) by -0.08, 0.05, and 0.05, respectively. On the other hand, genes FOXP4, EMP2, and SAMHD1 will change the average model outcome~(9.758071) by -0.08, -0.03, and -0.03, respectively. 
 
-\begin{figure*}[h]
+\begin{sidewaysfigure*}
     \centering
-	\includegraphics[scale=0.8]{images/global_fi_2.png}
-	\caption{Global feature impact identifies, which features in a dataset have the greatest positive or negative effect on the outcomes of the $MCAE_{lrc}$  model}
-    \label{fig:global_feature_impacts}
-\end{figure*}
+	\includegraphics[scale=0.6]{images/summary_plot.png}
+	\caption{Summary plot, indicating relationship between feature values and their impacts on models' predictions}
+    \label{fig:local_feature_impacts5}
+\end{sidewaysfigure*}
 
-\hspace*{3.5mm} On average, the variable FOXP4, VPS9D1-AS1,and CYBRD1 will increase the average model outcome(9.758071) by -0.08, 0.05, and 0.05 respectively. On average, the variable FOXP4, EMP2,and SAMHD1 will change the average model outcome(9.758071) by -0.08, -0.03, and-0.03 respectively.. 
+\hspace*{3.5mm} On the other hand, the summary plot shown in \cref{fig:local_feature_impacts5} indicates the relationship between the value of a feature and the impact on the prediction made by the for the $MCAE_{lrc}$ model. As shown, GPRIN1, FABP4, AC020916-1, CHADL, RPL10P6, PRSS16, GATA3, SFRP2, LRIG1, SAMHD1, BNC1, AL603825-1, LAPTM5, TBC1D4, SEMA4C, CWH43, HAGLROS, SEMA3E, IVL, EN1, MTND2P28, KREMEN2, EMP2, OSMR, and RAVER1 have the highest impact on the model. 
 
-\subsection{Local explainability}
-In order to explain individual diagnoses, we provide sensitivity analysis in terms of what-if and leave-one-feature out analyse. 
+\subsection{Local explanations}
+In order to explain individual diagnoses, only the important features w.r.t local feature impact is not enough. In fact, sensitivity analysis in terms of what-if and leave-one-feature out analyses are found to be useful across different scenarios. 
 
-\subsubsection{Local feature impact}
-Local Feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row. The features are most important in explaining the target variable. Most importance is on the top. The average outcome predicted by the model is 9.758071. On average, the variable TFAP2A, VPS9D1-AS1,and MTND2P28 will increase the average model outcome(9.758071) by -0.36, 0.8, and 0.47 respectively. On average, the variable TFAP2A, ADCY3,and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28 respectively.
+\subsubsection{Local feature impacts}
+Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row, i.e., individual sample. The features are most important in explaining the target variable, are shown on the top. As shown in \cref{fig:local_feature_impacts}, the average outcome predicted by the the $MCAE_{lrc}$ model is 9.758071. On average, variables TFAP2A, VPS9D1-AS1, and MTND2P28 will increase the average model outcome~(9.758071) by -0.36, 0.8, and 0.47, respectively. On the other hand, variables TFAP2A, ADCY3, and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28, respectively.
 
-\begin{figure*}[h]
+\begin{figure*}
     \centering
-	\includegraphics[scale=0.6]{images/local_fi_1.png}
-	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
+	\includegraphics[scale=1.3]{images/local_fi_1.png}
+	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row}
     \label{fig:local_feature_impacts}
 \end{figure*}
 
-\subsubsection{What-if analysis}
-Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight". 
-
-\begin{figure*}[h]
+\begin{figure*}
     \centering
-	\includegraphics[scale=0.8]{images/local_fi_1.png}
-	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
-    \label{fig:local_feature_impacts2}
+	\includegraphics[scale=0.7]{images/similar_profiles.png}
+	\caption{Similar patient cohorts identified by the $MCAE_{lrc}$ model}
+    \label{fig:similar_patients}
+\end{figure*}
+
+\hspace*{3.5mm} Now in order to find which patients to extent to which they are similar to the patient being diagnoses are identified in \cref{fig:similar_patients}, as indicated by the last row in the table below labelled as "Weight". 
+
+\subsubsection{Sensitivity analyses: what-if and leave-one-feature-out}
+In order to quantitatively validate the feature-level relevances for local explianability, first, what-if analysis is carried out. As shown in \cref{fig:what_if}, genes TFAP2A, VPS9D1-AS1, MTND2P28, ADCY3, FOXP4, GPRIN1, EFNB1, FABP4, MGP, AC020916-1, CDC7, CHADL, RPL10P6, OASL, and PRSS16 are most sensitive to making changes. 
+
+\begin{figure*}
+    \centering
+	\includegraphics[scale=0.7]{images/what_if.png}
+	\caption{What-if analysis, showing most important features for which making changes will impact the prediction most on the $MCAE_{lrc}$ model}
+    \label{fig:what_if}
 \end{figure*}
 
 \subsubsection{Leave-one-feature-out analysis}
-Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight". Further, in order to quantitatively validate the word-level relevances for local explianability, we perform the leave-one-out experiment. The idea is to improve the greedy backward elimination algorithm by preserving more interactions among terms. First, we randomly select a sample hate statement in test set. For the sample, we generate prediction probabilities for all the classes, followed by explaining word-level relevance for two highest probable classes. 
+Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight". The idea is to improve the greedy backward elimination algorithm by preserving more interactions among terms. First, we randomly select a sample hate statement in test set. For the sample, we generate prediction probabilities for all the classes, followed by explaining word-level relevance for two highest probable classes. 
 
-Let's consider the example in 
+\hspace*{3.5mm} Let's consider the example in 
 \cref{fig:explain_term_wise_religious_hate}. Words on the right 
 side are positive, while words on the left are negative. Words like %\bn{`জাতি'}, \bn{`দখলে'} , and \bn{`হিন্দু'}  
 are positive for religious class, albeit the most significant word %\bn{`জাতি'}  
@@ -1052,7 +1284,7 @@ is negative for personal hate category~(where words
 are more important). The word %\bn{`জাতি'}
 has the highest positive score of 0.27 for class religious. Our model predicts this as a religious hate statement too, with the probability of 59\%. 
 
-\begin{figure}[h]
+\begin{figure}
     \vspace{-2mm}
 	\centering
 	\includegraphics[scale=0.6]{images/reli_explain.png}
@@ -1061,27 +1293,13 @@ has the highest positive score of 0.27 for class religious. Our model predicts t
 	\vspace{-4mm}
 \end{figure}
 
-However, if we remove word %\bn{`জাতি'} 
+\hspace*{3.5mm} However, if we remove word %\bn{`জাতি'} 
 from the text, we would expect the model to predict the label religious with a probability of 32\%~(i.e., 59\% $-$ 27\%). On the other hand, word %\bn{`জাতি'} 
 is negative for class personal hate, albeit words %\bn{`বাচ্চারা'}
 and 'have positive scores of 0.23 and 0.17 for the class personal. These words identified by our approach not only can reveal the relevance of important terms for classifier’s decision, but also signify that removing most relevant terms will impact the prediction decision, accordingly to their relevance value. 
 
-\begin{figure*}[h]
-    \centering
-	\includegraphics[scale=0.8]{images/local_fi_1.png}
-	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
-    \label{fig:local_feature_impacts3}
-\end{figure*}
-
-\subsubsection{Similar profiles}
-Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight".
-
-\begin{figure*}[h]
-    \centering
-	\includegraphics[scale=0.8]{images/similar_profiles.png}
-	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of a machine learning model for a specific row for the $MCAE_{lrc}$ model}
-    \label{fig:local_feature_impacts4}
-\end{figure*}
+%\subsubsection{Similar profiles and summary plot}
+%Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight".
 
 \section{Chapter Summary}\label{chapter_5:conclusion}
 In this chapter, we developed two deep multimodal architectures called $MCAE_{lrc}$ and $MCAE_{slr}$ cancer types based on different combination of multimodal genomics data types. Our approach is based on GradCAM++, LRP, and attention mechanism with a vanilla CNN, an VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$ networks. Experiment results show that omics data are useful useful for predicting cancer types with high confidence giving high f1 scores~(of up to 96.25\% for single modality based on GE and of up to 92.45\% for GE+miRNA input modalities). Based on this comparison, we can conclude that there is a possibility both $MCAE_{lrc}$ and $MCAE_{slr}$ might surpass MAE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
@@ -1090,7 +1308,6 @@ In this chapter, we developed two deep multimodal architectures called $MCAE_{lr
 
 \hspace*{3.5mm} Nevertheless, we attempted to provide a more human-interpretable explanation by showing statistically significant biomarkers, which confirms that the identified genes are biologically relevant. Several other factors have hindered this research, e.g., lack of enough training samples and single modality, i.e., only GE data used for making the predictions and generating the explanations. The latter reason caused the network to produce high training and validation errors during the training phase, giving lower accuracy during the inferencing phase. Although we attempted to open the CNN, VGG16, and MCAE `black-box' models through biomarker validation and feature ranking, our approach is mostly post-hoc as the explainability is based on test cases and results similar to LRP. 
 %Several further factors have hindered this research, such as lack of enough training samples, and lack of biological pathways analysis. 
-
 To summarize, this chapter disseminate the following findings, through several experiments:  
 
 \begin{enumerate}[noitemsep]
