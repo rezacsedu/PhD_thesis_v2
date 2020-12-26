@@ -632,7 +632,7 @@ When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0,
 
 \begin{sidewaysfigure*}
 \centering
-	\includegraphics[scale=0.55]{images/ui.png}
+	\includegraphics[scale=0.8]{images/ui.png}
 	\caption{High-level user interface to explain the predictions}
     \label{fig:ui_explain}
     \vspace{-4mm}
@@ -1165,7 +1165,7 @@ Identification all significant common genes help understand various aspects for 
 \end{sidewaysfigure*}
 
 \subsubsection{Global feature impacts}
-Feature interactions among globally important features with attention mechanism are demonstrated in \cref{fig:global_feature_impacts}. Global feature impacts signify which features have positive impact and which features have negative impact on the output of the diagnosis decision. As shown, on average, genes FOXP4, VPS9D1-AS1, and CYBRD1 will increase the average model outcome~(i.e., 9.758071) by -0.08, 0.05, and 0.05, respectively. On the other hand, genes FOXP4, EMP2, and SAMHD1 will change the average model outcome~(9.758071) by -0.08, -0.03, and -0.03, respectively. 
+Feature interactions among globally important features with attention mechanism are demonstrated in \cref{fig:global_feature_impacts}. Global feature impacts signify which features have positive impact and which features have negative impact on the output of the diagnosis decision. GBP4, VPS9D1-AS1, SLN, SEMA3E, GP2, CXCL10, RAVER1, AL603825-1, TBC1D4, CLTRN, OASL, CWH43, and GABRP positively impact the prediction. This also signifies that if the prediction is in favour of specific cancer type~(let's say COAD) for a specific patient, these variables will play crucial role in maintaining this prediction. However, if we look at TRIM17, CDS1, PCOLCE2, MGP, MTCO1P53, TFF3, AC026403-1, HAGLROS, LAPTM5, SULT4A1, EN1, and EFNB1 have negative impact on the prediction. This means that if the prediction is "COAD" and we increase the value of these variables, we will likely end up flipping-up the prediction to another cancer type.
 
 \begin{sidewaysfigure*}
     \centering
@@ -1174,13 +1174,13 @@ Feature interactions among globally important features with attention mechanism 
     \label{fig:local_feature_impacts5}
 \end{sidewaysfigure*}
 
-\hspace*{3.5mm} On the other hand, the summary plot shown in \cref{fig:local_feature_impacts5} indicates the relationship between the value of a feature and the impact on the prediction made by the for the $MCAE_{lrc}$ model. As shown, GPRIN1, FABP4, AC020916-1, CHADL, RPL10P6, PRSS16, GATA3, SFRP2, LRIG1, SAMHD1, BNC1, AL603825-1, LAPTM5, TBC1D4, SEMA4C, CWH43, HAGLROS, SEMA3E, IVL, EN1, MTND2P28, KREMEN2, EMP2, OSMR, and RAVER1 have the highest impact on the model. 
+\hspace*{3.5mm} Zooming on the individual features provide further insights. In particular, it is observed that the average outcome predicted by the model is 9.754495. On average, the variable GBP4, VPS9D1-AS1, and SLN will increase the average model outcome~(9.754495) by 0.04, 0.05, and 0.06, respectively. On the other hand, the variable TRIM17, CDS1, and PCOLCE2 will change the average model outcome~(9.754495) by -0.04, -0.03, and -0.04, respectively. On the other hand, the summary plot by combining feature importance with feature effects are shown in \cref{fig:local_feature_impacts5}. Each point on the summary plot is an impact value for a feature and an instance. The plot indicates the relationship between the value of a feature and the impact on the prediction made by the for the $MCAE_{lrc}$ model. As shown, GPRIN1, FABP4, AC020916-1, CHADL, RPL10P6, PRSS16, GATA3, SFRP2, LRIG1, SAMHD1, BNC1, AL603825-1, LAPTM5, TBC1D4, SEMA4C, CWH43, HAGLROS, SEMA3E, IVL, EN1, MTND2P28, KREMEN2, EMP2, OSMR, and RAVER1 have the highest impact on the model. 
 
 \subsection{Local explanations}
 In order to explain individual diagnoses, only the important features w.r.t local feature impact is not enough. In fact, sensitivity analysis in terms of what-if and leave-one-feature out analyses are found to be useful across different scenarios. 
 
 \subsubsection{Local feature impacts}
-Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row, i.e., individual sample. The features are most important in explaining the target variable, are shown on the top. As shown in \cref{fig:local_feature_impacts}, the average outcome predicted by the the $MCAE_{lrc}$ model is 9.758071. On average, variables TFAP2A, VPS9D1-AS1, and MTND2P28 will increase the average model outcome~(9.758071) by -0.36, 0.8, and 0.47, respectively. On the other hand, variables TFAP2A, ADCY3, and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28, respectively. To find which patients are similar to the patient being currently diagnosed are identified in \cref{fig:similar_patients}, as indicated by the last row in the table labelled as "Weight". 
+Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row, i.e., individual sample. The features are most important in explaining the target variable, are shown on the top. As shown in \cref{fig:local_feature_impacts}, the average outcome predicted by the the $MCAE_{lrc}$ model is 9.758071. On average, variables TFAP2A, VPS9D1-AS1, and MTND2P28 will increase the average model outcome~(9.758071) by -0.36, 0.8, and 0.47, respectively. On the other hand, variables TFAP2A, ADCY3, and FOXP4 will change the average model outcome~(9.758071) by -0.36, -0.31, and-0.28, respectively. 
 
 \begin{figure*}[h]
     \centering
@@ -1197,6 +1197,8 @@ Local feature impact identifies which features have the greatest positive or neg
 \end{figure*}
 
 %\hspace*{3.5mm} 
+
+\hspace*{3.5mm} Further, to find which patients are similar to the patient being currently diagnosed are identified in \cref{fig:similar_patients}, as indicated by the last row in the table labelled as "Weight". This is a useful way of explaining to end users~(e.g., a patient or for doctor's understanding) that because Profile `A', Profile `B' and Profile `C' had very similar variables to specific row. Therefore, the model predicted a certain outcome. In this case, Profile 0 is 55.76\% similar, Profile 2 is 23.65\% similar, and Profile 4 is 15.26\% similar to the sample or row number 1 that we are trying to explain. Now the end user can comprehend how the model is making its decisions by looking at that patients.  
 
 \subsubsection{Sensitivity analyses: what-if and leave-one-feature-out}
 In order to quantitatively validate the feature-level relevances for local explianability, first, what-if analysis is carried out. As shown in \cref{fig:what_if}, genes TFAP2A, VPS9D1-AS1, MTND2P28, ADCY3, FOXP4, GPRIN1, EFNB1, FABP4, MGP, AC020916-1, CDC7, CHADL, RPL10P6, OASL, and PRSS16 are most sensitive to making changes. 
