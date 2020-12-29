@@ -227,7 +227,7 @@ Literature~\cite{OOD19} has outlined two types of countermeasures against advers
 \begin{figure}[htp!]
     \centering
     \includegraphics[scale=0.9]{images/reactive_measure.png}
-    \caption[Reactive and proactive measures in a nutshell against adversarial attacks]{Workflow of reactive and proactive measures against an adversarial sample during the inferencing}
+    \caption[Reactive and proactive measures in a nutshell against adversarial attacks]{Workflow of reactive and proactive measures against adversarial sample in inferencing}
     \label{fig:reactive_measures}
     \vspace{-4mm}
 \end{figure}
@@ -338,8 +338,7 @@ In this section, we discuss the evaluation results of content moderation attack 
 More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
 
 \begin{enumerate}[noitemsep]
-    \item Can we detect if a supplied input is an adversarial sample?
-    \item Can we detect if a supplied input is of ID or OOD sample? 
+    \item Can we detect if a supplied input is an adversarial sample~(i.e., ID or OOD sample)? 
     \item Can the model reconstruct, from noise input, a cleaner version of the sample? 
     \item Which neural network architecture is more robust against different adversarial attacks?  
     \item Considering the attacks scenarios, what types of counter measures is useful for genomic data?
@@ -614,20 +613,17 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 
 \section{Chapter Summary} \label{chapter_6:conclusion}
 In this chapter, discussed how to improve the adversarial robustness of an explainable model. We apply different types of adversarial attacks on our model by generating AEx with content moderation attack by introducing noise, generating AEx as OOD. Then we impose both proactive and reactive counter measurements before assessing the robustness against each scenario. 
-For detecting OOD, we trained two different classifiers to detect OOD samples that are far from the support of the ID samples. However, considering the scope of this thesis, we try to limit the discussion within simple methods. In future, we intend to focus more employ not so complicated and sophisticated counter-measurements. 
-
-In this section, we discuss the evaluation results of content moderation attack and OOD detection, both quantitatively and qualitatively. %Besides, a comparative analysis with state-of-the-art approaches is provided. 
-More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
+For detecting OOD, we trained two different classifiers to detect OOD samples that are far from the support of the ID samples. However, considering the scope of this thesis, we try to limit the discussion within simple methods. In future, we intend to focus more employ not sophisticated counter-measurements. To summarize, this chapter disseminate the following findings, through several experiments:
 
 \begin{enumerate}[noitemsep]
-    \item Can we detect if a supplied input is an adversarial sample?
-    \item Can we detect if a supplied input is of ID or OOD sample? 
-    \item Can the model reconstruct, from noise input, a cleaner version of the sample? 
-    \item Which neural network architecture is more robust against different adversarial attacks?  
-    \item Considering the attacks scenarios, what types of counter measures is useful for genomic data?
+    \item \textbf{Can we detect if a supplied input is an adversarial sample?} The approach used in this chapter can moderately identify if a supplied sample is an adversarial sample Overall, both ID and OOD samples can be identified. 
+    
+    \item \textbf{Can the model reconstruct, from noise input, a cleaner version of the sample?} Adding Gaussian noises during retraining already made both classifier robust against minor perturbations. Nevertheless, PixelCNN is found to be effective at reconstructing, from perturbations samples, the cleaner versions moderately. However, this approach is found to have very limited effectiveness against OOD attacks. 
+    
+    \item \textbf{Which neural network architecture is more robust against different adversarial attacks?} The classifier $MCAE_{lrc}$ classifier found to be more robust compared to $MCAE_{slr}$. Probably, the reason is that the former classifier still can learn more abstract features from the reconstructed inputs from PixelCNN, which help in the classification as well.  
+    
+    \item \textbf{Considering the attacks scenarios, what types of counter measures is useful for genomic data?} As DeepFool provides less perturbations, it is found to be moderately strong attack. However, FGSM is found to be too strong attacks, as it provides higher perturbations. Subsequently, both classifiers perform moderately well against DeepFool attack, albeit $MCAE_{lrc}$ classifier found to be more robust against both attacks types compared to $MCAE_{slr}$. Besides, GE and miRNA are more sensitive to making changes, which reflect in the GE, miRNA, GE+miRNA modalities too. 
 \end{enumerate}
-
-\hspace*{3.5mm} Results of each observation are analysed, both quantitative and qualitatively, in the following section. 
 
 %Our method does not require labeled OOD samples to train the neural network. 
 %We extensively evaluated our method not only on OOD detection benchmarks, but also on real-world simulation datasets. Our method significantly outperformed the current state-of-the-art methods on different DNN architectures across various in and out-of-distribution dataset pairs. 
