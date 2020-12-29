@@ -226,8 +226,8 @@ Literature~\cite{OOD19} has outlined two types of countermeasures against advers
 
 \begin{figure}[htp!]
     \centering
-    \includegraphics[width=0.7\textwidth,height=90mm]{images/reactive_measure.png}
-    \caption{Workflow of reactive measures against an adversarial sample during the inferencing}
+    \includegraphics[scale=0.9]{images/reactive_measure.png}
+    \caption[Reactive and proactive measures in a nutshell against adversarial attacks]{Workflow of reactive and proactive measures against an adversarial sample during the inferencing}
     \label{fig:reactive_measures}
     \vspace{-4mm}
 \end{figure}
@@ -276,8 +276,8 @@ We assume that an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{i
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth,height=60mm]{images/ood_ex_1.png}
-    \caption{Detection of OOD samples by the discrepancy between two classifiers based on~\cite{OOD19}, where $MCAE_{slr}$ and $MCAE_{lrc}$ represent model $f_1$ and $f_2$, respectively}
+    \includegraphics[scale=0.6]{images/ood_ex_1.png}
+    \caption[OOD sample detection w.r.t discrepancy between two different  classifiers]{Detection of OOD samples by the discrepancy between two classifiers based on~\cite{OOD19}, where $MCAE_{slr}$ and $MCAE_{lrc}$ represent model $f_1$ and $f_2$, respectively}
     \label{fig:ood_detection_example}
     \vspace{-4mm}
 \end{figure}
@@ -289,8 +289,8 @@ We assume that an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{i
 
 \begin{figure}[htp!]
     \centering
-    \includegraphics[width=0.8\textwidth,height=100mm]{images/OOD_1.png}
-    \caption[Supervised pre-training and unsupervised fine-tuning steps for OOD detection.]{Supervised pre-training and unsupervised fine-tuning steps for OOD detection method which we extended for multimodal scenario is based on~\cite{yu2019unsupervised}. The network consists of an extractor $E$ and two classifiers $f_{1}$ and $f_{2}$. \textbf{Step A}: supervised training to classify ID samples correctly. \textbf{Step B}: $f_{1}$ and $f_{2}$ learn to maximize the discrepancy in an unsupervised manner to detect OOD samples}
+    \includegraphics[scale=0.7]{images/OOD_1.png}
+    \caption[Supervised pre-training and unsupervised fine-tuning steps for OOD detection]{Supervised pre-training and unsupervised fine-tuning steps for OOD detection method which we extended for multimodal scenario is based on~\cite{yu2019unsupervised}. The network consists of an extractor $E$ and two classifiers $f_{1}$ and $f_{2}$. \textbf{Step A}: supervised training to classify ID samples correctly. \textbf{Step B}: $f_{1}$ and $f_{2}$ learn to maximize the discrepancy in an unsupervised manner to detect OOD samples}
     \label{fig:ood_network}
     \vspace{-2mm}
 \end{figure}
@@ -332,16 +332,29 @@ We measure the disagreement between the classifiers and train the network to max
 \end{align}
 
 \hspace*{3.5mm} where $x$ could be a unimodal or multimodal sample. Subsequently, we stop making the inferencing for an OOD samples, given that making a wrong prediction is far better than a garbage prediction. 
+
 \section{Experiments}\label{chapter_6:results} 
 In this section, we discuss the evaluation results of content moderation attack and OOD detection, both quantitatively and qualitatively. %Besides, a comparative analysis with state-of-the-art approaches is provided. 
+More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
+
+\begin{enumerate}[noitemsep]
+    \item Can we detect if a supplied input is an adversarial sample?
+    \item Can we detect if a supplied input is of ID or OOD sample? 
+    \item Can the model reconstruct, from noise input, a cleaner version of the sample? 
+    \item Which neural network architecture is more robust against different adversarial attacks?  
+    \item Considering the attacks scenarios, what types of counter measures is useful for genomic data?
+\end{enumerate}
+
+\hspace*{3.5mm} Results of each observation are analysed, both quantitative and qualitatively, in the following section. 
 
 \subsection{Experiment setup}
 %All the programs were written in Python\footnote{\url{https://github.com/rezacsedu/XAI_Cancer_Prediction}}. The software stack consists of scikit-learn and Keras with TensorFlow backend. The network was trained on an Nvidia GTX 1080i GPU with CUDA and cuDNN enabled to make the overall pipeline faster. 
 %Further, since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through a random search and 5-fold cross-validation tests. In each of 5 runs, 70\% of the data is used for the training, 30\% for the evaluation, while 10\% of the training set is used for validation of the networks to optimize the cross-entropy loss based on the best learning rate, batch size, number of filters, kernel size, and dropout/Gaussian noise probability. 
 %\subsubsection{Setup for content moderation detection}
 %\subsubsection{Setup for OOD detection}
-For the pre-training, we follow steps similar to literature~\cite{OOD19}, but using Adam optimizer to train both MCAE classifiers for 200 epochs. The learning rate~(LR) started at 0.1 and dropped by a factor of 10 at 50\% and 75\% of the training progress, respectively. During the fine-tune, we iterate each fit for 50 epochs, by setting margin m = 1:2 to detect OOD samples. Subsequently, we select the best classifier using WeightWatcher. %Results based on hyperparameters produced through random search and 5-fold cross-validation are reported and discussed with a comparative analysis with AUROC, AUPR, FPR, TPR, FNR, and DE. 
-To assess the robustness of our models, we compute the empirical robustness metric~(ERM) of a classifier object over the test set for a given adversarial crafting method attack as suggested in literature~\cite{moosavi2016deepfool}. The ERM is equivalent to computing the minimal perturbation that the attacker must introduce for a successful attack. Technically, the higher the ERM value, the higher the a classifier is. Mathematically, ERM is measured as follows~\cite{moosavi2016deepfool}:
+For the pre-training, we follow steps similar to literature~\cite{OOD19}, but using Adam optimizer to train both MCAE classifiers for 200 epochs. The learning rate~(LR) started at 0.1 and dropped by a factor of 10 at 50\% and 75\% of the training progress, respectively. During the fine-tune, we iterate each fit for 50 epochs, by setting margin m = 1:2 to detect OOD samples. 
+%Subsequently, we select the best classifier using WeightWatcher. %Results based on hyperparameters produced through random search and 5-fold cross-validation are reported and discussed with a comparative analysis with AUROC, AUPR, FPR, TPR, FNR, and DE. 
+To assess the robustness of our models, we compute the empirical robustness metric~(ERM) of a classifier object over the test set for a given adversarial crafting method attack as suggested in literature~\cite{moosavi2016deepfool}. ERM is equivalent to computing the minimal perturbation that the attacker must introduce for a successful attack and is measured as follows~\cite{moosavi2016deepfool}:
 
 \vspace{-4mm}
 \begin{align}
@@ -349,9 +362,10 @@ To assess the robustness of our models, we compute the empirical robustness metr
     _{\infty}}{\|\boldsymbol{x}\|_{\infty}},
 \end{align}
 
-where $\hat{\boldsymbol{r}}(\boldsymbol{x})$ is
-computed respectively using DeepFool~(with $p=\infty$) and the FGSM. Besides, we compute the CLEVER~(short for \textbf{C}ross \textbf{L}ipschitz \textbf{E}xtreme \textbf{V}alue for n\textbf{E}twork \textbf{R}obustness) score for an untargeted attack based on literature~\cite{weng2018evaluating}. 
-The CLEVER score is attack-agnostic and computationally feasible for large neural networks, given the fact that CLEVER is aligned with the robustness indication measured by the $\ell_{2}$ and $\ell_{\infty}$ norms \footnote{The \textbf{$\ell_{1}$ norm}~(also known as Manhattan Distance or Taxicab norm) gives the magnitudes of the vectors in a space. The \textbf{$\ell_{2}$ norm}~(also known as the Euclidean norm) gives the shortest distance to go from one point to another. The \textbf{$\ell_{\infty}$ norm} gives the largest magnitude among each element of a vector, i.e., only the largest element has the effect.} of adversarial examples from powerful attacks. Besides, it is defended networks using defensive distillation or bounded ReLU indeed achieve better CLEVER scores~\cite{weng2018evaluating}. On the other hand, we measure false positive rates~(FPR), detection errors~(DE), Area Under the Receiver Operating Characteristic curve~(AUROC), Area Under the Precision-Recall~(AUPR) to assess robustness of the models against OOD attack, as~\cite{OOD19,OOD18}, with the below settings: 
+\hspace*{3.5mm} where $\hat{\boldsymbol{r}}(\boldsymbol{x})$ is computed respectively using DeepFool~(with $p=\infty$) and the FGSM. The higher the ERM value, the higher the a classifier is. Besides, we compute the CLEVER~(short for \textbf{C}ross \textbf{L}ipschitz \textbf{E}xtreme \textbf{V}alue for n\textbf{E}twork \textbf{R}obustness) score for an untargeted attack based on literature~\cite{weng2018evaluating}. 
+The CLEVER score is attack-agnostic and computationally feasible for large neural networks, given the fact that CLEVER is aligned with the robustness indication measured by the $\ell_{2}$ and $\ell_{\infty}$ norms \footnote{The \textbf{$\ell_{1}$ norm}~(also known as Manhattan Distance or Taxicab norm) gives the magnitudes of the vectors in a space. The \textbf{$\ell_{2}$ norm}~(also known as the Euclidean norm) gives the shortest distance to go from one point to another. The \textbf{$\ell_{\infty}$ norm} gives the largest magnitude among each element of a vector, i.e., only the largest element has the effect.} of adversarial examples from powerful attacks. 
+%Besides, it is defended networks using defensive distillation or bounded ReLU indeed achieve better CLEVER scores~\cite{weng2018evaluating}. 
+Besides, false positive rates~(FPR), detection errors~(DE), Area Under the Receiver Operating Characteristic curve~(AUROC), Area Under the Precision-Recall~(AUPR), are computed to assess robustness of the models against OOD attack, as~\cite{OOD19,OOD18}, with the following settings: 
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -436,11 +450,10 @@ The CLEVER score is attack-agnostic and computationally feasible for large neura
 \end{sidewaystable*}
 \fi 
 
-\hspace*{3.5mm} For computing the CLEVER and ERM metrics, we use the Adversarial Robustness Toolbox~(aka. ART)\footnote{\url{https://github.com/Trusted-AI/adversarial-robustness-toolbox}}. On the other hand, we use scikit-learn standard libraray for computing FPR, TPR, FNR, AUPR~(both IN and Out), and AUROC. 
+\hspace*{3.5mm} CLEVER and ERM metrics were computed using the Adversarial Robustness Toolbox~(aka. ART)\footnote{\url{https://github.com/Trusted-AI/adversarial-robustness-toolbox}}. Besides, scikit-learn was used for computing FPR, TPR, FNR, AUPR~(both IN and Out), and AUROC. 
 
 \subsection{Robust classifier's performance on the adversarial samples}
 With the above experimental setting, first, we generate some adversarial samples to attack both of our $f_1$ and $f_2$ models. Subsequently, we retrain both models with adversarial samples generated with DeepFool to make them robust. In both cases, the retrained models are much more robust than the originally trained model as shown in \cref{fig:normal_vs_robust_models}, where $\epsilon \in\{0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9\}$ to achieve the smallest $\ell_{\infty}$ distortion for individual sample. However, the retrained model based on latent representation concatenation shows more robustness then the shared latent representation. 
-
 \begin{figure*}[h]
 	\centering
 	\begin{subfigure}{.48\linewidth}
@@ -470,7 +483,7 @@ With the above experimental setting, first, we generate some adversarial samples
     \label{tab:robustness_result}
 \end{table}
 
-\hspace*{3.5mm} $f_1$ behaves more robustly even when $\epsilon$ is increased upto 0.4, giving upto 85\% accuracy. IN contrast, $f_2$ shows very fragile performance, giving drastic reduction of the accuracy by 25\%. \Cref{tab:robustness_result} reports the $\ell_{\infty}$ robustness to adversarial perturbations for four different networks based on DeepFool and FGSM with $90 \%$ of misclassification. \Cref{tab:robustness_result} shows ERM scores for both classifiers. Since a higher ERM value indicates a more robust classifier, $f_1$ behaves more robustly against both DeepFool and FGSM attacks. 
+\hspace*{3.5mm} Classifier $f_1$ found robust even when $\epsilon$ is increased upto 0.4, giving upto 85\% accuracy. In contrast, $f_2$ shows fragile performance, giving drastic reduction of the accuracy by 25\%. \Cref{tab:robustness_result} reports the $\ell_{\infty}$ robustness to adversarial perturbations for 4 different models based on DeepFool and FGSM with $90\%$ of misclassification. \Cref{tab:robustness_result} shows ERM scores for both classifiers. Since a higher ERM value indicates a more robust classifier, $f_1$ found to be more robust against both DeepFool and FGSM attacks. 
 
 \begin{table}
     \centering
@@ -593,7 +606,7 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 	\label{fig:max_soft_scores_and_de_scores}
 \end{figure*}
 
-\hspace*{3.5mm} As seen, the discrepancy loss of ID samples is smaller than OOD samples in all settings. The DE is lower when the difference between the discrepancy loss of ID and OOD samples is larger, which means ID and OOD samples can be separated by the divergence between the two classifiers' output. Since this method needs to fine-tune the classifiers in order to detect the OOD samples, the decision boundary changed slightly. Eventually, we see a significant drop of classification accuracy~(by 8\%) compared to original accuracy we observed in \cref{chapter:xai}. We ca observe that GE and miRNA are more sensitive to making changes, which reflect in the GE, miRNA, GE+miRNA modalities too. 
+\hspace*{3.5mm} As seen, the discrepancy loss of ID samples is smaller than OOD samples in all settings. The DE is lower when the difference between the discrepancy loss of ID and OOD samples is larger, which means ID and OOD samples can be separated by the divergence between the two classifiers' output. Since this method needs to fine-tune the classifiers in order to detect the OOD samples, the decision boundary changed slightly. Eventually, we see a significant drop of classification accuracy~(by 8\%) compared to original accuracy we observed in \cref{chapter:xai}. We can observe that GE and miRNA are more sensitive to making changes, which reflect in the GE, miRNA, GE+miRNA modalities too. 
 
 %This problem could be solved by using the original classifier to classify ID samples with some runtime increase and it is still much more acceptable than ELOC [26] using an ensemble of five models which needs more runtime and computing resources.
 
@@ -602,6 +615,19 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 \section{Chapter Summary} \label{chapter_6:conclusion}
 In this chapter, discussed how to improve the adversarial robustness of an explainable model. We apply different types of adversarial attacks on our model by generating AEx with content moderation attack by introducing noise, generating AEx as OOD. Then we impose both proactive and reactive counter measurements before assessing the robustness against each scenario. 
 For detecting OOD, we trained two different classifiers to detect OOD samples that are far from the support of the ID samples. However, considering the scope of this thesis, we try to limit the discussion within simple methods. In future, we intend to focus more employ not so complicated and sophisticated counter-measurements. 
+
+In this section, we discuss the evaluation results of content moderation attack and OOD detection, both quantitatively and qualitatively. %Besides, a comparative analysis with state-of-the-art approaches is provided. 
+More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
+
+\begin{enumerate}[noitemsep]
+    \item Can we detect if a supplied input is an adversarial sample?
+    \item Can we detect if a supplied input is of ID or OOD sample? 
+    \item Can the model reconstruct, from noise input, a cleaner version of the sample? 
+    \item Which neural network architecture is more robust against different adversarial attacks?  
+    \item Considering the attacks scenarios, what types of counter measures is useful for genomic data?
+\end{enumerate}
+
+\hspace*{3.5mm} Results of each observation are analysed, both quantitative and qualitatively, in the following section. 
 
 %Our method does not require labeled OOD samples to train the neural network. 
 %We extensively evaluated our method not only on OOD detection benchmarks, but also on real-world simulation datasets. Our method significantly outperformed the current state-of-the-art methods on different DNN architectures across various in and out-of-distribution dataset pairs. 
