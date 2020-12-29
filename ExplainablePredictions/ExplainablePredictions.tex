@@ -1208,7 +1208,7 @@ Local feature impact identifies which features have the greatest positive or neg
 \hspace*{3.5mm} Further, to find which patients are similar to the patient being currently diagnosed are identified in \cref{fig:similar_patients}, as indicated by the last row in the table labelled as "Weight". This is a useful way of explaining to end users~(e.g., a patient or for doctor's understanding) that because Profile `A', Profile `B' and Profile `C' had very similar variables to specific row. Therefore, the model predicted a certain outcome. In this case, Profile 0 is 55.76\% similar, Profile 2 is 23.65\% similar, and Profile 4 is 15.26\% similar to the sample or row number 1 that we are trying to explain. Now the end user can comprehend how the model is making its decisions by looking at that patients.  
 
 \subsubsection{Sensitivity analyses: what-if and leave-one-feature-out}
-To quantitatively validate the feature-level relevances, what-if analysis is carried out. As shown in \cref{fig:what_if}, genes TFAP2A, VPS9D1-AS1, MTND2P28, ADCY3, FOXP4, GPRIN1, EFNB1, FABP4, MGP, AC020916-1, CDC7, CHADL, RPL10P6, OASL, and PRSS16 are most sensitive to making changes. 
+To quantitatively validate the feature-level relevances, what-if analysis is carried out. As shown in \cref{fig:what_if}, genes TFAP2A, VPS9D1-AS1, MTND2P28, ADCY3, FOXP4, GPRIN1, EFNB1, FABP4, MGP, AC020916-1, CDC7, CHADL, RPL10P6, OASL, and PRSS16 are most sensitive to making changes. On the other hand, making changes to SEMA4C, CWH43, HAGLROS, SEMA3E, and IVL does not have significant impact on the prediction. 
 
 \begin{figure*}[h]
     \centering
@@ -1220,14 +1220,7 @@ To quantitatively validate the feature-level relevances, what-if analysis is car
 \subsubsection{Leave-one-feature-out analysis}
 Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight". The idea is to improve the greedy backward elimination algorithm by preserving more interactions among terms. First, we randomly select a sample hate statement in test set. For the sample, we generate prediction probabilities for all the classes, followed by explaining word-level relevance for two highest probable classes. 
 
-\hspace*{3.5mm} Let's consider the example in 
-\cref{fig:explain_term_wise_religious_hate}. Words on the right 
-side are positive, while words on the left are negative. Words like %\bn{`জাতি'}, \bn{`দখলে'} , and \bn{`হিন্দু'}  
-are positive for religious class, albeit the most significant word %\bn{`জাতি'}  
-is negative for personal hate category~(where words
-%\bn{`বাচ্চারা'}  and \bn{`হারামজা'}  
-are more important). The word %\bn{`জাতি'}
-has the highest positive score of 0.27 for class religious. Our model predicts this as a religious hate statement too, with the probability of 59\%. 
+\hspace*{3.5mm} Let's pick a random sample from the test set and perform the inferencing. Let's the model predicts the sample of COAD cancer types. As shown in \cref{fig:explain_term_wise_religious_hate}, features on the right side are positive, while features on the left are negative. It turns out that features like TFAP2A,  VPS9D1-AS1, MTND2P28, ADCY3, nad FOXP4 are positive for COAD class, for this single inferencing. The feature TFAP2A has the highest positive score of 0.29 for class COAD. Our model predicts this as a COAD cancer type too, with the probability of 55\%. Besides, the sample could be of BRCA cancer type with a probability of 29\%.  
 
 \begin{figure}[h]
     \vspace{-2mm}
@@ -1238,10 +1231,7 @@ has the highest positive score of 0.27 for class religious. Our model predicts t
 	\vspace{-4mm}
 \end{figure}
 
-\hspace*{3.5mm} However, if we remove word %\bn{`জাতি'} 
-from the text, we would expect the model to predict the label religious with a probability of 32\%~(i.e., 59\% $-$ 27\%). On the other hand, word %\bn{`জাতি'} 
-is negative for class personal hate, albeit words %\bn{`বাচ্চারা'}
-and 'have positive scores of 0.23 and 0.17 for the class personal. These words identified by our approach not only can reveal the relevance of important terms for classifier’s decision, but also signify that removing most relevant terms will impact the prediction decision, accordingly to their relevance value. 
+\hspace*{3.5mm} However, if we remove feature TFAP2A from the patient profile, we would expect the model to predict the label COAD with a probability of 26\%~(i.e., 55\% $-$ 29\%), making the actual prediction to be BRCA cancer type. On the other hand, features IVL, PRSS16, EFNB1, and CWH43 are more important features, having impacts of 0.23, 0.17, 0.123, and 0.07, respectively for the class BRCA. These feature identified by our approach not only can reveal the relevance of important feature for classifier’s decision, but also signify that removing most relevant biomarkers will impact the prediction decision, accordingly to their relevance value. 
 
 %\subsubsection{Similar profiles and summary plot}
 %Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight".
