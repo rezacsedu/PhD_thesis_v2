@@ -410,12 +410,22 @@ Now relating this rule set with the decision rules can be described with an exam
     \item TP53 $  \cap $ ($\exists$has$ {\_}$significance$ {\_}$degree.High) $  \cap $ ($\exists$responsible$ {\_}$for.BreastCancer) $ \sqsubseteq  $ ($\exists$has$ {\_}$evidence.PubMed) $\cap$ (=493) (has ${\_}$citations.T)}
 \end{itemize}
 
-\hspace*{3.5mm} Additinally, the doctor can interpret this rule to the patient, where the decision is backed by the fact that a gene biomarker called `TP53': `TP53' is found to be highly responsible for the presence of breast cancer in your body. This gene has very strong mutations associations w.r.t. to breast cancer. Nevertheless, many scientific article has found it's association. What we assume that such an inferred rule can be used not only to fix inconsistencies, but also to generate fairer decision rules.
+\hspace*{3.5mm} Additionally, the doctor can interpret this rule to the patient, where the decision is backed by the fact that a gene biomarker called `TP53': `TP53' is found to be highly responsible for the presence of breast cancer in your body. This gene has very strong mutations associations w.r.t. to breast cancer. Nevertheless, many scientific article has found it's association. What we assume that such an inferred rule can be used not only to fix inconsistencies, but also to generate fairer decision rules.
 
 \section{Chapter Summary}\label{chapter_9:conclusion}
 In this chapter, attempts were taken to mitigate different types of bias such as sampling, reporting, and model selection bias. Besides, random forest classifier is  trained on individual modality to calculate feature importance by reducing biases and increasing variance. Besides, to understand clinical feature contributions to support the statistical feature importance, SHAP is employed in a post-hoc manner. Further, an attempt is taken to mitigate biases in automatic decision making as well as heterogeneity that could occur during the predictive modelling. Finally, the predictions were combined with the reasoning to generate fair decision rules. 
 
 %Although fairness is an incredibly desirable quality from both clinical, technological, or philosophical side, it has been found that it is surprisingly difficult to make a CDSS fully fair. 
+\hspace*{3.5mm} More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
+
+\begin{enumerate}[noitemsep]
+    \item Can we train a surrogate model to approximate the behaviour of a complex DNN model? 
+    \item How effective a surrogate model at approximating the oracle model?  
+    \item How effective decision rules are to explain global and local behaviours of a model?   
+    \item Can we explain misclassified instances using decision rules? 
+\end{enumerate}
+
+\hspace*{3.5mm} Results of each observation are analysed, both quantitative and qualitatively, in the following section.
 
 \hspace*{3.5mm} There are three potential limitations of our approach w.r.t. fairness: i) we could not focus on other types of biases such as automation and coverage biases, which is mainly due to the nature of the data and experiment, ii) we could not yet externally validated or assessed our CDSS against the fairness, iii) we haven't computed any fairness metrics, hence we can't confidently say how fair our approach is. Now that we came to an end of the explainable journey towards developing a diagnosis decision support system, we should summarize the key findings and limitations before providing potential outlooks. In the next chapter, we conclude this thesis by discussing the overall key findings. Additionally, we'll provide several future research directions for the scientific communities. 
 

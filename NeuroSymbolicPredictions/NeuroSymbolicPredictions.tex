@@ -254,7 +254,16 @@ In many cases, a set of facts $\mathcal{F}$ may contain contradictory knowledge,
 \hspace*{3.5mm} We use the Pellet reasoner to deductively close the KG, i.e., we deductively close our KG w.r.t. the OWL2 EL profile. The $\mathcal{KG}$ would be deductively closed $iff$ for all $\phi$ s.t. $\mathcal{KG} \models \phi, \phi \in \mathcal{KG}$. Although the deductive closure of a knowledge is countably infinite, we assume it is finite for our case. Subsequently, we add only inferences that can be represented explicitly as edges between named individuals and classes~(i.e., entities that are explicitly named) in the $\mathcal{KG}$ s.t. for all instances $x_{i}, x_{j} \in \mathcal{KG}$ and object properties $r \in \mathcal{KG}$, if $\mathcal{KG} \models r\left(x_{i}, x_{j}\right)$, then $r\left(x_{i}, x_{j}\right) \in \mathcal{KG} ^{\models}$. Furthermore, for all named classes $C \in \mathcal{KG}$ and instances $x \in \mathcal{KG}$, if $\mathcal{KG}=\mathrm{C}(x)$, then $C(x) \in \mathcal{KG} ^{\pm}$. Finally, relations between classes are inferred by adding subclass axioms to the inferred graph, s.t. for any class $C, D \in \mathcal{KG}$, if $\mathcal{KG} \models C \sqsubseteq D$, then $C \sqsubseteq D \in \mathcal{KG}^{\pm}$. 
 
 \section{Evaluations}\label{chapter_8:results}
-In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. 
+In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
+
+\begin{enumerate}[noitemsep]
+    \item Can we train a surrogate model to approximate the behaviour of a complex DNN model? 
+    \item How effective a surrogate model at approximating the oracle model?  
+    \item How effective decision rules are to explain global and local behaviours of a model?   
+    \item Can we explain misclassified instances using decision rules? 
+\end{enumerate}
+
+\hspace*{3.5mm} Results of each observation are analysed, both quantitative and qualitatively, in the following section.
 
 \subsection{Experiment setup}
 We used Prot{\'e}g{\'e} 5.5.0 is used for the reasoning, DLx querying, and DL rule generations with Pellet, RLK, and HermiT reasoners. 
