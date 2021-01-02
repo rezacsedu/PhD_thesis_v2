@@ -12,7 +12,7 @@ In chapter \ref{chapter:uni_modality} and \ref{chapter:multiodality}, different 
     \item Which interpretability technique is more helpful for explaining global and individual diagnosis?
 \end{enumerate}
 
-\hspace*{3.5mm} First, several neural network architectures will be trained to learn joint latent representation from the multimodal genomics data, before classifying the samples into specific cancer types. Then attempts will be taken to improve the interpretability and algorithmic transparency of the black-box models. Through several experiments, hypotheses will be built upon for which multimodality combinations and which interpretability techniques are suited most to generate insights. In particular, to improve the algorithmic transparency and explainability of the black-box models, different probing, perturbing, and interpretable methods will applied, in both ante-hoc and post-hoc interpretability settings. Further, to validate if the identified biomarkers are biologically relevant, functional analysis will be carried out. The interpretations will be used to generate new hypotheses to be tested experimentally in \cref{chapter:xai_rules}. % in terms of model surrogation.
+\hspace*{3.5mm} First, several neural network architectures will be trained to learn joint latent representation from the multimodal genomics data, before classifying the samples into specific cancer types. Then attempts will be taken to improve the interpretability and algorithmic transparency of the black-box models. Through several experiments, hypotheses will be built upon for which multimodality combinations and which interpretability techniques are suited most to generate insights. In particular, to improve the algorithmic transparency and explainability of the black-box models, different probing, perturbing, and interpretable methods will applied, in both ante-hoc and post-hoc interpretability settings. Then, by utilizing state-of-the-art methods, explainability metrics such as model plausibility and faithfulness were computed. Further, to validate if the identified biomarkers are biologically relevant, functional analysis will be carried out. The interpretations will be used to generate new hypotheses to be tested experimentally in \cref{chapter:xai_rules}. % in terms of model surrogation.
 
 \section{Introduction}\label{chapter_5:intro}
 As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, of which TCGA most well-known for omics data. Omics data is a collection of biomolecules inside living things such as genomics, metabolomics, and proteomics. TCGA curates various omics data, e.g., mutations, GE, DNA methylation, CNV, and miRNA expressions. By acquiring deep insights of these data, treatment can be focused on preventive measures. Besides, clinical and pathology information are provided. TCGA further analyzed over 11,000 cancer cases from 33 prevalent forms of cancer as the part of Pan Cancer Atlas~(PCAt) project, covering gene expression, somatic mutation, DNA methylation, miRNA expression, and CNVs related data~\cite{lyu2018deep}. 
@@ -130,12 +130,18 @@ A few other works focused on counterfactual explanations. However, their optimiz
     \vspace{-4mm}
 \end{table}
 
-\hspace*{3.5mm} Due to the stochastic nature of DNN, the prediction and feature importance generated would be slightly different across runs, i.e., not deterministic. This also applied to DSS we developed in the previous chapters. We might even encounter similar issue for tree-based ensemble models such as random forest. For example, GBT provides 3 options for measuring feature importance: i) \emph{weight}, which is the number of times a feature is used to split the data across all trees, ii) \emph{cover}, the number of times a feature is used to split the data across all trees weighted by the number of training data points go through those splits, and iii) \emph{gain}, which is the average training loss reduction gained when using a feature for splitting. Based on these measure, feature importance orderings~(i.e., the order in which features were added) are different since subsequent features will get a disproportionately high weight.
+\hspace*{3.5mm} Existing works~\cite{holzinger2020measuring,holzinger2019causability,karim2019onconetexplainer,ying2019gnnexplainer} on measuring explainability, they mostly focus on both statistical explainability of an XAI system~\cite{li2017comprehensive}. When it comes to measure the explainability of a trained ML model, it is still an ongoing research, with limited works and measure available. Recently DeYoung et al.~\cite{deyoung2019eraser} proposed ERASER benchmark to measure the explainability aspect of ML models for natural language processing~(NLP). They proposed computing the explainability in terms of plausibility and faithfulness. Plausibility refers to how convincing the interpretation is to humans, while faithfulness refers to how accurately it reflects the true reasoning process of the model~\cite{jacovi2020towards}. To measure the faithfulness, two metrics called comprehensiveness and sufficiency have been proposed. 
+Providing diagnosis and statistical explanations are very convenient. However, in a domain like healthcare, it is necessary to enable a domain expert to understand, why an algorithm came up with a certain result~\cite{holzinger2020measuring,holzinger2019causability}, i.e., and physiological explainability is also important~\cite{holzinger2019causability}. Consequently, XAI rapidly gained interest in biomedicine. 
+
+\hspace*{3.5mm} XAI studies and methods\footnote{Please refer to \cref{sec:xai_methods} in \cref{chapter:preli}} put more emphasize on transparency and traceability of opaque DNN models~\cite{karim2019onconetexplainer}. However, there a wide variety of methods. For example, with layer-wise relevance propagation~(LRP)~\cite{LRP1,LRP2,LRP3} relevant parts of inputs to, and representations in, a neural network which caused a result, can be highlighted~\cite{holzinger2020measuring}. 
+Andreas Holzinger, et al.~\cite{holzinger2020measuring} has introduced `System Causability Scale'~(SCS) to measure the quality of explanations. SCS is based on the notion of Causability~\cite{holzinger2019causability} combined with concepts adapted from a widely-accepted usability scale. The purpose of SCS is to quickly determine whether and to what extent an explainable user interface, an explanation, or an explanation process itself is suitable for the intended purpose~\cite{holzinger2020measuring}.  
+
+\hspace*{3.5mm} However, on a challenging note on statistical explainability: due to the stochastic nature of DNN, the prediction and feature importance generated would be slightly different across runs, i.e., not deterministic. This also applied to DSS we developed in the previous chapters. We might even encounter similar issue for tree-based ensemble models such as random forest. For example, GBT provides 3 options for measuring feature importance: i) \emph{weight}\footnote{Number of times a feature is used to split the data across all trees}, ii) \emph{cover}\footnote{Number of times a feature is used to split the data across all trees weighted by the number of training data points go through those splits}, and iii) \emph{gain}\footnote{The average training loss reduction gained when using a feature for splitting}. Based on these measure, feature importance orderings~(i.e., the order in which features were added) may be significantly different since subsequent features will get a disproportionately high weight. 
 
 \hspace*{3.5mm} In the previous chapter, a multimodal autoencoder~(MAE) architecture was constructed and trained on multimodal genomics data. Then based on the concatenated latent feature vectors, breast cancer subtype classification tasks were performed. Since the latent vectors are not easily interpretable, MAE was as a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. Nevertheless, apart from some restrictive initiatives, no substantial works are done to improve the opaqueness of a DNN classifier based on multimodal representation learning. %Considering the factros, we not only
 
 \section{Methods}\label{chapter_5:mm}
-In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Therefore, we rely on several probing and interpretability methods discussed in \cref{chapter:preli} to improve both algorithmic transparency of the model and explainability of the diagnosis. 
+In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. There is no single approach to explainable AI that always works best~\cite{arya2019one}. There are many ways to explain an algorithmic decision or a model. The appropriate choice depends on the persona of the consumer and the requirements of the AI pipeline that bridge the gap from research to practice~\cite{arya2019one}. Therefore, we rely on several probing and interpretability methods discussed in \cref{chapter:preli} to improve both algorithmic transparency of the model and explainability of the diagnosis. Finally, comprehensiveness, sufficiency, and SCS will be computed to measure the quality of the explanation. 
 
 \iffalse
 \subsection{Problem statement}
@@ -177,6 +183,8 @@ to generate a modality specific latent representation $z$. Latent representation
     \item What training data points $x_i \in X$ are most important to $f(x_i)$? 
     \item What minimal change is necessary across input samples $x_i \in X$ to change the output $f(x_i)$?
 \end{itemize}
+
+\hspace*{3.5mm} On a serious note on usability of an XAI system, interactive ML adds the component of human expertise to AI/ML processes by enabling them to re-enact and retrace AI/ML results\footnote{For example, let them check it for it's user-friendliness, effectiveness, and plausibility}~\cite{holzinger2020measuring}. This requires human–AI interfaces for the DSS. In order to build effective and efficient interactive human–AI interfaces we have to deal with the question of how to evaluate the quality of explanations given by an explainable AI system~\cite{holzinger2020measuring}. In a nutshell, the problem is not only providing accurate diagnosis decision and (both global and local) explanations, but also leveraging human–AI interfaces for the DSS.   
 
 \subsection{Datasets}
 The DNA methylation, copy numbers, mutations, miRNA, and GE profiles from PCAt covering 33 prevalent tumor type for 9,074 samples are considered in our approach. This dataset has been used widely as prior knowledge to generate tumor-specific biomarkers~\cite{way2018machine,hoadley2018cell,malta2018machine}. These data are hybridized by the Affymetrix Genome-Wide Human SNP Array 6.0\footnote{\url{http://www.affymetrix.com/support/technical/byproduct.affx}}, which allows us to examine the largest number of cases along with the highest probe density~\cite{31Park}. Besides, cancer transcriptomes from the PCAt project is used to interrogate GE states induced by deleterious mutations and copy number alterations. The sample distribution across data types are shown in \cref{table:alldatadetails2}. %~\cite{weinstein2013cancer}. 
@@ -618,6 +626,40 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
 %after the last convolutional layer of each CAE encoder for individual modalities. 
 %such that the attention vector~(that represents individual feature weights) for each input modality contribute to the latent space $Z_k$.  
 
+\section{Measuring Explainability}
+Comprehensiveness, sufficiency, and SCS are computed to measure the quality of the explanation. First, to measure comprehensiveness, a contrast example $\tilde{x}_{i}$ is created, for each sample $x_{i}$, where $\tilde{x}_{i}$ is calculated by removing the predicted rationales $r_{i}$ from $x_{i}$. Let $f\left(x_{i}\right)_{c}$ be the original prediction probability provided by a model $f$~(i.e., $MCAE_{lrc}$ or $MCAE_{slr}$) for the predicted class $c$. If model $f$ is defined as $f\left(x_{i} \backslash r_{i}\right)_{c}$ as the predicted probability of $\tilde{x}_{i}\left(=x_{i} \backslash r_{i}\right)$, it is expected that the model prediction to be lower on removing the rationales~\cite{deyoung2019eraser}. Then the comprehensiveness $e$ is calculated as~\cite{deyoung2019eraser}: 
+
+\begin{align}
+    e  = f\left(x_{i}\right)_{c}-f\left(x_{i} \backslash r_{i}\right)_{c}
+\end{align}
+
+\hspace*{3.5mm} A prediction is considered as a match if the overlap with any of the ground truth rationales $r_i \geq 0.5$. A high value of comprehensiveness implies that the rationales were influential in the prediction. The sufficiency $s$, which measures the degree to which extracted rationales are adequate for the model $f$ to make a prediction, is measured as follows~\cite{deyoung2019eraser}: 
+
+\begin{align}
+    s  =  f\left(x_{i}\right)_{c} f\left(r_{i}\right)_{c}
+\end{align}
+
+\hspace*{3.5mm} On the other hand, SCS is computed from the usability perspective, based on the answer from the end users in the form of survey. 
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Factors in data} - I found that data included all relevant known causal factors with sufficient precision and granularity.
+    \item \textbf{Understood} - I understood the explanations within the context of my work.
+    \item \textbf{Change detail level} - I could change the level of detail on demand.
+    \item \textbf{Need teacher/support} - I did not need support to understand the explanations.
+    \item \textbf{Understanding causality} - I found the explanations helped me to understand causality.
+    \item \textbf{Use with knowledge} - I was able to use the explanations with my knowledge base.
+    \item \textbf{No inconsistencies} - I did not find inconsistencies between explanations.
+    \item \textbf{Learn to understand} - I think that most people would understand the explanations quickly.
+    \item \textbf{Needs references} - I did not need more references in the explanations: e.g., medical guidelines.
+    \item \textbf{Efficient} - I received the explanations in a timely and efficient manner.
+\end{enumerate}
+
+\hspace*{3.5mm} SCS recommended a 5 point scale, where rating 1 = strongly disagree, 2 = disagree, 3 = neutral, 4 = agree, 5 = strongly agree. Upon received the feedback on these aspects, SCS is measured by dividing ratings with the total ratings as follows: 
+
+\begin{align}
+    SCS  = \sum_{i=1}^{10} \text {Rating}_{i} / 50
+\end{align}
+
 \section{Experiments}\label{chapter_5:results} 
 In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. More specifically, several experiments were carried out to improve the interpretability of the models, with the following objectives:
 
@@ -626,6 +668,8 @@ In this section, we discuss the evaluation results, both quantitatively and qual
     \item What individual genomic modalities are more suitable for global and individual diagnosis? 
     \item What multimodal input combinations are more suitable for global and individual diagnosis?
     \item Which interpretability technique is more helpful for explaining global and individual diagnosis?
+    \item How faithful the explanations are? 
+    \item What is more important: accuracy, explainability, or faithfulness?
 \end{enumerate}
 
 \hspace*{3.5mm} Results of each observation is analysed, both quantitative and qualitatively. 
@@ -633,9 +677,10 @@ In this section, we discuss the evaluation results, both quantitatively and qual
 \subsection{Experiment setup}
 Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
 
-\hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. 
+\hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. Besides, we report the comprehensiveness and sufficiency to measure the faithfulness of the explanations and the predictions. 
+
 %Hence, we did not report F1-scores. 
-When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed, based on $MCAE_{lrc}$ classifier. The idea is to explain the diagnosis, via 5 different areas, namely: i) Global explanations, ii) Local explanations, iii), Feature interactions, iv) Data distributions, and v) Model performance, as shown in \cref{fig:ui_explain}. 
+\hspace*{3.5mm} When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed, based on $MCAE_{lrc}$ classifier. The idea is to explain the diagnosis, via 5 different areas, namely: i) Global explanations, ii) Local explanations, iii), Feature interactions, iv) Data distributions, and v) Model performance, as shown in \cref{fig:ui_explain}. 
 
 \begin{sidewaysfigure*}
 \centering
@@ -1231,25 +1276,50 @@ Display similar profiles and the extent to which they are similar to the chosen 
 	\vspace{-4mm}
 \end{figure}
 
-\hspace*{3.5mm} However, if we remove feature TFAP2A from the patient profile, we would expect the model to predict the label COAD with a probability of 26\%~(i.e., 55\% $-$ 29\%), making the actual prediction to be BRCA cancer type. On the other hand, features IVL, PRSS16, EFNB1, and CWH43 are more important features, having impacts of 0.23, 0.17, 0.123, and 0.07, respectively for the class BRCA. These feature identified by our approach not only can reveal the relevance of important feature for classifier’s decision, but also signify that removing most relevant biomarkers will impact the prediction decision, accordingly to their relevance value. 
+\hspace*{3.5mm} However, if we remove feature TFAP2A from the profile, we would expect the model to predict the label COAD with a probability of 26\%~(i.e., 55\% $-$ 29\%), making the actual prediction to be BRCA cancer type. On the contrary, features IVL, PRSS16, EFNB1, and CWH43 are more important features, having impacts of 0.23, 0.17, 0.123, and 0.07, respectively for the class BRCA. These features not only can reveal the relevance of important feature for classifier’s decision, but also signify that removing most relevant biomarkers will impact the prediction decision, accordingly to their relevance value. 
 
 %\subsubsection{Similar profiles and summary plot}
 %Display similar profiles and the extent to which they are similar to the chosen applicant as indicated by the last row in the table below labelled as "Weight".
+
+\begin{table}[h]
+    \centering
+    \caption{Measure of explainability}
+    \begin{tabular}{l|c|c}
+        \hline \textbf{Classifier} & \textbf{Comprehensiveness} & \textbf{Sufficiency} \\ 
+        \hline $CNN_{g}$ & 0.29 & 0.09 \\ \hline 
+        $CNN_{m}$ & 0.21 & 0.05 \\
+        \hline $CNN_{c}$ & 0.29 & 0.09 \\  
+        \hline $VGG16_{g}$ & 0.29 & 0.09 \\ \hline 
+        $VGG16_{m}$ & 0.21 & 0.05 \\
+        \hline $VGG16_{c}$ & 0.29 & 0.09 \\ \hline 
+        $MCAE_{lrc}$ & 0.21 & 0.05 \\
+        \hline $MCAE_{slr}$ & 0.29 & 0.09 \\ 
+        \hline
+    \end{tabular}
+    \label{tab:faithfullness_result}
+\end{table}
+
+\subsection{Measure of explainability}
+For computing the explainability, both unimodal and multimodal models are considered. However, since GE and miRNA modalities work well in multimodal setting, CNV modality is excluded from the calculation. Results of the faithfulness are shown in \cref{tab:faithfullness_result} in terms of comprehensiveness and sufficiency. As shown that unimodal models such as vanilla $CNN_{m}$, $VGG16_{g}$, $VGG16_{m}$, $CAE_{g}$, and $CAE_{m}$ consistently outperforms other models such as $CNN_{g}$, $CNN_{g}$, $VGG16_{c}$, $CAE_{c}$, $MCAE_{lrc}$~(i.e., $f_1$), and $MCAE_{slr}$~(i.e., $f_2$). This signifies that a model which attain the best scores in terms of performance metrics, may not perform well in terms of faithfulness explainability metrics. Model $CNN_{g}$, $CNN_{c}$, $VGG16_{c}$, $CAE_{c}$ and $MCAE_{slr}$ have  the  worst  score  for  sufficiency as compared to other models. 
+
+\hspace*{3.5mm} Models $CAE_{g}$  $CAE_{m}$, and $MCAE_{lrc}$ turns out to be the best models for both sufficiency and comprehensiveness metric. Overall, $CAE_{g}$ performs the best among unimodal and $MCAE_{lrc}$ among multimodal model. As observed a model’s performance metric alone is not enough. Models with slightly lower performance, but much higher scores for faithfulness might be preferred for a sensitive and critical healthcare use cases such as cancer diagnosis at hand. 
 
 \section{Chapter Summary}\label{chapter_5:conclusion}
 In this chapter, two deep multimodal architectures called $MCAE_{lrc}$ and $MCAE_{slr}$ have been developed for cancer types prediction based on different combination of multimodal genomics data types. Besides, probing techniques such as GradCAM++, LRP, and attention mechanism employed on a vanilla CNN, an VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$ networks. Experiment results show that omics data are useful useful for predicting cancer types with high confidence giving high f1 scores~(of up to 96.25\% for single modality based on GE and of up to 92.45\% for GE+miRNA input modalities). Based on this comparison, it would not be unreasonable to conclude that there is a possibility both $MCAE_{lrc}$ and $MCAE_{slr}$ might surpass MAE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
 
 \hspace*{3.5mm} The $MCAE_{lrc}$ model can predict cancer types 96.25\% of the cases correctly, which slightly outperforms the approach by Boyu et al.~\cite{lyu2018deep}, but 6.5\% better than the approach by Yuanyuan et al.~\cite{li2017comprehensive}. Further, $MCAE_{lrc}$ model reduces the false prediction rate for the READ, UCS, ESCA, and CHOL tumor samples. In particular, against 35\%, 81\%, 77\%, and 56\% of the correctly predicted cases by~\cite{lyu2018deep}, $MCAE_{lrc}$ can predict 88.74\%, 87.26\%, 89.56\%, and 84.55\% of the cases correctly. Although slightly underperforms than~\cite{lyu2018deep} at classifying BRCA, THCA, and PRAD~(in red), our $MCAE_{lrc}$ model is more consistent for the majority cancer types and likely to perform more stably on new GE data. Further, by we statistical analysis is provided to confirm if the identified genes are statistically relevant. Nevertheless, more human-interpretable explanations are shown, covering both global and local explanations of the diagnosis made, through a user-friendly interface. 
 
-\hspace*{3.5mm} The downside is that several other factors have hindered this research too. For example, lack of enough training samples and single modality, i.e., only GE data used for making the predictions and generating the explanations. The latter reason caused the network to produce high training and validation errors during the training phase, giving lower accuracy during the inferencing phase. Although we attempted to open the CNN, VGG16, and MCAE `black-box' models through biomarker validation and feature ranking, our approach is mostly post-hoc as the explainability is based on test cases and results similar to LRP. 
-%Several further factors have hindered this research, such as lack of enough training samples, and lack of biological pathways analysis. 
-To summarize, this chapter disseminate the following findings, through several experiments:  
+\hspace*{3.5mm} The downside is that several other factors have hindered this research too. For example, lack of enough training samples and single modality, i.e., only GE data used for making the predictions and generating the explanations. The latter reason caused the network to produce high training and validation errors during the training phase, giving lower accuracy during the inferencing phase. Although we attempted to open the CNN, VGG16, and MCAE `black-box' models through biomarker validation and feature ranking, our approach is mostly post-hoc as the explainability is based on test cases and results similar to LRP. Another potential limitation that during the writing of the dissertation, the usability survey was not performed. Consequently, SCS is not reported in the experiment result section. %Several further factors have hindered this research, such as lack of enough training samples, and lack of biological pathways analysis.
+In a nutshell, this chapter disseminate the following findings and recommendations, based on experiments:  
 
 \begin{enumerate}[noitemsep]
     \item \textbf{What types of machine learning model and neural network architectures are for suitable for handing multimodal inputs?} - traditional baselines ML models cannot handle multi-input types, hence not suitable for multimodality. 
     \item \textbf{What individual genomic modalities are more suitable for more accurate diagnosis?} experiments results show that GE and miRNA and their multimodality more reliable results for cancer subtype prediction. This also suggests that this input combination is suitable for multimodality integration for subsequent experiments. 
     \item \textbf{What multimodal input combinations are more suitable for more accurate diagnosis?} - experiments results show that GE + miRNA multimodality combination is more suitable for cancer subtype prediction. This also suggests that DNA methylation data is not suitable for cancer diagnosis, hence not suitable for multimodality integration for subsequent experiments.
     \item \textbf{What types of data can express biological characteristics of the patients?} - the qualitative analysis of the learned representation of GE + miRNA data can express biological characteristics of cohorts. Subsequently, the MAE learns latent molecular properties in coded form from patient expression profiles. This suggests that the hypothesis built upon is valid. 
+    \item \textbf{How faithful the explanations are?} - based on the comprehensiveness and sufficiency 
+    \item What is more important: accuracy, explainability, or faithfulness?
+    \item Models with slightly lower performance, but much higher scores for plausibility and faithfulness might be preferred depending on the task at hand. 
 \end{enumerate}
 
 \hspace*{3.5mm} In order to ensure an explainable model is robust to adversaries and behaves as intended in real-life treatment diagnosis, adversarial robustness of the model needs to be improved~\cite{bhatt2020explainable}. In the next chapter, different adversarial attacks will be introduced on our model, including content moderation, numeric data moderation, and out-of-distribution~(OOD), before assessing the robustness against each scenario. 
