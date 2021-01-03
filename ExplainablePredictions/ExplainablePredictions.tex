@@ -633,7 +633,12 @@ Comprehensiveness, sufficiency, and SCS are computed to measure the quality of t
     e  = f\left(x_{i}\right)_{c}-f\left(x_{i} \backslash r_{i}\right)_{c}
 \end{align}
 
-\hspace*{3.5mm} A prediction is considered as a match if the overlap with any of the ground truth rationales $r_i \geq 0.5$. A high value of comprehensiveness implies that the rationales were influential in the prediction. The sufficiency $s$, which measures the degree to which extracted rationales are adequate for the model $f$ to make a prediction, is measured as follows~\cite{deyoung2019eraser}: 
+\hspace*{3.5mm} 
+
+
+Zaidan Eisner et al.~\cite{zaidan2007using} introduced the concept of using rationales in NLP in which human annotators would highlight a span of text that could support their labeling decision. For example, to justify why a review is positive, an annotator can highlight the most important words and phrases that would tell someone to see the movie. On the contrary, to justify why a review is negative, highlight words and phrases that would tell someone not to see the movie. Subsequently, it is found to be useful in different downstream NLP tasks~\cite{deyoung2019eraser} such as sentiment analysis~\cite{}, hate speech detection~\cite{mathew2020hatexplain}, text classification~\cite{herrewijnenmachine}, etc. The idea is conceptualized with the leave-one-feature-out analysis in which the rationale is computed based on the number of highlighted feature divided by the number of feature in a test sample. 
+
+A prediction is considered as a match if the overlap with any of the ground truth rationales $r_i \geq 0.5$. A high value of comprehensiveness implies that the rationales were influential in the prediction. The sufficiency $s$, which measures the degree to which extracted rationales are adequate for the model $f$ to make a prediction, is measured as follows~\cite{deyoung2019eraser}: 
 
 \begin{align}
     s  =  f\left(x_{i}\right)_{c} f\left(r_{i}\right)_{c}
@@ -675,12 +680,12 @@ In this section, we discuss the evaluation results, both quantitatively and qual
 \hspace*{3.5mm} Results of each observation is analysed, both quantitative and qualitatively. 
 
 \subsection{Experiment setup}
-Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0. 
+Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0.
 
 \hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. Besides, we report the comprehensiveness and sufficiency to measure the faithfulness of the explanations and the predictions. 
 
 %Hence, we did not report F1-scores. 
-\hspace*{3.5mm} When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed, based on $MCAE_{lrc}$ classifier. The idea is to explain the diagnosis, via 5 different areas, namely: i) Global explanations, ii) Local explanations, iii), Feature interactions, iv) Data distributions, and v) Model performance, as shown in \cref{fig:ui_explain}. 
+\hspace*{3.5mm} When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed, based on $MCAE_{lrc}$ classifier. The idea is to explain the diagnosis, via 6 different areas, namely: i) Global explanations, ii) Local explanations, iii), Feature interactions, iv) Data distributions, v) Model performance, and vi) Measure of explainability, as shown in \cref{fig:ui_explain}. 
 
 \begin{sidewaysfigure*}
 \centering
@@ -1271,7 +1276,7 @@ Display similar profiles and the extent to which they are similar to the chosen 
     \vspace{-2mm}
 	\centering
 	\includegraphics[scale=0.6]{images/reli_explain.png}
-	\caption{Word-level relevance test}% using leave-one-out test}
+	\caption{Gene-level relevance test using leave-one-out test}
     \label{fig:explain_term_wise_religious_hate}
 	\vspace{-4mm}
 \end{figure}
@@ -1300,9 +1305,9 @@ Display similar profiles and the extent to which they are similar to the chosen 
 \end{table}
 
 \subsection{Measure of explainability}
-For computing the explainability, both unimodal and multimodal models are considered. However, since GE and miRNA modalities work well in multimodal setting, CNV modality is excluded from the calculation. Results of the faithfulness are shown in \cref{tab:faithfullness_result} in terms of comprehensiveness and sufficiency. As shown that unimodal models such as vanilla $CNN_{m}$, $VGG16_{g}$, $VGG16_{m}$, $CAE_{g}$, and $CAE_{m}$ consistently outperforms other models such as $CNN_{g}$, $CNN_{g}$, $VGG16_{c}$, $CAE_{c}$, $MCAE_{lrc}$~(i.e., $f_1$), and $MCAE_{slr}$~(i.e., $f_2$). This signifies that a model which attain the best scores in terms of performance metrics, may not perform well in terms of faithfulness explainability metrics. Model $CNN_{g}$, $CNN_{c}$, $VGG16_{c}$, $CAE_{c}$ and $MCAE_{slr}$ have  the  worst  score  for  sufficiency as compared to other models. 
+For computing the explainability, both unimodal and multimodal models are considered. However, since GE and miRNA modalities work well in multimodal setting, CNV modality is excluded from the calculation. Results of the faithfulness are shown in \cref{tab:faithfullness_result} in terms of comprehensiveness and sufficiency~(where the prefix is used to refer the DNN architecture, e.g., vanilla `CNN', `VGG16', `CAE', or `MCAE', and suffix refer to modality such as `g' for gene expression, `m' for miRNA, `c' for CNV, etc.). As shown that unimodal models such as vanilla $CNN_{m}$, $VGG16_{g}$, $VGG16_{m}$, $CAE_{g}$, and $CAE_{m}$ consistently outperforms other models such as $CNN_{g}$, $CNN_{g}$, $VGG16_{c}$, $CAE_{c}$, $MCAE_{lrc}$~(i.e., $f_1$), and $MCAE_{slr}$~(i.e., $f_2$). This signifies that a model which attain the best scores in terms of performance metrics, may not perform well in terms of faithfulness explainability metrics.  
 
-\hspace*{3.5mm} Models $CAE_{g}$  $CAE_{m}$, and $MCAE_{lrc}$ turns out to be the best models for both sufficiency and comprehensiveness metric. Overall, $CAE_{g}$ performs the best among unimodal and $MCAE_{lrc}$ among multimodal model. As observed a model’s performance metric alone is not enough. Models with slightly lower performance, but much higher scores for faithfulness might be preferred for a sensitive and critical healthcare use cases such as cancer diagnosis at hand. 
+\hspace*{3.5mm} Model $CNN_{g}$, $CNN_{c}$, $VGG16_{c}$, $CAE_{c}$ and $MCAE_{slr}$ have the worst score for sufficiency as compared to other models. Models $CAE_{g}$  $CAE_{m}$, and $MCAE_{lrc}$ turns out to be the best models for both sufficiency and comprehensiveness metric. Overall, $CAE_{g}$ performs the best among unimodal and $MCAE_{lrc}$ among multimodal model. As observed a model’s performance metric alone is not enough. Models with slightly lower performance, but much higher scores for faithfulness might be preferred for a sensitive and critical healthcare use cases such as cancer diagnosis at hand. 
 
 \section{Chapter Summary}\label{chapter_5:conclusion}
 In this chapter, two deep multimodal architectures called $MCAE_{lrc}$ and $MCAE_{slr}$ have been developed for cancer types prediction based on different combination of multimodal genomics data types. Besides, probing techniques such as GradCAM++, LRP, and attention mechanism employed on a vanilla CNN, an VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$ networks. Experiment results show that omics data are useful useful for predicting cancer types with high confidence giving high f1 scores~(of up to 96.25\% for single modality based on GE and of up to 92.45\% for GE+miRNA input modalities). Based on this comparison, it would not be unreasonable to conclude that there is a possibility both $MCAE_{lrc}$ and $MCAE_{slr}$ might surpass MAE and ML baselines models such as GBT or RF performance with the right combination of inputs. 
