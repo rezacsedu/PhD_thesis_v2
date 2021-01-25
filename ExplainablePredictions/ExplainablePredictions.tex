@@ -397,7 +397,7 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
 \end{align}
 \fi 
 
-\hspace*{3.5mm} Although permutation feature importance provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect the intrinsic predictive value of a feature by itself~\cite{molnar2019interpretable}. There is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, order in which a model sees features can affect the predictions. In SHapley Additive exPlanations~(aka. SHAP)~\cite{SHAP} interpretable method, feature importance is an alternative to the permutation feature importance discussed above. The only difference is how the importance is measured. Permutation feature importance is based on the decrease in model performance, while SHAP is based on magnitude of feature attributions~\cite{molnar2019interpretable}. 
+\hspace*{3.5mm} Although permutation feature importance provides a view on global feature importance and signifies how important a feature is for a particular model, it does not necessarily reflect the intrinsic predictive value of a feature by itself~\cite{molnar2019interpretable}. There is a possibility that a feature that seems to have lower importance for a under/overfitted model could be very important for a better fitted model. Nevertheless, the order in which a model sees features can affect the predictions. In SHapley Additive exPlanations~(aka. SHAP)~\cite{SHAP} interpretable method, feature importance is an alternative to the permutation feature importance discussed above. The only difference is how the importance is measured. Permutation feature importance is based on the decrease in model performance, while SHAP is based on magnitude of feature attributions~\cite{molnar2019interpretable}. 
 
 \hspace*{3.5mm} The goal is to explain the prediction of sample $x_i$ by computing the contribution of each feature in the prediction w.r.t Shapley values. Shapley values that are based on coalitional game theory~\cite{branzei2008models}\footnote{In game theory, a cooperative game played with competition between groups of players known as ``coalitions'' as there is a possibility of external enforcement of cooperative behavior. The cooperative game theory focuses on predicting which coalitions will form, the joint actions that groups take and the resulting collective payoffs.} is used as the measure of feature attributions. Feature values of $x_i$ act as players in a coalition such that the Shapley values tell us how to fairly distribute the  payout~\cite{molnar2019interpretable}. This can be correlated with distributing the prediction contributions among the features in a sample. SHAP specifies the explanation as follows~\cite{molnar2019interpretable}:
 
@@ -467,16 +467,16 @@ Although a single and simple AE discussed in \cref{preli:AEs} can reconstruct an
 \fi 
 
 \subsection{Training of MCAE}
-A single and simple AE can be used to reconstruct an output similar to the original input. However, it cannot handle multimodality~(i.e., different types of information). Weights of a encoder module is learned from both non-corrupted and unlabeled data. Subsequently, noisy supervised data with missing modalities is not suitable for learning latent features. Nevertheless, difference w.r.t dimensionality among input modalities are pretty large. For example, sometimes GE data come with about 20,000 features, but miRNA has only 5000 features. Non-trivial challenge in modality specific representation learning and limitations of MAE architecture are enough motivations to employ multimodal representation learning and classification based on multimodal CAE architecture~(MCAE). 
+A single and simple AE can be used to reconstruct an output similar to the original input. However, it cannot handle multimodality~(i.e., different types of information). Weights of a encoder module is learned from both non-corrupted and unlabeled data. Subsequently, noisy supervised data with missing modalities is not suitable for learning latent features. Nevertheless, the difference among input modalities are pretty large in terms of the dimensionality. For example, sometimes GE data come with about 20,000 features, but miRNA data has only 5,000 features. Non-trivial challenge in modality specific representation learning and limitations of MAE architecture are enough motivations to employ multimodal representation learning and classification based on multimodal CAE architecture~(MCAE). 
 
 \hspace*{3.5mm} Although CNNs are known as effective feature extractors, instead of using manually engineered convolutional filters in CNN, convolutional and pooling layers can be stacked together to construct a stacked convolutional autoencoder~(CAE), to leverage better feature extraction capability~\cite{alirezaie2019semantic}. This makes CAE, compared to vanilla AE based multimodal learning, more effective for very high dimensional data. In particular, CAE learns more optimal filters by minimizing the reconstruction loss, which results in more abstract features from the encoder~(e.g., pixel-level features from images, when genomic samples are embedded into 2D pixel-space~\cite{mostavi2019convolutional}). This helps to stabilize the pretraining. Subsequently, the network converges faster by avoid corruption in feature space~\cite{guo2017deep}. 
 
-\hspace*{3.5mm} Since individual latent representation is require to have the same dimensionality~\cite{mmdcae}, MCAE architecture depicted in \cref{fig:slr_1} is used to generate a combined representation for all input modalities, instead of one latent representation for each input modality. From network topological point of view, MCAE creates hierarchical hidden units by stacking multiple CAEs, which have strong connections between nodes not only for individual modality, but also across the modalities. Training MCAE involves pre-training to leverage the representation learning, followed by supervised fine-tuning on learned representation. 
+\hspace*{3.5mm} Since individual latent representation is require to have the same dimensionality~\cite{mmdcae}, MCAE architecture depicted in \cref{fig:slr_1} is used to generate a combined representation for all input modalities, instead of one latent representation for each input modality. From the network topological point of view, MCAE creates hierarchical hidden units by stacking multiple CAEs, which have a strong connection between nodes not only for individual modality, but also across the modalities. Training MCAE involves pre-training to leverage the representation learning, followed by supervised fine-tuning on learned representation. 
 
 \subsubsection{Unsupervised pertaining of MCAE} 
-Pre-training is similar to training a two-stage CAE network: first stage represents modality specific learning. The second stage corresponds to cross-modality. Pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual CAEs. 
+Pre-training is similar to training a two-stage CAE network: the first stage represents modality specific learning. The second stage corresponds to cross-modality. Pre-training is performed greedily on each layer of the network, which corresponds to representation learning with individual CAEs. 
 
-\paragraph{Stage-1: individual modality}\hspace{-3mm} of MCAE represents a specific modality for each type of data. Individual modality CAE is not only a one-layer CAE, but also a multilayer and gradually shrinking CAE with different number of layers per modality. An CAE consist of two sub-networks called encoder and decoder. Each layer of CAE consists of an encoder, that performs convolution and pooling, and a decoder that performs unpooling and deconvolution operations. More technically, encoder is a sigmoid function $g(.)$ parameterized by $\phi$, while decoder function $f(.)$ is parameterized by $\theta$. 
+\paragraph{Stage-1: individual modality}\hspace{-3mm} of MCAE represents a specific modality for each type of data. Individual modality CAE is not only a one-layer CAE, but also a multilayer and gradually shrinking CAE with different number of layers per modality. An CAE consist of two sub-networks called encoder and decoder. Each layer of CAE consists of an encoder, that performs convolution and pooling, and a decoder that performs unpooling and deconvolution operations. More technically, an encoder is a sigmoid function $g(.)$ parameterized by $\phi$~(refer to below for detail), while the decoder function $f(.)$ is parameterized by $\theta$~(refer to below for detail). 
 
 \hspace*{3.5mm} Assuming input $X_{k} \in \mathbb{R}^{D}$ for each of $k \in \mathbb{R}^K$ modalities is consisting of $n$ samples, a convolutional layer first calculates the convolutional feature map. Max-pooling operation is then performed, which downsamples the output of the convolutional layer by taking the maximum value in each non-overlapping sub-region. Thus, $X_{k}$ is mapped and transformed into a lower-dimensional embedding space, $Z_k$. Assuming, $p$ and $p$ are number of input and hidden units, respectively, latent-space representation $Z_k=g_{\phi}(X_{k})$ is learned in the bottleneck layer~\cite{mmdcae}: 
 
@@ -485,7 +485,7 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
     \label{eq:fcuk_1}
 \end{equation}
 
-\hspace*{3.5mm} The final feature maps $Z_k$ are latent variables, specific to modality $k$. In \cref{eq:fcuk_1}, where $\phi$ are trainable parameters~(which include a weight matrix $W_{k} \in \mathbb{R}^{p \times q}$ and a bias vector $b_{k} \in \mathbb{R}^{q}$ that are specific to respective modality $k$), $\oslash$ is the convolutional operation, and $\sigma$ is ELU~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}. Then the decoder module reconstructs from $h_k$, the original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
+\hspace*{3.5mm} The final feature maps $Z_k$ are latent variables, specific to modality $k$. In \cref{eq:fcuk_1}, where $\phi$ are trainable parameters~(which include a weight matrix $W_{k} \in \mathbb{R}^{p \times q}$ and a bias vector $b_{k} \in \mathbb{R}^{q}$ that are specific to respective modality $k$), $\oslash$ is the convolutional operation, and $\sigma$ is the ELU~\cite{clevert2015fast} activation function\footnote{Unlike MAE architecture, where ReLU activation function was used.}. Then the decoder module reconstructs from $h_k$, the original input $X_{k}$ from the latent representation $Z_k$ using the decoder function $f(.)$. Hidden representation $h_{k}$ is mapped back as reconstructed version $\hat{X}_{k}$, similar to original input ${X}_{k}$, as follows~\cite{mmdcae}: 
 
 \begin{equation}
     \hat{X_k}=f_{\theta}\left(Z_k\right)=f_{\theta}\left(g_{\phi}({X_k})\right) \label{eq:mcae_eq_1},
@@ -522,16 +522,16 @@ Pre-training is similar to training a two-stage CAE network: first stage represe
     %\label{eq:m1}
 \end{equation}  
 
-\hspace*{3.5mm} where $\left\{W_{c}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{c}, b_{e}, b_{r}\right\}$ are bias vectors for CNV, gene expression, and miRNA expression modalities, respectively. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation. Each of $X_c$, $X_e$, and $X_r$ input modalities are very high dimensional, with huge difference w.r.t. dimensionality. In such a case, simple distance measure is not suitable~\cite{thiam2020multimodal}. Therefore, following mean squared error is a better measure of reconstruction loss:  
+\hspace*{3.5mm} where $\left\{W_{c}, W_{e}, W_{r}\right\}$ are encoder's weight matrices, $\left\{b_{c}, b_{e}, b_{r}\right\}$ are bias vectors for CNV, gene expression, and miRNA expression modalities, respectively. Last element of the hidden dimension is the dimensionality of the modality-specific latent representation. Each of the $X_c$, $X_e$, and $X_r$ input modalities are very high dimensional, with huge difference w.r.t. dimensionality. In such a case, simple distance measure is not suitable~\cite{thiam2020multimodal}. Therefore, following mean squared error is a better measure of reconstruction loss:  
 
 \begin{equation}
-    L_{\mathrm{k}}(\theta, \phi)=\frac{1}{n} \sum_{i=1}^{n}\left({X_k}-f_{\theta}\left(g_{\phi}\left({X_k}\right)\right)\right)^{2} +\lambda\left\|W_{k}\right\|_{2}^{2}
+    L_{\mathrm{k}}(\theta, \phi)=\frac{1}{n} \sum_{i=1}^{n}\left({X_k}-f_{\theta}\left(g_{\phi}\left({X_k}\right)\right)\right)^{2} +\lambda\left\|W_{k}\right\|_{2}^{2}.
 \end{equation} 
 
-\hspace*{3.5mm} By replacing $f_{\theta}\left(g_{\phi}\left({X_k}\right)\right)$ with $\hat{X}_{k}$, above equation is changed to following: 
+\hspace*{3.5mm} By replacing $f_{\theta}\left(g_{\phi}\left({X_k}\right)\right)$ with $\hat{X}_{k}$, above equation is changed to the following: 
 
 \begin{equation}
-    L_{\mathrm{k}}(\theta, \phi)=\frac{1}{n} \sum_{i=1}^{n}\left({X_k}-\hat{X}_{k}\right)^{2} +\lambda\left\|W_{k}\right\|_{2}^{2}
+    L_{\mathrm{k}}(\theta, \phi)=\frac{1}{n} \sum_{i=1}^{n}\left({X_k}-\hat{X}_{k}\right)^{2} +\lambda\left\|W_{k}\right\|_{2}^{2},
 \end{equation} 
 
 \hspace*{3.5mm} where $\lambda$ is the activity regularizer and $W_{k}$ is network weights specific to input modality $k$. 
@@ -548,7 +548,7 @@ a concatenation layer is placed to concatenate individual latent representations
 
 \begin{equation}
     \left[\hat{h}_{m}\oplus \hat{h}_{e} \oplus \hat{h}_{r}
-    \right]=\Psi\left(\hat W_{mcae} \odot h_{mcae}+\hat {b}_{mcae}\right)
+    \right]=\Psi\left(\hat W_{mcae} \odot h_{mcae}+\hat {b}_{mcae}\right).
 \end{equation}
 
 \hspace*{3.5mm} The above equation can be decomposed into following individual modality specific representations:  
@@ -569,22 +569,22 @@ Final latent vector $h_{mcae}$ is feed into fully connected softmax layer for th
 Reconstruction loss of individual modality ${L}_{k}$ and CE loss ${L}_{ce}$ of the entire MCAE architecture are combined and optimized jointly as~\cite{mmdcae}: 
 
 \begin{align}
-    L_{mcae}=\sum_{i=0}^{n} \alpha_{r} {L}_{k}+\alpha_{c} {L}_{ce}
+    L_{mcae}=\sum_{i=0}^{n} \alpha_{r} {L}_{k}+\alpha_{c} {L}_{ce},
     %\label{eq:sum}
 \end{align}
 
 \hspace*{3.5mm} where $\alpha_{r}$ and $\alpha_{c}$ are the regularization weights assigned to modality specific~(i.e., ${L}_{k}$) and cross-entropy specific~(${L}_{ce}$) loss functions, respectively. Network parameters were initialized with Xavier initialization~\cite{xavier} and trained using the AdaGrad optimization method~\cite{duchi2011adaptive}. 
 
 \subsection{Probing into black-box MCAE models}
-Approaches based on multimodal learning directly merge all the latent representations into vector representations. As there is not huge difference between GE, miRNA, or CNV values, merging them blindly could ignore subtle differences between modalities. 
+Approaches based on multimodal learning directly merge all the latent representations into vector representations. As there is not a huge difference between GE, miRNA, or CNV values, merging them blindly could ignore subtle differences between modalities. 
 %w.r.t feature contributions and may increase dimensions of the representation. 
 Nevertheless, latent feature vectors are not easily interpretable. This critical drawback impedes the interpretability, making the MCAE a black-box model. However, disentangling latent vectors can provide insight into what features did the representations capture and what attributes of the samples are the classification going to be based on~\cite{karimTCBB2020}. 
 
-\hspace*{3.5mm} Unlike the unimodal CNN models, where fully convolutional layers act as feature extractor, it is more reasonable to empower the MCAE model to perform feature selection itself. This thesis hypotheses\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions} that attention mechanism can be applied on the bottleneck layer to generate attention weight vector. Then the attention weight vector itself can be decomposed to compute modality specific feature attributions. In other words, the idea is not only generating latent space, but also modality specific attention weight vectors before the actual concatenation. % and fusing different features  would help  %
+\hspace*{3.5mm} Unlike the unimodal CNN models, where fully convolutional layers act as the feature extractor, it is more reasonable to empower the MCAE model to perform feature selection itself. This thesis hypotheses\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions} that attention mechanism can be applied on the bottleneck layer to generate attention weight vector. Then the attention weight vector itself can be decomposed to compute modality specific feature attributions. In other words, the idea is not only generating latent space, but also modality specific attention weight vectors before the actual concatenation. % and fusing different features  would help  %
 
 %\subsubsection{Multimodal attention: computing feature importance}
-\hspace*{3.5mm} However, the use of attention mechanism for tabular and high-dimensional data is quite restrictive, except for a recent approach called self-attention networks~(SANs) proposed by Matej P. et al.~\cite{vskrlj2020feature}. Nevertheless, it is yet not clear how attention concept can be used for computing feature importance in multimodal input setting.
-As computing individual feature contributions from concatenated feature vector is challenging, the global attention-based feature computation is extended for the MCAE architecture. 
+\hspace*{3.5mm} However, the use of attention mechanisms for tabular and high-dimensional data is quite restrictive, except for a recent approach called self-attention networks~(SANs) proposed by Matej P. et al.~\cite{vskrlj2020feature}. Nevertheless, it is yet not clear how the attention concept can be used for computing feature importance in multimodal input setting.
+As computing individual feature contributions from the concatenated feature vectors is challenging, the global attention-based feature computation is extended for the MCAE architecture. 
 
 \begin{figure*}
 	\centering
@@ -602,13 +602,13 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
     g_l(h)=\frac{1}{k} \bigoplus_{k}\left[h \otimes \operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} h+\boldsymbol{b}_{l_{\mathrm{att}}}^{k}\right)\right],
 \end{equation}
 
-\hspace*{3.5mm} where $h$ is used as input to a softmax-activated layer by setting number of neurons equal to the number of features $|F_l|= p \times q $~(i.e., dimensionality of latent input), $k$ is the number of attention heads, $\otimes$ is Hadamard product, $\oplus$ is the Hadamard summation across individual heads, and $\sigma$ is the ELU activation function The softmax function is applied to $j_{i}$-th element of a weight vector $v_l$ is defined as~\cite{vskrlj2020feature}:
+\hspace*{3.5mm} where $h$ is used as input to a softmax-activated layer by setting the number of neurons equal to the number of features $|F_l|= p \times q $~(i.e., dimensionality of latent input), $k$ is the number of attention heads, $\otimes$ is the Hadamard\footnote{The Hadamard product is a binary operation, which takes two matrices of the same dimensions and produces another matrix of the same dimension.} product~\cite{horn1990hadamard}, $\oplus$ is the Hadamard summation across individual heads, and $\sigma$ is the ELU activation function. The softmax function, which is applied to $j_{i}$-th element of a weight vector $v_l$ is defined as follows~\cite{vskrlj2020feature}:
 
 \begin{equation}
     \operatorname{softmax}\left(\boldsymbol{v_l}_{j_{i}}\right)=\frac{\exp \left(\boldsymbol{v_l}_{j_{i}}\right)}{\sum_{j=1}^{|F_l|} \exp \left(\boldsymbol{v_l}_{j}\right),}
 \end{equation}
 
-\hspace*{3.5mm} where $v_l \in \mathbb{R}^{|F_l|}$. As $\sigma$ maintains a bijection between $F_l$ and weights in individual heads $W_{latt}^{k}$, weights in the $|F-l| \times|F_l|$ weight matrix represents the relations between features. Then element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of individual samples against true label ${y}$. Then similar to SAN, a fully connected softmax layer is used for the classification. Then, similar to SAN, attention vectors from $l_{\text {att}}$ is then used to compute feature importance estimates using a global attention layer, where the weights are activated using softmax activation. 
+\hspace*{3.5mm} where $v_l \in \mathbb{R}^{|F_l|}$. As $\sigma$ maintains a bijection between $F_l$ and weights in individual heads $W_{latt}^{k}$, weights in the $|F-l| \times|F_l|$ weight matrix represent the relations between features. Then element-wise product with the input space is computed in the forward pass towards predicting the label $\hat{y}$ of individual samples against true label ${y}$. Then similar to SAN, a fully connected softmax layer is used for the classification. Then, similar to SAN, attention vectors from $l_{\text {att}}$ is then used to compute feature importance estimates using a global attention layer, where the weights are activated using softmax activation. 
 
 \begin{sidewaysfigure*}
 	\centering
@@ -617,7 +617,7 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
 	\label{fig:all_attention}
 \end{sidewaysfigure*}
 
-\hspace*{3.5mm} On the other hand, similar to SAN's global attention mechanism, another attention layer is applied on top of the final concatenated latent space. This way, the attention layer will then act as a global attention layer, which takes the concatenated~(either based on LRC or SLR) to compute overall feature attributions, as shown in \cref{fig:all_attention}. In both modality specific and final concatenated latent space, feature importance is then computed from the weight vector, similar to SAN as:
+\hspace*{3.5mm} On the other hand, similar to SAN's global attention mechanism, another attention layer is applied on top of the final concatenated latent space. This way, the attention layer will then act as a global attention layer, which takes the concatenated~(either based on LRC or SLR) to compute overall feature attributions, as shown in \cref{fig:all_attention}. In both modality specific and final concatenated latent space, feature importance is then computed from the weight vector, similar to SAN as follows~\cite{vaswani2017attention}:
 
 \begin{equation}
     R_{l}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F_l| \times|F_l|}.
@@ -630,15 +630,15 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
 %such that the attention vector~(that represents individual feature weights) for each input modality contribute to the latent space $Z_k$.  
 
 \section{Measuring Explainability}
-Comprehensiveness, sufficiency, and SCS are computed to measure the quality of the explanation. First, to measure comprehensiveness, a contrast example $\tilde{x}_{i}$ is created, for each sample $x_{i}$, where $\tilde{x}_{i}$ is calculated by removing the predicted rationales $r_{i}$ from $x_{i}$. Let $f\left(x_{i}\right)_{c}$ be the original prediction probability provided by a model $f$~(i.e., $MCAE_{lrc}$ or $MCAE_{slr}$) for the predicted class $c$. If model $f$ is defined as $f\left(x_{i} \backslash r_{i}\right)_{c}$ as the predicted probability of $\tilde{x}_{i}\left(=x_{i} \backslash r_{i}\right)$, it is expected that the model prediction to be lower on removing the rationales~\cite{deyoung2019eraser}. Then the comprehensiveness $e$ is calculated as~\cite{deyoung2019eraser}: 
+Comprehensiveness, sufficiency, and SCS are computed to measure the quality of the explanation. First, to measure comprehensiveness, a contrast example $\tilde{x}_{i}$ is created, for each sample $x_{i}$, where $\tilde{x}_{i}$ is calculated by removing the predicted rationales $r_{i}$ from $x_{i}$. Let $f\left(x_{i}\right)_{c}$ be the original prediction probability provided by a model $f$~(i.e., $MCAE_{lrc}$ or $MCAE_{slr}$) for the predicted class $c$. If a model $f$ is defined as $f\left(x_{i} \backslash r_{i}\right)_{c}$ as the predicted probability of $\tilde{x}_{i}\left(=x_{i} \backslash r_{i}\right)$, it is expected that the model prediction to be lower on removing the rationales~\cite{deyoung2019eraser}. Then the comprehensiveness $e$ is calculated as~\cite{deyoung2019eraser}: 
 
 \begin{align}
     e  = f\left(x_{i}\right)_{c}-f\left(x_{i} \backslash r_{i}\right)_{c}
 \end{align}
 
-\hspace*{3.5mm} Zaidan Eisner et al.~\cite{zaidan2007using} introduced the concept of rationales in NLP in which human annotators would highlight a span of text that could support their labeling decision. For example, to justify why a review about a movie is positive, an annotator can highlight the most important words and phrases that would tell someone to see the movie. While, to justify why a review is negative, highlight words and phrases that would recommend someone not to see the movie. It is found to be useful in different NLP tasks~\cite{deyoung2019eraser} like sentiment analysis, hate speech detection, and text classification~\cite{herrewijnenmachine}. 
+\hspace*{3.5mm} Zaidan E. et al.~\cite{zaidan2007using} introduced the concept of rationales in NLP in which human annotators would highlight a part of text that could support their labeling decision. For example, to justify why a review about a movie is positive, an annotator can highlight the most important words and phrases that would tell someone why to see the movie. While to justify why a review is negative, the annotator can highlight words and phrases that would recommend someone why not to see the movie. It is found to be useful in different NLP tasks~\cite{deyoung2019eraser} like sentiment analysis, hate speech detection, and text classification~\cite{herrewijnenmachine}. 
 
-\hspace*{3.5mm} For the cancer diagnosis, the same idea is conceptualized based on the leave-one-feature-out analysis in which the rationale is computed based on the number of extracted features divided by the number of features in a test sample. A prediction is considered a match if the overlap with any of the ground truth rationales $r_i \geq 0.25$. A high value of comprehensiveness implies that the rationales were influential w.r.t prediction. The sufficiency $s$ that measures the degree to which extracted rationales are adequate for the model $f$ to make a prediction is measured as~\cite{deyoung2019eraser}: 
+\hspace*{3.5mm} For the cancer diagnosis, the same idea is conceptualized based on the leave-one-feature-out analysis in which the rationale is computed based on the number of extracted features divided by the number of features in a test sample. A prediction is considered a match if the overlap with any of the ground truth rationales $r_i \geq 0.25$. A high value of comprehensiveness implies that the rationales were influential w.r.t prediction. The sufficiency $s$ measuring the degree to which extracted rationales are adequate for the model $f$ to make a prediction is defined  as follows~\cite{deyoung2019eraser}: 
 
 \begin{align}
     s  =  f\left(x_{i}\right)_{c} f\left(r_{i}\right)_{c}
@@ -659,30 +659,31 @@ Comprehensiveness, sufficiency, and SCS are computed to measure the quality of t
     \item \textbf{Efficient} - I received the explanations in a timely and efficient manner.
 \end{enumerate}
 
-\hspace*{3.5mm} SCS recommended a 5 point scale, where rating 1 = strongly disagree, 2 = disagree, 3 = neutral, 4 = agree, 5 = strongly agree. Upon received the feedback on these aspects, SCS is measured by dividing ratings with the total ratings, i.e., $SCS  = \sum_{i=1}^{10} \text {Rating}_{i} / 50$. 
+\hspace*{3.5mm} The SCS recommended a 5 point scale, where rating 1 = strongly disagree, 2 = disagree, 3 = neutral, 4 = agree, 5 = strongly agree. Upon received the feedback on these aspects, SCS is measured by dividing ratings with the total ratings, i.e., $SCS  = \sum_{i=1}^{10} \text {Rating}_{i} / 50$. 
 
 \section{Experiments}\label{chapter_5:results} 
-In this section, evaluation results of several experiments are discussed both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. To improve the interpretability of the models, experiments are carried out with the following objectives:
+In this section, evaluation results of several experiments are discussed both quantitatively and qualitatively. A comparative analysis with state-of-the-art approaches is provided. To improve the interpretability of the models, experiments are carried out with the following objectives:
 
 \begin{enumerate}[noitemsep]
     %\item What types of neural network architectures are for more for handing multimodal inputs. 
     \item What individual genomic modalities are more suitable for global and individual diagnosis? 
     \item What multimodal input combinations are more suitable for global and individual diagnosis?
     \item Which interpretability technique is more helpful for explaining global and individual diagnosis?
-    \item How faithful the explanations are? 
+    \item How faithful are the explanations? 
     \item What is more important: accuracy, explainability, or faithfulness?
 \end{enumerate}
 
 \hspace*{3.5mm} Results of each observation is analysed, both quantitative and qualitatively. 
 
 \subsection{Experiment setup}
-Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. Further, the effect of minor noise~(by leveraging Gaussian noise layer) and dropout regularization are observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0.
+Each network is trained for 500 epochs, in a similar setting of cosine annealing cycling, by setting the batch size to $128$. The activity regularization term $\lambda$ is set between $[0.001, 0.005]$, while the regularization weights of the loss functions in \cref{eq:sum} are set as  $\alpha_{r}$=0.1, and $\alpha_{c}$=0.25. Further, the effect of minor noise~(by leveraging a Gaussian noise layer) and dropout regularization are observed. Gaussian noise parameters are empirically set to a standard deviation of 0.1 and a mean of 0.
 
-\hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Further, since classes are imbalanced, Matthias correlation coefficient~(MCC) scores were reported. We did not report F1-scores since it is significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. Besides, we report the comprehensiveness and sufficiency to measure the faithfulness of the explanations and the predictions. 
+\hspace*{3.5mm} Results based on random hyperparameters search and 5-fold cross-validation are reported with macro-averaged precision and recall. Since the dataset is moderately imbalanced, Matthias correlation coefficient~(MCC) scores are reported. We did not report F1-scores since they are significant only when precision and recall are very different. Thus, it is important for cancer diagnosis to have both high precision and high recall~\cite{naulaerts2017precision}, results with very different precision and recall are not useful in cancer diagnosing and tumor type identification. Besides, we report the comprehensiveness and sufficiency to measure the faithfulness of the explanations and the predictions. 
 
 %Hence, we did not report F1-scores. 
-\hspace*{3.5mm} When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble prediction on. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed, based on $MCAE_{lrc}$ classifier. The idea is to explain the diagnosis, via 6 different areas, namely: i) Global explanations, ii) Local explanations, iii), Feature interactions, iv) Data distributions, v) Model performance, and vi) Measure of explainability, as shown in \cref{fig:ui_explain}. 
+\hspace*{3.5mm} When we create snapshots, we set the number of epochs to 200, maximum LR to 1.0, and the number of cycles to 20, giving 20 snapshots for each model. For 4 different architectures~(vanilla CNN, VGG16, $MCAE_{lrc}$, and $MCAE_{slr}$), we get 80 snapshot models in total, on which we construct the ensemble prediction on. Two best snapshot models are then used for the decision visualization and evaluations. Besides, a web application is developed, based on $MCAE_{lrc}$ classifier. The idea is to explain the diagnosis, via 6 different areas, namely: i) Global explanations, ii) Local explanations, iii), Feature interactions, iv) Data distributions, v) Model performance, and vi) Measure of explainability. %, as shown in \cref{fig:ui_explain}. 
 
+\iffalse
 \begin{sidewaysfigure*}
 \centering
 	\includegraphics[scale=0.8]{images/ui.png}
@@ -690,6 +691,7 @@ Each network is trained for 500 epochs, in a similar setting of cosine annealing
     \label{fig:ui_explain}
     \vspace{-4mm}
 \end{sidewaysfigure*}
+\fi 
 
 \subsection{Model performance}
 In this sub-section, we analyse performance of each model, considering both single and multimodality. Then, both marker genes and common genes will be selected for the model surrogate strategy in \cref{chapter:xai_rules}.
@@ -820,7 +822,7 @@ show that the AUC scores are consistent across the folds showing stable predicti
 \end{figure*}
 \fi 
 
-\hspace*{3.5mm} Further, class-specific MCC scores of VGG16 model is 4\% higher than the CNN model, which suggests that the predictions were strongly correlated with the ground truth, yielding a Pearson product-moment correlation coefficient higher than 0.70 for all the classes except for the CHOL tumor samples. The downside, however, is that both classifiers made a number of mistakes too, e.g., VGG16 can classify ESCA, READ, UCS, and CHOL tumor cases in only 89\% of the cases accurately, while the CNN model made more mistakes particularly for the READ, LUAD, LIHC, KIRP, COAD, and STAD tumor samples. Nevertheless, as is shown 17 of 23 normal classes are classified into their corresponding cancer type, where normal samples from kidney~(KICH, KIRC and KIRP), liver~(CHOL and LIHC), lung~(LUAD and LUSC) or digestive system~(ESCA and STAD) are clearly grouped together. This indicates probably the model learned to recognize tissues of origin. While we analysed the classification results of tumor samples, the major classification errors are also within kidney, lung, colon, and rectum adenocarcinomas.
+\hspace*{3.5mm} Further, class-specific MCC scores of the VGG16 model are 4\% higher than the CNN model, which suggests that the predictions were strongly correlated with the ground truth, yielding a Pearson product-moment correlation coefficient higher than 0.70 for all the classes except for the CHOL tumor samples. The downside, however, is that both classifiers made a number of mistakes too, e.g., VGG16 can classify ESCA, READ, UCS, and CHOL tumor cases in only 89\% of the cases accurately, while the CNN model made more mistakes particularly for the READ, LUAD, LIHC, KIRP, COAD, and STAD tumor samples. Nevertheless, as is shown 17 of 23 normal classes are classified into their corresponding cancer type, where normal samples from kidney~(KICH, KIRC and KIRP), liver~(CHOL and LIHC), lung~(LUAD and LUSC) or digestive system~(ESCA and STAD) are clearly grouped together. This indicates probably the model learned to recognize tissues of origin. While we analysed the classification results of tumor samples, the major classification errors are also within kidney, lung, colon, and rectum adenocarcinomas.
 
 \begin{sidewaysfigure*}
 	\centering
