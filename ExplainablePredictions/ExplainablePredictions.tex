@@ -36,7 +36,7 @@ Identification of biomarkers is the ranking of biologically significant and mean
 %. Inclusion of complementary genes, Picking of cancer related genes instead of cell composition related genes, and
 %. Reasonably efficient.
 
-\hspace*{3.5mm} In this chapter, multimodal genomics data is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. Data from the PCAt project~\cite{weinstein2013cancer} is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. A vanilla convolutional neural network~(CNN) and a deep CNN architecture called VGG-16 are trained end-to-end for the classification. On the other hand, a multimodal convolutional autoencoder~(MCAE) network is trained to learn joint latent representation from the multimodal genomics data before the classification. These models are treated as `black-box' methods. Subsequently, to improve algorithmic transparency, different probing techniques are employed to mitigate the opaqueness of these `black-box' models. 
+\hspace*{3.5mm} In this chapter, multimodal genomics data is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. Data from the PCAt project~\cite{weinstein2013cancer} is used to train deep neural network~(DNN) architectures to classify the cohorts into specific cancer patient groups. A vanilla convolutional neural network~(CNN) and a deep CNN architecture called VGG-16 are trained end-to-end for the classification. On the other hand, a multimodal convolutional autoencoder~(MCAE) network is trained to learn joint latent representation from the multimodal genomics data before the classification. These models are treated as `black-box' methods. To improve algorithmic transparency, different probing techniques are employed to mitigate the opaqueness of these `black-box' models. 
 
 \hspace*{3.5mm} Since genomics data are high dimensional, this thesis hypothesis that\footnote{\textbf{H4}: \textit{Since genomics data is high dimensional, embedding them into 2D raw images can help locate significant biomarkers.}} embedding them into 2D raw images can help locate significant biomarkers\footnote{Supporting publication: Md. Rezaul Karim, Michael Cochez, Oya Beyan, Stefan Decker, and Christoph Lange-Bever, ``OncoNetExplainer: Explainable Predictions of Cancer Types Based on Gene Expression Data", Proc. of \emph{IEEE International Conference on Bioinformatics and Bioengineering~(BIBE'2019)}, Athens, Greece, October 28-30, 2019}. % for the corresponding tumor types. 
 To identify relevant biomarkers\footnote{RQ2: \textit{How to identify relevant features or factors for a certain decision?}}, Grad-CAM++ and LRP are used to generate class-specific heat maps~(HM) for all classes. 
@@ -385,7 +385,7 @@ Data for each modality is high dimensional, where majority of features~(genes) a
 \hspace*{3.5mm} To observe if the feature identified by CNNs are statistically significant and comparable to established feature ranking approaches such as random forest-based estimates, we compute feature importance for the driver genes. The permutation feature importance is computed on top of a trained model $f$. For each feature $x_i$ in dataset $X_k$ and for each repetition $r$ in $1, 2, \ldots, R$, column $x_i$ is randomly shuffled to generate a corrupted version of the data $\tilde{X_k}_{r,x_i}$. Then a reference balanced score~(F1-score in our case) $s_{r,x_i}$ is computed for $f$. Subsequently, the mean importance $\sigma_{x_i}$ for feature $x_{i}$ is computed as follows: 
 
 \begin{align}
-    \sigma_{x_i}=s-\frac{1}{R} \sum_{r=1}^{R} s_{r,x_i}
+    \sigma_{x_i}=s-\frac{1}{R} \sum_{r=1}^{R} s_{r,x_i}.
 \end{align}
 
 \iffalse
@@ -402,21 +402,21 @@ Using ELI5, permutation feature importance are computed on top of the trained mo
 \hspace*{3.5mm} The goal is to explain the prediction of sample $x_i$ by computing the contribution of each feature in the prediction w.r.t Shapley values. Shapley values that are based on coalitional game theory~\cite{branzei2008models}\footnote{In game theory, a cooperative game played with competition between groups of players known as ``coalitions'' as there is a possibility of external enforcement of cooperative behavior. The cooperative game theory focuses on predicting which coalitions will form, the joint actions that groups take and the resulting collective payoffs.} is used as the measure of feature attributions. Feature values of $x_i$ act as players in a coalition such that the Shapley values tell us how to fairly distribute the  payout~\cite{molnar2019interpretable}. This can be correlated with distributing the prediction contributions among the features in a sample. SHAP specifies the explanation as follows~\cite{molnar2019interpretable}:
 
 \begin{equation}
-    f\left(z^{\prime}\right)=\phi_{0}+\sum_{j=1}^{M} \phi_{j} z_{j}^{\prime}
+    f\left(z^{\prime}\right)=\phi_{0}+\sum_{j=1}^{M} \phi_{j} z_{j}^{\prime},
 \end{equation}
 
 \hspace*{3.5mm} where $f$ is an explanation model, $z^{\prime} \in\{0,1\}^{M}$ is the coalition vector\footnote{Less technically, coalition vector is simplified feature representation for tabular data}, $\mathrm{M}$ is the maximum coalition size, and $\phi_{j} \in \mathbb{R}$ is the feature attribution for a feature $\mathrm{j}$ or Shapley values. The computation is repeated in all possible orders to compare the features fairly. If $x_i$ is a feature in modality specific input $X_k$, it's importance w.r.t Shapley value $\phi$ is computed by comparing what the model predicts with and without $x_i$ for all possible combinations of $n$ features in $X_k$. For $x_i$, prediction $\hat x_i$ and $\phi$ are then calculated as~\cite{NIPS2017_7062}. 
 
 \vspace{-2mm}
 \begin{align}
-    \phi_{i}(\hat x_i)=\sum_{X_k \subseteq N / i} \frac{|X_k| !(n-|X_k|-1) !}{n !}(\hat x_i(X_k \cup i)-\hat x_i(X_k))
+    \phi_{i}(\hat x_i)=\sum_{X_k \subseteq N / i} \frac{|X_k| !(n-|X_k|-1) !}{n !}(\hat x_i(X_k \cup i)-\hat x_i(X_k)).
     \label{eq:shap}
 \end{align}
 
 \hspace*{3.5mm} If $x_i$ has no or almost zero effect on the predicted value, it is expected to produce a Shapley value of 0. If two features $x_i$ $x_{i+1}$ contribute equally to the prediction, Shapley values should be the same~\cite{NIPS2017_7062}. In SHAP, features with large absolute Shapley values are more important than others. In order to compute global importance, absolute Shapley values per feature~(across the data) are averaged as~\cite{NIPS2017_7062}:
 
 \begin{equation}
-    I_{j}=\sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|
+    I_{j}=\sum_{i=1}^{n}\left|\phi_{j}^{(i)}\right|.
 \end{equation}
 
 \hspace*{3.5mm} Although feature importance is used to provide global explanations by highlighting important features, plot only the value per feature is often not very insightful. Therefore, using the Shapely values, summary plot is more widely used, where feature importance is combined with feature effects. More detail will be discussed in a later chapter. It is to be noted that both CNN and VGG16 trained models are evaluated on a held-out set prior computing the feature importance using permutation feature importance and SHAP.
@@ -620,7 +620,7 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
 \hspace*{3.5mm} On the other hand, similar to SAN's global attention mechanism, another attention layer is applied on top of the final concatenated latent space. This way, the attention layer will then act as a global attention layer, which takes the concatenated~(either based on LRC or SLR) to compute overall feature attributions, as shown in \cref{fig:all_attention}. In both modality specific and final concatenated latent space, feature importance is then computed from the weight vector, similar to SAN as follows~\cite{vaswani2017attention}:
 
 \begin{equation}
-    R_{l}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F_l| \times|F_l|}.
+    R_{l}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F_l| \times|F_l|},
     %\label{eq:gal_k}
 \end{equation}
 
@@ -633,7 +633,7 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
 Comprehensiveness, sufficiency, and SCS are computed to measure the quality of the explanation. First, to measure comprehensiveness, a contrast example $\tilde{x}_{i}$ is created, for each sample $x_{i}$, where $\tilde{x}_{i}$ is calculated by removing the predicted rationales $r_{i}$ from $x_{i}$. Let $f\left(x_{i}\right)_{c}$ be the original prediction probability provided by a model $f$~(i.e., $MCAE_{lrc}$ or $MCAE_{slr}$) for the predicted class $c$. If a model $f$ is defined as $f\left(x_{i} \backslash r_{i}\right)_{c}$ as the predicted probability of $\tilde{x}_{i}\left(=x_{i} \backslash r_{i}\right)$, it is expected that the model prediction to be lower on removing the rationales~\cite{deyoung2019eraser}. Then the comprehensiveness $e$ is calculated as~\cite{deyoung2019eraser}: 
 
 \begin{align}
-    e  = f\left(x_{i}\right)_{c}-f\left(x_{i} \backslash r_{i}\right)_{c}
+    e  = f\left(x_{i}\right)_{c}-f\left(x_{i} \backslash r_{i}\right)_{c}.
 \end{align}
 
 \hspace*{3.5mm} Zaidan E. et al.~\cite{zaidan2007using} introduced the concept of rationales in NLP in which human annotators would highlight a part of text that could support their labeling decision. For example, to justify why a review about a movie is positive, an annotator can highlight the most important words and phrases that would tell someone why to see the movie. While to justify why a review is negative, the annotator can highlight words and phrases that would recommend someone why not to see the movie. It is found to be useful in different NLP tasks~\cite{deyoung2019eraser} like sentiment analysis, hate speech detection, and text classification~\cite{herrewijnenmachine}. 
@@ -641,7 +641,7 @@ Comprehensiveness, sufficiency, and SCS are computed to measure the quality of t
 \hspace*{3.5mm} For the cancer diagnosis, the same idea is conceptualized based on the leave-one-feature-out analysis in which the rationale is computed based on the number of extracted features divided by the number of features in a test sample. A prediction is considered a match if the overlap with any of the ground truth rationales $r_i \geq 0.25$. A high value of comprehensiveness implies that the rationales were influential w.r.t prediction. The sufficiency $s$ measuring the degree to which extracted rationales are adequate for the model $f$ to make a prediction is defined  as follows~\cite{deyoung2019eraser}: 
 
 \begin{align}
-    s  =  f\left(x_{i}\right)_{c} f\left(r_{i}\right)_{c}
+    s  =  f\left(x_{i}\right)_{c} f\left(r_{i}\right)_{c}.
 \end{align}
 
 \hspace*{3.5mm} SCS is computed w.r.t usability perspective, i.e., based on the response from the usability questionnaires:  
