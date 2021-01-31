@@ -39,7 +39,7 @@ Since we are emphasizing not only on high precision in clinical diagnosis, the m
 Since we apply content moderation (on numeric data) and OOD adversarial attacks, we limited our discussion on related work covering these two aspects only. Although some of the discussed works are not directly applicable for our cancer decision support system, they still provide the foundations to come up with effective adversarial robustness in our approach. Nevertheless, usually AEx are almost identical to normal samples, we treat attacks with AEx and OOD as two different types of attacks. 
 
 \subsection{Attacks with adversarial examples}
-Till date numerous approaches have been proposed on creating adversarial samples and some of them are already defeated by a countermeasure in later studies~\cite{yuan2019adversarial}. The concept of AEx was first formulated by Dalvi et al.~\cite{dalvi2004adversarial} as a game between adversary and classifier in which the attack and defense on AEx can be correlate as an iterative game. First gradient-based approaches are earliest approaches to generate AEx and attack linear suppport vector machines~(SVM)~\cite{biggio2013evasion}. Szegedy et al.\cite{szegedy2013intriguing} first introduced the concept of AEx against neural networks, where AEx were generated using a L-BFGS method\footnote{ Broyden–Fletcher–Goldfarb–Shanno is an iterative method for solving an unconstrained nonlinear optimization problem} as follows~\cite{yuan2019adversarial}:
+Till date numerous approaches have been proposed on creating adversarial samples and some of them are already defeated by a countermeasure in later studies~\cite{yuan2019adversarial}. The concept of AEx was first formulated by Dalvi et al.~\cite{dalvi2004adversarial} as a game between adversary and classifier in which the attack and defense on AEx can be correlate as an iterative game. First gradient-based approaches are earliest approaches to generate AEx and attack linear support vector machines~(SVM)~\cite{biggio2013evasion}. Szegedy et al.\cite{szegedy2013intriguing} first introduced the concept of AEx against neural networks, where AEx were generated using a L-BFGS method\footnote{ Broyden–Fletcher–Goldfarb–Shanno is an iterative method for solving an unconstrained nonlinear optimization problem.} as follows~\cite{yuan2019adversarial}:
 
 \vspace{-6mm}
 \begin{align}
@@ -58,7 +58,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
     \label{eq:fgsm_eta}
 \end{align}
 
-\hspace*{3.5mm} where $\epsilon$ is the magnitude of the perturbation, which is is computed using back-propagation. The corresponding adversarial example of sample $x$ is $x^{\prime}$, which is calculated as $x^{\prime}=x+\eta$~\cite{yuan2019adversarial}. On the other hand, literature~\cite{rozsa2016adversarial} proposed called called Fast Gradient Sign Method~(FGSM) to improve FGSM. In FGSM, the sign of gradient in FGSM is replaced with the raw gradient: $\eta=\nabla_{x} J(\theta, x, l)$. The effectiveness of FGSM relies in it's agnostic nature on constraints on each pixel, hence AEx can be generated with a larger local difference~\cite{yuan2019adversarial}. Since one-step attack is not only easy to transfer to another domain but also also easy to defend~\cite{yuan2019adversarial}, Dong. Y., et al.~\cite{dong2018boosting}, improve FGSM method in which momentum is applied to generate AEx more iteratively, where the gradients were calculated by:
+\hspace*{3.5mm} where $\epsilon$ is the magnitude of the perturbation, which is is computed using back-propagation. The corresponding adversarial example of sample $x$ is $x^{\prime}$, which is calculated as $x^{\prime}=x+\eta$~\cite{yuan2019adversarial}. On the other hand, in FGSM, the sign of gradient is replaced with the raw gradient: $\eta=\nabla_{x} J(\theta, x, l)$. The effectiveness of FGSM relies in it's agnostic nature on constraints on each pixel. Thus, AEx can be generated with a larger local difference~\cite{yuan2019adversarial}. Since one-step attack is not only easy to transfer to another domain but also also easy to defend~\cite{yuan2019adversarial}, Dong. Y., et al.~\cite{dong2018boosting}, improve FGSM method in which momentum is applied to generate AEx more iteratively, where the gradients were calculated by:
 
 \vspace{-6mm}
 \begin{align}
@@ -86,32 +86,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
 \hspace*{3.5mm} It is extended for multi-class classifier by finding the closest hyperplanes by finding a more general $\ell_{p}$ norm, $p \in[0, \infty)$. Eventually, DeepFool provides less perturbation compared to FGSM~\cite{yuan2019adversarial}.
 
 \subsection{Attacks with OOD examples}
-Subsequently, numerous approaches have been proposed to accurately identify OOD, in which many researchers have treated it as anomaly detection problem. Since discriminatively trained neural network classifiers produce reliable predictions only for ID samples, detecting OOD samples is essential. Assuming OOD to be outside the closed boundary of ID, typical neural classifiers do not contain the knowledge of this boundary for OOD detection during inference. Since OOD to be outside the closed boundary of ID, a predictive model is incapable of detecting OOD detection during the inferencing time, several recent approaches have been proposed to embed the logic into the learning algorithm and explicitly training the classifier with OOD samples close to the ID boundary. However, state-of-the-art approaches often fail to cover the entire ID boundary effectively, thereby resulting in a sub-optimal OOD detector. 
-
-\begin{table*}[!ht]
-    \caption{different cancer detection methods, data types, and performance }
-    \label{table:stateofart2}
-    \begin{center}
-    \scriptsize
-    \vspace{-6mm}
-    \begin{tabular}{l|l|l|l}
-        \hline
-        \textbf{Reference} & \textbf{Approach} & \textbf{Use cases} & \textbf{AUROC/FPR} \\\hline
-            Ren et al.~\cite{OOD1} & Likelihood ratios & Imaging \& genomics & 93\%/6.6\% \\\hline % 2018
-            Vernekar et al.~\cite{OOD2} & Manifold learning network & MNIST and Fashion-MNIST classification & 99.6\%/0.4\% \\\hline % 2018
-            DeVries et al.~\cite{OOD3} & Learning confidence estimates & Imaging & 99.1\%/9.3\% \\\hline % 2018
-        	Papadopoulos et al.~\cite{OOD4} & Confidence control & Image \& texts  & 97.81\%/6.1\%  \\\hline  % 2017
-            Hendrycks et al.~\cite{OOD5} &  Outlier exposure & Imaging & 89.3\%/9.5\% \\\hline % 2016
-            Masana et al.~\cite{OOD6} & Metric learning  & MNIST and SVHN & 75\% \\\hline % 2016
-        	Rajana et al.~\cite{20Rajanna} & Deep NN & Prostate cancer & 95\%\\\hline
-            Chen et al.~\cite{18Chen} & Shallow NN & Colon cancer  & 84\% \\ \hline % 2015
-            Ahmed et al.~\cite{abdel2016breast} & DBN & Breast cancer  & 99\% \\ \hline % 2015
-            Zheng et al.~\cite{23Zheng} & K-means/SVM & Breast cancer & 97.38\% \\ \hline % 2014
-            Xiaofan et al.~\cite{ding2014application} & Naïve Bayes & Cancer risk & 93\% \\ \hline % 2014
-        \end{tabular}
-    \end{center}
-        \vspace{-6mm}
-\end{table*}
+Numerous approaches have been proposed to accurately identify OOD, as shown in \cref{table:stateofart2}. Many researchers have treated introducing OOD attacks and subsequent detection as anomaly detection problems. Since discriminatively trained neural network classifiers produce reliable predictions only for ID samples, detecting OOD samples is essential. Assuming OOD to be outside the closed boundary of ID, typical neural classifiers do not contain the knowledge of this boundary for OOD detection during inference. Since OOD to be outside the closed boundary of ID, a predictive model is incapable of detecting OOD detection during the inferencing time, several recent approaches have been proposed to embed the logic into the learning algorithm and explicitly training the classifier with OOD samples close to the ID boundary. However, state-of-the-art approaches often fail to cover the entire ID boundary effectively, thereby resulting in a sub-optimal OOD detector~\cite{OOD10,OOD12}. 
 
 \hspace*{3.5mm} Lee et al.~\cite{OOD13} explains that test samples drawn sufficiently far away from the training distribution statistically or adversarially is a fundamental requirement for deploying a model in many real-world ML applications. However, deep neural networks with the softmax classifier are known to produce highly overconfident posterior distributions even for such abnormal samples.  %Ensemble of Leave-Out Classifiers (ELOC
 Jie et al.~\cite{OOD1} proposed likelihood ratio method for deep generative models for the OOD detection. Since OOD is heavily affected by population level background statistics, they demonstrated that likelihood ratio method can effectively correct for these confounding background statistics. Vernekar et al.~\cite{OOD2} proposed of an efficient approach to generate OOD samples based on manifold learning network. Then, OOD samples are used to train a classifier with an extra class~(i.e., $n+1$ classes, where ${(n+1)}^{th}$ class represents OOD samples). % for the detection of OOD during the inferencing time. 
@@ -138,6 +113,31 @@ They show that only a few OOD samples are sufficient to guide the decision bound
 \hspace*{3.5mm} DeVries T. et al.~\cite{OOD3} shows that after training a DNN using IsoMax, ODD samples can be identified efficiently by simply calculating the entropy of the network's output probabilities. The approach proposed by them is called Entropic Score~(ES). The combined approach~(i.e., IsoMax for training and ES for ODD during inference) they proposed is also found to be fast, accurate, scalable, and unexposed. Based on the Outlier Exposure~(OE) technique, Rajati et al.~\cite{OOD4} proposed a novel loss function Outlier Exposure with Confidence Control~(OECC). They show that efficient optimization of OECC cam achieve state-of-the-art results in OOD detection with OE on both image and text classification tasks without needing much OOD samples. Vyas et al.~\cite{OOD8} proposed an ensemble method for the OOD detection which comprises of an ensemble of classifiers. Each classifier is trained in a self-supervised manner by leaving out a random subset of training data as OOD data and the rest as ID data. Although, sounds promising, the ensemble method based on randomly generated OOD samples mixed with real samples, did not preforms well, mainly because of in efficient way of generating OOD samples. 
 
 \hspace*{3.5mm} Shalev et al.~\cite{OOD10}, proposed to use multiple semantic dense representations instead of sparse representation as the target label. Choi et al.~\cite{OOD11} proposed to scale OOD detection to high-dimensional data is to learn a tractable likelihood approximation of the training distribution, and use it to reject unlikely inputs. However, likelihood models on natural data are themselves susceptible to OOD errors, and even assign large likelihoods to samples from other datasets. Quintanilha  et al.~\cite{OOD12}, show that a simple ensembling of first and second order deep feature statistics can be exploited to effectively differentiate ID and OOD samples. It is observed that the mean and standard deviation within feature maps differs greatly between ID and OOD samples. Kliger et al.~\cite{OOD15} discuss the problem of simultaneous classification and novelty detection by determining whether an input is from the known set of classes and from which specific class, or from an unknown domain. They show a multi-class discriminator trained with a generator that generates samples from a mixture of nominal data distributions performs the best.
+
+\begin{table*}[!ht]
+    \caption{different cancer detection methods, data types, and performance }
+    \label{table:stateofart2}
+    \begin{center}
+    \scriptsize
+    \vspace{-6mm}
+    \begin{tabular}{l|l|l|l}
+        \hline
+        \textbf{Reference} & \textbf{Approach} & \textbf{Use cases} & \textbf{AUROC/FPR} \\\hline
+            Ren et al.~\cite{OOD1} & Likelihood ratios & Imaging \& genomics & 93\%/6.6\% \\\hline % 2018
+            Vernekar et al.~\cite{OOD2} & Manifold learning network & MNIST and Fashion-MNIST classification & 99.6\%/0.4\% \\\hline % 2018
+            DeVries et al.~\cite{OOD3} & Learning confidence estimates & Imaging & 99.1\%/9.3\% \\\hline % 2018
+        	Papadopoulos et al.~\cite{OOD4} & Confidence control & Image \& texts  & 97.81\%/6.1\%  \\\hline  % 2017
+            Hendrycks et al.~\cite{OOD5} &  Outlier exposure & Imaging & 89.3\%/9.5\% \\\hline % 2016
+            Masana et al.~\cite{OOD6} & Metric learning  & MNIST and SVHN & 75\% \\\hline % 2016
+        	Rajana et al.~\cite{20Rajanna} & Deep NN & Prostate cancer & 95\%\\\hline
+            Chen et al.~\cite{18Chen} & Shallow NN & Colon cancer  & 84\% \\ \hline % 2015
+            Ahmed et al.~\cite{abdel2016breast} & DBN & Breast cancer  & 99\% \\ \hline % 2015
+            Zheng et al.~\cite{23Zheng} & K-means/SVM & Breast cancer & 97.38\% \\ \hline % 2014
+            Xiaofan et al.~\cite{ding2014application} & Naïve Bayes & Cancer risk & 93\% \\ \hline % 2014
+        \end{tabular}
+    \end{center}
+        \vspace{-6mm}
+\end{table*}
 
 \hspace*{3.5mm} Liang et al.~\cite{OOD13} propose OOD image detection in neural networks~(ODIN), a simple and effective method that does not require any change to a pre-trained model. ODIN is based on the observation that using feature scaling and adding small perturbations to the input can separate the softmax score distributions between in- and OOD images, allowing for more effective detection. Based on experiments it is found that ODIN is compatible with diverse network architectures and datasets. Hendrycks et al.~\cite{OOD17} considers two related problems of detecting if an example is misclassified or OOD. A simple baseline that utilizes probabilities from softmax distributions can be found effective in computer vision, NLP, and automatic speech recognition. In a later approach, Qing et al.~\cite{OOD19} propose a two-head deep CNN architectures and maximize the discrepancy between the two classifiers~(MDBC) to detect OOD inputs. It train a two-head CNN consisting of one common feature extractor and two classifiers which have different decision boundaries but can classify ID samples correctly. 
 
