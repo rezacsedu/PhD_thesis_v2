@@ -1,20 +1,22 @@
 \chapter{Improving Adversarial Robustness} \label{chapter:robustness}
-\textit{``Concentrate on your strength and strongly build your strength whilst others concentrate on your weakness!''} -Ernest Agyemang Yeboah 
+\textit{``Strongly build your strength whilst others concentrate on your weakness!''} -Ernest Agyemang Yeboah 
 
 \section{Chapter Overview}
-The ability of a classifier to recognize unknown inputs is important for many classification-based systems~\cite{OOD15}. Although modern deep neural network~(DNN) architectures are efficient predictive models, they often unable to identify why and when their predictions might be incorrect~\cite{OOD3} as the relation between learning confidence and neural networks provides an intuitive production~\cite{OOD3}. This problem occurs when we train and use a model without knowing it's internal working principle and without knowing if it necessary learns concepts to mirror human cognition. Given that a model was evaluated w.r.t the accuracy measures, often it tend to work on average on unseen data. Often we do not know the reason behind such lower performance and consequently, we ignore the reasoning as long as it performs moderately well. 
-If we cannot specify how a model works, it is always possible to identify wrongly identified samples. 
-At least, using a brute-force approach, it is possible to find small variations of a specific samples that change the model’s behaviour~(e..g, predictions and explanations). 
+The ability of a classifier to recognize unknown inputs is important for many classification-based systems~\cite{OOD15}. Although modern deep neural network~(DNN) architectures are efficient predictive models, they often unable to identify why and when their predictions might be incorrect~\cite{OOD3} as the relation between learning confidence and neural networks provides an intuitive production~\cite{OOD3}. This problem occurs when we train and use a model without knowing it's internal working principle and without knowing if it necessary learns concepts to mirror human cognition. Assuming a black-box model is evaluated w.r.t the accuracy measures, often it tend to work on average on unseen data. Reasons behind such lower performance can not be identified and ignored the reasoning as long as it performs moderately well. 
+However, if we cannot specify how a model works, it is always possible to identify wrongly identified samples. Using a brute-force approach, it is possible to find small variations of a specific samples that change the model’s behaviour~(e..g, predictions and explanations)~\cite{RobustnessNotEnough}. 
 
-\hspace*{3.5mm} Although trivial variations are expected, if they contain unwanted noise added with major content moderation, such samples becomes so called ``adversarial examples''~(AEx). AEx are used to introduce different types of attacks on the models either to fool them or to expose their internals. Therefore, it is desirable that a deployed machine learning~(ML) model is capable of detecting such anomalous inputs~(i.e., AEx)~\cite{OOD5}. To ensure a model is robust to adversaries and behaves as intended, both proactive~(e.g., adversarial retraining) and reactive measures~(e.g., identification of adversarial attack and stop the inferencing) are necessary. In this chapter, different adversarial attacks are introduced, including  numeric data moderation and out-of-distribution~(OOD), before assessing the robustness against each scenario. This chapter hypotheses\footnote{\textbf{H7}: A black-box model with sufficient adversarial robustness, will still be able to generate moderately consistent and reliable predictions and explanations.} that a black-box model with sufficient adversarial robustness, will still be able to generate moderately consistent and reliable predictions and explanations. 
+\hspace*{3.5mm} Although trivial variations are expected, if unwanted noises are added with major content moderation, such samples becomes so called ``adversarial examples''~(AEx). AEx are often used to introduce different types of adversarial attacks on the models, either to fool them or to sabotage their internal functionality. It is, therefore, desirable that a deployed machine learning~(ML) model is capable of detecting anomalous inputs~(i.e., AEx)~\cite{OOD5}. To ensure an ML model is robust to adversaries and behaves as intended, both proactive~(e.g., adversarial retraining) and reactive measures~(e.g., identification of adversarial attack) are necessary. In this chapter, AEx are first generated, followed by introducing different adversarial attacks on the model,
+%. In particular, numeric data moderation and out-of-distribution~(OOD) attacks are introduced, 
+before assessing the robustness against each scenario. This chapter hypotheses\footnote{\textbf{H7}: An adversarially robust white-box model, will be able to generate moderately consistent and reliable predictions.} that a adversarially robust model, will be able to generate moderately consistent and reliable predictions. 
 
 \section{Introduction}
-In a typical ML pipeline, splitting the available data into training, validation, and test sets is common: a model is trained on the train set, hyperparameters are validated on the validation set, and the trained model is evaluated on the test set. However, often, it is difficult to asses how would a model perform on the test set in a real-world scenario, e.g., in a clinical setting. Besides, if we have multiple models trained and out of which we need to decide which one to deploy in a clinical setting, how would we decide? Suppose, we have 2 trained models $X$ and $Y$. If model $X$ performs better than model $Y$ on the test set, does that mean model $X$ would also be more suitable in a clinical setting? Statistical learning theory can answer this question through some general assumptions. If the test set represents the population to large extent and coming from the same distributions and if the data in the clinical setting is also coming from the same distributions, we can relate the test set error to the real-world error with a high probability. 
+In a typical ML pipeline, splitting the available data into training, validation, and test sets is common: a model is trained on the train set, hyperparameters are validated on the validation set, and the trained model is evaluated on the test set. However, often, it is difficult to asses how would a model perform on the test set in a real-world scenario, e.g., in a clinical setting. Besides, if we have multiple models trained and out of which we need to decide which one to deploy in a clinical setting, how would we decide? Suppose, we have 2 trained models $X$ and $Y$. If model $X$ performs better than model $Y$ on the test set, does that mean model $X$ would also be more suitable in a clinical setting? Statistical learning theory can answer this question through some general assumptions. 
+If the test set represents the population to large extent and coming from the same distributions and if the data in the clinical setting is also coming from the same distributions, we can relate the test set error to the real-world error with a high probability. 
+However, oftentimes deployed ML models are vulnerable against adversarial attacks. Since the diagnostic decision provided by a clinical decision support system~(DSS) is critical and wrong decisions are not acceptable in any case, it is essential to ensure that the a clinical DSS backed by a model is robust to adversaries and behaves as intended in real-life treatment diagnosis purposes. 
 
-\hspace*{3.5mm} However, oftentimes deployed ML models are vulnerable against adversarial attacks. Since the diagnostic decision provided by a clinical decision support system~(DSS) is critical and wrong decisions are not acceptable in any case, it is essential to ensure that the a clinical DSS backed by a model is robust to adversaries and behaves as intended in real-life treatment diagnosis purposes. Bendale et al.~\cite{OOD18} show that it is easy to generate images that humans would never classify as a particular object class, yet networks classify such images with high confidence as that given class. This makes the adversarial images look almost identical to original clean images, but with small perturbations. Although a human could easily distinguish the adversarial MNIST digits~\cite{yuan2019adversarial}, often barely recognizable by humans if trivial amounts of noises are added into an image. An adversarial image sample on ImageNet is shown in \cref{fig:fgsm_example}, where the perturbation~(middle) is generated by adding an imperceptibly small vector whose elements are equal to the sign of the elements of the gradient of the cost function w.r.t the clean image of a panda~(left). The adversarial image is then classified as a gibbon~(right). 
+\hspace*{3.5mm} Bendale et al.~\cite{OOD18} show that it is easy to generate images that humans would never classify as a particular object class, yet networks classify such images with high confidence as that given class. This makes the adversarial images look almost identical to original clean images, but with small perturbations. Although a human could easily distinguish the adversarial MNIST digits~\cite{yuan2019adversarial}, often barely recognizable by humans if trivial amounts of noises are added into an image. An adversarial image sample on ImageNet is shown in \cref{fig:fgsm_example}, where the perturbation~(middle) is generated by adding an imperceptibly small vector whose elements are equal to the sign of the elements of the gradient of the cost function w.r.t the clean image of a panda~(left). The adversarial image is then classified as a gibbon~(right). This signifies that even a very minor perturbation is not only enough to misguide an image classifier, i.e., it is very easy to perform such a trivial attack and make the classifier fool. Consequently, the user might get a response of an incorrect image label, which tend the classifier to make wrong predictions. 
 
-\hspace*{3.5mm} Therefore, even a very minor perturbation is not only enough to misguide an image classifier, i.e., it is very easy to perform such a trivial attack and make the classifier fool. Consequently, the user might get a response of an incorrect image label, which tend the classifier to make wrong predictions. 
-Let's consider another image classification problem such as dog vs. cat classifier. Suppose, we have a  model trained on millions of images of dogs and cats. Now in the adversarial scenario, the classification task can be described as follows: a user inputs an image of elephant image to get the prediction of the class label. There is a high possibility that a user will get a response of an incorrect image label, i.e., either dog or cat, forcing the classifier to make a wrong prediction. This way, even it is possible to fool the most robust deep neural network~(DNN) architecture. It becomes more extreme if the test data comes from another distribution than the training set, i.e., OOD, then even the statistical learning theory fails relate the errors unless we provide the model with additional information such as domain knowledge. Consequently, in case of OOD scenario, how the model would perform on a new distribution is not guaranteed. 
+\hspace*{3.5mm} Let's consider another image classification problem such as dog vs. cat classifier. Suppose, we have a  model trained on millions of images of dogs and cats. Now in the adversarial scenario, the classification task can be described as follows: a user inputs an image of elephant image to get the prediction of the class label. There is a high possibility that a user will get a response of an incorrect image label, i.e., either dog or cat, forcing the classifier to make a wrong prediction. This way, even it is possible to fool the most robust deep neural network~(DNN) architecture. It becomes more extreme if the test data comes from another distribution than the training set. Then even the statistical learning theory fails relate the errors unless additional information about the model such as domain knowledge is provided. Consequently, it is not guaranteed what would be the prediction in case of OOD samples. 
 
 \begin{figure}
     \centering
@@ -26,18 +28,29 @@ Let's consider another image classification problem such as dog vs. cat classifi
 
 \hspace*{3.5mm} Moreover, there is a close intersection between adversarial robustness and model interpretations~\cite{bhatt2020explainable,sharma2019certifai}. The closest adversarial example should perturb `fragile' features, enabling the model to fit to robust features, i.e., class-discriminating feature~\cite{bhatt2020explainable}. Often, discriminative models offer very limited performance guarantees when trained on a dataset that is not generated by the same process as the training distribution, e.g., OOD~\cite{OOD1}. Further, the use of larger and more complex inputs in DNN magnifies the difficulty of distinguishing between anomalous and in-distribution~(ID)~\cite{OOD5}. Such adversarial attacks are perhaps more critical in healthcare, especially when AI-guided systems is used to provide diagnosis aid to a doctor, e.g., in the case of an OOD data point, a learning algorithm often encounter times not only makes a wrong or erroneous prediction but also can come up with a deadly error in clinical diagnosis~\cite{OOD1}. 
 
-\hspace*{3.5mm} In the previous chapter, several predictive models were trained~(i.e., VGG16, $MCAE_{slr}$, and $MCAE_{lrc}$) to predict cancer types based on genomics data. Now, assuming that we have a less complex CNN model trained on gene expression~(GE) data and assuming that the model shows 90\% confidence at predicting different cancer types, when evaluated on a sufficiently large test set. Once the model is deployed and ready for inferencing, making prediction for a single instance is trivial: given an image representation of a GE sample, the model predicts the cancer type as BRCA with 90\% probability. How confident are we that the input to the model is really a GE sample and not a copy number variation~(CNV) sample? The model will definitely make a prediction, not most probably it would be a wrong diagnosis. 
+\hspace*{3.5mm} In the previous chapter, several predictive models were trained~(i.e., VGG16, $MCAE_{slr}$, and $MCAE_{lrc}$) to predict cancer types based on genomics data. Assuming a less complex CNN model trained on gene expression~(GE) data shows 90\% confidence at predicting different cancer types correctly, when evaluated on a sufficiently large test set. Once the model is deployed and ready for inferencing, making prediction for a single instance is trivial. Suppose for a given an image representation of a GE sample, the model predicts the cancer type as BRCA with 90\% probability. How confident are we that the input to the model is really a GE sample and not a copy number variation~(CNV)? And how confident are we that the model will definitely make a right prediction? How confident are we that the clinical DSS will not end up with a wrong diagnosis decision? ML security researchers have suggested not to trust what a model says blindly -- especially in the presence of an adversary. Even if we assume there are no adversaries, we still would not have certainty that the input image is a GE sample. 
 
-\hspace*{3.5mm} However, making a wrong prediction is far better than a garbage prediction. It is well-known that in the presence of an adversary, it would not be wise to trust  what our model says blindly. Even if we assume there are no adversaries, we still would not have certainty that the input image is a GE sample. If we are given an independently sampled set generated or coming from the same distribution, the model is less likely to make wrong~(as well as garbage) prediction on more than a certain number of samples with a high probability. 
-Determining whether an input belongs to the population distribution of the training data~(i.e., ID sample), the model should be robust enough. 
+\hspace*{3.5mm} After all, robustness is difficult to interpret as no model is ever fully robust in practice~\cite{RobustnessNotEnough}. The only model that is fully robust for all inputs is the trivial model that returns the same prediction for all outputs, even in the presence of strongest adversarial attacks~\cite{RobustnessNotEnough}. For all other models, there is a decision boundary and some data points will be close to the model’s decision boundary and hence not robust, given the fact that some parts of the neighborhood of inputs near the decision boundary will always be on each side of the decision boundary~\cite{RobustnessNotEnough}. On the other hand, making a wrong prediction is far better than a garbage prediction. If we are given an independently sampled set generated or coming from the same distribution, the model is less likely to make wrong and garbage prediction, on more than a certain number of samples with a high probability. If a model can detect if an input belongs to the population distribution of the training data~(i.e., ID sample), it can be considered robust enough. 
 
-\hspace*{3.5mm} Therefore, in a larger extent, in order to ensure an explainable model is robust to adversaries and behaves as intended in real-life treatment diagnosis, both proactive~(e.g., adversarial retraining) and reactive measures~(e.g., identification of possible adversarial attack and stop the inferencing) are necessary. More specifically, if a sample is of OOD, the prediction is unreliable as the error cannot be bounded. 
-Since we are emphasizing not only on high precision in clinical diagnosis, the model itself have to be able to detect OOD kind of adversaries, so that it is robust to such adversaries can lead to more human interpretable features by providing counterfactual explanations. In this chapter, we introduce different types of adversarial attacks on our model, including content moderation, numeric data moderation, and OOD, followed by assessing the robustness against these scenario. 
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{images/db_1.png}
+    \caption[Robustness is difficult to interpret]{Why making an ML model fully robust? The black line illustrates a decision boundary between $+$ and $-$ predictions. Some data points are close to the decision boundary for which their neighborhood circle may cross the decision boundary~\cite{RobustnessNotEnough}}
+    \label{fig:db_example}
+    \vspace{-4mm}
+\end{figure}
+
+\hspace*{3.5mm} However, in order to ensure an ML model is robust to adversaries and behaves as intended in real-life treatment diagnosis, both proactive~(e.g., adversarial retraining) and reactive measures~(e.g., identification of possible adversarial attack and stop the inferencing) are necessary: if a sample is of OOD, the prediction is unreliable as the error cannot be bounded. However, since it is impossible to build a fully robust ML model, this chapter models the robustness is a property such that the model’s prediction is to remain stable to small variations in the input. That is, a small invisible noise should not flip the prediction like the panda to gibbon example. 
+Similarly, for the cancer diagnosis, adding a minor perturbation to the supplied input should not flip the prediction to a completely different cancer type. Less technically, the robustness relates only to the question whether the diagnosis decision is near to the model’s decision boundary, without knowing the actual decision boundary~(i.e., unseen patient profile).
+
+\hspace*{3.5mm} Nevertheless, since we are emphasizing not only on high precision in clinical diagnosis, the model itself have to be able to detect different types of adversarial attacks. %, so that it is robust to such adversaries can lead to more human interpretable features by providing counterfactual explanations. 
+In this chapter, we introduce different types of adversarial attacks on our model, including content moderation, numeric data moderation, and OOD, followed by assessing the robustness against these scenario.
+In particular, model's robustness were evaluated in terms of ERM\footnote{Empirical Robustness Metric~\cite{moosavi2016deepfool}} and  CLEVER\footnote{\textbf{C}ross \textbf{L}ipschitz \textbf{E}xtreme \textbf{V}alue for n\textbf{E}twork \textbf{R}obustness~\cite{weng2018evaluating}} in a non-targeted attack scenario. 
 
 %The rest of the chapter is structured as follows: \cref{chapter_6:rw} covers some related works on improving adversarial robustness of the ML models and summarize their potential limitations. \Cref{chapter_6:mm} describes the overall approach, including the detail of the data preparation before the network construction and training. \Cref{chapter_6:results} demonstrates the experiment results and discusses key findings of the study. Finally, \cref{chapter_6:conclusion} provides some explanations of the importance and relevance of the study reported, highlights the limitations and discuss some future works before concluding the chapter. 
 
 \section{Related Work} \label{chapter_6:rw}
-Since we apply content moderation (on numeric data) and OOD adversarial attacks, we limited our discussion on related work covering these two aspects only. Although some of the discussed works are not directly applicable for our cancer decision support system, they still provide the foundations to come up with effective adversarial robustness in our approach. Nevertheless, usually AEx are almost identical to normal samples, we treat attacks with AEx and OOD as two different types of attacks. 
+Since only content moderation on genomic data and OOD adversarial attacks are introduced on the models, this section will focus works covering these two aspects only. Although some of the discussed works are not directly applicable for our cancer decision support system, they still provide the foundations for an  adversarially robust clinical DSS. Nevertheless, since AEx are almost identical to normal samples, AEx and OOD are treated as two different types of attacks. 
 
 \subsection{Attacks with adversarial examples}
 Till date numerous approaches have been proposed on creating adversarial samples and some of them are already defeated by a countermeasure in later studies~\cite{yuan2019adversarial}. The concept of AEx was first formulated by Dalvi et al.~\cite{dalvi2004adversarial} as a game between adversary and classifier in which the attack and defense on AEx can be correlate as an iterative game. First gradient-based approaches are earliest approaches to generate AEx and attack linear support vector machines~(SVM)~\cite{biggio2013evasion}. Szegedy et al.\cite{szegedy2013intriguing} first introduced the concept of AEx against neural networks, where AEx were generated using a L-BFGS method\footnote{ Broyden–Fletcher–Goldfarb–Shanno is an iterative method for solving an unconstrained nonlinear optimization problem.} as follows~\cite{yuan2019adversarial}:
@@ -51,7 +64,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
     \label{eq:fgsm_aex}
 \end{align}
 
-\hspace*{3.5mm} where $c$ is a constant used to approximate values of AEx by linear-searching with $c > 0$, making it very expensive an expensive to find the optimal value for $c$. Subsequently, Goodfellow et al.\cite{goodfellow2014explaining}, proposed a fast method called Fast Gradient Sign Method~(FGSM) to generate AEx. The simplicity and effectiveness of FGSM relies on the fact that it needs to perform one step gradient update along the direction of the sign of gradient at each pixel, where the perturbation is expressed as~\cite{goodfellow2014explaining}: 
+\hspace*{3.5mm} where $c$ is a constant used to approximate values of AEx by linear-searching with $c > 0$, making it computationally expensive to find the optimal value of $c$. Subsequently, Goodfellow et al.\cite{goodfellow2014explaining} proposed a fast method called Fast Gradient Sign Method~(FGSM) to generate AEx. The simplicity and effectiveness of FGSM lies on the fact that it needs to perform one step gradient update along the direction of the sign of gradient at each pixel, where the perturbation is expressed as~\cite{goodfellow2014explaining}: 
 
 \vspace{-6mm}
 \begin{align}
@@ -87,7 +100,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
 \hspace*{3.5mm} It is extended for multi-class classifier by finding the closest hyperplanes by finding a more general $\ell_{p}$ norm, $p \in[0, \infty)$. Eventually, DeepFool provides less perturbation compared to FGSM~\cite{yuan2019adversarial}.
 
 \subsection{Attacks with OOD examples}
-Numerous approaches have been proposed to accurately identify OOD, as shown in \cref{table:stateofart2}. Many researchers have treated introducing OOD attacks and subsequent detection as anomaly detection problems. Since discriminatively trained neural network classifiers produce reliable predictions only for ID samples, detecting OOD samples is essential. Assuming OOD to be outside the closed boundary of ID, typical neural classifiers do not contain the knowledge of this boundary for OOD detection during inference. Since OOD to be outside the closed boundary of ID, a predictive model is incapable of detecting OOD detection during the inferencing time, several recent approaches have been proposed to embed the logic into the learning algorithm and explicitly training the classifier with OOD samples close to the ID boundary. However, state-of-the-art approaches often fail to cover the entire ID boundary effectively, thereby resulting in a sub-optimal OOD detector~\cite{OOD10,OOD12}. 
+Numerous approaches have been proposed to accurately identify OOD in which many researchers have treated introducing OOD attacks and subsequent detection as anomaly detection problems. Since discriminatively trained neural network classifiers produce reliable predictions only for ID samples, detecting OOD samples is essential. Assuming OOD to be outside the closed boundary of ID, typical neural classifiers do not contain the knowledge of this boundary for OOD detection during inference. Since OOD to be outside the closed boundary of ID, a predictive model is incapable of detecting OOD detection during the inferencing time, several recent approaches have been proposed to embed the logic into the learning algorithm and explicitly training the classifier with OOD samples close to the ID boundary. However, state-of-the-art approaches often fail to cover the entire ID boundary effectively, thereby resulting in a sub-optimal OOD detector~\cite{OOD10,OOD12}. 
 
 \hspace*{3.5mm} Lee et al.~\cite{OOD13} explains that test samples drawn sufficiently far away from the training distribution statistically or adversarially is a fundamental requirement for deploying a model in many real-world ML applications. However, deep neural networks with the softmax classifier are known to produce highly overconfident posterior distributions even for such abnormal samples.  %Ensemble of Leave-Out Classifiers (ELOC
 Jie et al.~\cite{OOD1} proposed likelihood ratio method for deep generative models for the OOD detection. Since OOD is heavily affected by population level background statistics, they demonstrated that likelihood ratio method can effectively correct for these confounding background statistics. Vernekar et al.~\cite{OOD2} proposed of an efficient approach to generate OOD samples based on manifold learning network. Then, OOD samples are used to train a classifier with an extra class~(i.e., $n+1$ classes, where ${(n+1)}^{th}$ class represents OOD samples). % for the detection of OOD during the inferencing time. 
@@ -115,8 +128,9 @@ They show that only a few OOD samples are sufficient to guide the decision bound
 
 \hspace*{3.5mm} Shalev et al.~\cite{OOD10}, proposed to use multiple semantic dense representations instead of sparse representation as the target label. Choi et al.~\cite{OOD11} proposed to scale OOD detection to high-dimensional data is to learn a tractable likelihood approximation of the training distribution, and use it to reject unlikely inputs. However, likelihood models on natural data are themselves susceptible to OOD errors, and even assign large likelihoods to samples from other datasets. Quintanilha  et al.~\cite{OOD12}, show that a simple ensembling of first and second order deep feature statistics can be exploited to effectively differentiate ID and OOD samples. It is observed that the mean and standard deviation within feature maps differs greatly between ID and OOD samples. Kliger et al.~\cite{OOD15} discuss the problem of simultaneous classification and novelty detection by determining whether an input is from the known set of classes and from which specific class, or from an unknown domain. They show a multi-class discriminator trained with a generator that generates samples from a mixture of nominal data distributions performs the best.
 
+\iffalse
 \begin{table*}[!ht]
-    \caption{different cancer detection methods, data types, and performance }
+    \caption{Different OOD detection methods, their use cases, and effectiveness}
     \label{table:stateofart2}
     \begin{center}
     \scriptsize
@@ -139,53 +153,35 @@ They show that only a few OOD samples are sufficient to guide the decision bound
     \end{center}
         \vspace{-6mm}
 \end{table*}
+\fi 
 
-\hspace*{3.5mm} Liang et al.~\cite{OOD13} propose OOD image detection in neural networks~(ODIN), a simple and effective method that does not require any change to a pre-trained model. ODIN is based on the observation that using feature scaling and adding small perturbations to the input can separate the softmax score distributions between in- and OOD images, allowing for more effective detection. Based on experiments it is found that ODIN is compatible with diverse network architectures and datasets. Hendrycks et al.~\cite{OOD17} considers two related problems of detecting if an example is misclassified or OOD. A simple baseline that utilizes probabilities from softmax distributions can be found effective in computer vision, NLP, and automatic speech recognition. In a later approach, Qing et al.~\cite{OOD19} propose a two-head deep CNN architectures and maximize the discrepancy between the two classifiers~(MDBC) to detect OOD inputs. It train a two-head CNN consisting of one common feature extractor and two classifiers which have different decision boundaries but can classify ID samples correctly. 
-
+\hspace*{3.5mm} Liang et al.~\cite{OOD13} propose OOD image detection in neural networks~(ODIN), a simple and effective method that does not require any change to a pre-trained model. ODIN is based on the observation that using feature scaling and adding small perturbations to the input can separate the softmax score distributions between in- and OOD images, allowing for more effective detection. ODIN is found to be compatible with diverse network architectures and datasets. Hendrycks et al.~\cite{OOD17} considers two related problems of detecting if an example is misclassified or OOD. A simple baseline that utilizes probabilities from softmax distributions can be found effective in computer vision, NLP, and automatic speech recognition. Qing et al.~\cite{OOD19} proposed a two-head deep CNN architectures by maximizing the discrepancy between two classifiers~(MDBC). The two-head CNN consisting of one common feature extractor and two classifiers which have different decision boundaries but can classify ID samples correctly. 
 
 \section{Methods}\label{chapter_6:mm}
 In this section, we cover different threat models for different types of adversarial attack. Depending upon scenarios, assumptions, and quality requirements of diagnosis, we then generate AEx to deploy specific attack approaches, followed by adversary training to defend the adversary attacks. 
-In this context, robustness is the idea that a model’s prediction is stable to small variations in the input, hopefully because it’s prediction is based on reliable abstractions of the real task that mirror how a human would perform the task. That is, small invisible noise should not flip the prediction from panda to gibbon, small additions to the image should not prevent the model from recognizing a stop sign, and weather conditions or slightly titling the camera should not affect the steering angle of a self-driving car. Hence the explanation is a nice conceptual view, but not very helpful in a practical setting, where we care about whether a prediction is correct. Robustness relates only to the question whether we are near the model’s decision boundary, without knowing anything about the actual decision boundary.
 
-\hspace*{3.5mm} Robustness is an appealing property to study, because it is easy to define well as an invariant over the relation of two inputs (technically a metamorphic relation) without having to rely on specifications and ground truth of what the actual correct prediction is. All local robustness properties more or less follow this form: Given an
-input $x$ and a model $f$ of interest, we want the model's prediction to stay the
-same for all inputs $x$ ' in the neighborhood of $x$, where the neighborhood is defined by some distance function $\delta$ and some maximum distance $\Delta$ :
-$\forall x^{\prime} . \delta\left(x, x^{\prime}\right) \leq \Delta \Rightarrow f(x)=f\left(x^{\prime}\right)$
-The way the distance is defined may differ a lot based on the problem.
-Typical examples allow for low amounts of noise to all input features (e.g., all pixels), arbitrary changes to few input features (e.g., change any three
-pixels), or more complicated transformations (e.g., tilting the picture or
-adding "fog"). Whatever the possible transformations or corresponding
-distance functions and maximum distance, we always reason about some
-neighborhood around the original input.
+\subsection{Problem statement}
+Several literature have defined robustness as an invariant over the relation of two inputs without having to rely on specifications of the model and the ground truth~\cite{RobustnessNotEnough}. Since this thesis aims to improve both overall robustness of the model and the individual diagnosis robustness, local and global robustness are formulated. For an input sample $x$, the problem of local robustness is to ensure that the prediction $\hat y$ for model $f$ remains consistently same for all inputs $x$ in the neighborhood of $x$, where the neighborhood is defined w.r.t a distance function $\delta$. The maximum distance $\Delta$ is then defined and computed as follows~\cite{RobustnessNotEnough}:
 
-\hspace*{3.5mm} Note that this definition does not require any information about what the
-correct prediction for $f(x)$ or $f\left(x^{\prime}\right)$ is, we simply reason that
-the prediction shall stay consistent (whether correct or not) within a
-neighborhood.
-Robustness is either established as a binary property, i.e., an input for a model is verified as robust or not (usually conservative over approximations,
-but also probabilistic judgments with a confidence level have been
-proposed), or as some form of relative measure, e.g., the distance to the
-nearest adversarial example or the percentage of robust inputs in the
-neighborhood. In addition to local robustness, some researchers have also discussed a global robustness property of a model, some form of average robustness for all possible inputs. For example, one could measure for what percent of inputs robustness can be verified or what the average distance is from each input to the nearest adversarial example.
+\begin{align}
+    \forall x^{\prime}. \delta\left(x, x^{\prime}\right) \leq \Delta \Rightarrow f(x)=f\left(x^{\prime}\right). 
+\end{align}
 
-\hspace*{3.5mm} First of all, robustness is difficult to interpret. The only model that is fully robust for all inputs is the trivial model that returns the same prediction for all outputs. For all other models, there is a decision boundary and some inputs will be close to the model’s decision boundary and hence not robust: some parts of the neighborhood of inputs near the decision boundary will be on each side of the decision boundary.
-No model is ever fully robust: The black line illustrates a decision boundary between + and - predictions. Some inputs are close to the decision boundary that their neighborhood (circle) extends past the decision boundary.
+\hspace*{3.5mm} In the context of adversarial attack, the above distance can be formulated as the amounts of noise to all input features or arbitrary changes to few input features~(e.g., AEx) or more complicated transformations~(e.g., OOD samples). 
+%Whatever the possible transformations or corresponding distance functions and maximum distance, we always reason about some neighborhood around the original input.
+Since this definition does not require the knowledge about the ground truths for $f(x)$ or $f\left(x^{\prime}\right)$, it is reasonable to hypothesize that the prediction will stay consistent  within a neighborhood, regardless it is correct or not~\cite{RobustnessNotEnough}.
+%Robustness is either established as a binary property, i.e., an input for a model is verified as robust or not (usually conservative over approximations, but also probabilistic judgments with a confidence level have been proposed), or as some form of relative measure, e.g., the distance to the nearest adversarial example or the percentage of robust inputs in the neighborhood. 
+In addition to local robustness, the global robustness property for model $f$ is formulated as an average robustness for all inputs in modality $k$. That is, the global robustness is measured as the average distance is from each input to the nearest adversarial example~\cite{RobustnessNotEnough}. 
 
 \subsection{Formulating threat models}
-Yuan et al.~\cite{yuan2019adversarial} has decomposed threat models from the following four different aspects: 
+Yuan et al.~\cite{yuan2019adversarial} has decomposed threat models four different aspects: 
+i) \textbf{adversarial falsification} - negative and positive samples are generated with false positive and false negative attacks, respectively, ii) \textbf{adversary's knowledge} - if the deployed model is a white-box or a black-box, iii) \textbf{adversarial specificity} - targeted or non-targeted attacks, and  \textbf{attack frequency} - one-time or iterative attacks. These aspects can be categorized into black-box and white-box attacks. In a white-box attack scenario, it is assumed that the adversary has sufficient knowledge about the model, including the training data, model architectures, hyper-parameters, numbers of layers, activation functions, and model weights~\cite{yuan2019adversarial}. To introduce successful attacks on a white-box model, AEx are generated by calculating model gradients. 
 
-\begin{enumerate}[noitemsep]
-    \item \textbf{Adversarial falsification} - negative and positive samples are generated with false positive and false negative attacks, respectively. 
-    \item \textbf{Adversary's knowledge} - if the deployed model is a white-box or a black-box. 
-    \item \textbf{Adversarial specificity} - targeted or non-targeted attacks.  
-    \item \textbf{Attack frequency} - one-time or iterative attacks. 
-\end{enumerate}
-
-\hspace*{3.5mm} Above aspects can be categorized into black-box and white-box attacks. In a white-box attack scenario, it is assumed that the adversary has sufficient knowledge about the model, including the training data, model architectures, hyper-parameters, numbers of layers, activation functions, and model weights~\cite{yuan2019adversarial}. To introduce successful attacks on a white-box model, AEx are generated by calculating model gradients. In contrast, a black-box attack assumes that the adversary has no access to or knowledge about the model, but knows what the model is for~(e.g., model's confidence score). Although, majority of adversarial attacks are white-box attacks, they can be applied to black-box scenario too, due to the transferability of AEx~\cite{papernot2016transferability}. Targeted attacks misguide a model to a specific class in a in a multiclass classification problem, e.g., an adversary can fool the cancer types classifier to predict all the AEx of type breast cancer.  %, except the original one.
+\hspace*{3.5mm} In a black-box attack scenario, it is assumed that the adversary has no access to or knowledge about the model, but knows what the model is for~(e.g., model's confidence score). Although, majority of adversarial attacks are white-box attacks, they can be applied to black-box scenario too, due to the transferability of AEx~\cite{papernot2016transferability}. Targeted attacks misguide a model to a specific class in a in a multiclass classification problem, e.g., an adversary can fool the cancer types classifier to predict all the AEx of type breast cancer. Targeted attacks usually maximize the probability of targeted adversarial class, while a non-targeted attack does not assign a specific class to the model's output, i.e., the class output can be arbitrary~\cite{yuan2019adversarial}.  %, except the original one.
 
 \begin{figure}[htp!]
     \centering
-    \includegraphics[scale=0.6]{images/aattacks.png}
+    \includegraphics[scale=0.55]{images/aattacks.png}
     \caption[Formulating adversarial threat model]{Two types of attack scenarios: up: minor content moderation across samples with fast gradient sign method~\cite{goodfellow2014explaining}, below: crafting adversarial samples with DeepFool}
     \label{fig:aattacks}
     \vspace{-2mm}
@@ -200,7 +196,7 @@ Yuan et al.~\cite{yuan2019adversarial} has decomposed threat models from the fol
 \end{figure}
 \fi 
 
-\hspace*{3.5mm} Targeted attacks usually maximize the probability of targeted adversarial class, while a non-targeted attack does not assign a specific class to the model's output, i.e., the class output can be arbitrary~\cite{yuan2019adversarial}. Since non-targeted attacks are easier to implement compared to targeted attacks, and keeping in mind the scope of this thesis, only non-targeted attacks are introduced in a black-box scenario, as outlined in \Cref{fig:aattacks}. More specifically, only two types of adversarial attacks are introduced to the models: i) attack with AEx generated content moderation attack with FGSM, ii) attack with AEx generated with DeepFool. %, iii) attack with OOD samples generated with GAN. %The first two attacks falls in the content moderation attack category. 
+\hspace*{3.5mm} Since non-targeted attacks are easier to implement compared to targeted attacks, and keeping in mind the scope of this thesis, only non-targeted attacks are introduced in a black-box scenario, as outlined in \Cref{fig:aattacks}. More specifically, only two types of adversarial attacks are introduced to the models: i) attack with AEx generated content moderation attack with FGSM, ii) attack with AEx generated with DeepFool. %, iii) attack with OOD samples generated with GAN. %The first two attacks falls in the content moderation attack category. 
 We hypothesize\footnote{\textbf{H7}: A black-box model with sufficient adversarial robustness, will still be able to generate moderately consistent and reliable predictions and explanations. } that a black-box model with sufficient adversarial robustness, will still be able to generate moderately consistent and reliable predictions and explanations. 
 
 \subsection{Adversarial attacks}
@@ -266,18 +262,18 @@ GAN-based AEx are more natural to human. First, we train a Wasserstein GAN model
 \subsection{Defenses against adversarial attacks}
 Bendale et al.~\cite{OOD19} introduced two types of countermeasures against adversarial attacks called ``reactive'' and ``proactive'' measures. The former deals with detecting AEx after an ML model is deployed. Examples include adversarial detecting, input reconstruction, and network verification. The latter is about making an ML more robust before an adversary generates and introduce an attack. Examples include network distillation, adversarial (re)training, and classifier robustifying. Keeping in mind the scope of this thesis, only adversarial retraining and input reconstruction were performed, as shown in \cref{fig:reactive_measures}. 
 
-\begin{figure}[htp!]
-    \centering
-    \includegraphics[scale=0.8]{images/reactive_measure.png}
-    \caption[Reactive and proactive measures in a nutshell against adversarial attacks]{Workflow for the reactive and proactive measures against adversarial attacks at inference time}
-    \label{fig:reactive_measures}
-    \vspace{-4mm}
-\end{figure}
-
 \subsubsection{Proactive measure: adversarial retraining}
 %We evaluate the models on adversarial test examples, before employing any defense. 
 Two proactive measures were taken: i) improving learning generalization by adding Gaussian noise layers, ii) adversarial retraining. 
-First, in order to improve the robustness of the representation learning~(RL), noise was introduced to CNV modality only\footnote{Noise was introduced noise via Gaussian noise layers to make the snapshot models~(refer to \cref{chapter:uni_modality}).}, which helped both Conv-LSTM and CAE classifiers improve the generalization. Subsequently, noises were added in all input modalities~(i.e., GE, miRNA, and CNV modalities) with zero mean and standard deviations of 0-200\% $(k)$ of $i^{\text {th}}$ per feature~(i.e., gene) average $\left(\mu_{i}\right),$ or $N(0, k \mu)$ per feature. This help learn robust features having little variations, which is hope to improve the generalization for multimodal learning scenario too. 
+First, in order to improve the robustness of the representation learning~(RL), noise was introduced to CNV modality only\footnote{Noise was introduced by adding Gaussian noise layers during the construction of snapshot models.}, which helped both Conv-LSTM and CAE classifiers improve the generalization. Subsequently, noises were added in all input modalities~(i.e., GE, miRNA, and CNV modalities) with zero mean and standard deviations of 0-200\% $(k)$ of $i^{\text {th}}$ per feature~(i.e., gene) average $\left(\mu_{i}\right),$ or $N(0, k \mu)$ per feature. This help learn robust features having little variations, which is hope to improve the generalization for multimodal learning scenario too. 
+
+\begin{figure}[htp!]
+    \centering
+    \includegraphics[scale=0.75]{images/reactive_measure.png}
+    \caption[Reactive and proactive measures in a nutshell against adversarial attacks]{Workflow for the reactive and proactive measures against adversarial attacks at inference time}
+    \label{fig:reactive_measures}
+    %\vspace{-4mm}
+\end{figure}
 
 \hspace*{3.5mm} Although introducing minor noises to the input help improve model generalization, adversarial retraining is necessary to improve the consistency of the model, as AEx are mostly added with higher perturbations. Given two different gradient-based cancer type~i.e., trained) classifiers $f_1$ and $f_2$~(e.g., $MCAE_{slr}$ and $MCAE_{lrc}$ models trained on the multimodal genomics data based on shared latent representation and latent representation concatenation, respectively), the robustness of each content moderation model is measured by the minimum perturbations required for an input sample to evade detection. For model $f: \mathbb{R}^{D} \rightarrow$ $\{1, \ldots, k\}$~(either $f_1$ or $f_2$), assuming $f(x)=\operatorname{argmax}_{i}\left(z(x)_{i}\right)$, where $z(x) \in\mathbb{R}^{k}$ is the final layer output, and $z(x)_{i}$ is the prediction score w.r.t $i^{th}$ class. Similar to literature~\cite{bhatt2020explainable}, the objective is formulated w.r.t. to find the minimum perturbation as an optimization problem as follows~\cite{bhatt2020explainable}:
 
@@ -300,7 +296,9 @@ Therefore, more robust models have more convincing gradient-based explanations, 
 
 \subsubsection{Reactive measure: input reconstruction}
 %Now let's assume, we identified AEx with minor content moderation. Therefore, we can also assume that 
-To increase the robustness of DNNs, deep contractive autoencoder is proposed by introducing penalty to both first order and the second order derivatives of the mapping, which help improve the stability of the learned representation around training points, in terms of classification error.~\cite{rifai2011higher}. However, depending upon data generation platform~(e.g., human methylation 450K vs. 27K), an adversarial sample would be slightly different than a original sample. Based on this assumption, we assume, after the transformation, an adversarial sample will not be able to affect the prediction of a trained model very severely. 
+To increase the robustness of DNNs, deep contractive autoencoder is proposed by introducing penalty to both first order and the second order derivatives of the mapping, which help improve the stability of the learned representation around training points, in terms of classification error.~\cite{rifai2011higher}.
+However, Christian et al.~\cite{RobustnessNotEnough} states that evaluating the robustness at inference time as the most plausible usage scenario. That is, checking whether a prediction made by a deployed ML model is robust. 
+For our clinical DSS, depending upon data generation platform~(e.g., human methylation 450K vs. 27K), an adversarial sample would be slightly different than a original sample. Based on this assumption, we assume, after the transformation, an adversarial sample will not be able to affect the prediction of a trained model very severely. 
 
 \hspace*{3.5mm} Research has shown that AEx can be transformed to corresponding clean input via reconstruction. In particular, Meng et al.~\cite{meng2017magnet} trained an denoising AE~(DAE) to reconstruct from the AEx the original samples by  removing the added adversarial perturbations. 
 %Then, robust features were\footnote{We already introduced noise via Gaussian noise layers to make the snapshot models~(refer to \cref{chapter:uni_modality})} learned having little variations. Nevertheless, reconstruction of cleaned version of AEx is possible. % is possible by adding Gaussian noise~\cite{OOD19}.
@@ -346,8 +344,7 @@ Assuming an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{in}\rig
 \hspace*{3.5mm} If two different classifiers~(i.e. $f_{1}$ and $f_{2}$ in our case) are initialized with random initial parameters and subsequently trained on ID samples supervised way, they are tend to show slightly different characteristics. Nevertheless, most OOD samples have larger discrepancy than ID samples, two different classifiers classify OOD samples differently~\cite{OOD19}. 
 %Based on the characteristic of OOD samples,  
 We measure the disagreement between the classifiers and train the network to maximize it. Similar to literature~\cite{OOD19}, it is expected that the network will push OOD samples outside the manifold of ID samples. Consequently, OOD samples and ID samples can be separated according to the discrepancy between the two classifiers’ outputs as shown in \cref{fig:ood_detection_example}, where discrepancy loss is computed as follows to measure the divergence between the two softmax class probabilities for an input~\cite{OOD19}: 
-
-\vspace{-6mm}
+\vspace{-2mm}
 \begin{align}
     d\left(p_{1}(\mathbf{y} | \mathbf{x}), p_{2}(\mathbf{y} | \mathbf{x})\right)=H\left(p_{1}(\mathbf{y} | \mathbf{x})\right)-H\left(p_{2}(\mathbf{y} | \mathbf{x})\right),
     \label{eq:dis_loss_1}
@@ -355,7 +352,7 @@ We measure the disagreement between the classifiers and train the network to max
 
 \hspace*{3.5mm} where $H(\cdot)$ is the entropy over the softmax distribution. Again similar to literature~\cite{yu2019unsupervised}, the whole training consists of supervised pre-training and unsupervised fine-tuning. During the pre-training, we train the network to learn discriminative features before classifying the ID samples correctly in a supervised way. Since this is a supervised way to predict the labels, we optimize the following CEL~\cite{yu2019unsupervised}:
 
-\vspace{-6mm}
+\vspace{-2mm}
 \begin{align}
     {L}_{sup}=-\frac{1}{\left|X_{i n}\right|} \sum_{\mathbf{x}_{\mathrm{in}} \in X_{i n}} \sum_{i=1}^{2} \log \left(p_{i}\left(y_{i n} | \mathbf{x}_{\mathrm{in}}\right)\right).
 \end{align}
@@ -386,22 +383,22 @@ In this section, we discuss the evaluation results of content moderation attack 
 More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
 
 \begin{enumerate}[noitemsep]
-    \item Can we detect if a supplied input is an adversarial sample~(i.e., ID or OOD sample)? 
-    \item Can the model reconstruct, from noise input, a cleaner version of the sample? 
+    \item Can we detect if a supplied input is an adversarial sample~(i.e., AEx or OOD)? 
+    \item Can the model reconstruct, from noise input, a cleaner version of an AEx sample? 
     \item Which neural network architecture is more robust against different adversarial attacks?  
-    \item Considering the attacks scenarios, what types of counter measures is useful for genomic data?
+    \item What types of counter measures are useful for a model trained on multimodal genomic data?
 \end{enumerate}
 
-\hspace*{3.5mm} Results of each observation are analysed, both quantitative and qualitatively, in the following section. 
+\hspace*{3.5mm} In the following sections, results of each observation are analysed, both quantitative and qualitatively. %, in the following section. 
 
 \subsection{Experiment setup}
 %All the programs were written in Python\footnote{\url{https://github.com/rezacsedu/XAI_Cancer_Prediction}}. The software stack consists of scikit-learn and Keras with TensorFlow backend. The network was trained on an Nvidia GTX 1080i GPU with CUDA and cuDNN enabled to make the overall pipeline faster. 
 %Further, since an appropriate selection of hyperparameters can have a huge impact on the performance of a deep architecture, we perform the hyperparameter optimization through a random search and 5-fold cross-validation tests. In each of 5 runs, 70\% of the data is used for the training, 30\% for the evaluation, while 10\% of the training set is used for validation of the networks to optimize the cross-entropy loss based on the best learning rate, batch size, number of filters, kernel size, and dropout/Gaussian noise probability. 
 %\subsubsection{Setup for content moderation detection}
 %\subsubsection{Setup for OOD detection}
-For the pre-training, we follow steps similar to literature~\cite{OOD19}, but using Adam optimizer to train both MCAE classifiers for 200 epochs. The learning rate~(LR) started at 0.1 and dropped by a factor of 10 at 50\% and 75\% of the training progress, respectively. During the fine-tune, we iterate each fit for 50 epochs, by setting margin m = 1:2 to detect OOD samples. 
+During the pre-training of both MCAE classifiers, the learning rate is set to 0.1 and dropped by a factor of 10 at 50\% and 75\% of the training progress over 200 epochs. During the fine-tuning, each fit is iterated for 50 epochs, by setting margin m = 1:2 for the OOD detection. % OOD samples. 
 %Subsequently, we select the best classifier using WeightWatcher. %Results based on hyperparameters produced through random search and 5-fold cross-validation are reported and discussed with a comparative analysis with AUROC, AUPR, FPR, TPR, FNR, and DE. 
-To assess the robustness of our models, we compute the empirical robustness metric~(ERM) of a classifier object over the test set for a given adversarial crafting method attack as suggested in literature~\cite{moosavi2016deepfool}. ERM is equivalent to computing the minimal perturbation that the attacker must introduce for a successful attack and is measured as follows~\cite{moosavi2016deepfool}:
+Christian et al.~\cite{RobustnessNotEnough} recommended to evaluate the average robustness of a model for arbitrary inputs as the global robustness measure. To assess the robustness of the models, the empirical robustness metric~(ERM)~\cite{moosavi2016deepfool} is computed over the test set for a given adversarial crafting attack. ERM is equivalent to computing the minimal perturbation that the attacker must introduce for a successful attack~\cite{moosavi2016deepfool}:
 
 \vspace{-4mm}
 \begin{align}
@@ -409,10 +406,15 @@ To assess the robustness of our models, we compute the empirical robustness metr
     _{\infty}}{\|\boldsymbol{x}\|_{\infty}},
 \end{align}
 
-\hspace*{3.5mm} where $\hat{\boldsymbol{r}}(\boldsymbol{x})$ is computed respectively using DeepFool~(with $p=\infty$) and the FGSM. The higher the ERM value, the higher the a classifier is. Besides, we compute the CLEVER~(short for \textbf{C}ross \textbf{L}ipschitz \textbf{E}xtreme \textbf{V}alue for n\textbf{E}twork \textbf{R}obustness) score for an untargeted attack based on literature~\cite{weng2018evaluating}. 
-The CLEVER score is attack-agnostic and computationally feasible for large neural networks, given the fact that CLEVER is aligned with the robustness indication measured by the $\ell_{2}$ and $\ell_{\infty}$ norms \footnote{The \textbf{$\ell_{1}$ norm}~(also known as Manhattan Distance or Taxicab norm) gives the magnitudes of the vectors in a space. The \textbf{$\ell_{2}$ norm}~(also known as the Euclidean norm) gives the shortest distance to go from one point to another. The \textbf{$\ell_{\infty}$ norm} gives the largest magnitude among each element of a vector, i.e., only the largest element has the effect.} of adversarial examples from powerful attacks. 
+\hspace*{3.5mm} where $\hat{\boldsymbol{r}}(\boldsymbol{x})$ is computed respectively using DeepFool~(with $p=\infty$) and the FGSM. The higher the ERM value, the higher is a classifier. Besides, the CLEVER~(short for \textbf{C}ross \textbf{L}ipschitz \textbf{E}xtreme \textbf{V}alue for n\textbf{E}twork \textbf{R}obustness) score proposed by Weng et al.~\cite{weng2018evaluating} is computed, in a non-targeted attack scenario. 
+Besides, CLEVER score is attack-agnostic and computationally feasible for large neural networks, given the fact that CLEVER is aligned with the robustness indication measured by the $\ell_{2}$ and $\ell_{\infty}$ norms \footnote{The \textbf{$\ell_{1}$} norm -also known as Manhattan Distance or Taxicab norm gives the magnitudes of the vectors in a space. The \textbf{$\ell_{2}$ norm} - also known as the Euclidean norm) gives the shortest distance to go from one point to another. The \textbf{$\ell_{\infty}$ norm} gives the largest magnitude among each element of a vector, i.e., only the largest element has the effect.} of adversarial examples from powerful attacks. 
 %Besides, it is defended networks using defensive distillation or bounded ReLU indeed achieve better CLEVER scores~\cite{weng2018evaluating}. 
-Besides, false positive rates~(FPR), detection errors~(DE), Area Under the Receiver Operating Characteristic curve~(AUROC), Area Under the Precision-Recall~(AUPR), are computed to assess robustness of the models against OOD attack, as~\cite{OOD19,OOD18}, with the following settings: 
+Besides, false positive rates~(FPR), detection errors~(DE), Area Under the Receiver Operating Characteristic curve~(AUROC), Area Under the Precision-Recall~(AUPR), are computed to assess robustness of the models against OOD attack. 
+
+%CLEVER and ERM metrics were computed using the Adversarial Robustness Toolbox~(aka. ART)\footnote{\url{https://github.com/Trusted-AI/adversarial-robustness-toolbox}}. Besides, scikit-learn was used for computing FPR, TPR, FNR, AUPR~(both IN and Out), and AUROC. 
+
+\iffalse
+, as~\cite{OOD18}, with the following settings: 
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -424,6 +426,7 @@ Besides, false positive rates~(FPR), detection errors~(DE), Area Under the Recei
 \end{itemize}
 %\vspace{-2mm}
 %\subsection{Content moderation robustness}
+\fi 
 
 \iffalse
 \begin{sidewaystable*}[htp!]
@@ -497,21 +500,20 @@ Besides, false positive rates~(FPR), detection errors~(DE), Area Under the Recei
 \end{sidewaystable*}
 \fi 
 
-\hspace*{3.5mm} CLEVER and ERM metrics were computed using the Adversarial Robustness Toolbox~(aka. ART)\footnote{\url{https://github.com/Trusted-AI/adversarial-robustness-toolbox}}. Besides, scikit-learn was used for computing FPR, TPR, FNR, AUPR~(both IN and Out), and AUROC. 
-
 \subsection{Robust classifier's performance on the adversarial samples}
 With the above experimental setting, first, we generate some adversarial samples to attack both of our $f_1$ and $f_2$ models. Subsequently, we retrain both models with adversarial samples generated with DeepFool to make them robust. In both cases, the retrained models are much more robust than the originally trained model as shown in \cref{fig:normal_vs_robust_models}, where $\epsilon \in\{0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9\}$ to achieve the smallest $\ell_{\infty}$ distortion for individual sample. However, the retrained model based on latent representation concatenation shows more robustness then the shared latent representation. 
+
 \begin{figure*}[h]
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[scale=1.0]{images/adversarial_training_1.png}
+		\includegraphics[scale=0.95]{images/adversarial_training_1.png}
 		\caption{$MCAE_{lrc}$}
         \label{fig:normal_vs_robust_f1}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[scale=1.0]{images/adversarial_training_2.png}
+		\includegraphics[scale=0.95]{images/adversarial_training_2.png}
 		\caption{$MCAE_{slr}$}
         \label{fig:normal_vs_robust_f2}
 	\end{subfigure}
@@ -570,7 +572,7 @@ With the above experimental setting, first, we generate some adversarial samples
 \hspace*{3.5mm} On the other hand, in \cref{tab:my_label}, we provide the comparison between the average untargeted CLEVER scores and distortion based on the FGSM and DeepFool untargeted attacks. As expected, CLEVER is smaller than the distortions of adversarial samples in most cases. Since CLEVER is independent of attack algorithms, the reported CLEVER scores roughly indicate the distortion of the best possible attack w.r.t a specific $\ell_{p}$ distortion. CLEVER scores can be considered as a security checkpoint for unseen attacks. Since we observe substantial gaps in distortion between the CLEVER score and the considered attack algorithms, it suggest the existence of a more effective attack that can close the gap~\cite{weng2018evaluating}.
 
 \subsection{OOD detection performance}
-Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples moderately. As shown in \cref{fig:max_soft_score}, there is moderately less overlap between OOD samples and ID samples on the dataset. The relationship between the discrepancy loss and the DE on the test samples are shown in \cref{Table:OOD_result_2}. As observed the discrepancy loss of ID samples is smaller than OOD samples in most of the settings. It can also be noticed that the DE is lower when the difference between the discrepancy loss of ID and OOD samples is larger, which means ID and OOD samples can be separated by the divergence between the two classifiers’ outputs. As demonstrated, more test sample help decrease both DE, ID/OOD discrepancy losses, upto a certain point. For example, when we evaluate the models on 1,800 samples, all the 3 metrics increased, which is probably because of more discrepancy loss. 
+The approach presented can distinguish between in- and OOD samples moderately. As shown in \cref{fig:max_soft_score}, there is moderately less overlap between OOD samples and ID samples on the dataset. The relationship between the discrepancy loss and the DE on the test samples are shown in \cref{Table:OOD_result_2}. As observed the discrepancy loss of ID samples is smaller than OOD samples in most of the settings. It can also be noticed that the DE is lower when the difference between the discrepancy loss of ID and OOD samples is larger, which means ID and OOD samples can be separated by the divergence between the two classifiers’ outputs. As demonstrated, more test sample help decrease both DE, ID/OOD discrepancy losses, upto a certain point. For example, when we evaluate the models on 1,800 samples, all the 3 metrics increased, which is probably because of more discrepancy loss. 
 
 \iffalse
 \begin{figure}
@@ -624,7 +626,7 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 	\label{Table:OOD_result_2}
 \end{sidewaystable*}
 
-\hspace*{3.5mm} Besides, we observe moderately high disagreement, w.r.t between two classifiers' outputs based on unlabeled ID and OOD samples after training the network on labeled ID samples in a supervised way. The histogram of the classifier's maximum softmax scores in \cref{fig:max_soft_scores_and_de_scores} shows that the distribution of the score moderately different w.r.t whether a sample is ID or OOD after the fine-tuning: $p_{1k}$ and $p_{2k}$ denote the probability distribution for class $k$. The discrepancy loss makes OOD sample's maximum $p_{1k}$ close to $1/K$ and maximum $p_{2k}$ close to 1. On the other hand, ID samples' $p_{1k}$ mostly similar to $p_{2k}$, which is based on the support outlined in \cref{eq:ood_join_loss}.
+\hspace*{3.5mm} Besides, moderately high disagreement is observed w.r.t between two classifiers' outputs in in \cref{fig:max_soft_scores_and_de_scores} that are based on unlabeled ID and OOD samples after training the network on labeled ID samples in a supervised way. The histogram of the classifier's maximum softmax scores shows that the distribution of the score moderately different w.r.t whether a sample is ID or OOD after the fine-tuning: $p_{1k}$ and $p_{2k}$ denote the probability distribution for class $k$. The discrepancy loss makes OOD sample's maximum $p_{1k}$ close to $1/K$ and maximum $p_{2k}$ close to 1, while ID samples' $p_{1k}$ is mostly similar to $p_{2k}$, which is based on the support outlined in \cref{eq:ood_join_loss}.
 
 \iffalse
 \begin{figure}
@@ -639,13 +641,13 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 	\centering
 	\begin{subfigure}{.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=50mm]{images/ood_detection.png}
+		\includegraphics[width=0.95\linewidth,height=45mm]{images/ood_detection.png}
 		\caption{Histogram of maximum softmax scores}
         \label{fig:max_soft_score}
 	\end{subfigure}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth,height=50mm]{images/hist_max_softmax.png}
+		\includegraphics[width=0.95\linewidth,height=45mm]{images/hist_max_softmax.png}
 		\caption{Histogram of ID and OOD detection scores}
 		\label{fig:id_ood_de_scores}
 	\end{subfigure}
@@ -653,24 +655,30 @@ Our approach based on~\cite{OOD19}, can distinguish between in- and OOD samples 
 	\label{fig:max_soft_scores_and_de_scores}
 \end{figure*}
 
-\hspace*{3.5mm} As seen, the discrepancy loss of ID samples is smaller than OOD samples in all settings. The DE is lower when the difference between the discrepancy loss of ID and OOD samples is larger, which means ID and OOD samples can be separated by the divergence between the two classifiers' output. Since this method needs to fine-tune the classifiers in order to detect the OOD samples, the decision boundary changed slightly. Eventually, we see a significant drop of classification accuracy~(by 8\%) compared to original accuracy we observed in \cref{chapter:xai}. We can observe that GE and miRNA are more sensitive to making changes, which reflect in the GE, miRNA, GE+miRNA modalities too. 
+\hspace*{3.5mm} The discrepancy loss of ID samples is smaller than OOD samples in all settings. The DE is lower when the difference between the discrepancy loss of ID and OOD samples is larger, which means ID and OOD samples can be separated by the divergence between the two classifiers' output. Since this method needs to fine-tune the classifiers in order to detect the OOD samples, the decision boundary changed slightly. Eventually, a significant drop of classification accuracy~(by 8\%) compared to original accuracy is observed in \cref{chapter:xai}. This is also signifies that the GE and miRNA are more sensitive to making changes compared to CNV, which reflect in the GE, miRNA, GE+miRNA modalities too. 
 
 %This problem could be solved by using the original classifier to classify ID samples with some runtime increase and it is still much more acceptable than ELOC [26] using an ensemble of five models which needs more runtime and computing resources.
 
 %\section{Discussion} \label{chapter_6:discussion}
+
+\iffalse
+\subsection{Debugging the model}
+Christian et al.~\cite{RobustnessNotEnough} recommended to evaluate robustness of a trained model on a set of unseen data inputs, instead of evaluating robustness globally. Inspired by this, the robustness is evaluated on a few randomly selected single inputs that are considered as representative of actual test set and their corresponding AEx versions. 
+Knowing whether certain predictions on sample inputs are robust may help us with debugging. We might identify areas of inputs for which many predictions are not robust — either because they are truly close to the real decision boundary or, more likely, because the model is simply not very good at understanding these inputs. We might identify dangerous conditions, such as the inability of our model to deal with fog — hopefully identified during testing not in production.
+\fi 
 
 \section{Chapter Summary} \label{chapter_6:conclusion}
 In this chapter, discussed how to improve the adversarial robustness of an explainable model. We apply different types of adversarial attacks on our model by generating AEx with content moderation attack by introducing noise, generating AEx as OOD. Then we impose both proactive and reactive counter measurements before assessing the robustness against each scenario. 
 For detecting OOD, we trained two different classifiers to detect OOD samples that are far from the support of the ID samples. However, considering the scope of this thesis, we try to limit the discussion within simple methods. In future, we intend to focus more employ not sophisticated counter-measurements. To summarize, this chapter reports the following findings, through several experiments:
 
 \begin{enumerate}[noitemsep]
-    \item \textbf{Can we detect if a supplied input is an adversarial sample?} The approach used in this chapter can moderately identify if a supplied sample is an adversarial sample Overall, both ID and OOD samples can be identified. 
+    \item \textbf{Can we detect if a supplied input is an adversarial sample?} The approach presented in this chapter can moderately identify if a supplied sample is an adversarial sample. Overall, both ID and OOD samples can be identified. 
     
-    \item \textbf{Can the model reconstruct, from noise input, a cleaner version of the sample?} Adding Gaussian noises during retraining already made both classifier robust against minor perturbations.  PixelCNN is found moderately effective at reconstructing the cleaner versions of the AEx. However, this approach is found to have very limited effectiveness against OOD attacks. 
+    \item \textbf{Can the model reconstruct, from noise input, a cleaner version of an AEx sample?} Adding Gaussian noises during retraining already made both classifier robust against minor perturbations.  PixelCNN is found moderately effective at reconstructing the cleaner versions of the AEx. However, this approach is found to have very limited effectiveness against OOD attacks. 
     
     \item \textbf{Which neural network architecture is more robust against different adversarial attacks?} The classifier $MCAE_{lrc}$ classifier found to be more robust compared to $MCAE_{slr}$. Probably, the reason is that the former classifier still can learn more abstract features from the reconstructed inputs from PixelCNN, which help in the classification as well.  
     
-    \item \textbf{Considering the attacks scenarios, what types of counter measures is useful for genomic data?} As DeepFool provides less perturbations, it is found to be moderately strong attack. However, FGSM is found to be too strong attacks, as it provides higher perturbations. Subsequently, both classifiers perform moderately well against DeepFool attack, albeit $MCAE_{lrc}$ classifier found to be more robust against both attacks types compared to $MCAE_{slr}$. Besides, GE and miRNA are more sensitive to making changes, which reflect in the GE, miRNA, GE+miRNA modalities too. 
+    \item \textbf{Considering the attacks scenarios, which counter measure is more robust for a model trained on multimodal genomic data?} As DeepFool provides less perturbations, it is found to be moderately strong attack. On the other hand, FGSM is found to be too strong attacks, as it provides much higher perturbations than DeepFool. Subsequently, both classifiers perform moderately well against DeepFool attack, albeit $MCAE_{lrc}$ classifier found to be more robust against both attacks types compared to $MCAE_{slr}$. Besides, GE and miRNA are more sensitive to making changes, which reflect in the GE, miRNA, GE+miRNA modalities too. 
 \end{enumerate}
 
 %Our method does not require labeled OOD samples to train the neural network. 
