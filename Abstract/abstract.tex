@@ -12,27 +12,27 @@
         However, if we cannot see how a clinical decision is made, we cannot know what impact it will create on a patient. %, because the day when such AI-guided systems will make life decisions for humans is not very far ahead. 
         %AI-based techniques have been utilized in numerous scenarios, including automated diagnoses and treatment in clinical settings\cite{karimBIB2019}. 
         For example, cancer is one of the deadliest diseases caused by abnormal behaviours of genes that control cell division and growth. As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, producing large-scale omics data. Appropriate diagnoses depend on accurate prediction of cancer types. Therefore, it is crucial to analyze genomics data and clinical outcomes before recommending necessary treatments. Acquiring deep insights of omics data, can provide profound insights to reveal genetic predispositions of cancer before it grows. %Besides, treatment can be focused on preventive measures.  %Eventually, . %Analyzing such data can provide profound insights to reveal genetic predispositions of cancer before it grows. 
-        Further, `right to explanation' of GDPR that enforces `algorithmic transparency', gives patients the right to know why and how a diagnosis decision is made. 
+        %Further, `right to explanation' of GDPR that enforces `algorithmic transparency', gives patients the right to know why and how a diagnosis decision is made. 
         %In this case, interpretability attained with neuro-symbolic reasoning can provide insights into the reasons. % why a given cancer case is of a specific type. 
         %can help in finding more suitable treatments, cures, or drug repositioning. 
         
         \vspace{1mm}
-        \textbf{Motivations}: 
+        \hspace*{3.5mm} \textbf{Motivations}: 
         %one of the main differences between ML and symbolic reasoning~(SR) is where the learning happens: a learning algorithm learns rules to establish correlations between inputs and outputs, but rules are generated through human intervention in SR. 
         to build an explainable decision support system~(DSS), humans must learn the rules by which two phenomena relate before embedding those relationships into a static and hard-coded program.
         %A hard-coded rule is a preconception. 
-        While a DNN architecture is trained on an assumption on how it should learn rather than what conclusion it should reach, a more effective way is choosing developing a system to learn flexibly and produce accurate decisions. In this case, explicit representation of domain knowledge and data provenance through the layers of a DNN can pave the path to an explainable DSS and improve the transparency and interpretability based on human-understandable decision rules and SR.  
+        While a DNN architecture is trained on an assumption on how it should learn rather than what conclusion it should reach, a more effective way is choosing developing a system to learn flexibly and produce accurate decisions. In this case, explicit representation of domain knowledge and data provenance through the layers of a DNN can not only pave the path to an explainable DSS, but also help improve the transparency and interpretability of the diagnoses made human-understandable decision rules. % and SR.  
         %generate human-understandable explanations and ensure fairness 
         %by mitigating biases.
         %, where human-understandable decision rules and SR can help improve the transparency and interpretability, generate human-understandable explanations and ensure fairness by mitigating biases. 
-        This thesis aims to: i) improve algorithmic transparency and explainability of a `black-box' DSS for cancer diagnosis, ii) discovery and disseminating knowledge of molecular mechanisms of carcinogenesis. 
+        Based on this motivation, this thesis aims to: i) improve algorithmic transparency and explainability of a `black-box' DSS for cancer diagnosis, ii) discovery and disseminating knowledge of molecular mechanisms of carcinogenesis. 
         
         \vspace{1mm}
         
-        \textbf{Methods:} several unimodal and multimodal neural network architectures are first trained on genomics data %and clinical outcome 
+        \hspace*{3.5mm} \textbf{Methods:} several unimodal and multimodal neural network architectures are first trained on genomics data %and clinical outcome 
         and learn high-level abstract features. Neural ensemble method, 
         %which is more effective than structures solely based on a single model
-        is then employed to get the most stable model from multiple model snapshots. To improve algorithmic transparency and interpretability, different probing techniques~(e.g., class activation maps and layer-wise relevance propagation) were employed. To improve adversarial robustness, adversarial training was performed considering different attacks scenarios.
+        is then employed to get the most stable model from multiple model snapshots. To improve algorithmic transparency and interpretability, different probing techniques~(e.g., class activation maps and layer-wise relevance propagation) were employed. Then, to improve adversarial robustness, adversarial training was performed considering different attacks scenarios.
         Model surrogation strategy is then employed to  generate the explanations in terms of decision rules, focusing both local and global interpretability. %to adversaries and behaves as intended in real-life scenario, a is necessary
         As a part of the SR, a domain-specific knowledge graph~(KG) is developed by integrating knowledge and facts about cancer from external sources. %, which provides the foundation of our semantic layer. 
         A semantic reasoner is then used to learn the hierarchical relations from the KG and to provides the reasoning of diagnosis decision. %, a semantic reasoner is used. %
@@ -41,7 +41,7 @@
         
         \vspace{1mm}
         
-        \textbf{Results:} quantitative and qualitative analyses show that our approach exhibits not only high confidence at predicting the cancer types correctly giving an average precision of 96.25\%, but also provides human-interpretable explanations of the predictions by exposing top genes and cancer-specific driver genes.} 
+        \hspace*{3.5mm} \textbf{Results:} quantitative and qualitative analyses show that our approach exhibits not only high confidence at predicting the cancer types correctly giving an average precision of 96.25\%, but also provides human-interpretable explanations of the predictions by exposing top genes and cancer-specific driver genes.} 
         %Nevertheless, findings are validated through pathway analysis and annotations provided by the TumorPortal. 
         %We hope our approach will be a useful contribution, particularly towards the development of AI-assisted applications and an acceleration of their adoption in the clinical practice.} 
 \end{abstract}
