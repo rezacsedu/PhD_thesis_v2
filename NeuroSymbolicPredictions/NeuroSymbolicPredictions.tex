@@ -147,7 +147,7 @@ Combining connectionist and symbolic paradigms is a promising way to address thi
 \begin{sidewaysfigure}
 	\centering
 	\includegraphics[scale=0.9]{images/Capture5.PNG}
-	\caption{A hybrid approach, known as neuro-symbolic AI, combines features of the two main AI strategies. In symbolic AI (upper left), humans must supply a “knowledge base” that the AI uses to answer questions. Deep nets (upper right) are trained to arrive at correct answers. During training, they adjust the strength of the connections between layers of nodes. The hybrid uses deep nets, instead of humans, to generate only those portions of the knowledge base that it needs to answer a given question.} 
+	\caption[Symbolic vs. A neuro-symbolic AI]{A hybrid approach, conceptually recreated based on the by Anil Ananthaswamy et al~\cite{AIsnextbigleap} is known as neuro-symbolic AI. A neuro-symbolic AI system combines both symbolic AI~(upper left - where a human develops ``knowledge bas'' that the system uses to answer questions) and neural networks~(upper right) that are trained to provide the answers. During training, a DNN adjusts the strength of the connections between layers of nodes. In a hybrid AI system, human is replaced with a DNN, to generate only those portions of the knowledge base that it needs to answer a given question.} 
 	\label{fig:neurosymbolic_AI}
 	\vspace{-2mm}
 \end{sidewaysfigure} 
@@ -678,7 +678,7 @@ For all the biomarkers, we have generated as much as 1,900 rules. However, for t
     \item TP53 $ \sqsubseteq  $ Biomarker
     \item TP53 $ \sqsubseteq  $ $  \forall $is$ {\_}$a.Protein-coding
     \item TP53 $ \sqsubseteq  $ $  \forall $is$ {\_}$a.POTSF
-    \item TP53 $ \sqsubseteq  $ ($\exists$has$ {\_}$evidence.PubMed) $  \cap $ ($\exists$has$ {\_}$significance$ {\_}$degree.High) $  \cap $ ($\exists$responsible$ {\_}$for.EndometrialCancer)
+    \item TP53 $ \sqsubseteq  $ ($\exists$has$ {\_}$evidence.PubMed) $ \cap $ ($\exists$has$ {\_}$significance$ {\_}$degree.High) $  \cap $ ($\exists$responsible$ {\_}$for.EndometrialCancer)
     \item TP53 $ \sqsubseteq  $ ($\exists$has$ {\_}$significance$ {\_}$degree.High) $  \cap $ ($\exists$responsible$ {\_}$for.LungSquasmousCellCarcinoma)
     \item TP53 $ \sqsubseteq  $ ($\exists$has$ {\_}$significance$ {\_}$degree.High) $  \cap $ ($\exists$responsible$ {\_}$for.GlioblastomaMultiforme)
     \item TP53 $ \sqsubseteq  $ ($\exists$has$ {\_}$significance$ {\_}$degree.High) $  \cap $ ($\exists$responsible$ {\_}$for.PanCan)
