@@ -361,13 +361,8 @@ BRCA$\sqsubseteq$Cancer$\sqsubseteq$DiseaseOfCellularProliferation$\sqsubseteq$D
 %\subsubsection{Cancer specific biomarkers}
 
 \subsection{KG enrichment with cancer specific biomarkers} %Enriching disease specific knowledge}
-Additional information about cancer specific biomarkers are extracted from the scientific articles. We employed a BERT-based information extraction method. In particular, both BioBERT and SciBERT variants of BERT are finetuned with the selected articles crawled from the PubMed, MeSH, and CancerIndex. Our hypothesis is that, in learning to recover masked tokens, the model forms a representational topology of cancer genomics will enable the ontology-guided knowledge extraction to outperform CRF and Bi-LSTM-based approaches for named entity recognition, entity-relationship extraction, and multi-type normalization. 
+Additional information about cancer specific biomarkers are extracted from the scientific articles. For example, some genes have both oncogenic and tumor-suppressor functions, i.e., they have both oncogenic and tumor-suppressor functionality~\cite{POSTF}. For this, we employed a BERT-based information extraction method. In particular, BioBERT and SciBERT variants of BERT are finetuned with the selected articles crawled from the PubMed, MeSH, and CancerIndex. Our hypothesis is that, in learning to recover masked tokens, the model forms a representational topology of cancer genomics will enable the ontology-guided knowledge extraction to outperform CRF and Bi-LSTM-based approaches for named entity recognition, entity-relationship extraction, and multi-type normalization. 
 %For the IE from \textbf{stream tables}, we will apply CascadeTabNet~\cite{cascadetabnet2020}, which is an end-to-end neural network architecture capable of both object detection and recognition simultaneously.
-To integrate the new information into our initial KG, we incorporate a semantic lexicon. The lexicon extractor will be a BioBERT and SciBERT-based instance extractor, which will: i) use rules from the cancer ontology to enrich the semantic lexicon with new lexicon symbols and ii) extract instance information and create RDF triples, followed by enrichment of the KG.
-% In our approach, each instance will be extracted as an RDF triple in the form of $(u,e,v)=(\mathit{subject},\mathit{predicate},\mathit{object})$, where each triple forms a connected component of a sentence for the KG.
-
-\hspace*{3.5mm} In the relation extraction step, a link between the extracted lexical terms from the source text and the concepts from the ontology is established. Then, using a BioBERT and SciBERT-based named entity recognition module, the context of the terms will be analyzed to determine the appropriate disambiguation, before assigning the term to the correct concept.
-Finally, attribute-value pairs will be identified, which will involve the identification of a subject, mapping this subject to a semantic class, and using the predicate and object as the attribute name and value, respectively. Moreover, our study will investigate domain-specific potentials of transformer-based approach, followed by a comparative analysis with the well-established Bi-LSTM architectures.
 
 \begin{figure*}[h]
 	\centering
@@ -377,7 +372,57 @@ Finally, attribute-value pairs will be identified, which will involve the identi
 	\vspace{-2mm}
 \end{figure*}
 
-\hspace*{3.5mm} \Cref{fig:main_ontology_pro_view} shows the hierarchical view of the biomarker class, where we included all the biomarkers, particularly, genes related to all the cancer types we consider in this ontology. The possible sub-classes of `BiomarkerSignificance' is then defined as HIGH, MEDIUM, and LOW based on the annotations provided by the TumorPortal\footnote{\url{http://www.tumorportal.org/tumor_types?ttype=PanCan}}. Further, each entity belonging to the class biomarker is annotated with all the information of properties available in the OGG ontology, as shown in \cref{fig:ogg_ontology}. Besides, we included the number of scientific articles as an evidence associated with certain genes, which is shown in \cref{fig:biomarker_subclass}. The `Disease' class consists of a subclasses named  `DiseaseOfCellularProliferation' under which there is another sub-class called `Cancer'. Under the class Cancer we included all the cancer types we are interested in, and which are labeled with their well-known abbreviations, e.g., BRCA for breast cancer. \Cref{fig:diseases_class} shows the structure of the class disease and its subclasses. As we mentioned, for the entities in the class disease we also inherited the object properties from the DOID ontology and included them as annotations. 
+\begin{table*}
+    \centering
+    \caption{Hyperparameter combination for BERT variants}
+    \label{table:bert_params}
+    \begin{tabular}{l|l|l|l|l}
+        \hline
+         \textbf{Hyper parameter}  & \textbf{Bangla-BERT}  &
+         \textbf{mBERT cased} &
+         \textbf{mBERT-uncased} & \textbf{XLM-RoBERTa}\\
+        \hline
+        Learning-rate  & 3e-5  & 3e-5 & 5e-5 & 2e-5 \\
+        Epochs & 6 & 6 & 6 & 5 \\
+        Max seq length & 128 & 128 & 128 & 128 \\
+        Dropout & 0.3 & 0.3 & 0.3 & 0.4 \\
+        Batch size & 16 & 16 & 16 & 16 \\
+        \hline
+    \end{tabular}
+\end{table*}
+
+\subsubsection{Bioentity extraction}
+As already described bio-entity extraction component involve two sub-tasks: i) named entity recognition that recognizes the named entities in PubMed abstracts based on the BioBERT and SciBERT models, and ii) multi-type normalization that assigns unique IDs to extracted biomedical entities. The NER task recognizes a variety of domain-specific proper nouns in a
+biomedical corpus and is perceived as one of the most notable biomedical text mining tasks.
+The transformers applied in BERT connect the encoders and decoders through self-attention for greater parallelization and reduced training time. BERT was designed as a general-purpose language representation model that was pre-trained on English Wikipedia and BooksCorpus. Consequently, it is incredibly challenging to maintain high performance when applying BERT to biomedical domain texts that contain a considerable number of domain-specific proper nouns and terms (e.g., BRCA1 gene and Triton X-100 chemical). BERT required refinement, so BioBERT—a neural network-based high-performance NER model—was developed. Its purpose is to
+recognize the known biomedical entities and discover new biomedical entities. 
+
+\hspace*{3.5mm} First, in the NER component, the case-sensitive version of BERT is used to initialize BioBERT. Second, PubMed articles and PubMed Central articles are used to pre-train BioBERT's weights. The pre-trained weights are then fine-tuned for the NER task. While fine-tuning BERT (BioBERT), we used WordPiece tokenization $^{15}$ to mitigate the out-of-vocabulary issue. WordPiece embedding is a method of dividing a word into several units %(e.g., Immunoglobulin divided into I $##mm##uno ##g ##lo ##bul ##in$) 
+and expressing each unit. This technique is effective at extracting the features associated with uncommon words. The NER models available in BioBERT can predict the following seven tags: IOB2 tags (i.e., Inside, Outside, and Begin) $^{16}, \mathrm{X}$ (i.e., a sub-token of WordPiece), [CLS] (i.e., the leading token of a sequence for classification), [SEP] (i.e., a sentence delimiter), and PAD (i.e., a padding of each word in a sentence). The NER models were fine-tuned as follows:
+
+\begin{align}
+    p\left(T_{i}\right)=\operatorname{softmax}\left(T_{i} W^{T}+b\right)_{k}, \quad k=0,1, \ldots, 6
+\end{align}
+
+\hspace*{3.5mm} where $k$ represents the indexes of seven tags $\{\mathrm{B}, \mathrm{I}, \mathrm{O}, \mathrm{X},[\mathrm{CLS}],[\mathrm{SEP}], \mathrm{PAD}\}, p$ is the probability distribution of assigning each $k$ to token $i,$ and $T_{i} \in R^{H}$ is the final hidden representation, which is calculated by BioBERT for each token $i . H$ is the hidden size of $T_{i}, W \in R^{K \times H}$ is a weight matrix between $k$ and $T_{i}, K$ represents the number of tags and is equal to $7,$ and $b$ is a $\mathrm{K}$ -dimensional vector that records the bias on each $k .$ The classification loss $L$ is calculated as follows:
+
+\begin{align}
+    L(\Theta)=-\frac{1}{N} \sum_{i=1}^{N} \log \left(p\left(y_{i} \mid T_{i} ; \Theta\right)\right.
+\end{align}
+
+\hspace*{3.5mm} where $\Theta$ represents the trainable parameters, and $N$ is the sequence length. First, a tokenizer was applied to words in a sentence on a dataset with labels in the CoNLL format $^{17}$. The WordPiece algorithm was then applied to the sub-words of each word. Consequently, BioBERT was able to extract diverse types of bio-entities. Furthermore, an entity or two entities with frequently-occurring token interaction would be marked with more than one entity type span $(26.2 \%$ for all PubMed abstracts). Based on the calculated probability distribution, we were able to choose the correct entity type when entities were tagged with more than two types according to the probability-based decision rules $^{8}$
+
+\subsubsection{Fine-tuning NER models}
+We shuffle the training set for every epoch. Besides, the gradient clipping method is applied. We set the initial learning rate to $2 e^{-5}$ and adopt the Adam optimizer with the scheduled learning rate. We adopt the pre-trained \textit{uncased BERT-base} model, by setting maximum input length to $256$. The number of combination layers of multi-head attention, followed by a fully connected softmax layer.
+As we perform the ensemble of best models to report the final predictions, several experiments with different hyperparameters combinations are tired~(as shown in \cref{table:bert_params}), before saving the best performing epochs, for each model. The Bangla-BERT-base\footnote{\url{https://huggingface.co/sagorsarker/bangla-bert-base}} is a pretrained language model built with BERT-based mask language modeling. RoBERTa~\cite{liu2019roberta} is an improved variant of BERT, which is optimized by setting larger batch sizes, introducing dynamic masking, and training on larger datasets. XLM-RoBERTa~\cite{conneau2019unsupervised} is a multilingual model trained on web crawled data. XLM-RoBERTa not only outperformed other transformer models on cross-lingual benchmarks but also performed better on various NLP tasks in a low-resourced language setting.
+
+\subsubsection{Integrating extracted triples into KG}
+In the relation extraction step, a link between the extracted lexical terms from the source text and the concepts from the ontology is established. Then, using a BioBERT and SciBERT-based named entity recognition module, the context of the terms will be analyzed to determine the appropriate disambiguation, before assigning the term to the correct concept. Finally, attribute-value pairs are identified, which will involve the identification of a subject, mapping this subject to a semantic class, and using the predicate and object as the attribute name and value, respectively. \Cref{fig:main_ontology_pro_view} shows the hierarchical view of the biomarker class, where we included all the biomarkers, particularly, genes related to all the cancer types we consider in this ontology. 
+
+\hspace*{3.5mm} To integrate the new information into the KG, a semantic lexicon is incorporated. The lexicon extractor will be a BioBERT and SciBERT-based instance extractor, which will: i) use rules from the cancer ontology to enrich the semantic lexicon with new lexicon symbols and ii) extract instance information and create RDF triples, followed by enrichment of the KG. In our approach, each instance will be extracted as an RDF triple in the form of $(u,e,v)=(\mathit{subject},\mathit{predicate},\mathit{object})$, where each triple forms a connected component of a sentence for the KG. As many as 83 POTSF genes reported by Shen et al.~\cite{POSTF} through database search and literature annotation are used to enrich the list. 
+BRCA1, CAMTA1, CBFA2T3, CDX2, CREB3L1, CREBBP, DDB2, DNMT1, DNMT3A, ETV6, EZH2, FOXA1, FOXL2, FOXO1, FOXO3, FOXO4, FOXP1, FUS, IRF4, KLF4, KLF5, NCOA4, NOTCH1, NOTCH2, NOTCH3, NPM1, NR4A3, PAX5, PML, PPARG, RB1, RUNX1, SMAD4, STAT3, TCF3, TCF7L2, TP53, TP63, TRIM24, WT, ZBTB16, BCR, CHEK2, EPHA1, EPHA3, EPHB4, FLT3, MAP2K4, MAP3K4, MST1R, NTRK3, PRKAR1A, PRKCB, SYK, ARHGEF12, BCL10, BRCA2, CBL, CDC73, CDH11, CDKN1B, DCC, DDX3×, DICER1, FAS, FAT1, GPC3, IDH1, IKZF2, LIFR, NF2, NUP98, PHF6, PTPN1, PTPN11, RHOA, RHOB, SH2B3, SLC9A3R1, SOCS1, SPOP, SUZ12, WHSC1L1. 
+
+\hspace*{3.5mm} The possible sub-classes of `BiomarkerSignificance' is then defined as HIGH, MEDIUM, and LOW based on the annotations provided by the TumorPortal\footnote{\url{http://www.tumorportal.org/tumor_types?ttype=PanCan}}. Further, each entity belonging to the class biomarker is annotated with all the information of properties available in the OGG ontology, as shown in \cref{fig:ogg_ontology}. Besides, we included the number of scientific articles as an evidence associated with certain genes, which is shown in \cref{fig:biomarker_subclass}. The `Disease' class consists of a subclasses named  `DiseaseOfCellularProliferation' under which there is another sub-class called `Cancer'. Under the class Cancer we included all the cancer types we are interested in, and which are labeled with their well-known abbreviations, e.g., BRCA for breast cancer. \Cref{fig:diseases_class} shows the structure of the class disease and its subclasses. As we mentioned, for the entities in the class disease we also inherited the object properties from the DOID ontology and included them as annotations. 
 
 \iffalse
 \begin{figure*}[h]
@@ -415,12 +460,7 @@ Finally, attribute-value pairs will be identified, which will involve the identi
 \end{figure*}
 
 %\subsubsection{Enriching gene specific evidence}
-\hspace*{3.5mm} Further, we included the class `Feature' to express the relation between a disease and the responsible genes associated with it. More specifically, we indicate the significance degree of a particular gene, regarding a disease. Besides, we included biomarker type and the evidence type information. PubMed, MeSH, and CancerIndex are considered as the source of the evidence. \Cref{fig:biomarker_subclass} shows the general structure of the `Feature' class. These features~(in terms of annotations and object properties) are used to indicate the relation between entities from different classes, as shown in \cref{fig:biomarker_subclass}, which in turn annotations allow the rules generation. Furthermore, since depending on the types gene biomarkers can be categorized as `Oncogene', `Protein-coding', and `POTSF', we considered these as the subclasses of `BiomarkerType'. As many as 83 POTSF genes reported by Shen et al.~\cite{POSTF} through database search and literature annotation are used to enrich the list. 
-
-\begin{itemize}[noitemsep]
-    \item \textbf{Proto-oncogenes with tumor-suppressor function} - some genes have both oncogenic and tumor-suppressor functions, i.e., they have both oncogenic and tumor-suppressor functionality~\cite{POSTF}.
-    \item \textbf{List of POTSF genes} - BRCA1, CAMTA1, CBFA2T3, CDX2, CREB3L1, CREBBP, DDB2, DNMT1, DNMT3A, ETV6, EZH2, FOXA1, FOXL2, FOXO1, FOXO3, FOXO4, FOXP1, FUS, IRF4, KLF4, KLF5, NCOA4, NOTCH1, NOTCH2, NOTCH3, NPM1, NR4A3, PAX5, PML, PPARG, RB1, RUNX1, SMAD4, STAT3, TCF3, TCF7L2, TP53, TP63, TRIM24, WT, ZBTB16, BCR, CHEK2, EPHA1, EPHA3, EPHB4, FLT3, MAP2K4, MAP3K4, MST1R, NTRK3, PRKAR1A, PRKCB, SYK, ARHGEF12, BCL10, BRCA2, CBL, CDC73, CDH11, CDKN1B, DCC, DDX3×, DICER1, FAS, FAT1, GPC3, IDH1, IKZF2, LIFR, NF2, NUP98, PHF6, PTPN1, PTPN11, RHOA, RHOB, SH2B3, SLC9A3R1, SOCS1, SPOP, SUZ12, WHSC1L1~\cite{POSTF}. 
-\end{itemize}
+\hspace*{3.5mm} Further, we included the class `Feature' to express the relation between a disease and the responsible genes associated with it. More specifically, we indicate the significance degree of a particular gene, regarding a disease. Besides, we included biomarker type and the evidence type information. PubMed, MeSH, and CancerIndex are considered as the source of the evidence. \Cref{fig:biomarker_subclass} shows the general structure of the `Feature' class. These features~(in terms of annotations and object properties) are used to indicate the relation between entities from different classes, as shown in \cref{fig:biomarker_subclass}, which in turn annotations allow the rules generation. Furthermore, since depending on the types gene biomarkers can be categorized as `Oncogene', `Protein-coding', and `POTSF', we considered these as the subclasses of `BiomarkerType'. 
 
 \subsection{Ontological reasoning: query processing to instance classification}
 As already stated, our semantic layer, consists of four components: query processing module, knowledge matching module, instance classifier, and the ontology reasoner. The ontology represented as a RDF KG consists of 31,034 triples including data, ontologies, and formal representation annotations. The semantic layer provides an interface between the KG and the rule generator. %We provide the details of each component in this sub-section.
@@ -447,7 +487,7 @@ In many cases, a set of facts $\mathcal{F}$ may contain contradictory knowledge,
 
 \hspace*{3.5mm} We use the Pellet reasoner to deductively close the KG, i.e., we deductively close our KG w.r.t. the OWL2 EL profile. The $\mathcal{KG}$ would be deductively closed $iff$ for all $\phi$ s.t. $\mathcal{KG} \models \phi, \phi \in \mathcal{KG}$. Although the deductive closure of a knowledge is countably infinite, we assume it is finite for our case. Subsequently, we add only inferences that can be represented explicitly as edges between named individuals and classes~(i.e., entities that are explicitly named) in the $\mathcal{KG}$ s.t. for all instances $x_{i}, x_{j} \in \mathcal{KG}$ and object properties $r \in \mathcal{KG}$, if $\mathcal{KG} \models r\left(x_{i}, x_{j}\right)$, then $r\left(x_{i}, x_{j}\right) \in \mathcal{KG} ^{\models}$. Furthermore, for all named classes $C \in \mathcal{KG}$ and instances $x \in \mathcal{KG}$, if $\mathcal{KG}=\mathrm{C}(x)$, then $C(x) \in \mathcal{KG} ^{\pm}$. Finally, relations between classes are inferred by adding subclass axioms to the inferred graph, s.t. for any class $C, D \in \mathcal{KG}$, if $\mathcal{KG} \models C \sqsubseteq D$, then $C \sqsubseteq D \in \mathcal{KG}^{\pm}$. 
 
-\section{Evaluations}\label{chapter_8:results}
+\section{Experiments}\label{chapter_8:results}
 In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
 
 \begin{enumerate}[noitemsep]
@@ -462,7 +502,7 @@ In this section, we discuss the evaluation results, both quantitatively and qual
 \subsection{Experiment setup}
 We used Prot{\'e}g{\'e} 5.5.0 is used for the reasoning, DLx querying, and DL rule generations with Pellet, RLK, and HermiT reasoners. 
 %The detail information including versions are shown in \cref{fig:plugins_info}. 
-However, ELK does not support object all values from axioms, while HermiT gave some inconsistent~(giving different number of rules). Therefore, we report the rules generated with Pellet only. The inferred rules based on the reasoning are expressed using DLx format. 
+However, ELK does not support object all values from axioms, while HermiT gave some inconsistent~(giving different number of rules). Therefore, we report the rules generated with Pellet only. The inferred rules based on the reasoning are expressed using DLx format. To evaluate the effectiveness of domain-specific potentials of transformer-based approach for information extraction, a comparative analysis with the well-established CRF and Bi-LSTM architectures. 
 
 \subsection{Query benchmarks}
 Below we provide a few questions in human language~(NLQ) and in DLx query~(DLQ) format. The answers based on different reasoners can be found in appendix. However, as shown in in \cref{fig:sample_q_a}, the answer of NLQ ``List of all biomarkers which are classified POTSF and responsible for breast cancer answered" against the DLQ ``Biomarker and responsible\_for some BRCA and is\_a only POTSF" by the Prot{\'e}g{\'e} is understandable but not clear how the reasoner derives such answer. Therefore, in the next subsection, we derive corresponding rule for individual biomarker. 
@@ -561,7 +601,6 @@ SELECT ?otherEntity (count(?tweet) as ?count) WHERE {
 
 \subsection{Interpretation of generated rules}
 We interpret the inferred rules. We apply DLx Class Axiom Renderer Plugin\footnote{\url{https://github.com/MindfulMichaelJames/ProtegeDLAxiomPlugin}} to represent the rules.   
-
 \subsubsection{Notations and assumptions}
 Due to brevity, we cover some notations and assumptions that will be used for the interpretations:
 
