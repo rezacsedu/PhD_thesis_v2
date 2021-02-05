@@ -362,13 +362,22 @@ BRCA$\sqsubseteq$Cancer$\sqsubseteq$DiseaseOfCellularProliferation$\sqsubseteq$D
 %\subsubsection{Cancer specific biomarkers}
 
 \subsection{KG enrichment with cancer specific biomarkers} %Enriching disease specific knowledge}
-\Cref{fig:main_ontology_pro_view} shows the hierarchical view of the biomarker class, where we included all the biomarkers, particularly, genes related to all the cancer types we consider in this ontology. The possible sub-classes of `BiomarkerSignificance' is then defined as HIGH, MEDIUM, and LOW based on the annotations provided by the TumorPortal\footnote{\url{http://www.tumorportal.org/tumor_types?ttype=PanCan}}. Further, each entity belonging to the class biomarker is annotated with all the information of properties available in the OGG ontology, as shown in \cref{fig:ogg_ontology}. Besides, we included the number of scientific articles as an evidence associated with certain genes, which is shown in \cref{fig:biomarker_subclass}.
+Additional information about cancer specific biomarkers are extracted from the scientific articles. We employed a BERT-based information extraction method. In particular, both BioBERT and SciBERT variants of BER are finetuned with the articles extracted from the PubMed. Our hypothesis is that, in learning to recover masked tokens, the model forms a representational topology of cancer genomics will enable the ontology-guided knowledge extraction to outperform CRF and Bi-LSTM-based approaches for named entity recognition, entity-relationship extraction, and multi-type normalization. 
+
+\hspace*{3.5mm} For the IE from \textbf{stream tables}, we will apply CascadeTabNet~\cite{cascadetabnet2020}, which is an end-to-end neural network architecture capable of both object detection and recognition simultaneously.
+To integrate the new information into our initial KG, we incorporate a semantic lexicon. The lexicon extractor will be a BioBERT and SciBERT -based instance extractor, which will: i) use rules from the cancer ontology to enrich the semantic lexicon with new lexicon symbols and ii) extract instance information and create RDF triples, followed by enrichment of the KG.
+% In our approach, each instance will be extracted as an RDF triple in the form of $(u,e,v)=(\mathit{subject},\mathit{predicate},\mathit{object})$, where each triple forms a connected component of a sentence for the KG.
+
+\hspace*{3.5mm} In the relation extraction, a link between the extracted lexical terms from the source text and the concepts from the ontology will be established. Then, using a BioBERT and SciBERT-based named entity recognition module, the context of the terms will be analyzed to determine the appropriate disambiguation, before assigning the term to the correct concept.
+Finally, attribute-value pairs will be identified, which will involve the identification of a subject, mapping this subject to a semantic class, and using the predicate and object as the attribute name and value, respectively. Moreover, our study will investigate domain-specific potentials of transformer-based approach, followed by a comparative analysis with the well-established BiLSTM architectures.
+
+\hspace*{3.5mm} \Cref{fig:main_ontology_pro_view} shows the hierarchical view of the biomarker class, where we included all the biomarkers, particularly, genes related to all the cancer types we consider in this ontology. The possible sub-classes of `BiomarkerSignificance' is then defined as HIGH, MEDIUM, and LOW based on the annotations provided by the TumorPortal\footnote{\url{http://www.tumorportal.org/tumor_types?ttype=PanCan}}. Further, each entity belonging to the class biomarker is annotated with all the information of properties available in the OGG ontology, as shown in \cref{fig:ogg_ontology}. Besides, we included the number of scientific articles as an evidence associated with certain genes, which is shown in \cref{fig:biomarker_subclass}.
 
 \begin{figure*}[h]
 	\centering
-		\includegraphics[width=0.3\linewidth,height=60mm]{images/feature_class.png}
-        \label{fig:biomarker_subclass}
-	\caption{Annotations and relations between entities in the biomarker class and subclass}
+		\includegraphics[scale=0.6]{images/KG_enrichment.png}
+        \label{fig:kg_enrichment}
+	\caption{Knowledge graph enrichment with cancer specific biomarkers}
 	\vspace{-2mm}
 \end{figure*}
 
@@ -394,6 +403,13 @@ BRCA$\sqsubseteq$Cancer$\sqsubseteq$DiseaseOfCellularProliferation$\sqsubseteq$D
 	\vspace{-2mm}
 \end{figure*}
 \fi 
+\begin{figure*}[h]
+	\centering
+		\includegraphics[width=0.3\linewidth,height=60mm]{images/feature_class.png}
+        \label{fig:biomarker_subclass}
+	\caption{Annotations and relations between entities in the biomarker class and subclass}
+	\vspace{-2mm}
+\end{figure*}
 
 \begin{figure*}
 	\centering
