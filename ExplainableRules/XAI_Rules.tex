@@ -22,12 +22,12 @@ DNNs are inherently opaque, making them difficult for users necessarily know whi
 
 \hspace*{3.5mm} In the previous chapters, we have seen that explaining a diagnosis decision with plots and charts are good for exploration and discovery. We have seen how the models are helpful at predicting cancer types. However, interpreting them to patients may be difficult for the first time. For example, suppose the $MCAE_{lrc}$ model predicts that the selected patient has breast cancer in which model's average response~(i.e., intercept) on the GE+miRNA modality is +0.452. The model predicts that the selected patient was diagnosed with a probability of 75.3\%. It also displays all the variables that contributed to that prediction. Still, explaining them to a patient in a Lyman terms may be difficult unless they are explained in a simple human-interpretable way~(e.g., decision rule).  
 
-\begin{figure*}[h]
+\begin{figure}[h]
 	\centering
-		\includegraphics[scale=0.7]{images/intercept.png}
+		\includegraphics[scale=0.6]{images/intercept.png}
 	    \caption{Explaining a diagnosis decision to patient is difficult unless it is interpreted simpler way}
-	    \label{problem_of_xai:1}
-\end{figure*}
+	\label{problem_of_xai:1}
+\end{figure}
 
 \hspace*{3.5mm} Moreover, a doctor might want to understand the reasons behind any automatic diagnosis before making the final diagnosis decision. Domain experts may have knowledge that they learned in years of their research and clinical practice, which is what current ML models may fail to utilize~\cite{ming2018rulematrix}. 
 %In this thesis, one of the goals is to generate human-interpretable decision rules automatically based on self-explanatory logic for all decisions. 
@@ -97,19 +97,15 @@ This issue can be resolved by introducing a default rule. The default rule appli
 A number of approaches that have been proposed construct globally interpretable models. With such models, the user should be able to guess the model’s behavior on any example - perfect coverage. However, these models are not appropriate for many domains, e.g. almost no interpretable rule-based system is suitable for text or image applications, due to the sheer size of the feature space, or are just not accurate enough. 
 Since interpretability comes at the cost of flexibility, accuracy, or efficiency, an alternative is learning a simple interpretable model to imitate the black-box model globally. For example, a decision tree or a set of rules can yield low human precision. Simple models are not able to fully capture the behavior of the complex ones, and thus lead users to wrong conclusions, especially since it is not clear when the simple model is faithful. To avoid this problem, local model-agnostic explanations can be used to explain individual predictions, instead of explaining the whole model at once or globally. 
 
-\hspace*{3.5mm} These methods provide a trade-off: each explanation is easy to understand even for complex models and tasks, but only captures the behavior of the model on a local region of the in-put space. Together with many forms of linear explanations, anchor-based approaches have been used to explain the reasoning for complex models for use cases such as machine translation and video question answering system. 
-Rule-based models are composed of logical representations, i.e., ``IF-THEN-ELSE'' statements pervasively used in programming languages. Typical representations of rule-based models include decision tables, decision trees, and rule sets or decision lists. Trees are hierarchical data structure that have been widely. BaobabView uses a node-link data flow diagram to visualize the logic of decision trees, which inspired our design of data flow visualization in rule lists. 
-
-\hspace*{3.5mm} However, there is little research on how visualization can help analyze decision tables and rule lists. The lack of interest in visualizing decision tables and rule lists is partially due to the fact that they are not naturally graphical representations as trees. There is also no consensus that trees are the best visual representations for understanding rule-based models. A comprehensive empirical study conducted by Huysmanset al.~\cite{mehrabi2019survey} found that decision tables are the most effective representations, while other studies disagrees.
+\hspace*{3.5mm} These methods provide a trade-off: each explanation is easy to understand even for complex models and tasks, but only captures the behavior of the model on a local region of the in-put space. Together with many forms of linear explanations, anchor-based approaches have been used to explain the reasoning for complex models for use cases such as machine translation and video question answering system. Rule-based models are composed of logical representations, i.e., ``IF-THEN-ELSE'' statements pervasively used in programming languages. Typical representations of rule-based models include decision tables, decision trees, and rule sets or decision lists. Trees are hierarchical data structure that have been widely. BaobabView uses a node-link data flow diagram to visualize the logic of decision trees, which inspired our design of data flow visualization in rule lists. 
+However, there is little research on how visualization can help analyze decision tables and rule lists. The lack of interest in visualizing decision tables and rule lists is partially due to the fact that they are not naturally graphical representations as trees. There is also no consensus that trees are the best visual representations for understanding rule-based models. A comprehensive empirical study conducted by Huysmanset al.~\cite{mehrabi2019survey} found that decision tables are the most effective representations, while other studies disagrees.
 
 %In a later position paper, Freitas et al. summarized a few good properties rules and tables possess that trees do not. Previous studies used pure texts to present rules.  %In our study, we provide a graphical representation of rule lists as an alternative for navigating and exploring proxy models.
 
-\hspace*{3.5mm}This is a major reason why an interpretable surrogate model may not learn such complex interactions. To overcome this, one approach is to generate a surrogate model trained on the simplified data containing most important features.
+\hspace*{3.5mm} Due to highly non-linearity containing higher order interactions among features in  very complex DNN model, an interpretable surrogate model may not learn such complex interactions. To overcome this, one approach is to generate a surrogate model trained on the simplified data containing most important features~\cite{molnar2019interpretable}.
 %Due to highly non-linearity containing higher order interactions among features, surrogate models is that black box models based on DNNs are often highly complex. This is a major reason why an interpretable surrogate model may not learn such complex interactions. To overcome this, one approach is to generate a surrogate model trained on the simplified data containing most important features.
 , known as a Local Interpretable Model-agnostic Explanations (LIME; [50]). 
-While the complex logic underlying the whole model may be too much for a surrogate model to learn, the logic for one instance or a group of similar instances (e.g. co-expressed genes) may be simple enough. For example, LIME was used to better understand why some patients (i.e. instances) were misclassified by a black box model predicting survival after cardiac arrest $[51] .$ A LIME model for a patient that was mis-predicted to survive showed that the black box model was too heavily influenced by certain features (e.g. healthy. 
-
-\hspace*{3.5mm} Unlike neural networks today, NBDTs can output intermediate decisions for a prediction. For example, given an image, a neural network may output Dog. However, an NBDT can output both Dog and Animal, Chordate, Carnivore (below).
+While the complex logic underlying the whole model may be too much for a surrogate model to learn, the logic for one instance or a group of similar instances (e.g. co-expressed genes) may be simple enough. For example, LIME was used to better understand why some patients (i.e. instances) were misclassified by a black box model predicting survival after cardiac arrest $[51] .$ A LIME model for a patient that was mis-predicted to survive showed that the black box model was too heavily influenced by certain features (e.g. healthy. Unlike neural networks today, NBDTs can output intermediate decisions for a prediction. For example, given an image, a neural network may output Dog. However, an NBDT can output both Dog and Animal, Chordate, Carnivore (below).
 
 \section{Methods} \label{chapter_7:mm}
 In this section, we discuss our approach in detail, including data collection, preprocessing, network construction, and training, followed by interpreting the network towards biomarkers identification. 
@@ -239,6 +235,42 @@ According to baseline expression results, both gene expression and miRNA express
 \subsubsection{Rule set generation}
 For a given surrogate model ${f}$, the task is to extract a rule list $R$ to explain it's decision. However, each modality in the multimodal genomic dataset has a large number of features. RuleMatrix~\cite{ming2018rulematrix} that was proposed for binary classification problem is extended for multiclass classification problem. In other words, the output distribution of RuleMatrix is extended to multinomial instead of binomial. 
 As shown in \cref{fig:rules_wf}, we treat the original~(trained) model as a teacher that have sufficient knowledge and the student model is trained using the data ``labeled" by the teacher, s.t. the predictions of the teacher model is used as ground truth instead of the real ones. Nevertheless, since we have access to both a trained model and the data used to train the model, estimating the distribution of the training data ${X}$ is feasible. 
+
+%\vspace{-2mm}
+\begin{algorithm*}[h]
+\caption{Generating initial decision list}
+\small{
+    \DontPrintSemicolon \SetKwInOut{Input}{Input}%
+    \SetKwInOut{Output}{Output}%
+    \Input{Trained surrogate model $M_b$ and the list of default rules $D$}%
+    \Output{Initial decision list in~(rule, probability) pairs}%
+    \BlankLine%
+    \textbf{Step-1}: generate the list of pre-mined frequent patterns from FP-Growth trees $F$\;
+    \textbf{Step-2}: Sample the list length parameter $m$ from a truncated Poisson distribution.\;
+    \textbf{Step-3}: \For{for each default rule $d \in D$}{\;
+        \vspace{-2mm}
+        $\Tilde{D} \leftarrow$ Sample the Dirichlet-multinomial distribution parameter $\theta_0$ for target cancer type\;
+        \textbf{Return} $\Tilde{D}$  
+    }
+    \textbf{Step-4}: \For{Decision list rule $\mathrm{j}=1, \ldots, \mathrm{m}, \mathrm{d}$ 0}{\;
+        \vspace{-2mm}
+        Sample the rule length parameter $I$ number of conditions for rule $j$\;
+        Sample a condition of length $l_{j}$ from the pre-mined conditions $F$\;
+        $\Tilde{D_t} \leftarrow$ Sample the Dirichlet-multinomial distribution parameter for the antecedents\;
+        \textbf{Return} $\Tilde{D_t}$  
+    }
+    \BlankLine%
+    \textbf{Step-5}: \For{For each sample in the dataset $x \in X$}{\;
+        \vspace{-2mm}
+        $R \leftarrow \{\}$\;
+        $r \leftarrow$ Find the rule from the decision list that occurs first\;
+        $p \leftarrow$ Draw the predicted outcome from the binomial probability distribution for rule $r$.\;
+        $R \leftarrow r u p$\;
+        \textbf{Return} $R$  
+        }
+    }
+    \label{algo:initial_decision_lis_generation}
+\end{algorithm*}
 
 \hspace*{3.5mm} Unlike RuleMatrix, this approach does not require the joint distribution estimation~(i.e., for discrete and continuous features), given that our feature space is continuous. RuleMatrix takes a trained model ${f}$~(i.e, teacher) and training set $X$ as input to produce a rule list $R$ generated through a surrogate model by approximating the classifier w.r.t, fidelity as the accuracy with the true labels as the output of ${f}$~\cite{ming2018rulematrix}. On the other hand, since the classifier $f$ can reach it's decision through multiple rules with excessive length, applying sequential covering\footnote{A procedure that repeatedly learns a single rule to create a decision list~\cite{molnar2019interpretable}} the entire dataset rule by rule was not what we optimally think. 
 
