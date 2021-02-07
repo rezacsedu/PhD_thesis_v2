@@ -145,14 +145,17 @@ The problem is to generate a set of rules capable of ``anchoring"~(covering) the
 \hspace*{3.5mm} Let $R$ be a rule~(in the form of set of predicates) to provide interpretable representation, such that $R(x)$ returns 1 if all its feature predicates are true for instance $x$, 0 otherwise. For example, in \cref{ge:ancor_example} when x=\{1, 0.3195, -0.2154, -0.154, 0.4767, 0.652\} or x=\{1, 0.230, -0.552, 0.715, 0.924, 0.652\}, $f(x)=Y$, $A(x)=1$ where $A=\{TP53, TBX3, MPO, AMBN\}$. On the other hand, when x=\{0, -0.240, 0.252, 0.350, -0.642, -0.985\} or x=\{0, -0.450, 0.012, 0.650, -0.325, -0.357\}, $f(x)=N$, $R(x)=0$ where $R=\{TP53, TBX3, MTOR, MPO\}$. Representing a decision this intuitive way is not very user friendly given the continuous nature of the data and huge number of feature space. Therefore, we need a better rule list to approximate the behaviour of the original models trained on dataset $X$. 
 
 \subsection{Generating decision rules}
-The Bayesian rule-based approach is employed to generate and explain model's decision. The overall workflow of the rule generation is shown in \cref{fig:rules_wf}. First, a MCAE is trained on multimodal genomics data to learn the latent representation. Global attention mechanism is applied on the latent representation to disentangle and identify potential 660 marker genes. A surrogate model is subsequently trained on the identified features to produce a rule list by approximating the behaviour of the  models. Since not all the rule may not qualify w.r.t. coverage, support, and confidence, it is reasonable to add filtering option for the users. In particular, support and confidence are the two thresholds that can be set to get the filtered rules, before explaining the final decision to the patients. Since, representation learning and predictive modelling are already covered, only the model surrogation, rule generation, filtering of rules, and rule-based explanation steps are covered in the subsequent sections. 
+A Bayesian rule-based approach called Scalable Bayesian Rule List~(SBRL) is employed to generate decision rules and explain a surrogate model's decision. The overall workflow of the rule generation is shown in \cref{fig:rules_wf}. First, a MCAE is trained on multimodal genomics data to learn the latent representation. Global attention mechanism is applied on the latent representation to disentangle and identify potential 660 marker genes. A surrogate model is subsequently trained on the identified features to produce a rule list by approximating the behaviour of the  models. 
+
+\hspace*{3.5mm} Since not all the rule may not qualify w.r.t. coverage, support, and confidence, it is reasonable to add filtering option for the users. In particular, support and confidence are the two thresholds that can be set to get the filtered rules, before explaining the final decision to the patients. Since, representation learning and predictive modelling are already covered, only the model surrogation, rule generation, filtering of rules, and rule-based explanation steps are covered in the subsequent sections. 
 
 \subsubsection{Model surrogation}
 A surrogate model is an interpretable model trained to approximate the predictions of the underlying model as accurately as possible and to be interpretable. By interpreting the surrogate model, one can draw conclusions about the `black box' model~\cite{molnar2019interpretable}. The goal he is to approximate our `black-box' prediction function $f$ as closely as possible with the surrogate model prediction function $g$, under the constraint that $g$ is interpretable. For $g$, any interpretable model can be used~\cite{molnar2019interpretable}. Interpreting a long rule set containing a large number of antecedents, is very difficult. Moreover, all the input features to be categorical, while our dataset has a continuous feature space. 
 
 \hspace*{3.5mm} To solve this, RuleMatrix uses the minimum description length binning~(MDLB)\footnote{\url{https://github.com/hlin117/mdlp-discretization}} discretization to discretize the features and the FP-Growth frequent mining algorithm~\cite{han2000mining} to get the candidate rule sets based on which the final rule set is generated. In our approach, MDLB was not a feasible option due to the nature of the data. 
 Maslove et al.~\cite{maslove2013discretization} has suggested that discretization could help not only to get better accuracy, but also help interpreting the decision rules better. This requires the features to be categorical such that numeric features have to be categorized. Therefore, we come up with our own discretization based on domain knowledge. 
-There are many ways to cut a continuous feature into intervals, but this is not trivially straightforward way. This evolves an important question. How many intervals should the feature be divided into? Employing two splitting criteria such as quantiles and fixed interval lengths could be an option. For the former, one can binning continuous features based on the frequency of the values by quantiles is an option. However, it could end up with so many bins that would not help in interpreting a rule in human understandable way. 
+
+\hspace*{3.5mm} There are many ways to cut a continuous feature into intervals, but this is not trivially straightforward way. This evolves an important consideration on number of intervals the feature should be divided into. Employing two splitting criteria such as quantiles and fixed interval lengths could be an option. For the former, one can binning continuous features based on the frequency of the values by quantiles is an option. However, it could end up with so many bins that would not help in interpreting a rule in human understandable way. 
 %Although genomics data used are also mostly continuous, domain expertise or knowledge might help. 
 According to baseline expression results, both gene expression and miRNA expressions are discritized into 4 different levels\footnote{\url{https://www.ebi.ac.uk/gxa/FAQ.html}}:
 
@@ -238,53 +241,44 @@ As shown in \cref{fig:rules_wf}, we treat the original~(trained) model as a teac
 
 %\vspace{-2mm}
 \begin{algorithm*}[h]
-\caption{Generating initial decision list}
+\caption{Initial decision list generation based on Scalable Bayesian Rule List}
 \small{
     \DontPrintSemicolon \SetKwInOut{Input}{Input}%
     \SetKwInOut{Output}{Output}%
     \Input{Trained surrogate model $M_b$ and the list of default rules $D$}%
     \Output{Initial decision list in~(rule, probability) pairs}%
     \BlankLine%
-    \textbf{Step-1}: generate the list of pre-mined frequent patterns from FP-Growth trees $F$\;
+    \textbf{Step-1}: generate the list of pre-mined frequent patterns from FP-Growth trees $F$.\;
     \textbf{Step-2}: Sample the list length parameter $m$ from a truncated Poisson distribution.\;
     \textbf{Step-3}: \For{for each default rule $d \in D$}{\;
         \vspace{-2mm}
-        $\Tilde{D} \leftarrow$ Sample the Dirichlet-multinomial distribution parameter $\theta_0$ for target cancer type\;
+        $\Tilde{D} \leftarrow$ Sample the Dirichlet-multinomial distribution parameter $\theta_0$ for target cancer type.\;
         \textbf{Return} $\Tilde{D}$  
     }
     \textbf{Step-4}: \For{Decision list rule $\mathrm{j}=1, \ldots, \mathrm{m}, \mathrm{d}$ 0}{\;
         \vspace{-2mm}
-        Sample the rule length parameter $I$ number of conditions for rule $j$\;
-        Sample a condition of length $l_{j}$ from the pre-mined conditions $F$\;
-        $\Tilde{D_t} \leftarrow$ Sample the Dirichlet-multinomial distribution parameter for the antecedents\;
+        Sample the rule length parameter $I$ number of conditions for rule $j$.\;
+        Sample a condition of length $l_{j}$ from the pre-mined conditions $F$.\;
+        $\Tilde{D_t} \leftarrow$ Sample the Dirichlet-multinomial distribution parameter for the antecedents.\;
         \textbf{Return} $\Tilde{D_t}$  
     }
     \BlankLine%
     \textbf{Step-5}: \For{For each sample in the dataset $x \in X$}{\;
         \vspace{-2mm}
         $R \leftarrow \{\}$\;
-        $r \leftarrow$ Find the rule from the decision list that occurs first\;
+        $r \leftarrow$ Find the rule from the decision list $\Tilde{D_t}$ that occurs first.\;
         $p \leftarrow$ Draw the predicted outcome from the binomial probability distribution for rule $r$.\;
-        $R \leftarrow r u p$\;
+        $R \leftarrow r \cup p$\;
         \textbf{Return} $R$  
         }
     }
     \label{algo:initial_decision_lis_generation}
 \end{algorithm*}
 
-\hspace*{3.5mm} Unlike RuleMatrix, this approach does not require the joint distribution estimation~(i.e., for discrete and continuous features), given that our feature space is continuous. RuleMatrix takes a trained model ${f}$~(i.e, teacher) and training set $X$ as input to produce a rule list $R$ generated through a surrogate model by approximating the classifier w.r.t, fidelity as the accuracy with the true labels as the output of ${f}$~\cite{ming2018rulematrix}. On the other hand, since the classifier $f$ can reach it's decision through multiple rules with excessive length, applying sequential covering\footnote{A procedure that repeatedly learns a single rule to create a decision list~\cite{molnar2019interpretable}} the entire dataset rule by rule was not what we optimally think. 
-
-Therefore, considering the length of number of predictors~(i.e, features), we apply the representation of an ordered list of inclusive rules based on scalable Bayesian Rule List~(SBRL)proposed by Yanget al.~\cite{BayesianRule}. SBRL algorithm expects all the input features to be categorical, while our dataset has a continuous feature space.
-
-\hspace*{3.5mm} However, similar to RuleMatrix, we restrict the antecedent to be a conjunction~(i.e., AND) of clauses, where each clause is a condition on an input feature, which eases users' cognitive burden of discriminating different logical operations\footnote{A regular  decision rule is consist of one or more antecedents~(with multiple AND and OR clauses) and a consequent.}. Eventually, the output of each rule is a probability distribution over the classes, representing the probability of an instance satisfying the antecedent belongs to each class. However, for a better understandability, we show the highest probabilities of two probable classes only. 
-%The simplest way to present a rule is to write it down as a logical expression, which is ubiquitous in programming languages. 
-
-\subsubsection{Filtering rules}
-%In contrast, even though LIME uses the same $\mathcal{D}$, anchors adapt their coverage to the model's behavior and makes their boundaries clear. 
-% Anchors are intuitive, easy to comprehend, and have extremely clear coverage – they only apply when all the conditions in the rule are met, and if they apply the precision is high. 
-In textual representations, the input features do not necessarily represent in the same order in each rule, making it difficult for users to search a rule with certain filtering criteria or when comparing conditions used in other rules. Given given that our feature space is very high dimensional, textual representations would be difficult to navigate when the length of a decision rule list is very large. However, the filtering of rules helps relieve the scalability issue and reduce the cognitive load when the extracted rule list is too long. This is very crucial for our case, since our teacher models are very complex DNN architectures and trained on high dimensional multimodal genomics data~\cite{ribeiro2018anchors}. 
-
-\hspace*{3.5mm} Apart from overlapping and conflicting rules, there is no better way to measure if the generated explanations justify how faithful they are w.r.t ``coverage"~\cite{ming2018rulematrix}. To check if a rule list approximates the model reasonably well, we provide two types of filters: filter by support~(or frequency) and confidence~(or accuracy). Therefore, using support, we filter out the rules that have little support, assuming those are not useful explaining clinical decisions. Considering the huge feature space that will be giving a large number of candidate rules, SBRL found to be suitable for the cancer diagnosis problem at hand. In SBRL, pre-mined frequent patterns are combined into a decision list using Bayesian statistics~\cite{molnar2019interpretable}, where the frequency of a pattern is measured in terms of its support in the entire training dataset:
+\hspace*{3.5mm} Unlike RuleMatrix, this approach does not require the joint distribution estimation~(i.e., for discrete and continuous features), given that our feature space is continuous. RuleMatrix takes a trained model~(i.e, teacher) and training\footnote{The number of driver genes identified the teacher model} set as input to produce a decision list or rule set.
+Besides, the objective is to approximate the teacher model's behaviour via the surrogate model w.r.t, fidelity as the accuracy. On the other hand, since the surrogate model can reach it's decision through multiple rules with excessive length and  
+%applying sequential covering\footnote{A procedure that repeatedly learns a single rule to create a decision list~\cite{molnar2019interpretable}} the entire dataset rule by rule was not what we optimally think. 
+considering the length of number of predictors~(i.e, features), we apply the representation of an ordered list of inclusive rules based on SBRL proposed by Yanget al.~\cite{BayesianRule}. \Cref{algo:initial_decision_lis_generation} shows the pseudocode for the generation of an initial decision list generation based on SBRL. In SBRL, pre-mined frequent patterns are combined into a decision list using Bayesian statistics~\cite{molnar2019interpretable}, where the frequency of a pattern is measured in terms of its support in the entire training dataset~\cite{molnar2019interpretable}:
 
 \vspace{-6mm}
 \begin{align}
@@ -295,9 +289,19 @@ In textual representations, the input features do not necessarily represent in t
     \label{eq:support_eq}
 \end{align}
 
-\hspace*{3.5mm} where $a$ or $x_j$ is the feature value for $i$th sample, $n$ the number of data points in the dataset and $I$ the indicator function that returns $1$ if the feature $x_{j}$ of the instance $i$ has level $a$, otherwise $0$. The latter filters out rules that have low confidence, making them insignificant in discriminating different classes while explaining clinical decisions. When performing inference, each rule is queried in order and will only fire if all its previous rules are not satisfied. This allows fast queries by bypassing the complex conflicts resolution mechanisms~\cite{ribeiro2018anchors}. 
+\hspace*{3.5mm} where $a$ or $x_j$ is the feature value for $i$th sample, $n$ the number of data points in the dataset and $I$ the indicator function that returns $1$ if the feature $x_{j}$ of the instance $i$ has level $a$, otherwise $0$. 
 
+\subsubsection{Filtering rules}
+%In contrast, even though LIME uses the same $\mathcal{D}$, anchors adapt their coverage to the model's behavior and makes their boundaries clear. 
+% Anchors are intuitive, easy to comprehend, and have extremely clear coverage – they only apply when all the conditions in the rule are met, and if they apply the precision is high. 
+In textual representations, the input features do not necessarily represent in the same order in each rule, making it difficult for users to search a rule with certain filtering criteria or when comparing conditions used in other rules. Given given that our feature space is very high dimensional, textual representations would be difficult to navigate when the length of a decision rule list is very large. However, the filtering of rules helps relieve the scalability issue and reduce the cognitive load when the extracted rule list is too long. This is very crucial for our case, since our teacher models are very complex DNN architectures and trained on high dimensional multimodal genomics data~\cite{ribeiro2018anchors}. 
 
+\hspace*{3.5mm} Apart from overlapping and conflicting rules, there is no better way to measure if the generated explanations justify how faithful they are w.r.t ``coverage"~\cite{ming2018rulematrix}. To check if a rule list approximates the model reasonably well, we provide two types of filters: filter by support~(or frequency) and confidence~(or accuracy). Therefore, using support, we filter out the rules that have little support, assuming those are not useful explaining clinical decisions. Considering the huge feature space that will be giving a large number of candidate rules, SBRL found to be suitable for the cancer diagnosis problem at hand. 
+
+\hspace*{3.5mm} However, similar to RuleMatrix, we restrict the antecedent to be a conjunction~(i.e., AND) of clauses, where each clause is a condition on an input feature, which eases users' cognitive burden of discriminating different logical operations\footnote{A regular  decision rule is consist of one or more antecedents~(with multiple AND and OR clauses) and a consequent.}. Eventually, the output of each rule is a probability distribution over the classes, representing the probability of an instance satisfying the antecedent belongs to each class. However, for a better understandability, we show the highest probabilities of two probable classes only. 
+%The simplest way to present a rule is to write it down as a logical expression, which is ubiquitous in programming languages. 
+
+\hspace*{3.5mm} The latter filters out rules that have low confidence, making them insignificant in discriminating different classes while explaining clinical decisions. When performing inference, each rule is queried in order and will only fire if all its previous rules are not satisfied. This allows fast queries by bypassing the complex conflicts resolution mechanisms~\cite{ribeiro2018anchors}. 
 
 %\subsubsection{Challenges} 
 %Ambiguities: i) many biomarkers, e.g., genes have different names (e.g., synonym) across sources, ii) describing the prediction in natural language.
