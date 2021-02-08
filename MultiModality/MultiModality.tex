@@ -28,9 +28,7 @@ The multilayer nature in DNN and it's successive layer is hypothesized to repres
 \section{Related Work}\label{chapter_4:rw}
 Until a few years ago, deep belief networks~(DBN) were most popular approaches. Technically, restricted Boltzmann machines~(RBM) provides the basic building blocks. Similar to DNNs, each successive layer in a DBN is expected to represent the data at a higher level of abstraction. The appeal of DBMs comes from the fact that they do not need supervised data for training. As they are graphical models the representation of data is probabilistic, however it is possible to convert them to a deterministic DNNs, which, however, loses the generative aspect of the model. Although, approaches using both unimodal~\cite{abdel2016breast} and multimodal DBN~\cite{liang} show reasonably high accuracy at different classification tasks, one of the potential limitations of DBN is that the limited capability at feature learning during pretraining~\cite{serban2016multi}, although it gets a decent set of feature representations. Furthermore, DBN is incapable of learning quality features from very high dimensional datasets, as the pretraining losses often get out of bound. %, which results in overfitting issue. 
 
-\hspace*{3.5mm} To overcome the limitations of existing approaches, majority of the multimodal methods focused on representation fusions~\cite{ito2018effects}, either by combining representations before the classification called feature level fusion or by combining the results of classifications performed in single-mode representations in another analysis  called `decision level fusion'~\cite{atrey2010multimodal}. 
-The multimodal autoencoder~(MAE) proposed by Ngiam et al.~\cite{NgiamKKNLN11} extended the idea of using autoencoders in the multimodal information fusion setting. They used stacked denoising autoencoders to represent each modality individually and then fused them into a multimodal representation using another autoencoder layer~\cite{mmsurvey,serban2016multi}. It is also common to fine-tune the resulting representation on a supervised learning tasks. 
-MAE~\cite{liu2016multimodal,serban2016multi,wang2018associativemulti} can be used to flexibly learn from prior distribution and to capture features from a target distribution. Subsequently, MAE-based approaches have been applied in natural language understanding like tasks such as document and dialogue modeling~\cite{serban2016multi}, emotion recognition~\cite{liu2016multimodal}, and multimodal word representation~\cite{wang2018associativemulti}. 
+\hspace*{3.5mm} To overcome the limitations of existing approaches, majority of the multimodal methods focused on representation fusions~\cite{ito2018effects}, either by combining representations before the classification called feature level fusion or by combining the results of classifications performed in single-mode representations in another analysis  called `decision level fusion'~\cite{atrey2010multimodal}. The multimodal autoencoder~(MAE) proposed by Ngiam et al.~\cite{NgiamKKNLN11} extended the idea of using autoencoders in the multimodal information fusion setting. They used stacked denoising autoencoders to represent each modality individually and then fused them into a multimodal representation using another autoencoder layer~\cite{mmsurvey,serban2016multi}. It is also common to fine-tune the resulting representation on a supervised learning tasks. MAE~\cite{liu2016multimodal,serban2016multi,wang2018associativemulti} can be used to flexibly learn from prior distribution and to capture features from a target distribution. Subsequently, MAE-based approaches have been applied in natural language understanding like tasks such as document and dialogue modeling~\cite{serban2016multi}, emotion recognition~\cite{liu2016multimodal}, and multimodal word representation~\cite{wang2018associativemulti}. 
 
 \hspace*{3.5mm} An alternative to a joint multimodal representation is a coordinated representation, where instead of projecting the modalities together into a joint space, separate representations for each modality are learned but coordinated them through a constraint. Although, there a few recent multimodal approaches for more optimized representation learning, a vanilla autoencoder-based MAE architecture is constructed. Multimodal system presented in~\cite{wang2018associativemulti} is extended by adding the capability of handling multiple modalities across four different types of genomics data. During the multimodal fusion approach, small part of patient data is discarded that don't have all modalities in our MAE network. A fully connected layer is then added for the supervised learning task, i.e. breast cancer subtypes predictions. 
 
@@ -42,8 +40,7 @@ MAE~\cite{liu2016multimodal,serban2016multi,wang2018associativemulti} can be use
 In this section, data collection, preprocessing, network construction, and training are discussed in detail. 
 
 \subsection{Problem statement}
-The problem of cancer sub-typing is to observe which genetic mutations are responsible for which breast cancer subtypes, based on multimodal genomics data containing ER, PGR, and HER2/neu statuses of breast cancer patients, either separately or in a multimodal way. 
-The heterogeneity of expression across samples is captured in a gene regulation space, instead of gene expression space. This also involves transforming gene expression, miRNA expression, and DNA methylation profiles into regulation profiles for characterizing differential expression of genes between different subtypes. Since breast cancer subtype classification consists of following three sub-tasks based on ER, PGR, and HER2/neu status: %, each of these will correspond to different neural networks: 
+The problem of cancer sub-typing is to observe which genetic mutations are responsible for which breast cancer subtypes, based on multimodal genomics data containing ER, PGR, and HER2/neu statuses of breast cancer patients, either separately or in a multimodal way. The heterogeneity of expression across samples is captured in a gene regulation space, instead of gene expression space. This also involves transforming gene expression, miRNA expression, and DNA methylation profiles into regulation profiles for characterizing differential expression of genes between different subtypes. Since breast cancer subtype classification consists of following three sub-tasks based on ER, PGR, and HER2/neu status: %, each of these will correspond to different neural networks: 
 
 \begin{itemize}[noitemsep]
     \item \textbf{ER status classification} - diagnosing individual patients into one of POSITIVE, NEGATIVE, and INDETERMINATE\footnote{Patients can't be grouped as positive, negative, or equivocal}, based on existence of ER protein breast tissue. 
@@ -58,7 +55,7 @@ Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{
 \begin{figure*}
   \centering
   \includegraphics[scale=0.55]{images/data_per_patients}
-  \caption[Selection and formation of multimodal breast cancer patient cohorts]{Selection and formation of multimodal breast cancer patient cohorts, where out of 1,098 breast cancer cohorts only 1,000 patients  contribute to multimodal data }
+  \caption[Selection and formation of multimodal breast cancer patient cohorts]{Selection and formation of multimodal breast cancer patient cohorts, where out of 1,098 breast cancer cohorts only 1,000 patients contribute to multimodal data}
   \label{fig:data_per_patients}
 \end{figure*}
 
@@ -68,7 +65,7 @@ Several databases of genomics data exist including TCGA~\cite{tcga}, ICGC~\cite{
 
 \begin{table}[h]
     \scriptsize
-    \caption{Statistics of the data used for breast cancer sub-type classification~\cite{karimACCESS2019}}
+    \caption[Statistics of the data used for breast cancer sub-type classification]{Statistics of the data used for breast cancer sub-type classification~\cite{karimACCESS2019}}
     	\vspace{-2mm}
     \label{tab:all_data_brca}
     \centering
@@ -307,6 +304,7 @@ The training process is performed through a total of 100 epochs with the batch s
 
 \subsection{Performance metrics}
 Results based on best hyperparameters produced through random search and 5-fold cross-validation tests empirically are reported in which macro-averaged precision, recall, F1, and Matthias correlation coefficient~(MCC) scores, along with confusion matrices are interpreted. Since this is one of the very first works on multimodality learning, comparing our approach with baseline models was not a viable option. 
+
 \iffalse
 \begin{sidewaysfigure*}[htp!]
 	\centering
@@ -349,7 +347,7 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
 \begin{table}[h]
     \centering
     \footnotesize
-    \caption{Top results for ER, PGR, and HER2/neu status classification~\cite{karimACCESS2019}}
+    \caption[Top results for ER, PGR, and HER2/neu status classification]{Top results for ER, PGR, and HER2/neu status classification~\cite{karimACCESS2019}}
     \vspace{-2mm}
     \label{tab:all_results}
     \begin{tabular}{l|l|l|l|l|l} 
@@ -418,7 +416,7 @@ Results for breast cancer subtype classification based on ER, PGR, and HER2/neu 
 		\caption{HER2 status classification }
         \label{fig:her2_confusion}
 	\end{subfigure}
-	\caption{Confusion matrix for ER, PGR and HER2 status classification~\cite{karimACCESS2019}} 
+	\caption[Confusion matrix for ER, PGR and HER2 status classification]{Confusion matrix for ER, PGR and HER2 status classification~\cite{karimACCESS2019}} 
 	\label{fig:multi_cms}
 \end{figure*}
 
@@ -461,7 +459,7 @@ To qualitatively study whether the learned representation can express biological
         \label{fig:tsne_ae}
 	\end{subfigure}
 	 \setlength{\belowcaptionskip}{-8pt}
-	\caption{t-SNE visualization of gene expressions vs autoencoder latent feature map~\cite{karimACCESS2019}} 
+	\caption[t-SNE visualization of gene expressions vs autoencoder latent feature map]{t-SNE visualization of gene expressions vs autoencoder latent feature map~\cite{karimACCESS2019}} 
 	\label{fig:tnse}
 	%\vspace{-2mm}
 \end{figure*}
@@ -481,7 +479,7 @@ None of the related works summarized in~\cref{table:stateofart} used multimodali
 
 \begin{table*}
 	\renewcommand{\arraystretch}{0.9}
-	\caption{Subtypes prediction with ML classifiers~(*=modality with best results)~\cite{karimACCESS2019}}
+	\caption[Subtypes prediction with ML classifiers]{Subtypes prediction with ML classifiers~(*=modality with best results)~\cite{karimACCESS2019}}
 	\label{table:classification}
 	\vspace{-2mm}
 	\scriptsize
@@ -557,9 +555,9 @@ The MAE implementation based on GE and miRNA expression modalities gave the best
 		\caption{HER2 status classification }
         \label{fig:top_her2}
 	\end{subfigure}
-	\caption{Top ER, PGR, and HER2 status classifications results for each input type~\cite{karimACCESS2019}} 
+	\caption[Top ER, PGR, and HER2 status classifications results for each input type]{Top ER, PGR, and HER2 status classifications results for each input type~\cite{karimACCESS2019}} 
 	\label{fig6}
-		\vspace{-2mm} 
+	\vspace{-2mm} 
 \end{figure*}
 
 \hspace*{3.5mm} Among ML baselines, both validation and training scores for SVM model converge to a low value with increasing size of the training set. Consequently, SVM did not benefit much from more training samples. However, being tree-based ensemble methods RF and GBT models can learn more complex concepts from GE + miRNA multimodal features, similar to MAE. The reason is that both RF and GBT models contributes to higher variance and lowering the bias. This is observed from higher training scores compared to validation scores for the maximum number of samples i.e. adding more training samples does increase model generalization. Overall, MAE gave relatively better results compared to regular AE with a single type of input. 

@@ -70,7 +70,7 @@ ML is using a set of statistical and mathematical algorithms to solve tasks such
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.6]{images/B08452_01_02.png}
-	\caption{Lifecycle of a typical  pipeline involve in an ML system~\cite{karimScalaML2019}} 
+	\caption[Lifecycle of a typical  pipeline involve in an ML system]{Lifecycle of a typical  pipeline involve in an ML system~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline}
 \end{figure}
 
@@ -93,7 +93,7 @@ However, if the performance is not satisfactory, additional tuning or retraining
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.7]{images/sup.png}
-	\caption{Workflow of supervised learning technique~\cite{karimScalaML2019}} 
+	\caption[Workflow of supervised learning technique]{Workflow of supervised learning technique~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline_sup}
 \end{figure}
 
@@ -104,7 +104,7 @@ However, if the performance is not satisfactory, additional tuning or retraining
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.9]{images/unsup.png}
-	\caption{Workflow of unsupervised learning technique~\cite{karimScalaML2019}} 
+	\caption[Workflow of unsupervised learning technique]{Workflow of unsupervised learning technique~\cite{karimScalaML2019}} 
 	\label{fig:ml_pipeline_unsup}
 \end{figure}
 
@@ -164,7 +164,7 @@ Then the decoder tries to reconstruct $X$ from $Z$ by reducing the reconstructio
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.6]{images/ae.png}
-    \caption{An unsupervised autoencoder as a network for latent feature learning~\cite{karimDLTF2018}}
+    \caption[An unsupervised autoencoder as a network for latent feature learning]{An unsupervised autoencoder as a network for latent feature learning~\cite{karimDLTF2018}}
     \label{fig:ae_theory1}
     \vspace{-2mm}
 \end{figure}
@@ -185,7 +185,7 @@ DNNs have no prior knowledge of how the pixels are organized because they do not
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.6]{images/cnn.png}
-    \caption{A schematic architecture of a CNN used for facial recognition~\cite{karim2017predictive,zaccone2018deep}}
+    \caption[A schematic architecture of a CNN used for facial recognition]{A schematic architecture of a CNN used for facial recognition~\cite{karim2017predictive,zaccone2018deep}}
     \label{fig:cnn_theory1}
 \end{figure}
 
@@ -198,7 +198,7 @@ Traditional neural networks instead ignore past events, as it is not possible fo
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.3]{images/B09698_06_4.png}
-    \caption{In RNN all the weights in all the layers have to be learned with time~\cite{karimDLTF2018}}
+    \caption[In RNN all the weights in all the layers have to be learned with time]{In RNN all the weights in all the layers have to be learned with time~\cite{karimDLTF2018}}
     \label{fig:rnn_theory1}
     \vspace{-2mm}
 \end{figure}
@@ -276,7 +276,7 @@ Since a vanilla AE is not suitable for handling data with spatial invariance~(e.
 \hspace*{3.5mm} where $o^j$ is $j^{th}$ feature map and $W_{oj}^{j}$ is $j^{th}$ filter of unpooling layer $o$; $j$ and $c^j$ are filter and bias of $j^{th}$ output layer, respectively. Compared to CNN, CAE learns optimal filters and minimize the reconstruction loss, which results in more abstract features from the encoder~(e.g., pixel-level features from images) that help to stabilize training and network converges faster, avoid corruption in feature space~\cite{guo2017deep}. 
 
 \begin{sidewaystable*}
-   \caption{Comparison of autoencoders-based representation learning approaches~\cite{karimBIB2019}} 
+   \caption[Comparison of autoencoders-based representation learning approaches]{Comparison of autoencoders-based representation learning approaches~\cite{karimBIB2019}} 
    \label{tab:fe}
    \scriptsize % text size of table content
    \centering % center the table
@@ -844,7 +844,7 @@ the concept of propositional self-attention networks~(PSAN) is one of the first 
 \begin{figure*}
 	\centering
 	\includegraphics[scale=0.6]{images/san.png}	
-	\caption{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
+	\caption[The schematic representation of the self-attention networks]{The schematic representation of the self-attention networks, conceptually reconstructed based on the same network architecture proposed by Matej P. et al.~\cite{vskrlj2020feature}}.
 	\label{fig:san}
 \end{figure*}
 
@@ -1148,10 +1148,8 @@ The largest uniformly processed cancer genomic data provided is TCGA, giving ove
 \end{itemize}
 
 \section{Chapter Summary}
-In this chapter, we provide preliminaries and several aspects required for the foundation of an AI DSS. We covered basics of decision support systems, machine learning, deep learning and neural networks, hyperparameter tuning, representation learning, neural ensemble methods, explainability and interpretability, different interpretable methods, and the mechanism of cancer growth and metastasis. 
-It is now understandable that cancer is not only a lethal disease, but also tremendously complex to diagnose and treat. Therefore, not only recommending accurate diagnosis, but also knowing the biological mechanisms is important, e.g., oncogenes in order to provide subsequent treatments. 
+In this chapter, we provide preliminaries and several aspects required for the foundation of an AI DSS. We covered basics of decision support systems, machine learning, deep learning and neural networks, hyperparameter tuning, representation learning, neural ensemble methods, explainability and interpretability, different interpretable methods, and the mechanism of cancer growth and metastasis. It is now understandable that cancer is not only a lethal disease, but also tremendously complex to diagnose and treat. Therefore, not only recommending accurate diagnosis, but also knowing the biological mechanisms is important, e.g., oncogenes in order to provide subsequent treatments. 
 
-\hspace*{3.5mm} Nevertheless, as research suggested~\cite{alirezaie2019semantic} that introducing semantics into deep learning model through ontological-reasoning will likely start a new era towards XAI, where the ML model reads input data, generates the predictions, observe the results, use the existing knowledge from the KB as a semantic reasoner, and produces new knowledge to provide more human-interpretable answers and explanations. The benefit is that the model learns not only from the data but also from explicit and encoded prior knowledge, which not only helps avoiding making similar mistakes in successive iterations, but also helps reducing the biases. 
-Eventually, if an explainable DSS system can explain its reasoning, we can verify whether that reasoning is sound with respect to these auxiliary criteria for real clinical setting. 
+\hspace*{3.5mm} Nevertheless, as research suggested~\cite{alirezaie2019semantic} that introducing semantics into deep learning model through ontological-reasoning will likely start a new era towards XAI, where the ML model reads input data, generates the predictions, observe the results, use the existing knowledge from the KB as a semantic reasoner, and produces new knowledge to provide more human-interpretable answers and explanations. The benefit is that the model learns not only from the data but also from explicit and encoded prior knowledge, which not only helps avoiding making similar mistakes in successive iterations, but also helps reducing the biases. Eventually, if an explainable DSS system can explain its reasoning, we can verify whether that reasoning is sound with respect to these auxiliary criteria for real clinical setting. 
 
 \hspace*{3.5mm}In the next chapter, we start our explainable journey towards developing a DSS to leverage the cancer diagnosis and making the decision explainable and trustworthy.~We will use CNV data~(i.e., single modality) and investigate whether it effectively helps to predict cancer types. We will employ neural ensemble method to make the prediction pipeline robust. 

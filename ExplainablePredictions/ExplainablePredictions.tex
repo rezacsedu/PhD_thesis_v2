@@ -66,7 +66,7 @@ A few other works focused on counterfactual explanations. However, their optimiz
 
 \begin{table}[h]
     \centering
-    \caption{XAI approaches w.r.t algorithmic fairness, robustness, and explainability~(refer to \cref{chapter:preli})}
+    \caption[XAI approaches w.r.t algorithmic fairness, robustness, and explainability]{XAI approaches w.r.t algorithmic fairness, robustness, and explainability~(refer to \cref{chapter:preli})}
     \label{tab:multimodal_xai_approaches}
     \scriptsize
     \vspace{-2mm}
@@ -137,6 +137,7 @@ Providing diagnosis and statistical explanations are very convenient. However, i
 Andreas Holzinger, et al.~\cite{holzinger2020measuring} has introduced `System Causability Scale'~(SCS) to measure the quality of explanations. SCS is based on the notion of Causability~\cite{holzinger2019causability} combined with concepts adapted from a widely-accepted usability scale. The purpose of SCS is to quickly determine whether and to what extent an explainable user interface, an explanation, or an explanation process itself is suitable for the intended purpose~\cite{holzinger2020measuring}.  
 
 \hspace*{3.5mm} The explainability based on statistical learning has a severe drawback. That is due to the stochastic nature of DNN, the prediction and feature importance generated would be slightly different across runs, i.e., not deterministic. This also applied to DSS we developed in the previous chapters. We might even encounter similar issue for tree-based ensemble models such as random forest. For example, GBT provides 3 options for measuring feature importance: i) \emph{weight}\footnote{Number of times a feature is used to split the data across all trees}, ii) \emph{cover}\footnote{Number of times a feature is used to split the data across all trees weighted by the number of training data points go through those splits}, and iii) \emph{gain}\footnote{The average training loss reduction gained when using a feature for splitting}. Based on these measure, feature importance orderings~(i.e., the order in which features are added) may be significantly different since subsequent features will get a disproportionately high weight. 
+
 \hspace*{3.5mm} In the previous chapter, a multimodal autoencoder~(MAE) architecture is constructed and trained on multimodal genomics data. Then based on the concatenated latent feature vectors, breast cancer subtype classification tasks are performed. Since the latent vectors are not easily interpretable, MAE is as a black-box model. However, disentangling latent vectors can provide insight into what features the representations captures and what attributes of the samples the classification going is based on~\cite{karimTCBB2020}. Nevertheless, apart from some restrictive initiatives, no substantial works are done to improve the opaqueness of a DNN classifier based on multimodal representation learning. %Considering the factros, we not only
 
 \section{Methods}\label{chapter_5:mm}
@@ -197,7 +198,7 @@ The sample distribution across data types is shown in \cref{table:alldatadetails
 \begin{table} [h]
 \centering
     \scriptsize
-    \caption{Sample distribution across tumor types: rows: tumour type, column: data types~\cite{weinstein2013cancer}}
+    \caption[Sample distribution across tumor types]{Sample distribution across tumor types: rows: tumour type, column: data types~\cite{weinstein2013cancer}}
     \label{table:alldatadetails2}
     \vspace{-2mm}
     \begin{tabular}{l|l|l|l|l}
@@ -613,7 +614,7 @@ Modality specific latent feature space $h_k$ is used as the input to the attenti
 \begin{sidewaysfigure*}
 	\centering
 	\includegraphics[scale=0.8]{images/full_attention.png}
-	\caption{The schematic representation of the overall approach, showing global attention mechanism on multimodal input}
+	\caption[The schematic representation of the overall approach]{The schematic representation of the overall approach, showing global attention mechanism on multimodal input}
 	\label{fig:all_attention}
 \end{sidewaysfigure*}
 
@@ -907,7 +908,7 @@ As it is evident that $MCAE_{lrc}$ classifier outperforms $MCAE_{slr}$, giving b
 Then for better interpretability, the top-20 list is further narrowed down to top-5, having at least five genes with feature importance of at least 0.25 w.r.t. gene effect score, as shown in \cref{table:proteinimportance_1} and  \cref{table:proteinimportance_2}. % from the 20,500 protein-coding genes. 
 
 \begin{table}
-    \caption{Top-5 genes and their importance}
+    \caption{Top-5 genes and their importance for cancer types: BRCA, KIRC, LUAD, PRAD, COAD, ACC, BLCA, CESC, CHOL, DLBC, ESCA, GBM, HNSC, KICH, KIRC, and KIRP }
     \label{table:proteinimportance_1} %RF Confusion Matrix Oncogene Subtype
     \begin{center}
     \scriptsize{
@@ -975,7 +976,7 @@ Then for better interpretability, the top-20 list is further narrowed down to to
         & GATA3  & Protein-coding & 0.664706 \\ %\cline{2-4}
         & MAP3K1  & Oncogene & 0.574118 \\ %\cline{2-4}
         & APC   & Protein-coding & 0.538039 \\ 
-        \midrule
+        \midrule 
         \multirow{5}{*}{ESCA} & VHL & Oncogene & 0.596078 \\ %\cline{2-4}
         & PBRM1 & Protein-coding  & 0.560784 \\ %\cline{2-4}
         & SETD2 & Protein-coding & 0.540784 \\ %\cline{2-4}
@@ -1019,7 +1020,7 @@ Then for better interpretability, the top-20 list is further narrowed down to to
 \end{table}
 
 \begin{table}
-    \caption{Top-5 genes and their importance}
+    \caption{Top-5 genes and their importance for cancer types: LAML, LGG, LIHC, LUSC, MESO, OV, PAAD, PCPG, READ, SARC, SKCM, STAD, TGCT, THCA, THYM, UCS and UVM}
     \label{table:proteinimportance_2} %RF Confusion Matrix Oncogene Subtype
     \begin{center}
     \scriptsize{
@@ -1075,7 +1076,7 @@ Then for better interpretability, the top-20 list is further narrowed down to to
         & MED12 & Protein-coding & 0.510784 \\ %\cline{2-4}
         & PIK3CA & Protein-coding & 0.491569 \\ %\cline{2-4}
         & FOXA1 & Protein-coding & 0.453137 \\ %\cline{2-4}
-        \midrule
+        \midrule 
         \multirow{5}{*}{READ}& EPHA6 & Protein-coding & 0.756078 \\ %\cline{2-4}
         & TIMP1 & Protein-coding & 0.720784 \\ %\cline{2-4}
         & ART5 & Protein-coding & 0.680784 \\ %\cline{2-4}
@@ -1240,7 +1241,7 @@ Local feature impact identifies which features have the greatest positive or neg
 \begin{figure*}[h]
     \centering
 	\includegraphics[scale=1.2]{images/local_fi_1.png}
-	\caption{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row}
+	\caption[Local feature impact identifies which features have the greatest positive/negative effect]{Local feature impact identifies which features have the greatest positive or negative effect on the outcome of the $MCAE_{lrc}$ model for a specific row}
     \label{fig:local_feature_impacts}
 \end{figure*}
 
@@ -1261,7 +1262,7 @@ To quantitatively validate the feature-level relevances, what-if analysis is car
 \begin{figure*}[h]
     \centering
 	\includegraphics[scale=0.7]{images/what_if.png}
-	\caption{What-if analysis, showing most important features for which making changes will impact the prediction most on the $MCAE_{lrc}$ model}
+	\caption[What-if analysis]{What-if analysis, showing most important features for which making changes will impact the prediction most on the $MCAE_{lrc}$ model}
     \label{fig:what_if}
 \end{figure*}
 

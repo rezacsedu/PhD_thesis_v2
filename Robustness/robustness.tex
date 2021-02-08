@@ -101,7 +101,6 @@ Till date numerous approaches have been proposed on creating adversarial samples
 
 \subsection{Attacks with OOD examples}
 Numerous approaches have been proposed to accurately identify OOD in which many researchers have treated introducing OOD attacks and subsequent detection as anomaly detection problems. Since discriminatively trained neural network classifiers produce reliable predictions only for ID samples, detecting OOD samples is essential. Assuming OOD to be outside the closed boundary of ID, typical neural classifiers do not contain the knowledge of this boundary for OOD detection during inference. Since OOD to be outside the closed boundary of ID, a predictive model is incapable of detecting OOD detection during the inferencing time, several recent approaches have been proposed to embed the logic into the learning algorithm and explicitly training the classifier with OOD samples close to the ID boundary. However, state-of-the-art approaches often fail to cover the entire ID boundary effectively, thereby resulting in a sub-optimal OOD detector~\cite{OOD10,OOD12}. 
-
 \hspace*{3.5mm} Lee et al.~\cite{OOD13} explains that test samples drawn sufficiently far away from the training distribution statistically or adversarially is a fundamental requirement for deploying a model in many real-world ML applications. However, deep neural networks with the softmax classifier are known to produce highly overconfident posterior distributions even for such abnormal samples.  %Ensemble of Leave-Out Classifiers (ELOC
 Jie et al.~\cite{OOD1} proposed likelihood ratio method for deep generative models for the OOD detection. Since OOD is heavily affected by population level background statistics, they demonstrated that likelihood ratio method can effectively correct for these confounding background statistics. Vernekar et al.~\cite{OOD2} proposed of an efficient approach to generate OOD samples based on manifold learning network. Then, OOD samples are used to train a classifier with an extra class~(i.e., $n+1$ classes, where ${(n+1)}^{th}$ class represents OOD samples). % for the detection of OOD during the inferencing time. 
 They show that only a few OOD samples are sufficient to guide the decision boundary of the classifier to be bounded around the ID regions evidenced by their OOD detection results.
@@ -323,7 +322,7 @@ Assuming an ID~(sample, label) pair, $\left\{\mathrm{x}_{\text {in}}, y_{in}\rig
 \begin{figure}
     \centering
     \includegraphics[scale=0.6]{images/ood_ex_1.png}
-    \caption[OOD sample detection w.r.t discrepancy between two different  classifiers]{Detection of OOD samples by the discrepancy between two classifiers based on~\cite{OOD19}, where $MCAE_{slr}$ and $MCAE_{lrc}$ represent model $f_1$ and $f_2$, respectively}
+    \caption[OOD sample detection w.r.t discrepancy between two different classifiers]{Detection of OOD samples by the discrepancy between two classifiers based on~\cite{OOD19}, where $MCAE_{slr}$ and $MCAE_{lrc}$ represent model $f_1$ and $f_2$, respectively}
     \label{fig:ood_detection_example}
     \vspace{-4mm}
 \end{figure}
@@ -517,7 +516,7 @@ With the above experimental setting, first, we generate some adversarial samples
 		\caption{$MCAE_{slr}$}
         \label{fig:normal_vs_robust_f2}
 	\end{subfigure}
-	\caption{Performance comparison: original vs.  robust classifier w.r.t  different \textit{eps} values} 
+	\caption[Performance comparison: original vs. robust classifier]{Performance comparison: original vs. robust classifier w.r.t different \textit{eps} values} 
 	\label{fig:normal_vs_robust_models}
 \end{figure*}
 

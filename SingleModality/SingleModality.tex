@@ -248,8 +248,7 @@ There are structural variations in DNA where protein-encoding genes are not pres
 
 \hspace*{3.5mm} Each gene has a starting and ending position in DNA, which is similar for copy numbers having starting and ending positions. For each gene, MSeq-CNV checks if a sample has any CNV region overlaps with that gene. Then it assigns the segment value for that gene, otherwise 0 is assigned. This means that a tumor sample has different copy number variation than a reference, which is measured by the segment value. If the value is positive, copy number in that gene is considered to be more increased than the reference. A negative value, however, signifies that the gene was deleted from that DNA location. A sample of the final training data is shown in table \ref{cnv:changed232d}. The first row shows a male patient's GBM tumor sample, where gene PRDM16 and RPL22 have copy number losses with segmentation values of 0.3195 and 0.2154, respectively. Whereas, gene CAMTA1 has no copy number variation, and so on. %Eventually, dimension of the training set reduced from 20,308 to 568 (+ the label column). 
 
-\subsection{Network construction and training}
-\label{nc}
+\subsection{Network construction and training}\label{nc}
 We construct and train CLSTM and CAE networks on two different CNVs representations~(i.e., oncogenes and protein-coding genes), followed by the creation of multiple snapshot models. Then we evaluate each network independently, followed by the MEA to combine the snapshot models. 
 
 \subsubsection{Construction of CLSTM network }
@@ -287,7 +286,7 @@ Humans communicate through languages or signs, which is analogous to biological 
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.6]{images/cae.png}	
-    \caption{Schematic representation of the CAE classifier~\cite{karimACCA2019}}
+    \caption[Schematic representation of the CAE classifier]{Schematic representation of the CAE classifier~\cite{karimACCA2019}}
 	\label{fig:cae}
 \end{figure*}
 
@@ -356,7 +355,7 @@ Cyclic cosine annealing~(CCA) is employed. CCA  aggressively~(but systematically
 \begin{figure}
     \centering
         \includegraphics[scale=0.65]{images/ensemble.png}
-    \caption{Model averaging ensemble of CLSTM and CAE snapshots~\cite{karimACCA2019}}
+    \caption[Model averaging ensemble of CLSTM and CAE snapshots]{Model averaging ensemble of CLSTM and CAE snapshots~\cite{karimACCA2019}}
     \label{fig:mae}
     \vspace{-2mm}
 \end{figure}
