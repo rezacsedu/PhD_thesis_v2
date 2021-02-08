@@ -59,7 +59,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
 \begin{align}
     \begin{array}{cl}
         \min _{x^{\prime}} & c\|\eta\|+J_{\theta}\left(x^{\prime}, l^{\prime}\right) \\
-         \text {s.t.} & x^{\prime} \in[0,1]
+         \text {s.t.} & x^{\prime} \in[0,1],
     \end{array}
     \label{eq:fgsm_aex}
 \end{align}
@@ -68,7 +68,7 @@ Till date numerous approaches have been proposed on creating adversarial samples
 
 \vspace{-6mm}
 \begin{align}
-    \eta=\epsilon \operatorname{sign}\left(\nabla_{x} J_{\theta}(x, l)\right)
+    \eta=\epsilon \operatorname{sign}\left(\nabla_{x} J_{\theta}(x, l)\right),
     \label{eq:fgsm_eta}
 \end{align}
 

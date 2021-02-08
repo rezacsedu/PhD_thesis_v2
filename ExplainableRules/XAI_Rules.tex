@@ -227,7 +227,7 @@ According to baseline expression results, both gene expression and miRNA express
 \hspace*{3.5mm} \Cref{algo:surrogate_model_generation} outlines the steps to obtain a surrogate model. Once a surrogate model is trained, R-squared measure~($R^2$) is calculated to measure how well the surrogate model replicates the `black-box' MCAE model~\cite{molnar2019interpretable}. The $R^2$ can be measured mathematically, as follows~\cite{molnar2019interpretable}: 
 
 \begin{equation}
-    R^{2}=1-\frac{SSE}{SST}=1-\frac{\sum_{i=1}^{n}\left(\hat{y}_{*}^{(i)}-\hat{y}^{(i)}\right)^{2}}{\sum_{i=1}^{n}\left(\hat{y}^{(i)}-\overline{\hat{y}}\right)^{2}}
+    R^{2}=1-\frac{SSE}{SST}=1-\frac{\sum_{i=1}^{n}\left(\hat{y}_{*}^{(i)}-\hat{y}^{(i)}\right)^{2}}{\sum_{i=1}^{n}\left(\hat{y}^{(i)}-\overline{\hat{y}}\right)^{2}},
     \label{ew:r_squared}
 \end{equation}
 

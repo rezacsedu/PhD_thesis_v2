@@ -1,9 +1,9 @@
-\chapter{Foundations}
+\chapter{Theoretical Foundations}
 \label{chapter:preli}
 \textit{``The beginning of knowledge is the discovery of something we do not understand''}- Frank Herbert 
 
 \section{Chapter Overview}
-In this chapter, we cover the foundations and concepts that will be found in all the subsequent chapters. We start with a basic of decision support systems~(DSS) and move towards an intelligent DSS. Subsequently, we cover the necessary foundations for building an explainable DSS for to provide accurate diagnoses decisions about different cancer types. In particular, we cover in detail the concepts of machine learning~(ML) and deep learning~(DL), artificial intelligence~(AI), decision rules, neuro-symbolic reasoning, and representation learning~(RL), with a focus on explainability and algorithmic transparency. We also discuss cancer types, subtypes, and growth and metastasis of cancer w.r.t biological interpretations of genomics data. 
+In this chapter, foundations and concepts will be discussed that will be found in all the subsequent chapters. This chapter starts with a basic of decision support systems~(DSS) and move towards an knowledge and AI-based DSS. Subsequently, necessary theoretical aspects are covered for building an explainable DSS to leverage accurate diagnoses decisions for cancer. In particular, the concepts of machine learning~(ML), deep learning~(DL), artificial intelligence~(AI), concepts and techniques of interpretable ML, decision rules, neuro-symbolic reasoning, and representation learning~(RL) are covered in detail, with a focus on explainability and algorithmic transparency. Besides, the growth and metastasis of cancer, cancer types, and cancer subtypes are discussed w.r.t biological interpretations of genomics data. 
 
 \section{Decision Support Systems}\label{sec:DSS}
 Decision support systems~(DSS) are information system that support business or organizational decision-making activities~\cite{hackathorn1981organizational}. A typical DSS takes a set of input and analyzes them to generate actionable insights and recommendation based on which `decisions' are generated. 
@@ -514,7 +514,7 @@ The higher the interpretability, the easier it is for human to comprehend why a 
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.55]{images/xai_tec.png}	
-    \caption[Categorization of XAI techniques]{Categorization of XAI techniques in terms of scope, methodology, and usage~(based on~\cite{das2020opportunities})}	
+    \caption[Categorization of XAI techniques]{Categorization of XAI techniques w.rt scope, methodology, and usage. Conceptually recreated based on categorization of XAI techniques by Das et al.~\cite{das2020opportunities})}	
 	\label{fig:survey_xai}
 \end{figure*}
 
@@ -612,7 +612,7 @@ Three most important concerns identified by Das et al.~\cite{das2020opportunitie
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=0.7]{images/lvg_cancer.png}	
-    \caption[Scopes and types of ML models in healthcare]{Scopes and types of ML models in healthcare based on their interpretability characteristics~(inspired by scopes and types by Stiglic et al.~\cite{stiglic2020interpretability}), showing an example prediction}	
+    \caption[Scopes and types of ML models in healthcare]{Scopes and types of ML models in healthcare based on their interpretability characteristics, showing an example prediction. Conceptually inspired by scopes and types proposed by Stiglic et al.~\cite{stiglic2020interpretability}.}	
 	\label{fig:local_vs_global_ex}
 \end{figure*}
 
@@ -700,7 +700,7 @@ For the human-level interpretability of a model, we need to know the inner insig
 \begin{sidewaysfigure*}
 	\centering
 	\includegraphics[scale=0.8]{images/xai_timeline.png}	
-    \caption[Timeline of XAI methods and algorithms]{A timeline of XAI methods, covering scopes, methodology, and usage level~(based on survey of XAI techniques by Das et al.~\cite{das2020opportunities})}	
+    \caption[Timeline of XAI methods and algorithms]{A timeline of XAI methods, covering scopes, methodology, and usage level. Conceptually based on survey of XAI techniques by Das et al.~\cite{das2020opportunities}.}	
 	\label{fig:xai_timeline}
 \end{sidewaysfigure*}
 
@@ -814,7 +814,7 @@ the concept of propositional self-attention networks~(PSAN) is one of the first 
 \Cref{fig:san} shows a schematic representation of a SAN, where $l_{\text {att}}$ represents the attention layer, which can be expressed mathematically as~\cite{vskrlj2020feature}:  
 
 \begin{equation}
-    l_{2}=g\left(W_{2} \cdot\left(\sigma \left(W_{|F|} \cdot \Omega(X)+\boldsymbol{b}_{l_{1}}\right)\right)+\boldsymbol{b}_{l_{2}}\right)
+    l_{2}=g\left(W_{2} \cdot\left(\sigma \left(W_{|F|} \cdot \Omega(X)+\boldsymbol{b}_{l_{1}}\right)\right)+\boldsymbol{b}_{l_{2}}\right),
 \end{equation}
 
 \hspace*{3.5mm} where $X$ is the input vectors, $\alpha_r$ is the regularization weights, and $g$ represents the first neural network layer, which maintains the connection with the input features $F$ as follows~\cite{vskrlj2020feature}: 
@@ -828,7 +828,7 @@ the concept of propositional self-attention networks~(PSAN) is one of the first 
 \begin{equation}
     ELU_{\alpha_r}(X_k)=\left\{\begin{array}{ll}
     \alpha_r(\exp (x)-1) & \text { if } x<0 \\
-    x & \text { if } x \geq 0,
+    x & \text { if } x \geq 0.
     \end{array}\right.
     \label{eq:elu_activation}
 \end{equation}
@@ -856,7 +856,7 @@ For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ sampl
 
 %Let $\operatorname{SAN}\left(\boldsymbol{x}_{i}\right)$ represent the attention output of the $i$ -th instance, defined as
 \begin{equation}
-    \operatorname{AV}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right]
+    \operatorname{AV}\left(\boldsymbol{x}_{i}\right)=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(W_{l_{\mathrm{att}}}^{k} \boldsymbol{x}_{i}+\boldsymbol{b}_{l_{\mathrm{att}}}\right)\right].
 \end{equation}
 
 \hspace*{3.5mm} Then the outputs are averaged on-instance basis, to get the global feature importance~\cite{vskrlj2020feature}: 
@@ -868,13 +868,13 @@ For $\left(\boldsymbol{x}_{i}, \boldsymbol{y}_{i}\right), 1 \leq i \leq n$ sampl
 \hspace*{3.5mm} In attention positive only correctly predicted samples are taken into account. For the final prediction $\hat{y}_{i}$ of a black-box model, feature importance $R_{I}^{c}$ is computed as follows~\cite{vskrlj2020feature}:
 
 \begin{equation}
-    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right]
+    R_{I}^{p}=\frac{1}{n} \sum_{i=1}^{n} \operatorname{AV}\left(\boldsymbol{x}_{i}\right)\left[\hat{\boldsymbol{y}}_{i}=\boldsymbol{y}_{i}\right],
 \end{equation}
 
 \hspace*{3.5mm} where $p$ signifies the feature importance for the true positives. This strategy works well for limited samples and a lower classification accuracy is acceptable. However, since it is important to have both high precision and recall~(which will lead to high f1 score as well) for the diagnosis, this approach is not suitable for clinical setting. Using both instance-level aggregations and attention positive, global feature importance is computed incrementally, i.e., by aggregating the attention vectors based on individual sample used during the SANs. In contrast, no aggregation is used in global attention layer-based feature importance computation. Once the network is fully trained, weights of global attention layer are activated using softmax activation. Feature importance is then computed from the weight vector as follows~\cite{vskrlj2020feature}:
 
 \begin{equation}
-    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|}.
+    R_{G}=\frac{1}{k} \bigoplus_{k}\left[\operatorname{softmax}\left(\operatorname{diag}\left(W_{l_{\mathrm{att}}}^{k}\right)\right)\right] ; W_{l_{\mathrm{att}}}^{k} \in \mathbb{R}^{|F| \times|F|},
     \label{eq:gal_k}
 \end{equation}
 
@@ -894,6 +894,7 @@ On the contrary, even this simple concept may not be well understood by patients
 
 %\section{Preliminaries}\label{chapter_8:preliminaries}
 
+\iffalse
 \section{Semantic Web and XAI}
 Life sciences in an early adopters of SW technologies~\cite{karim2018improving}. Many databases now make their data available as LD in which both biological entities and connections between them are identified through a unique identifier and the connections between them are expressed through standardized relations~\cite{alshahrani2017neuro}. LD enables interoperability between databases simply by reusing identifiers, where SPARQL can perform federated queries over multiple databases. Besides, ontologies are primary component of SW. 
 
@@ -1016,7 +1017,7 @@ Unfortunately, there is little consensus on what interpretability in ML is and h
     \item Whether the user's trust on the AI is appropriate
     \item How the human-XAI work system performs.
 \end{itemize}
-\fi 
+\fi \fi 
 
 \section{Cancer Growth and Metastasis}
 \label{cancer_growth}
