@@ -1242,31 +1242,36 @@ Feature interactions among globally important features with attention mechanism 
     \label{fig:fuji_score}
 \end{figure*}
 
- In contrast, the proposed SANs exhibit a consistent
-mapping between the input space and the meaning of individual features, making possible the aggregation schemes considered in this
-work.
-In terms of general performance, this paper proves empirically that
-SANs can emit attention vectors that offer similar feature rankings
+\begin{figure*}
+	\centering
+	\begin{subfigure}{.48\linewidth}
+		\centering
+		\includegraphics[scale=0.7]{images/fuji_score.png}
+		\caption{FUJI score-based ranking comparison}
+        \label{fig:fuji_score_compare}
+	\end{subfigure}
+	\hspace{2mm}
+	\begin{subfigure}{0.48\linewidth}
+		\centering
+		\includegraphics[scale=0.6]{images/am_fi_compare.png}
+		\caption{Feature importance}
+        \label{fig:relative_fi_am}
+	\end{subfigure}
+	\caption{a) The higher the FUJI score, higher the pairwise algorithmic similarity, when a certain number of features is considered, b) Relative feature importance for top-30 features} 
+	\label{fig:comgenes}
+\end{figure*}
+
+In contrast, the proposed SANs exhibit a consistent mapping between the input space and the meaning of individual features, making possible the aggregation schemes considered in this work. In terms of general performance, this paper proves empirically that SANs can emit attention vectors that offer similar feature rankings
 relevant for an external classifier (e.g., Logistic Regression). As the
 purpose of this work was not excessive grid search across possible
 architectures, which we leave for further work. Further, the proposed SANs
 shall be compared to the recently introduced TabNet [2], an approach
 that also attempts to unveil the feature importance landscape via sequential attention mechanism.
 
-We next discuss the similarities between the considered feature importance approaches. The results are presented as FUJI curves,
-where we omit the space of all possible (pairwise) comparisons to
-the ones, that are compared with the proposed SANs. The results are
-shown in Figure 3.
-The considered visualizations depict at least two general patterns.
-First, the attentionClean and attention-based importances are indeed
-very similar. We remind the reader that the difference between the
-two is that attentionClean only takes into account the correctly classified instances. Next, we can observe that ReliefF and Random Forestbased importances are different. Further, the global attention appears
-the most similar to Random Forest importances. Overall areas below
-FUJI curves are shown in Figure 4.
-6.3 Classification performance
-We next discuss the classification performance results. Let us remind
-the reader that the results show how the logistic regression (C = 1, L2
-normalization) classifier performs when parts of the feature space are
+We next discuss the similarities between the considered feature importance approaches. The results are presented as FUJI curves, where we omit the space of all possible (pairwise) comparisons to the ones, that are compared with the proposed SANs. The results are shown in Figure 3. The considered visualizations depict at least two general patterns.
+
+First, the attentionClean and attention-based importances are indeed very similar. We remind the reader that the difference between the two is that attentionClean only takes into account the correctly classified instances. Next, we can observe that ReliefF and Random Forestbased importances are different. Further, the global attention appears the most similar to Random Forest importances. Overall areas below
+FUJI curves are shown in Figure 4. 6.3 Classification performance We next discuss the classification performance results. Let us remind the reader that the results show how the logistic regression (C = 1, L2 normalization) classifier performs when parts of the feature space are
 pruned according to a given feature importance vector. The results
 are shown in Figure 5.
 The first observation—to our knowledge not known to the
@@ -1304,7 +1309,7 @@ Local feature impact identifies which features have the greatest positive or neg
 
 %\hspace*{3.5mm} 
 
-\hspace*{3.5mm} Further, to find which patients are similar to the patient being currently diagnosed are identified in \cref{fig:similar_patients}, as indicated by the last row in the table labelled as "Weight". This is a useful way of explaining to end users~(e.g., a patient or for doctor's understanding) that because Profile `A', Profile `B' and Profile `C' had very similar variables to specific row. Therefore, the model predicted a certain outcome. In this case, Profile 0 is 55.76\% similar, Profile 2 is 23.65\% similar, and Profile 4 is 15.26\% similar to the sample or row number 1 that we are trying to explain. Now the end user can comprehend how the model is making its decisions by looking at that patients.  
+\hspace*{3.5mm} Further, to find which patients are similar to the patient being currently diagnosed are identified by computing the cosine similarity measure, as indicated by the last row in the table labelled as "Weight" in in \cref{fig:similar_patients}. This is a useful way of explaining to end users~(e.g., a patient or for doctor's understanding) that because Profile `A', Profile `B' and Profile `C' had very similar variables to specific row. Therefore, the model predicted a certain outcome. In this case, Profile 0 is 55.76\% similar, Profile 2 is 23.65\% similar, and Profile 4 is 15.26\% similar to the sample or row number 1 that we are trying to explain. Now the end user can comprehend how the model is making its decisions by looking at that patients.  
 
 \subsubsection{Sensitivity analyses: what-if and leave-one-feature-out}
 To quantitatively validate the feature-level relevances, what-if analysis is carried out. As shown in \cref{fig:what_if}, genes TFAP2A, VPS9D1-AS1, MTND2P28, ADCY3, FOXP4, GPRIN1, EFNB1, FABP4, MGP, AC020916-1, CDC7, CHADL, RPL10P6, OASL, and PRSS16 are most sensitive to making changes. On the other hand, making changes to SEMA4C, CWH43, HAGLROS, SEMA3E, and IVL does not have significant impact on the prediction. 
@@ -1328,7 +1333,7 @@ Display similar profiles and the extent to which they are similar to the chosen 
 	\vspace{-4mm}
 \end{figure}
 
-\hspace*{3.5mm} Let's pick a random sample from the test set and perform the inferencing. Let's the model predicts the sample of COAD cancer types. As shown in \cref{fig:explain_term_wise_religious_hate}, features on the right side are positive, while features on the left are negative. It turns out that features like TFAP2A,  VPS9D1-AS1, MTND2P28, ADCY3, nad FOXP4 are positive for COAD class, for this single inferencing. The feature TFAP2A has the highest positive score of 0.29 for class COAD. Our model predicts this as a COAD cancer type too, with the probability of 55\%. Besides, the sample could be of BRCA cancer type with a probability of 29\%.  
+\hspace*{3.5mm} First, we randomly pick a sample from the test set and perform the inferencing. Let's the model predicts the sample of COAD cancer types. As shown in \cref{fig:explain_term_wise_religious_hate}, features on the right side positively impacting the prediction, while features on the left are negatively. It turns out that features like TFAP2A,  VPS9D1-AS1, MTND2P28, ADCY3, nad FOXP4 are positive for COAD class, for this single inferencing. The feature TFAP2A has the highest positive score of 0.29 for class COAD. Our model predicts this as a COAD cancer type too, with the probability of 55\%. Besides, the sample could be of BRCA cancer type with a probability of 29\%.  
 
 \hspace*{3.5mm} However, if we remove feature TFAP2A from the profile, we would expect the model to predict the label COAD with a probability of 26\%~(i.e., 55\% $-$ 29\%), making the actual prediction to be BRCA cancer type. On the contrary, features IVL, PRSS16, EFNB1, and CWH43 are more important features, having impacts of 0.23, 0.17, 0.123, and 0.07, respectively for the class BRCA. These features not only can reveal the relevance of important feature for classifier’s decision, but also signify that removing most relevant biomarkers will impact the prediction decision, accordingly to their relevance value. 
 
