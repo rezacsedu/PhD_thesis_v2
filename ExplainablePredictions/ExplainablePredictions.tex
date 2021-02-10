@@ -57,8 +57,7 @@ Attention mechanism is employed in a multimodal representation learning setting 
 The rest of the chapter is structured as follows: \cref{chapter_5:rw} covers related works concerning interpretable ML approaches and summarize their potential limitations. \Cref{chapter_5:mm} describes the overall approach, including the detail of the data collection and feature engineering before the network construction and training. \Cref{chapter_5:results} demonstrates the experiment results. \Cref{chapter_5:conclusion} provides key findings and highlights the limitations. % and discuss future works before concluding the chapter.
 
 \section{Related Work}\label{chapter_5:rw}
-Genomics, bioimaging, and clinical outcomes are used to identify rare and common transcripts, isoforms, and non-coding RNAs in cancer. 
-Lyu et al.~\cite{lyu2018deep} and Mostavi et al.~\cite{mostavi2019convolutional} embedded the RNA-Seq data from the PCA project into 2D images and trained a CNN to classify 33 tumor types, which outperforms the approach in~\cite{li2017comprehensive}. Besides they provide a functional analysis of genes with high intensities in the HM based on Grad-CAM and validated that these top genes are related to tumor-specific pathways. Other general methods on explainability, fairness and robustness. 
+Genomics, bioimaging, and clinical outcomes are used to identify rare and common transcripts, isoforms, and non-coding RNAs in cancer. Lyu et al.~\cite{lyu2018deep} and Mostavi et al.~\cite{mostavi2019convolutional} embedded the RNA-Seq data from the PCA project into 2D images and trained a CNN to classify 33 tumor types, which outperforms the approach in~\cite{li2017comprehensive}. Besides they provide a functional analysis of genes with high intensities in the HM based on Grad-CAM and validated that these top genes are related to tumor-specific pathways. Other general methods on explainability, fairness and robustness. 
 %There is no prior art that handles a diverse set of desirable properties needed to develop a responsible AI system. 
 A few other works focused on counterfactual explanations. However, their optimization formulation cannot handle categorical data~\cite{ying2019gnnexplainer}, i.e, optimization does not solve for such data and the values are found in a brute-force fashion.
 
@@ -137,6 +136,8 @@ Providing diagnosis and statistical explanations are very convenient. However, i
 Andreas Holzinger, et al.~\cite{holzinger2020measuring} has introduced `System Causability Scale'~(SCS) to measure the quality of explanations. SCS is based on the notion of Causability~\cite{holzinger2019causability} combined with concepts adapted from a widely-accepted usability scale. The purpose of SCS is to quickly determine whether and to what extent an explainable user interface, an explanation, or an explanation process itself is suitable for the intended purpose~\cite{holzinger2020measuring}.  
 
 \hspace*{3.5mm} The explainability based on statistical learning has a severe drawback. That is due to the stochastic nature of DNN, the prediction and feature importance generated would be slightly different across runs, i.e., not deterministic. This also applied to DSS we developed in the previous chapters. We might even encounter similar issue for tree-based ensemble models such as random forest. For example, GBT provides 3 options for measuring feature importance: i) \emph{weight}\footnote{Number of times a feature is used to split the data across all trees}, ii) \emph{cover}\footnote{Number of times a feature is used to split the data across all trees weighted by the number of training data points go through those splits}, and iii) \emph{gain}\footnote{The average training loss reduction gained when using a feature for splitting}. Based on these measure, feature importance orderings~(i.e., the order in which features are added) may be significantly different since subsequent features will get a disproportionately high weight. 
+
+\hspace*{3.5mm} Recently Matej et al.~\cite{vskrlj2020feature} have proposed self-attention networks~(SANs) for identifying feature importance from high-dimensional tabular data. As computing individual feature contributions from the concatenated feature vectors is challenging, the global attention-based feature computation is extended for the MCAE architecture. Through a set of comprehensive experiments they have showed that SAN is very effective on biological data having a large number of features. It is found that attention mechanism can detects larger subsets of features that can improve the performance even liner ML model such as logistic regression. On the contrary, performance of SAN degrades in case of smaller data sets, indicating that having not enough data can distill the relevant parts of the feature space. However, it is yet not clear how the attention concept can be used for computing feature importance in multimodal input setting.
 
 \hspace*{3.5mm} In the previous chapter, a multimodal autoencoder~(MAE) architecture is constructed and trained on multimodal genomics data. Then based on the concatenated latent feature vectors, breast cancer subtype classification tasks are performed. Since the latent vectors are not easily interpretable, MAE is as a black-box model. However, disentangling latent vectors can provide insight into what features the representations captures and what attributes of the samples the classification going is based on~\cite{karimTCBB2020}. Nevertheless, apart from some restrictive initiatives, no substantial works are done to improve the opaqueness of a DNN classifier based on multimodal representation learning. %Considering the factros, we not only
 
@@ -584,8 +585,7 @@ Nevertheless, latent feature vectors are not easily interpretable. This critical
 \hspace*{3.5mm} Unlike the unimodal CNN models, where fully convolutional layers act as the feature extractor, it is more reasonable to empower the MCAE model to perform feature selection itself. This thesis hypotheses\footnote{\textbf{H6}: The attention mechanism can be applied on encoder's bottleneck layer to generate attention weight vector, which can be decomposed to compute modality specific feature attributions} that attention mechanism can be applied on the bottleneck layer to generate attention weight vector. Then the attention weight vector itself can be decomposed to compute modality specific feature attributions. In other words, the idea is not only generating latent space, but also modality specific attention weight vectors before the actual concatenation. % and fusing different features  would help  %
 
 %\subsubsection{Multimodal attention: computing feature importance}
-\hspace*{3.5mm} However, the use of attention mechanisms for high-dimensional tabular data is quite restrictive, except for a recent approach called self-attention networks~(SANs) proposed by Matej et al.~\cite{vskrlj2020feature}. Besides, it is yet not clear how the attention concept can be used for computing feature importance in multimodal input setting.
-As computing individual feature contributions from the concatenated feature vectors is challenging, the global attention-based feature computation is extended for the MCAE architecture. 
+\hspace*{3.5mm} However, the use of attention mechanisms for high-dimensional genomics data is quite restrictive, except for a recent SANs~\cite{vskrlj2020feature}. Besides, it is yet not clear how the attention concept can be used for computing feature importance in multimodal input setting. As computing individual feature contributions from the concatenated feature vectors is challenging, the global attention-based feature computation is extended for the MCAE architecture. 
 
 \begin{figure*}
 	\centering
@@ -594,7 +594,7 @@ As computing individual feature contributions from the concatenated feature vect
 	\label{fig:k_attention}
 \end{figure*}
 
-\hspace*{3.5mm} The global attention layer proposed in SAN's can be used to compute  global feature importance only. %, similar to \cref{eq:gal_k}.
+\hspace*{3.5mm} The concept of the global attention layer SAN can be used to compute  global feature importance only. %, similar to \cref{eq:gal_k}.
 However, it cannot be used to compute modality-specific feature importance. Therefore, the attention mechanism is applied to each modality specific encoder's bottleneck layer, which forms an attention layer, as shown in \cref{fig:k_attention}. The output of the attention layer is an attention weight vector, which is decomposed to compute modality specific feature attributions.
 %n contrast, no aggregation is used in global attention layer-based feature importance computation. 
 Modality specific latent feature space $h_k$ is used as the input to the attention layer. Let's $g_l$ represents the attention neural network layer, which maintains the connection between the latent features $F_l$ as follows: 
@@ -1231,6 +1231,56 @@ Feature interactions among globally important features with attention mechanism 
 \end{sidewaysfigure*}
 
 \hspace*{3.5mm} Zooming on the individual features provide further insights: it is observed that the average outcome predicted by the model is 9.754495. On average, the variable GBP4, VPS9D1-AS1, and SLN will increase the average model outcome~(9.754495) by 0.04, 0.05, and 0.06, respectively. On the other hand, the variable TRIM17, CDS1, and PCOLCE2 will change the average model outcome~(9.754495) by -0.04, -0.03, and -0.04, respectively. On the other hand, the summary plot by combining feature importance with feature effects are shown in \cref{fig:local_feature_impacts5}. Each point on the summary plot is an impact value for a feature and an instance. The plot indicates the relationship between the value of a feature and the impact on the prediction made by the for the $MCAE_{lrc}$ model. As shown, GPRIN1, FABP4, AC020916-1, CHADL, RPL10P6, PRSS16, GATA3, SFRP2, LRIG1, SAMHD1, BNC1, AL603825-1, LAPTM5, TBC1D4, SEMA4C, CWH43, HAGLROS, SEMA3E, IVL, EN1, MTND2P28, KREMEN2, EMP2, OSMR, and RAVER1 have the highest impact on the model. 
+
+
+\hspace*{3.5mm} Recently Matej et al.~\cite{vskrlj2020feature} have proposed self-attention networks~(SANs) for identifying feature importance from high-dimensional tabular data. As computing individual feature contributions from the concatenated feature vectors is challenging, the global attention-based feature computation is extended for the MCAE architecture. Through a set of comprehensive experiments they have showed that SAN is very effective on biological data having a large number of features. It is found that attention mechanism can detects larger subsets of features that can improve the performance even liner ML model such as logistic regression. On the contrary, performance of SAN degrades in case of smaller data sets, indicating that having not enough data can distill the relevant parts of the feature space. However, it is yet not clear how the attention concept can be used for computing feature importance in multimodal input setting.
+
+\begin{figure*}
+    \centering
+	\includegraphics[scale=0.7]{images/fuji_score.png}
+	\caption{FUJI score-based ranking comparison. The higher the FUJI score, higher the pairwise algorithmic similarity, when a certain number of features is considered.}
+    \label{fig:fuji_score}
+\end{figure*}
+
+ In contrast, the proposed SANs exhibit a consistent
+mapping between the input space and the meaning of individual features, making possible the aggregation schemes considered in this
+work.
+In terms of general performance, this paper proves empirically that
+SANs can emit attention vectors that offer similar feature rankings
+relevant for an external classifier (e.g., Logistic Regression). As the
+purpose of this work was not excessive grid search across possible
+architectures, which we leave for further work. Further, the proposed SANs
+shall be compared to the recently introduced TabNet [2], an approach
+that also attempts to unveil the feature importance landscape via sequential attention mechanism.
+
+We next discuss the similarities between the considered feature importance approaches. The results are presented as FUJI curves,
+where we omit the space of all possible (pairwise) comparisons to
+the ones, that are compared with the proposed SANs. The results are
+shown in Figure 3.
+The considered visualizations depict at least two general patterns.
+First, the attentionClean and attention-based importances are indeed
+very similar. We remind the reader that the difference between the
+two is that attentionClean only takes into account the correctly classified instances. Next, we can observe that ReliefF and Random Forestbased importances are different. Further, the global attention appears
+the most similar to Random Forest importances. Overall areas below
+FUJI curves are shown in Figure 4.
+6.3 Classification performance
+We next discuss the classification performance results. Let us remind
+the reader that the results show how the logistic regression (C = 1, L2
+normalization) classifier performs when parts of the feature space are
+pruned according to a given feature importance vector. The results
+are shown in Figure 5.
+The first observation—to our knowledge not known to the
+community—is that SANs indeed perform competitively. Especially
+on data sets with a large number of features, such as the p53, genes
+and dlbcl (all biological ones), the attention mechanism detects larger
+subsets of features that can improve the performance of the logistic
+regression classifier, in e.g., dlbcl even outperforming all other approaches by a margin of more than 15%. On smaller data sets, SANs
+perform competitively (e.g., madelon, optdigits, chess), or do not perform that well (biodeg-p2-discrete). Overall, worse performance of
+SANs coincides with smaller data sets, indicating that not enough
+data was present for SANs to distill the relevant parts of the feature
+space. Further, it can be observed that ReliefF on data sets such as
+pd-speech and madelon outperforms all other approaches, indicating
+this state-of-the-art approach is suitable for low-resource situations
 
 \subsection{Local explanations}
 In order to explain individual diagnoses, only the important features w.r.t local feature impact is not enough. Sensitivity analysis in terms of what-if and leave-one-feature out analyses are found to be useful. 
