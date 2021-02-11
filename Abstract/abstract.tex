@@ -15,7 +15,7 @@
         %Further, `right to explanation' of GDPR that enforces `algorithmic transparency', gives patients the right to know why and how a diagnosis decision is made. 
         %In this case, interpretability attained with neuro-symbolic reasoning can provide insights into the reasons. % why a given cancer case is of a specific type. 
         %can help in finding more suitable treatments, cures, or drug repositioning. 
-        
+
         \vspace{1mm}
         \hspace*{3.5mm} \textbf{Motivations}: 
         %one of the main differences between ML and symbolic reasoning~(SR) is where the learning happens: a learning algorithm learns rules to establish correlations between inputs and outputs, but rules are generated through human intervention in SR. 
@@ -29,10 +29,10 @@
         %by mitigating biases.
         %, where human-understandable decision rules and SR can help improve the transparency and interpretability, generate human-understandable explanations and ensure fairness by mitigating biases. 
         Based on this motivation, this thesis aims to: i) improve algorithmic transparency and explainability of a `black-box' DSS for cancer diagnosis, ii) discovery and disseminating knowledge of molecular mechanisms of carcinogenesis. 
-        
+
         \vspace{1mm}
         
-        \hspace*{3.5mm} \textbf{Methods:} unimodal and multimodal DNN architectures are first trained on genomics data %and clinical outcome 
+        \hspace*{3.5mm} \textbf{Methods:} both unimodal and multimodal DNN architectures are first constructed and trained on genomics data %and clinical outcome 
         to learn high-level abstract features. Neural ensemble method, 
         %which is more effective than structures solely based on a single model
         is then employed to get the most stable model from multiple model snapshots. To improve the algorithmic transparency and interpretability of the models, different probing techniques~(e.g., class activation maps and layer-wise relevance propagation) were employed and cancer-specific marker genes were identified. 
@@ -44,7 +44,6 @@
         %by minimizing prediction biases. 
         Decision rules are then updated by combining the reasoning with the predictions to mitigate the biases in diagnosis decision. % more trustworthy. % by the CDSS. %
         Finally, explainability of the overall approach is assessed by computing comprehensiveness and sufficiency, as model faithfulness. 
-        
         \vspace{1mm}
         
         \hspace*{3.5mm} \textbf{Results:} quantitative and qualitative analyses show that our approach exhibits not only high confidence at predicting the cancer types correctly giving an average precision of 96.25\%, but also provides human-interpretable explanations of the predictions by exposing top genes and cancer-specific driver genes.} 
