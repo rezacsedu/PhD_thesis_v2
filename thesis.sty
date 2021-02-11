@@ -11,10 +11,12 @@
 \def\submitdate#1{\gdef\@submitdate{#1}}
 \def\degree#1{\gdef\@degree{#1}}
 \def\studentid#1{\gdef\@studentid{#1}}
-\def\supervisor#1{\gdef\@supervisor{#1}}
-\def\examiner#1{\gdef\@examiner{#1}}
+\def\examinerone#1{\gdef\@examinerone{#1}}
+\def\examinertwo#1{\gdef\@examinertwo{#1}}
 \def\advisorone#1{\gdef\@advisorone{#1}}
 \def\advisortwo#1{\gdef\@advisortwo{#1}}
+\def\chairone#1{\gdef\@chairone{#1}}
+\def\oralexaminerone#1{\gdef\@oralexaminerone{#1}}
 
 \def\maketitle{
   \begin{titlepage}{
@@ -28,21 +30,25 @@
     \normalsize {A dissertation submitted in partial fulfillment of the requirements for the degree of\\ \bf \@degree}
 
   }
-  \vskip 0.6in \par
+  \vskip 0.5in \par
   by  \vskip 0.05in \par
   \large {\bf \@author} \par
   \small {\bf \@studentid}
   
   \vskip 0.75in \par
-  \normalsize  {\bf Supervisor: \@supervisor}
+  \normalsize  {Examiner 1: \@examinerone}
   \vskip 0.05in \par
-  \normalsize  {\bf Advisor 1: \@advisorone}
+  \normalsize  {Examiner 2: \@examinertwo}
   \vskip 0.05in \par
-  \normalsize  {\bf Advisor 2: \@advisortwo}
+  \normalsize  {Advisor 1: \@advisorone}
   \vskip 0.05in \par
-  \normalsize  {\bf Opponent: \@examiner}
-  \vskip 1in \par
-  \normalsize {Computer Science 5 - Information Systems and Databases \par Department of Computer Science \par RWTH Aachen University \par Aachen, Germany}
+  \normalsize  {Advisor 2: \@advisortwo}
+  \vskip 0.05in \par
+  \normalsize  {Chair: \@chairone}
+  \vskip 0.05in \par
+  \normalsize  {Oral Examiner: \@oralexaminerone}
+    \vskip 1in \par
+  \normalsize {Computer Science 5 - Information Systems and Databases \par RWTH Aachen University \par Aachen, Germany}
 
   %\vskip 0.5in \par
  % \normalsize {I hereby declare that this dissertation is all my own work, except as indicated in the text: }

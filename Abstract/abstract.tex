@@ -5,13 +5,13 @@
     %Learning and Reasoning''}}
     %\centerline{Md. Rezaul Karim}
     \small{
-        \textbf{Background:} deep learning based on neural networks~(DNN) has shown tremendous success in automated decision-making in domains like industrial and chemical engineering, computer vision, healthcare, financial institutions, etc. However, due to  nested non-linear and complex structures, DNN architectures are mostly opaque and perceived as `black box' methods. 
+        \textbf{Background:} deep learning based on deep neural network architectures~(DNNs) has shown tremendous success at automated decision-making for numerous domains such as industrial and chemical engineering, computer vision, life sciences, healthcare, finance, natural language understanding, etc. However, due to nested non-linear and complex structures, DNN architectures are mostly opaque and perceived as `black box' methods. 
         %without providing enough insights. 
-        `Black-box' models not only suffer from a lack of transparency, but also cannot reason about underlying decisions. Such opaqueness raises numerous legal, ethical, and practical concerns. AI-based systems have already been utilized in critical domain like healthcare for automated diagnoses, treatment, and prognosis in a clinical setting. 
+        `Black-box' models not only lack of interpretability and transparency, but also cannot reason about their underlying decisions. Further, such opaqueness also raises numerous legal, ethical, and practical concerns. Artificial intelligence~(AI)-based systems have already been utilized for critical decision-making in healthcare like automated diagnoses, treatment, and prognosis in a clinical setting. 
         %, e.g. aiming to model the progression and treatment of cancerous conditions. 
-        However, if we cannot see how a clinical decision is made, we cannot know what impact it will create on a patient. %, because the day when such AI-guided systems will make life decisions for humans is not very far ahead. 
+        However, if we cannot see how a clinical decision is made, we cannot know what impact it will create on a cancer patient for example. %, because the day when such AI-guided systems will make life decisions for humans is not very far ahead. 
         %AI-based techniques have been utilized in numerous scenarios, including automated diagnoses and treatment in clinical settings\cite{karimBIB2019}. 
-        For example, cancer is one of the deadliest diseases caused by abnormal behaviours of genes that control cell division and growth. As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects have emerged, producing large-scale omics data. Appropriate diagnoses depend on accurate prediction of cancer types. Therefore, it is crucial to analyze genomics data and clinical outcomes before recommending necessary treatments. Acquiring deep insights of omics data, can provide profound insights to reveal genetic predispositions of cancer before it grows. %Besides, treatment can be focused on preventive measures.  %Eventually, . %Analyzing such data can provide profound insights to reveal genetic predispositions of cancer before it grows. 
+        On the other hand, cancer is one of the deadliest diseases caused by abnormal behaviours of genes that control cell division and growth. As the importance of genetic knowledge in cancer treatment is increasingly addressed, several projects based on next generation genome sequencing~(NGS) have emerged that produce large-scale omics data. Acquiring deep insights of omics data, can provide profound insights to reveal genetic predispositions of cancer before it grows. Nevertheless, since appropriate diagnoses depend on accurate prediction of cancer types, it is crucial to analyze those data before providing personalized diagnosis and subsequent treatments, cures, or drug repositioning. %Besides, treatment can be focused on preventive measures.  %Eventually, . %Analyzing such data can provide profound insights to reveal genetic predispositions of cancer before it grows. 
         %Further, `right to explanation' of GDPR that enforces `algorithmic transparency', gives patients the right to know why and how a diagnosis decision is made. 
         %In this case, interpretability attained with neuro-symbolic reasoning can provide insights into the reasons. % why a given cancer case is of a specific type. 
         %can help in finding more suitable treatments, cures, or drug repositioning. 
@@ -19,9 +19,12 @@
         \vspace{1mm}
         \hspace*{3.5mm} \textbf{Motivations}: 
         %one of the main differences between ML and symbolic reasoning~(SR) is where the learning happens: a learning algorithm learns rules to establish correlations between inputs and outputs, but rules are generated through human intervention in SR. 
-        to build an explainable decision support system~(DSS), humans must learn the rules by which two phenomena relate before embedding those relationships into a static and hard-coded program.
+        Developing an AI-based explainable decision support system~(DSS) 
+        %and improving it's explainability and algorithmic transparency 
+        to leverage accurate and trustworthy cancer diagnosis is a indispensable requirement. However, since neither the decision made by a complex DNN model be traced back to the inputs, nor it is clear why the outputs are transformed the way they are, it is arguable to treat the model a `black-box' method. However, explicit representation of domain knowledge and data provenance through the layers of a DNN can not only pave the path to an explainable DSS, but also help improve the transparency and interpretability of the diagnoses made human-understandable decision rules.  
+        %humans must learn the rules by which two phenomena relate before embedding those relationships into a static and hard-coded program.
         %A hard-coded rule is a preconception. 
-        While a DNN architecture is trained on an assumption on how it should learn rather than what conclusion it should reach, a more effective way is choosing developing a system to learn flexibly and produce accurate decisions. In this case, explicit representation of domain knowledge and data provenance through the layers of a DNN can not only pave the path to an explainable DSS, but also help improve the transparency and interpretability of the diagnoses made human-understandable decision rules. % and SR.  
+        %While a DNN architecture is trained on an assumption on how it should learn rather than what conclusion it should reach, a more effective way is choosing developing a system to learn flexibly and produce accurate decisions. In this case, explicit representation of domain knowledge and data provenance through the layers of a DNN can not only pave the path to an explainable DSS, but also help improve the transparency and interpretability of the diagnoses made human-understandable decision rules. % and SR.  
         %generate human-understandable explanations and ensure fairness 
         %by mitigating biases.
         %, where human-understandable decision rules and SR can help improve the transparency and interpretability, generate human-understandable explanations and ensure fairness by mitigating biases. 
@@ -29,15 +32,18 @@
         
         \vspace{1mm}
         
-        \hspace*{3.5mm} \textbf{Methods:} several unimodal and multimodal neural network architectures are first trained on genomics data %and clinical outcome 
-        and learn high-level abstract features. Neural ensemble method, 
+        \hspace*{3.5mm} \textbf{Methods:} unimodal and multimodal DNN architectures are first trained on genomics data %and clinical outcome 
+        to learn high-level abstract features. Neural ensemble method, 
         %which is more effective than structures solely based on a single model
-        is then employed to get the most stable model from multiple model snapshots. To improve algorithmic transparency and interpretability, different probing techniques~(e.g., class activation maps and layer-wise relevance propagation) were employed. Then, to improve adversarial robustness, adversarial training was performed considering different attacks scenarios.
-        Model surrogation strategy is then employed to  generate the explanations in terms of decision rules, focusing both local and global interpretability. %to adversaries and behaves as intended in real-life scenario, a is necessary
-        As a part of the SR, a domain-specific knowledge graph~(KG) is developed by integrating knowledge and facts about cancer from external sources. %, which provides the foundation of our semantic layer. 
-        A semantic reasoner is then used to learn the hierarchical relations from the KG and to provides the reasoning of diagnosis decision. %, a semantic reasoner is used. %
+        is then employed to get the most stable model from multiple model snapshots. To improve the algorithmic transparency and interpretability of the models, different probing techniques~(e.g., class activation maps and layer-wise relevance propagation) were employed and cancer-specific marker genes were identified. 
+        To improve the adversarial robustness, both reactive and proactive measures were taken considering different attacks scenarios. Then, model surrogation strategy is applied to approximate the black-box models and generate faithful explanations in terms of decision rules, focusing both local and global interpretability. To validate the biological relevance of identified biomarkers, functional analysis are carried out. 
+        %to adversaries and behaves as intended in real-life scenario, a is necessary
+        As a part of the symbolic reasoning, a domain-specific knowledge graph~(KG) is constructed by integrating knowledge and facts about cancer from external sources. %, which provides the foundation of our semantic layer. 
+        Subsequently, a semantic reasoner is used to learn hierarchical relations from the KG 
+        to validate the association~(i.e., reasoning) of cancer-specific biomarkers with different types of cancer. % and provide the reasoning of diagnosis decision. %, a semantic reasoner is used. %
         %by minimizing prediction biases. 
-        Finally, decision rules are updated by combining reasoning and predictions to make the clinical diagnosis more trustworthy. % by the CDSS. %Finally, we assess the explainability and fairness of the overall approach. 
+        Decision rules are then updated by combining the reasoning with the predictions to mitigate the biases in diagnosis decision. % more trustworthy. % by the CDSS. %
+        Finally, explainability of the overall approach is assessed by computing comprehensiveness and sufficiency, as model faithfulness. 
         
         \vspace{1mm}
         
