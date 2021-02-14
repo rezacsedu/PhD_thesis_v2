@@ -390,36 +390,51 @@ Systematic reviews of complex evidence cannot rely solely on protocol-driven sea
 \hspace*{3.5mm} As a continuation and following the search process using the queries in \cref{table:inclusion_exclusion_article}, all the records were merged, duplicates were removed, and a unique ID was assigned to each record. As we reused the word ``cancer'' in every search query, some overlapping results were returned as well. %Table 6 includes full texts from original search, snowball search (i.e. pursuing references of references) and reference list searches. 
 Overall, based on the inclusion and exclusion criteria of the literature used for the systematic review, and based on the outcome, we used only selected research papers that were more relevant, recent and highly cited. Since the systematic review was conducted a few months back, depending on the contents, addition or deletion  to/from  the above databases might happen.Consequently, the same queries may return a different results.
 
+\subsubsection{Article preprocessing}
+The pre-processing task involved, tokenisation, part-of-speech~(PoS) tagging, stemming, removal of stop words, dependency parsing, word sense disambiguation, linking words: 
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Tokenisation} - it involves parsing the text into atomic terms, words, and symbols. 
+    \item \textbf{Stemming} - it is about reducing tokens into their stem, base or root form. 
+    \item \textbf{Stop words removal} - it is about removing insignificant words. 
+    \item \textbf{PoS tagging} - to identify terms representing verbs, nouns, adjectives, etc. 
+    \item \textbf{Dependency parsing} - is about extracting a grammatical tree structure for a sentence where leaf nodes indicate individual words that together form phrases. 
+    \item \textbf{Word sense disambiguation} - to identify the meaning in which a word is used. 
+    \item \textbf{Linking words} -linking terms with a lexicon of senses based on a domain-specific ontology. 
+\end{enumerate}
+
+\hspace*{3.5mm} The linking of words is mostly involved entity linking, which is done in a later step. The resulting cleaned texts are then represented in  the CoNLL format\footnote{\url{http://universaldependencies.org/docs/format.html}}, where a corpus is represented with one word per line, each word containing 10 tab-separated columns with information about the word. 
+
 \subsubsection{Bio-entity extraction}
-The bio-entity extraction component involve two sub-tasks: i) NER that recognizes the named entities in PubMed abstracts based on the BioBERT~\cite{BioBERT} and SciBERT~\cite{SciBERT} models, and ii) multi-type normalization that assigns unique IDs to extracted biomedical entities. The NER is about recognizing domain-specific proper nouns in a biomedical corpus. For example, proteins, cell-cycle, BAD, and PNCa are 4 proper nouns in this sentence. \texttt{``The main proteins regulating cell-cycle are BAD and PNCa, which have downstream effects''}. \texttt{``TP53 and FAS are top two POTSF genes in terms of the number of associated cancer types, which are associated with 34 and 15 cancer types.''}, is another example, where a NER model should be able to identify that TP53, FAS, POTSF genes, and cancer are the named entities of our interests. 
+Bio-entity extraction component involve two tasks: i) NER that recognizes the named entities in PubMed abstracts based on the BioBERT~\cite{BioBERT} and SciBERT~\cite{SciBERT} models, and ii) multi-type normalization that assigns unique IDs to extracted bio entities. The NER model trained to recognize domain-specific proper nouns in a biomedical corpus. For example, proteins, cell-cycle, BAD, and PNCa are 4 proper nouns in this sentence. \texttt{The main proteins regulating cell-cycle are BAD and PNCa, which have downstream effects}. \texttt{TP53 and FAS are top two POTSF genes in terms of the number of associated cancer types, which are associated with 34 and 15 cancer types}, is another example, where a NER model should be able to identify that TP53, FAS, POTSF genes, and cancer are the named entities. 
 
 \hspace*{3.5mm} The transformers in all the BERT variants connect the encoders and decoders through self-attention for greater parallelization and reduced training time~\cite{hasan2020knowledge,kim2019neural}. BERT was designed as a general-purpose language representation model that was pre-trained on English Wikipedia, news, and book corpus. Thus, it is incredibly challenging to maintain high performance when applying BERT to biomedical domain texts that contain a considerable number of domain-specific proper nouns and terms. 
 Therefore, BioBERT and SciBERT are recently finetuned for solving different biomedical tasks. Both variatns fo BERT are found to be very effective at recognizing known biomedical entities~\cite{kim2019neural}. 
 
-\hspace*{3.5mm} First, BioBERT and SciBERT are initialized with case-sensitive version of BERT~(i.e., BERT cased). Then the SciBERT and BioBERT's weights are pre-trained on PubMed articles. Each pre-trained model are further fine-tuned for the NER task. While fine-tuning BioBERT and SciBERT, WordPiece\footnote{WordPiece embedding is a method of dividing and expressing a word into masked tokens.} tokenization is used to mitigate the out-of-vocabulary issue. The NER models available in SciBERT and BioBERT can predict the following seven tags: 
+\hspace*{3.5mm} BioBERT and SciBERT are initialized with case-sensitive version of BERT~(i.e., BERT cased). Then the SciBERT and BioBERT's weights are pre-trained on PubMed articles. Each pre-trained model are further fine-tuned for the NER task based on the selected articles. While fine-tuning BioBERT and SciBERT,  WordPiece\footnote{WordPiece embedding is a method of dividing and expressing a word into masked tokens.} tokenization is used to mitigate the out-of-vocabulary issue. The NER models available in SciBERT and BioBERT can predict the following seven tags~\cite{kim2019neural}: 
 
-\begin{enumerate}
-    \item IOB2 tags~(i.e., Inside, Outside, and Begin) (i.e., a sub-token of WordPiece), 
-    \item [CLS] (i.e., the leading token of a sequence for classification), \item [SEP] (i.e., a sentence delimiter), 
-    \item PAD (i.e., a padding of each word in a sentence).
+\begin{enumerate}[noitemsep]
+    \item \textbf{IOB2 tags} - Inside, Outside, and Begin. 
+    \item \textbf{X} - sub-token of WordPiece.  
+    \item \textbf{[CLS]} - the leading token of a sequence for classification. 
+    \item \textbf{[SEP]} - a sentence delimiter.  
+    \item \textbf{PAD} - a padding of each word in a sentence. 
 \end{enumerate}
 
-\hspace*{3.5mm} The NER models were fine-tuned as follows~\cite{kim2019neural}:
+\subsubsection{Fine-tuning NER models}
+The BertTokenizer was applied to words in a sentence on a dataset~(i.e., in CoNLL format) with labels. The WordPiece algorithm\footnote{\url{https://huggingface.co/transformers/tokenizer_summary.html}} was then applied to the sub-words of each word. BioBERT was able to extract diverse types of bio-entities, where an entity or two entities with frequently-occurring token interaction would be marked with more than one entity type span. Based on the calculated probability distribution, we were able to choose the correct entity type when entities were tagged with more than two types according to the probability-based decision rules~\cite{kim2019neural}. The NER models were fine-tuned as follows~\cite{kim2019neural}:
 
 \begin{align}
     p\left(T_{i}\right)=\operatorname{softmax}\left(T_{i} W^{T}+b\right)_{k},
 \end{align}
 
-\hspace*{3.5mm} where $k$ represents the indexes of seven tags $\{\mathrm{B}, \mathrm{I}, \mathrm{O}, \mathrm{X},[\mathrm{CLS}],[\mathrm{SEP}], \mathrm{PAD}\}, p$ is the probability distribution of assigning each $k$ to token $i,$ and $T_{i} \in R^{H}$ is the final hidden representation, which is calculated by BioBERT and SciBERT for each token $i$. $H$ is the hidden size of $T_{i}, W \in R^{K \times H}$ is a weight matrix between $k$ and $T_{i}, K$ represents the number of tags and is equal to $7$, and $b$ is a $\mathrm{K}$ -dimensional vector that records the bias on each $k$. The classification loss $L$ is calculated as follows~\cite{kim2019neural}:
+\hspace*{3.5mm} where $k$ represents the indexes of seven tags $\{\mathrm{B}, \mathrm{I}, \mathrm{O}, \mathrm{X},[\mathrm{CLS}],[\mathrm{SEP}], \mathrm{PAD}\}, p$ is the probability distribution of assigning each $k$ to token $i$, and $T_{i} \in R^{H}$ is the final hidden representation. The final hidden representation is calculated by BioBERT and SciBERT for each token $i$, $H$ is the hidden size of $T_{i}, W \in R^{K \times H}$ is a weight matrix between $k$ and $T_{i}, K$ represents the number of tags and is equal to $5$, and $b$ is a $\mathrm{K}$ -dimensional bias vector on each $k$. The classification loss $L$ is calculated as follows~\cite{kim2019neural}:
 
 \begin{align}
     L(\Theta)=-\frac{1}{N} \sum_{i=1}^{N} \log \left(p\left(y_{i} \mid T_{i}; \Theta\right)\right. ,
 \end{align}
 
-\hspace*{3.5mm} where $\Theta$ represents the trainable parameters, and $N$ is the sequence length. First, a tokenizer was applied to words in a sentence on a dataset with labels in the CoNLL format $^{17}$. The WordPiece algorithm was then applied to the sub-words of each word. Consequently, BioBERT was able to extract diverse types of bio-entities. Furthermore, an entity or two entities with frequently-occurring token interaction would be marked with more than one entity type span $(26.2 \%$ for all PubMed abstracts). Based on the calculated probability distribution, we were able to choose the correct entity type when entities were tagged with more than two types according to the probability-based decision rules $^{8}$
-
-\subsubsection{Fine-tuning NER models}
-We shuffle the training set for every epoch. Besides, the gradient clipping method is applied. We set the initial learning rate to $2 e^{-5}$ and adopt the Adam optimizer with the scheduled learning rate. For the pre-training of \textit{cased BERT} model, we set the maximum input length to $256$. The number of combination layers of multi-head attention, followed by a fully connected softmax layer. The hyperparameters combinations are listed in  \cref{table:bert_params}. 
+\hspace*{3.5mm} where $\Theta$ represents the trainable parameters, and $N$ is the sequence length. During the fine-tuning, the training set is shuffled for every epoch. Besides, the gradient clipping method is applied. We set the initial learning rate to $2 e^{-5}$ and adopt the Adam optimizer with the scheduled learning rate. For the pre-training of \textit{cased BERT} model, we set the maximum input length to $256$. The number of combination layers of multi-head attention, followed by a fully connected softmax layer. The hyperparameters combinations are listed in \cref{table:bert_params}. 
 
 \begin{table*}
     \centering
@@ -427,18 +442,19 @@ We shuffle the training set for every epoch. Besides, the gradient clipping meth
     \label{table:bert_params}
     \begin{tabular}{l|l|l|l|l}
         \hline
-         \textbf{Hyper parameter}  & \textbf{Bangla-BERT}  &
-         \textbf{mBERT cased} &
-         \textbf{mBERT-uncased} & \textbf{XLM-RoBERTa}\\
+        \textbf{Hyper parameter}  & \textbf{BioBERT cased} &
+        \textbf{SciBERT cased} & \textbf{BERT cased}\\
         \hline
-        Learning-rate  & 3e-5  & 3e-5 & 5e-5 & 2e-5 \\
-        Epochs & 6 & 6 & 6 & 5 \\
-        Max seq length & 128 & 128 & 128 & 128 \\
-        Dropout & 0.3 & 0.3 & 0.3 & 0.4 \\
-        Batch size & 16 & 16 & 16 & 16 \\
+        Learning rate & 3e-5 & 5e-5 & 2e-5 \\
+        Epochs & 6 & 6 & 5 \\
+        Max sequence length & 128 & 128 & 128 \\
+        Dropout & 0.3 & 0.3 & 0.4 \\
+        Batch size & 16 & 16 & 16 \\
         \hline
     \end{tabular}
 \end{table*}
+
+\hspace*{3.5mm} Multi-type normalization. Because an entity may be referred to by several synonymous terms (synonyms), and a term can be polysemous if it refers to multiple entity types (polysemy), we require a normalization process for the extracted entities. However, it is a daunting challenge to build a single normalization tool for multiple entity. 
 
 \subsubsection{Integrating extracted triples into KG}
 First, possible sub-classes of `BiomarkerSignificance' is defined as HIGH, MEDIUM, and LOW based on the annotations provided in the TumorPortal\footnote{\url{http://www.tumorportal.org/tumor_types?ttype=PanCan}}. Further, each entity belonging to the class biomarker is annotated with the properties available in the OGG ontology, as shown in \cref{fig:ogg_ontology}. Besides, number of scientific articles is included as an evidence associated with certain genes, which is shown in \cref{fig:biomarker_subclass}. The `Disease' class consists of a subclass named `DiseaseOfCellularProliferation' under which there is another sub-class called `Cancer'. Under the class Cancer we included those 33 cancer types of interests, and which are labeled with their well-known abbreviations, e.g., BRCA for breast cancer. \Cref{fig:diseases_class} shows the structure of the class disease and its subclasses. For the entities in the class disease, object properties from the DOID ontology are also inherited and included as annotations. 
