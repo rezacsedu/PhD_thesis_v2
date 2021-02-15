@@ -410,14 +410,6 @@ The bio-entity extraction component involve two tasks: i) NER that recognizes th
     
 \hspace*{3.5mm} The entity linking is about associating mentions of the named entities in a text with the existing nodes of our target KG~\cite{hogan2020knowledge}. Assuming these entities already exist in the KG, entity linking module then links the given mentions to these nodes. The entity linking task also involves named entity disambiguation, e.g., given that there could be multiple ways to mention the same entity~(e.g., \texttt{p53} and \texttt{TP3} are synonymously used). In such a case, the information available under both mentions across different nodes are splitted, under the assumptions that various aliases and multilingual labels are already captured during the NER task. Further, depending upon the complexity in the NER task, multi-type normalization are performed to assign unique IDs to extracted bio entities. Finally, the relation extraction, which is task to extract relations between the extracted entities is performed. In our case, both binary and n-ary relation types are considered only, in a closed setting where in a fixed set of relation types.  
 
-\begin{figure*}
-	\centering
-	\includegraphics[scale=0.8]{images/ner.png}
-	\caption{ Text extraction example; nodes new to the knowledge graph are shown dash}
-	\label{fig:ner_pipeline}
-	\vspace{-2mm}
-\end{figure*}
-
 \subsubsection{Fine-tuning NER models}
 The transformers in all the BERT variants connect the encoders and decoders through self-attention for greater parallelization and reduced training time~\cite{hasan2020knowledge,kim2019neural}. BERT was originally pre-trained on English Wikipedia, news, and book corpus. Thus, it requires domain-specific finetuning for biomedical domain texts that contain a considerable number of domain-specific proper nouns and terms. Recently, BioBERT and SciBERT are recently finetuned for solving different biomedical tasks, as shown in \cref{fig:ner_bert_pipeline}. Both variants for BERT are found to be very effective at recognizing known biomedical entities~\cite{kim2019neural}. 
 
@@ -428,6 +420,78 @@ The transformers in all the BERT variants connect the encoders and decoders thro
 	\label{fig:ner_bert_pipeline}
 	\vspace{-2mm}
 \end{figure*}
+
+\begin{figure*}
+	\centering
+	\includegraphics[scale=0.8]{images/ner.png}
+	\caption{ Text extraction example; nodes new to the knowledge graph are shown dash}
+	\label{fig:ner_pipeline}
+	\vspace{-2mm}
+\end{figure*}
+
+\begin{figure}
+\centering
+\newlength{\tgap}
+\setlength{\tgap}{0.0cm}
+
+\begin{tikzpicture}
+    %\node[task] (tokenL) {Input text:};
+    %TP53 is an oncogene, which is responsible for breast cancer and has POTSF functionality.
+    %TP53 is responsible for breast cancer and has POTSF functionality in PubMed.
+    \node[task] (tokenL) {Pre-processing:};
+    \node[right=1cm of tokenL.east,anchor=west,split,rectangle split parts=17] (token) {\nodepart{one} TP53 \nodepart{two} is \nodepart{three} responsible \nodepart{four} for \nodepart{five}Breast \nodepart{six} Cancer \nodepart{seven} and \nodepart{eight} has \nodepart{nine} POTSF \nodepart{ten} functionality \nodepart{eleven}, \nodepart{twelve} which \nodepart{thirteen} is \nodepart{fourteen} mentioned \nodepart{fifteen} in \nodepart{sixteen} PubMed \nodepart{seventeen}.};
+    
+    \node[task,below=\tgap of tokenL.south] (nerL) {\begin{tabular}{@{}c@{}}Named Entity\\Recognition:\end{tabular}};
+    
+    \node[word] at (nerL-|token.one south) (santiagoNER) {TP53};
+    
+    \node[word,xshift=-0.7ex] at (nerL-|token.six) (rnNER) {Breast Cancer};
+    
+    \node[word,xshift=-1ex] at (nerL-|token.thirteen south) (whsNER) {POTSF};
+    
+    \node[word] at (nerL-|token.sixteen south) (yearNER) {PubMed};
+    
+    \node[task,below=0.6\tgap of nerL.south] (elL) {\begin{tabular}{@{}c@{}}Entity Linking:\end{tabular}};
+    
+    \node[iri] at (elL-|santiagoNER) (santiagoEL) {TP53};
+    
+    \node[iri] at (elL-|rnNER) (eiEL) {Breast Cancer};
+    
+    \node[iri,dashed] at (elL-|whsNER) (whsEL) {POTSF};
+    
+    \node[iri,dashed] at (elL-|yearNER) (yearEL) {PubMed};
+    
+    %\node[task,below=\tgap of elL.south] (wsdL) {\begin{tabular}{@{}c@{}}Word Sense\\Disambiguation:\end{tabular}};
+    %
+    %\node at (wsdL-|token.three south) (flightWSD) {\AricaAirport};
+    %
+    %\node at (wsdL-|token.ten south) (namedWSD) {\faFlagCheckered};
+    
+    \node[task,below=1.5\tgap of elL.south] (reL) {\begin{tabular}{@{}c@{}}Relation Extraction\\\scriptsize \textit{Binary}:\end{tabular}};
+    
+    \node[iri,yshift=-1ex] at (reL-|santiagoEL) (santiagoRE) {TP53};
+    
+    \node[iri] at (santiagoRE-|eiEL) (eiRE) {Breast Cancer}
+      edge[arrin] node[lab] {responsibleFor} (santiagoRE);
+    
+    \node[iri,dashed] at (santiagoRE-|whsEL) (whsRE) {POTSF}
+      edge[arrin] node[lab] {hasType} (eiRE);
+    
+    \node[iri,dashed] at (santiagoRE-|yearEL) (yearRE) {PubMed}
+     edge[arrin] node[lab] {hasEvidence} (eiRE);
+    
+    \node[task,below=1.5\tgap of reL.south] (neL) {\begin{tabular}{@{}c@{}}\scriptsize \textit{$n$-ary}:\end{tabular}};
+    
+    \node[between=eiRE and whsRE] (mid) {};
+    
+    \node[bnode,dashed] at (neL-|mid) (nary) {}
+      edge[arrout,bend left=10] node[lab] {patient} (eiRE)
+      edge[arrout,bend right=10] node[lab] {name} (whsRE)
+      edge[arrout,bend right=15] node[lab] {time} (yearRE);
+    \end{tikzpicture}
+    
+    \caption{Text extraction example; nodes new to the knowledge graph are shown dashed \label{fig:textExtract}}
+\end{figure}
 
 \hspace*{3.5mm} BioBERT and SciBERT are initialized with case-sensitive version of BERT~(i.e., BERT cased). Then the SciBERT and BioBERT's weights are pre-trained on PubMed articles. Each pre-trained model are further fine-tuned for the NER task based on the selected articles that are collected based on the criteria defined in \cref{table:inclusion_exclusion_article}. While fine-tuning BioBERT and SciBERT,  WordPiece\footnote{WordPiece embedding is a method of dividing and expressing a word into masked tokens.} tokenization is used to mitigate the out-of-vocabulary issue. The NER models available in SciBERT and BioBERT can predict the following seven tags~\cite{kim2019neural}: 
 
@@ -452,7 +516,7 @@ The BertTokenizer was applied to words in a sentence on a dataset~(i.e., in CoNL
     \label{eq:bert_class_loss}
 \end{align}
 
-\hspace*{3.5mm} where $\Theta$ represents the trainable parameters, and $N$ is the sequence length. During the fine-tuning for 20 epochs, the training set is shuffled for every epoch, gradient clipping is applied, the initial learning rate is set to $2 e^{-5}$, the Adam optimizer is used to optimize the loss~(i.e., \cref{eq:bert_class_loss}) with the scheduled learning rate.  Then the multi-head attention layer is followed by a fully-connected softmax layer. \Cref{table:bert_params} shows the hyperparameter combination. 
+\hspace*{3.5mm} where $\Theta$ represents the trainable parameters, and $N$ is the sequence length. During the fine-tuning for 20 epochs, the training set is shuffled for every epoch, gradient clipping is applied, the initial learning rate is set to $2 e^{-5}$, the Adam optimizer is used to optimize the loss~(i.e., \cref{eq:bert_class_loss}) with the scheduled learning rate.  \Cref{table:bert_params} shows the hyperparameter combination. 
 %For the pre-training of \textit{BERT-cased} model, the maximum input length is set to $256$. 
 
 \begin{table*}
@@ -461,8 +525,8 @@ The BertTokenizer was applied to words in a sentence on a dataset~(i.e., in CoNL
     \label{table:bert_params}
     \begin{tabular}{l|l|l|l|l}
         \hline
-        \textbf{Hyper parameter}  & \textbf{BioBERT cased} &
-        \textbf{SciBERT cased} & \textbf{BERT cased}\\
+        \textbf{Hyperparameter}  & \textbf{BioBERT-cased} &
+        \textbf{SciBERT-cased} & \textbf{BERT-cased}\\
         \hline
         Learning rate & 3e-5 & 5e-5 & 2e-5 \\
         Epochs & 6 & 6 & 5 \\
@@ -510,26 +574,6 @@ Possible sub-classes of `BiomarkerSignificance' is defined as HIGH, MEDIUM, and 
 have been identified: 
 BRCA1, CAMTA1, CBFA2T3, CDX2, CREB3L1, CREBBP, DDB2, DNMT1, DNMT3A, ETV6, EZH2, FOXA1, FOXL2, FOXO1, FOXO3, FOXO4, FOXP1, FUS, IRF4, KLF4, KLF5, NCOA4, NOTCH1, NOTCH2, NOTCH3, NPM1, NR4A3, PAX5, PML, PPARG, RB1, RUNX1, SMAD4, STAT3, TCF3, TCF7L2, TP53, TP63, TRIM24, WT, ZBTB16, BCR, CHEK2, EPHA1, EPHA3, EPHB4, FLT3, MAP2K4, MAP3K4, MST1R, NTRK3, PRKAR1A, PRKCB, SYK, ARHGEF12, BCL10, BRCA2, CBL, CDC73, CDH11, CDKN1B, DCC, DDX3×, DICER1, FAS, FAT1, GPC3, IDH1, IKZF2, LIFR, NF2, NUP98, PHF6, PTPN1, PTPN11, RHOA, RHOB, SH2B3, SLC9A3R1, SOCS1, SPOP, SUZ12, WHSC1L1. 
 
-\iffalse
-\begin{figure*}[h]
-	\centering
-	\begin{subfigure}{.48\linewidth}
-		\centering
-		\includegraphics[width=0.6\linewidth,height=60mm]{images/feature_class.png}
-		\caption{Biomarker class}
-        \label{fig:feature_class}
-	\end{subfigure}
-	\begin{subfigure}{0.48\linewidth}
-		\centering
-		\includegraphics[width=0.6\linewidth,height=60mm]{images/feature1.png}
-		\caption{Biomarker subclass}
-        \label{fig:biomarker_subclass}
-	\end{subfigure}
-	\caption{Annotations and relations between entities in the biomarker class and subclass}
-	\label{fig:biomarker_class_subclass}
-	\vspace{-2mm}
-\end{figure*}
-\fi 
 
 %\subsubsection{Enriching gene specific evidence}
 \subsubsection{KG quality assessment}
