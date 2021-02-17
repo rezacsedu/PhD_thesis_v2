@@ -359,7 +359,8 @@ BRCA$\sqsubseteq$Cancer$\sqsubseteq$DiseaseOfCellularProliferation$\sqsubseteq$D
 
 %\subsubsection{Cancer specific biomarkers}
 \subsection{KG enrichment with cancer specific biomarkers} %Enriching disease specific knowledge}
-Based on the inclusion and exclusion criteria in \cref{table:inclusion_exclusion_article}, cancer-related scientific articles are collected to extract information about cancer specific biomarkers from. For example, some genes exhibits both oncogenic and tumor-suppressor functionality~\cite{POSTF}. The KG can be enriched by extracting the name and properties of these genes. To extract such useful knowledge, a BERT-based information extraction method is employed. BioBERT and SciBERT variants of BERT are finetuned with the selected articles crawled from the PubMed, MeSH, CancerIndex, IEEE Digital Library, and Google Scholar. Our hypothesis is that, in learning to recover masked tokens, the model forms a representational topology of cancer-related unstructured sources will enable the ontology-guided knowledge extraction to outperform CRF and Bi-LSTM-based approaches for NER, entity-relationship extraction, and multi-type normalization tasks. 
+As mentioned earlier that scientific articles contain additional facts and knowledge that can help enrich our KG. For example, Shen et al.~\cite{POSTF}, through database search and literature annotation,  have been identified 83 POTSF genes: BRCA1, CAMTA1, CBFA2T3, CDX2, CREB3L1, CREBBP, DDB2, DNMT1, DNMT3A, ETV6, EZH2, FOXA1, FOXL2, FOXO1, FOXO3, FOXO4, FOXP1, FUS, IRF4, KLF4, KLF5, NCOA4, NOTCH1, NOTCH2, NOTCH3, NPM1, NR4A3, PAX5, PML, PPARG, RB1, RUNX1, SMAD4, STAT3, TCF3, TCF7L2, TP53, TP63, TRIM24, WT, ZBTB16, BCR, CHEK2, EPHA1, EPHA3, EPHB4, FLT3, MAP2K4, MAP3K4, MST1R, NTRK3, PRKAR1A, PRKCB, SYK, ARHGEF12, BCL10, BRCA2, CBL, CDC73, CDH11, CDKN1B, DCC, DDX3×, DICER1, FAS, FAT1, GPC3, IDH1, IKZF2, LIFR, NF2, NUP98, PHF6, PTPN1, PTPN11, RHOA, RHOB, SH2B3, SLC9A3R1, SOCS1, SPOP, SUZ12, WHSC1L1. 
+To extract such valuable information, cancer-related scientific articles are collected to extract information about cancer specific biomarkers from, based on the inclusion and exclusion criteria in \cref{table:inclusion_exclusion_article},. For example, some genes exhibits both oncogenic and tumor-suppressor functionality~\cite{POSTF}. The KG can be enriched by extracting the name and properties of these genes. To extract such useful knowledge, a BERT-based information extraction method is employed. BioBERT and SciBERT variants of BERT are finetuned with the selected articles crawled from the PubMed, MeSH, CancerIndex, IEEE Digital Library, and Google Scholar. Our hypothesis is that, in learning to recover masked tokens, the model forms a representational topology of cancer-related unstructured sources will enable the ontology-guided knowledge extraction to outperform CRF and Bi-LSTM-based approaches for NER, entity-relationship extraction, and multi-type normalization tasks. 
 %For the IE from \textbf{stream tables}, we will apply CascadeTabNet~\cite{cascadetabnet2020}, which is an end-to-end neural network architecture capable of both object detection and recognition simultaneously.
 
 \subsubsection{Article inclusion and exclusion criteria}
@@ -423,12 +424,13 @@ The transformers in all the BERT variants connect the encoders and decoders thro
 
 \begin{figure*}
 	\centering
-	\includegraphics[scale=0.8]{images/ner.png}
-	\caption{ Text extraction example; nodes new to the knowledge graph are shown dash}
+	\includegraphics[scale=0.6]{images/ner_stages_ex.png}
+	\caption{Knowledge extraction example from text, where new knowledge are shown in dashed boxes.}
 	\label{fig:ner_pipeline}
 	\vspace{-2mm}
 \end{figure*}
 
+\iffalse
 \begin{figure}
 \centering
 \newlength{\tgap}
@@ -492,6 +494,7 @@ The transformers in all the BERT variants connect the encoders and decoders thro
     
     \caption{Text extraction example; nodes new to the knowledge graph are shown dashed \label{fig:textExtract}}
 \end{figure}
+\fi 
 
 \hspace*{3.5mm} BioBERT and SciBERT are initialized with case-sensitive version of BERT~(i.e., BERT cased). Then the SciBERT and BioBERT's weights are pre-trained on PubMed articles. Each pre-trained model are further fine-tuned for the NER task based on the selected articles that are collected based on the criteria defined in \cref{table:inclusion_exclusion_article}. While fine-tuning BioBERT and SciBERT,  WordPiece\footnote{WordPiece embedding is a method of dividing and expressing a word into masked tokens.} tokenization is used to mitigate the out-of-vocabulary issue. The NER models available in SciBERT and BioBERT can predict the following seven tags~\cite{kim2019neural}: 
 
@@ -506,36 +509,19 @@ The transformers in all the BERT variants connect the encoders and decoders thro
 The BertTokenizer was applied to words in a sentence on a dataset~(i.e., in CoNLL format) with labels. The WordPiece algorithm\footnote{\url{https://huggingface.co/transformers/tokenizer_summary.html}} was then applied to the sub-words of each word. BioBERT was able to extract diverse types of bio-entities, where an entity or two entities with frequently-occurring token interaction would be marked with more than one entity type span. Based on the calculated probability distribution, we were able to choose the correct entity type when entities were tagged with more than two types according to the probability-based decision rules~\cite{kim2019neural}. The NER models were fine-tuned as follows~\cite{kim2019neural}:
 
 \begin{align}
+\vspace{-2mm}
     p\left(T_{i}\right)=\operatorname{softmax}\left(T_{i} W^{T}+b\right)_{k},
 \end{align}
 
 \hspace*{3.5mm} where $k$ represents the indexes of seven tags $\{\mathrm{B}, \mathrm{I}, \mathrm{O}, \mathrm{X},[\mathrm{CLS}],[\mathrm{SEP}], \mathrm{PAD}\}, p$ is the probability distribution of assigning each $k$ to token $i$, and $T_{i} \in R^{H}$ is the final hidden representation. The final hidden representation is calculated by BioBERT and SciBERT for each token $i$, $H$ is the hidden size of $T_{i}, W \in R^{K \times H}$ is a weight matrix between $k$ and $T_{i}, K$ represents the number of tags and is equal to $5$, and $b$ is a $\mathrm{K}$ -dimensional bias vector on each $k$. The classification loss $L$ is calculated as follows~\cite{kim2019neural}:
 
 \begin{align}
+\vspace{-2mm}
     L(\Theta)=-\frac{1}{N} \sum_{i=1}^{N} \log \left(p\left(y_{i} \mid T_{i}; \Theta\right)\right. ,
     \label{eq:bert_class_loss}
 \end{align}
 
-\hspace*{3.5mm} where $\Theta$ represents the trainable parameters, and $N$ is the sequence length. During the fine-tuning for 20 epochs, the training set is shuffled for every epoch, gradient clipping is applied, the initial learning rate is set to $2 e^{-5}$, the Adam optimizer is used to optimize the loss~(i.e., \cref{eq:bert_class_loss}) with the scheduled learning rate.  \Cref{table:bert_params} shows the hyperparameter combination. 
-%For the pre-training of \textit{BERT-cased} model, the maximum input length is set to $256$. 
-
-\begin{table*}
-    \centering
-    \caption{Hyperparameter combination for BERT variants}
-    \label{table:bert_params}
-    \begin{tabular}{l|l|l|l|l}
-        \hline
-        \textbf{Hyperparameter}  & \textbf{BioBERT-cased} &
-        \textbf{SciBERT-cased} & \textbf{BERT-cased}\\
-        \hline
-        Learning rate & 3e-5 & 5e-5 & 2e-5 \\
-        Epochs & 6 & 6 & 5 \\
-        Max sequence length & 128 & 128 & 128 \\
-        Dropout & 0.3 & 0.3 & 0.4 \\
-        Batch size & 16 & 16 & 16 \\
-        \hline
-    \end{tabular}
-\end{table*}
+\hspace*{3.5mm} where $\Theta$ represents the trainable parameters, and $N$ is the sequence length. 
 
 \subsubsection{Integrating extracted triples into KG}
 Possible sub-classes of `BiomarkerSignificance' is defined as HIGH, MEDIUM, and LOW based on the annotations provided in the TumorPortal\footnote{\url{http://www.tumorportal.org/tumor_types?ttype=PanCan}}. Further, each entity belonging to the class biomarker is annotated with the properties available in the OGG ontology, as shown in \cref{fig:ogg_ontology}. Besides, number of scientific articles is included as an evidence associated with certain genes, which is shown in \cref{fig:biomarker_subclass}. The `Disease' class consists of a subclass named `DiseaseOfCellularProliferation' under which there is another sub-class called `Cancer'. Under the class Cancer we included those 33 cancer types of interests, and which are labeled with their well-known abbreviations, e.g., BRCA for breast cancer. \Cref{fig:diseases_class} shows the structure of the class disease and its subclasses. For the entities in the class disease, object properties from the DOID ontology are also inherited and included as annotations. 
@@ -567,15 +553,10 @@ Possible sub-classes of `BiomarkerSignificance' is defined as HIGH, MEDIUM, and 
 	\vspace{-2mm}
 \end{figure*}
 
-\hspace*{3.5mm} To integrate the new information into the KG, a semantic lexicon is incorporated. The lexicon extractor is a BioBERT and SciBERT-based instance extractor, which: i) uses the rules from the cancer ontology to enrich the semantic lexicon with new lexicon symbols and ii) extracts the instance information and create RDF triples, followed by enrichment of the KG. In our approach, each instance is extracted as an RDF triple in the form of $(u,e,v)=(\mathit{subject},\mathit{predicate},\mathit{object})$, where each triple forms a connected component of a sentence for the KG. 
-
-\hspace*{3.5mm} As many as 83 POTSF genes 
-%reported by Shen et al.~\cite{POSTF} through database search and literature annotation are used to enrich the list. 
-have been identified: 
-BRCA1, CAMTA1, CBFA2T3, CDX2, CREB3L1, CREBBP, DDB2, DNMT1, DNMT3A, ETV6, EZH2, FOXA1, FOXL2, FOXO1, FOXO3, FOXO4, FOXP1, FUS, IRF4, KLF4, KLF5, NCOA4, NOTCH1, NOTCH2, NOTCH3, NPM1, NR4A3, PAX5, PML, PPARG, RB1, RUNX1, SMAD4, STAT3, TCF3, TCF7L2, TP53, TP63, TRIM24, WT, ZBTB16, BCR, CHEK2, EPHA1, EPHA3, EPHB4, FLT3, MAP2K4, MAP3K4, MST1R, NTRK3, PRKAR1A, PRKCB, SYK, ARHGEF12, BCL10, BRCA2, CBL, CDC73, CDH11, CDKN1B, DCC, DDX3×, DICER1, FAS, FAT1, GPC3, IDH1, IKZF2, LIFR, NF2, NUP98, PHF6, PTPN1, PTPN11, RHOA, RHOB, SH2B3, SLC9A3R1, SOCS1, SPOP, SUZ12, WHSC1L1. 
-
+\hspace*{3.5mm} To integrate the new information into the KG, a semantic lexicon is incorporated. The lexicon extractor is a BioBERT and SciBERT-based instance extractor, which: i) uses the rules from the cancer ontology to enrich the semantic lexicon with new lexicon symbols and ii) extracts the instance information and create RDF triples, followed by enrichment of the KG. In our approach, each instance is extracted as an RDF triple in the form of $(u,e,v)=(\mathit{subject},\mathit{predicate},\mathit{object})$, where each triple forms a connected component of a sentence for the KG, e.g., for the sample text in \cref{fig:ner_bert_pipeline}, \texttt{TP53 is responsible for a deadly disease called Breast Cancer. TP53 has POTSF functionality, which is mentioned in numerous PubMed articles}, ``TP53'', ``disease'', ``Breast Cancer'', ``POTSF'', and ``PubbMed'' are the extracted named entities. Then, followed by entity linking, following relation triples are extracted: \texttt{(TP53, responsibleFor, Breast Cancer), (TP53, hasType, POTSF), (Breast Cancer, isA, Disease), (POTSF, hasEvidence, PubMed)}. 
 
 %\subsubsection{Enriching gene specific evidence}
+
 \subsubsection{KG quality assessment}
 Modelling ontologies is one of the key topics in knowledge engineering because of the difficulties it involves~\cite{poveda2014oops}. Regardless the source from which the data is collected, KG is created, and data extracted for the initial KG will usually be incomplete, and will contain duplicate, anomalies or errors, contradictory or even incorrect statements – especially when taken from multiple sources~\cite{hogan2020knowledge}. Therefore, once the KG is constructed and enrichment of a KG from external sources, a crucial step is to assess the quality of the resulting KG for fitness of purpose. Ensuring the robustness of a constructed KG is of utmost significance to ensure the quality of the inferred knowledge. The proliferation of massive KGs poses a question on the quality of the embedded knowledge~(i.e., entities and relations), and whether these facts precisely depict the intended real-world concepts and their relationships.
 
@@ -590,7 +571,7 @@ Classification and ranking metrics such as Hits@N and mean reciprocal rank, accu
     \item A cycle between two classes in the hierarchy is included in the ontology. Detecting this situation could avoid modelling and reasoning problems.
 \end{enumerate}
 
-\subsection{Ontological reasoning: query processing to instance classification}
+\subsection{Ontological reasoning}
 As already stated, our semantic layer, consists of four components: query processing module, knowledge matching module, instance classifier, and the ontology reasoner. The ontology represented as a RDF KG consists of 31,034 triples including data, ontologies, and formal representation annotations. The semantic layer provides an interface between the KG and the rule generator. %We provide the details of each component in this sub-section.
 
 \subsubsection{Query processing}
@@ -616,21 +597,32 @@ In many cases, a set of facts $\mathcal{F}$ may contain contradictory knowledge,
 \hspace*{3.5mm} We use the Pellet reasoner to deductively close the KG, i.e., we deductively close our KG w.r.t. the OWL2 EL profile. The $\mathcal{KG}$ would be deductively closed $iff$ for all $\phi$ s.t. $\mathcal{KG} \models \phi, \phi \in \mathcal{KG}$. Although the deductive closure of a knowledge is countably infinite, we assume it is finite for our case. Subsequently, we add only inferences that can be represented explicitly as edges between named individuals and classes~(i.e., entities that are explicitly named) in the $\mathcal{KG}$ s.t. for all instances $x_{i}, x_{j} \in \mathcal{KG}$ and object properties $r \in \mathcal{KG}$, if $\mathcal{KG} \models r\left(x_{i}, x_{j}\right)$, then $r\left(x_{i}, x_{j}\right) \in \mathcal{KG} ^{\models}$. Furthermore, for all named classes $C \in \mathcal{KG}$ and instances $x \in \mathcal{KG}$, if $\mathcal{KG}=\mathrm{C}(x)$, then $C(x) \in \mathcal{KG} ^{\pm}$. Finally, relations between classes are inferred by adding subclass axioms to the inferred graph, s.t. for any class $C, D \in \mathcal{KG}$, if $\mathcal{KG} \models C \sqsubseteq D$, then $C \sqsubseteq D \in \mathcal{KG}^{\pm}$. 
 
 \section{Experiments}\label{chapter_8:results}
-In this section, we discuss the evaluation results, both quantitatively and qualitatively. Besides, a comparative analysis with state-of-the-art approaches is provided. More specifically, several experiments were carried out to improve the adversarial robustness of the models, with the following objectives:
+In this section, we discuss the evaluation results, both quantitatively and qualitatively. More specifically, some query benchmarking are provided for selected questions. The generated rules are then interpreted, followed by decision reasoning with rules. For pre-training of \textit{BERT}-based NER models, the maximum input length is set to $256$. During the fine-tuning for 20 epochs, the training set is shuffled for each epoch, gradient clipping is applied, initial learning rate is set to $2 e^{-5}$, and the Adam optimizer is used to optimize the loss~(i.e., \cref{eq:bert_class_loss}) with the scheduled learning rate. \Cref{table:bert_params} shows the hyperparameter combination used for pretraining and finetuning phases. 
 
-\begin{enumerate}[noitemsep]
-    \item Can we train a surrogate model to approximate the behaviour of a complex DNN model? 
-    \item How effective a surrogate model at approximating the oracle model?  
-    \item How effective decision rules are to explain global and local behaviours of a model?   
-    \item Can we explain misclassified instances using decision rules? 
-\end{enumerate}
+\begin{table*}
+    \centering
+    \caption{Hyperparameter combination for BERT variants}
+    \label{table:bert_params}
+    \scriptsize{
+    \begin{tabular}{l|l|l|l|l}
+        \hline
+        \textbf{Hyperparameter}  & \textbf{BioBERT-cased} &
+        \textbf{SciBERT-cased} & \textbf{BERT-cased}\\
+        \hline
+        Learning rate & 3e-5 & 5e-5 & 2e-5 \\
+        Epochs & 6 & 6 & 5 \\
+        Max sequence length & 128 & 128 & 128 \\
+        Dropout & 0.3 & 0.3 & 0.4 \\
+        Batch size & 16 & 16 & 16 \\
+        \hline
+    \end{tabular}}
+\end{table*}
 
-\hspace*{3.5mm} Results of each observation are analysed, both quantitative and qualitatively, in the following section.
-
-\subsection{Experiment setup}
-We used Prot{\'e}g{\'e} 5.5.0 is used for the reasoning, DLx querying, and DL rule generations with Pellet, RLK, and HermiT reasoners. 
+\hspace*{3.5mm} Prot{\'e}g{\'e} 5.5.0 is used for the reasoning, w.r.t DLx querying. The DLx rule generations with Pellet, ELK, and HermiT reasoners. 
 %The detail information including versions are shown in \cref{fig:plugins_info}. 
-However, ELK does not support object all values from axioms, while HermiT gave some inconsistent~(giving different number of rules). Therefore, we report the rules generated with Pellet only. The inferred rules based on the reasoning are expressed using DLx format. To evaluate the effectiveness of domain-specific potentials of transformer-based approach for information extraction, a comparative analysis with the well-established CRF and Bi-LSTM architectures. 
+However, since ELK does not support object all values from axioms, while HermiT gave some inconsistent~(giving different number of rules), we report the rules generated with Pellet reasoner only. The inferred rules based on the reasoning are expressed in DLx format. To evaluate the effectiveness of domain-specific potentials of transformer-based approach for information extraction, a comparative analysis with the well-established CRF and Bi-LSTM architectures. 
+
+\subsection{Knowledge extraction}
 
 \subsection{Query benchmarks}
 Below we provide a few questions in human language~(NLQ) and in DLx query~(DLQ) format. The answers based on different reasoners can be found in appendix. However, as shown in in \cref{fig:sample_q_a}, the answer of NLQ ``List of all biomarkers which are classified POTSF and responsible for breast cancer answered" against the DLQ ``Biomarker and responsible\_for some BRCA and is\_a only POTSF" by the Prot{\'e}g{\'e} is understandable but not clear how the reasoner derives such answer. Therefore, in the next subsection, we derive corresponding rule for individual biomarker. 
@@ -728,11 +720,13 @@ SELECT ?otherEntity (count(?tweet) as ?count) WHERE {
 \fi 
 
 \subsection{Interpretation of generated rules}
-We interpret the inferred rules. We apply DLx Class Axiom Renderer Plugin\footnote{\url{https://github.com/MindfulMichaelJames/ProtegeDLAxiomPlugin}} to represent the rules.   
+%We interpret the inferred rules. We apply 
+The DLx Class Axiom Renderer Plugin\footnote{\url{https://github.com/MindfulMichaelJames/ProtegeDLAxiomPlugin}} is used to represent the rules.   
+
 \subsubsection{Notations and assumptions}
 Due to brevity, we cover some notations and assumptions that will be used for the interpretations:
 
-\noindent i) if <Biomarker> $\sqsubseteq$ $\forall$is\_a.Protein-coding, following two rules implied:\\
+\noindent i) If \texttt{<Biomarker> $\sqsubseteq$ $\forall$is\_a.Protein-coding}, following two rules implied:\\
 
 \vspace{-6mm}
 \begin{itemize}[noitemsep]
@@ -742,7 +736,7 @@ Due to brevity, we cover some notations and assumptions that will be used for th
 \end{itemize}
 \vspace{-6mm}
 
-\noindent ii) if <Biomarker> $\sqsubseteq$ $\forall$is\_a.POTSF, following two rules implied:\\
+\noindent ii) If \texttt{<Biomarker> $\sqsubseteq$ $\forall$is\_a.POTSF}, following two rules implied:\\
 
 \vspace{-6mm}
 \begin{itemize}[noitemsep]
@@ -752,7 +746,7 @@ Due to brevity, we cover some notations and assumptions that will be used for th
 \end{itemize}
 
 \vspace{-6mm}
-\noindent iii) if <Biomarker>$\sqsubseteq$ $\forall$is\_a.Oncogene, following two rules implied:\\
+\noindent iii) If \texttt{<Biomarker>$\sqsubseteq$ $\forall$is\_a.Oncogene}, following two rules implied:\\
 
 \vspace{-6mm}
 \begin{itemize}[noitemsep]
@@ -762,7 +756,7 @@ Due to brevity, we cover some notations and assumptions that will be used for th
 \end{itemize}
 
 \vspace{-6mm}
-\noindent iv) for every disease ` responsible\_for<cancer-type>', the following three rules are implied:\\
+\noindent iv) For every disease \texttt{responsible\_for<cancer-type>}, the following three rules are implied:\\
 
 \vspace{-6mm}
 \begin{itemize}[noitemsep]
@@ -773,8 +767,8 @@ Due to brevity, we cover some notations and assumptions that will be used for th
 \end{itemize}
 \vspace{-2mm}
 
-\subsubsection{Rules for subclasses}
-We consider the following rules for features:
+\subsubsection{Rules associated for subclasses}
+Following rules are generated for features:
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -785,7 +779,7 @@ We consider the following rules for features:
 \end{itemize}
 \vspace{-2mm}
 
-We consider the following rules on biomarker's significance:
+Following rules are generated for biomarker's significance:
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -798,7 +792,7 @@ We consider the following rules on biomarker's significance:
 \vspace{-2mm}
 
 \subsubsection{Rules associated with Biomarker Type}
-We consider the following rules on biomarker types:
+Following rules are generated for biomarker types:
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -809,7 +803,7 @@ We consider the following rules on biomarker types:
 \end{itemize}
 \vspace{-2mm}
 
-We consider the following rules on evidence types:
+Following rules are generated for evidence types:
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
@@ -821,36 +815,37 @@ We consider the following rules on evidence types:
 \vspace{-2mm}
 
 \subsubsection{Rules by cancer types}
-As already mention, we consider the following cancer types:
+Following are the rules generated for the cancer types:
 
 \vspace{-2mm}
 \begin{itemize}[noitemsep]
-\scriptsize{
-  \item DiseaseOfCellularProliferation  $\sqsubseteq $ Disease
-  \item Cancer $\sqsubseteq $ DiseaseOfCellularProliferation
-  \item AcuteLymphocyticLeukaemia $ \sqsubseteq $ Cancer
-  \item UrinaryBladderCancer $ \sqsubseteq $ Cancer
-  \item BreastCancer $ \sqsubseteq $ Cancer
-  \item Carcinoid $ \sqsubseteq $ Cancer
-    \item ChronicLymphocyticLeukemia $ \sqsubseteq $ Cancer
-  \item ColorectalCancer $ \sqsubseteq $ Cancer
-  \item DiffuseLargeB-cellLymphoma $ \sqsubseteq $ Cancer
-  \item EsophagealCancer $ \sqsubseteq $ Cancer
-  \item GlioblastomaMultiforme $ \sqsubseteq $ Cancer
-  \item HeadAndNeckCancer $ \sqsubseteq $ Cancer
- \item KidneyClearCell $ \sqsubseteq $ Cancer
-  \item AcuteMyleoidLeukemia $ \sqsubseteq $ Cancer
-    \item LungAdenocarcinoma $ \sqsubseteq $ Cancer
-  \item LungSquasmousCellCarcinoma $ \sqsubseteq $ Cancer
-  \item Medulloblastoma $ \sqsubseteq $ Cancer
-  \item Melanoma $ \sqsubseteq $ Cancer
-  \item MultipleMyeloma $ \sqsubseteq $ Cancer
-  \item Neuroblastoma $ \sqsubseteq $ Cancer
-  \item OvarianCancer $ \sqsubseteq $ Cancer
-    \item PanCan $ \sqsubseteq $ Cancer
-      \item ProstateCancer $ \sqsubseteq $ Cancer
-  \item EndometrialCancer $ \sqsubseteq $ Cancer
-  \item RhabdoidCancer $ \sqsubseteq $ Cancer.}
+    \scriptsize{
+          \item DiseaseOfCellularProliferation  $\sqsubseteq $ Disease
+          \item Cancer $\sqsubseteq $ DiseaseOfCellularProliferation
+          \item AcuteLymphocyticLeukaemia $ \sqsubseteq $ Cancer
+          \item UrinaryBladderCancer $ \sqsubseteq $ Cancer
+          \item BreastCancer $ \sqsubseteq $ Cancer
+          \item Carcinoid $ \sqsubseteq $ Cancer
+          \item ChronicLymphocyticLeukemia $ \sqsubseteq $ Cancer
+          \item ColorectalCancer $ \sqsubseteq $ Cancer
+          \item DiffuseLargeB-cellLymphoma $ \sqsubseteq $ Cancer
+          \item EsophagealCancer $ \sqsubseteq $ Cancer
+          \item GlioblastomaMultiforme $ \sqsubseteq $ Cancer
+          \item HeadAndNeckCancer $ \sqsubseteq $ Cancer
+          \item KidneyClearCell $ \sqsubseteq $ Cancer
+          \item AcuteMyleoidLeukemia $ \sqsubseteq $ Cancer
+          \item LungAdenocarcinoma $ \sqsubseteq $ Cancer
+          \item LungSquasmousCellCarcinoma $ \sqsubseteq $ Cancer
+          \item Medulloblastoma $ \sqsubseteq $ Cancer
+          \item Melanoma $ \sqsubseteq $ Cancer
+          \item MultipleMyeloma $ \sqsubseteq $ Cancer
+          \item Neuroblastoma $ \sqsubseteq $ Cancer
+          \item OvarianCancer $ \sqsubseteq $ Cancer
+          \item PanCan $ \sqsubseteq $ Cancer
+          \item ProstateCancer $ \sqsubseteq $ Cancer
+          \item EndometrialCancer $ \sqsubseteq $ Cancer
+          \item RhabdoidCancer $ \sqsubseteq $ Cancer.
+      }
 \end{itemize}
 \vspace{-4mm}
 
@@ -913,7 +908,7 @@ The preceding rule set covers a couple of facts w.r.t. the cancer types such as 
     \item Although TP53 is not an oncogene, it's evidently found  responsible for different cancer types. }
 \end{itemize}
 
-\hspace*{3.5mm} Now relating this rule set with the decision rules can be described with an example. Suppose, a doctor uploads patient's multimodal genomic data~(or unimodal in restrictive scenario) to get the diagnosis decision. Based on the outcome at hand~(e.g., prediction, feature importance, decision rule set), he then can be ensured that the patient has breast cancer. Subsequently, he can explain that the model made such decision by exposing blood biomarkers role, e.g., TP53 is the most significant biomarkers. Further, upon the patient request, doctor can then write a SPARQL or DLx query and ask the reasoner to reason how the decision is deduced/inferred based on the following rules and domain-knowledge he is aware of:  
+\hspace*{3.5mm} Now relating this rule set with the decision rules can be described with an example. Suppose, a doctor uploads patient's multimodal genomic data~(or unimodal data in a restrictive scenario) to get the diagnosis decision. Based on the outcome at hand~(e.g., prediction, feature importance, decision rule set), he then can be ensured that the patient has breast cancer. Subsequently, he can explain that the model made such decision by exposing blood biomarkers role, e.g., TP53 is the most significant biomarkers. Further, upon the patient request, doctor can then write a SPARQL or DLx query and ask the reasoner to reason how the decision is deduced/inferred based on the following rules and domain-knowledge he is aware of:  
 
 \begin{itemize}[noitemsep]
 \scriptsize{
@@ -923,7 +918,7 @@ The preceding rule set covers a couple of facts w.r.t. the cancer types such as 
     \item TP53 $  \cap $ ($\exists$has$ {\_}$significance$ {\_}$degree.High) $  \cap $ ($\exists$responsible$ {\_}$for.BreastCancer) $ \sqsubseteq  $ ($\exists$has$ {\_}$evidence.PubMed) $\cap$ (=493) (has ${\_}$citations.T)}
 \end{itemize}
 
-\hspace*{3.5mm} Additinally, the doctor can interpret this rule to the patient, where the decision is backed by the fact that a gene biomarker called `TP53': `TP53' is found to be highly responsible for the presence of breast cancer in your body. This gene has very strong mutations associations w.r.t. to breast cancer. Nevertheless, many scientific article has found it's association. What we assume that such an inferred rule can be used not only to fix inconsistencies, but also to generate fairer decision rules. 
+\hspace*{3.5mm} Additionally, the doctor can interpret this rule to the patient, where the decision is backed by the fact that a gene biomarker called `TP53': `TP53' is found to be highly responsible for the presence of breast cancer in your body. This gene has very strong mutations associations w.r.t. to breast cancer. Nevertheless, many scientific article has found it's association. What we assume that such an inferred rule can be used not only to fix inconsistencies, but also to generate fairer decision rules. 
 
 \section{Chapter Summary}\label{chapter_8:conclusion}
 In this chapter, the semantic layer that we developed consists of the query processing module, instance classifier, and ontological reasoner~\cite{futia2020integration}. Our approach based on SW technologies offer a data-efficient process by which models can be trained to reason on symbolic contexts and are able to provide background knowledge for DL models. We developed a domain-specific ontology as the basis of the KB by reusing concepts and knowledge from existing ontologies and KBs. We show how the SR can infer domain knowledge about top-k biomarkers we already identified. 
